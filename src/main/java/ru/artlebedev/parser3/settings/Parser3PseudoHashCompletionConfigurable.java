@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public final class Parser3PseudoHashCompletionConfigurable implements SearchableConfigurable {
 
-	private static final String DOCUMENTATION_URL = "https://github.com/mryasov-als/parser3-intellij-plugin/blob/main/docs/contextual-argument-completion.md";
+	private static final String DOCUMENTATION_URL = "https://github.com/mryasov-als/parser3-intellij-plugin/blob/master/docs/contextual-argument-completion.md";
 
 	private JTextArea textArea;
 

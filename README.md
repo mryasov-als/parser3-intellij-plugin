@@ -6,7 +6,8 @@ Parser3 - серверный язык с шаблонной моделью, ме
 
 ## Демо
 
-[Видео с возможностями плагина](https://github.com/mryasov-als/parser3-intellij-plugin/releases/download/v0.7.39/parser3plugin_demo.mp4)
+
+[Видео с возможностями плагина](https://disk.yandex.ru/i/wuDDEb5vGbZ3JQ)
 
 ## Возможности
 
