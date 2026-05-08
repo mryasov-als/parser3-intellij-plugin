@@ -1,0 +1,276 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Определяемые пользователем классы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Файл в&nbsp;таком формате определяет <a href="lesson5.htm">пользовательский класс</a>:
+<br>
+<code><b>
+<br>
+@CLASS
+<br>
+имя_класса
+<br>
+
+<br>
+#&nbsp;необязательно
+<br>
+@USE
+<br>
+файл_с_родительским&nbsp;классом&nbsp;&nbsp;
+<br>
+
+<br>
+#&nbsp;необязательно
+<br>
+@OPTIONS</b></code><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.3.0]
+<br>
+</i></b></span><code><b>locals
+<br>
+partial
+<br>
+dynamic</b></code><span> </span><span>или</span><span> </span><code><b>static</b></code><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.4.1]
+<br>
+</i></b></span><code><b>
+<br>
+#&nbsp;необязательно
+<br>
+#&nbsp;нельзя&nbsp;наследоваться&nbsp;от&nbsp;системных&nbsp;классов</b></code><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><span><b><i>[3.4.0]</i></b></span><code><b>
+<br>
+@BASE
+<br>
+имя_родительского_класса&nbsp;&nbsp;&nbsp;</b></code><span>
+<br>
+</span><span>
+<br>
+</span><code><b>#&nbsp;так&nbsp;рекомендуется&nbsp;называть&nbsp;</b><b><a href="obj.htm">метод — конструктор</a></b><b>&nbsp;класса
+<br>
+@create[параметры]
+<br>
+</b></code><span>
+<br>
+</span><code><b>#&nbsp;далее&nbsp;следуют&nbsp;</b><b><a href="definemethod.htm">определения методов</a></b><b>&nbsp;класса
+<br>
+@method1[параметры]
+<br>
+…
+<br>
+</b></code><span>
+<br>
+Модуль можно подключить (см.&nbsp;«<a href="opuse.htm">Подключение модулей</a>») к&nbsp;произвольному файлу - там появится возможность использования определенного здесь класса.
+<br>
+
+<br>
+Если происходит обращение к&nbsp;неизвестному классу, вызывается метод </span><code><b>autouse</b></code><span> класса </span><code><b>MAIN</b></code><span>, и&nbsp;имя класса </span><span>передается единственным параметром этому методу.</span><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><span><b><i>[3.4.0]
+<br>
+</i></b>
+<br>
+Если не&nbsp;указать </span><code><b>@CLASS</b></code><span>, файл дополнит класс </span><code><b>MAIN</b></code><span> и определит ряд дополнительных <a href="opuserdefined.htm">операторов</a>.
+<br>
+</span><code><b>
+<br>
+</b></code><span>Если определен метод…</span><code><b>
+<br>
+</b><b>@auto[]</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+код</b></code></span><span>
+<br>
+
+<br>
+…он будет выполнен автоматически при загрузке класса как статический метод (так называемый статический конструктор). Используется для&nbsp;инициализации статических полей (переменных) класса.
+<br>
+
+<br>
+<i>Примечание: результат работы метода игнорируется - никуда не&nbsp;попадает.
+<br>
+</i>
+<br>
+У метода </span><code><b>auto</b></code><span> могут быть объявлены один или два параметра:</span><code><b>
+<br>
+</b><b>@auto[</b><b>filespec</b><b>;classname</b><b>]</b><b>
+<br>
+</b></code><span>В первом параметре Parser передаст полное имя файла, содержащего метод, во втором параметре - имя инициализируемого класса.
+<br>
+
+<br>
+В Parser создаваемые классы наследуют методы классов, от&nbsp;которых были унаследованы. Унаследованные методы можно переопределить.
+<br>
+
+<br>
+<i>Примечание: метод </i><b><i>auto</i></b><i> по умолчанию не&nbsp;наследуется. Но если метод объявлен с двумя параметрами, он наследуется и выполнится при загрузке как базового, так и производных классов</i><i>.</i></span><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><span><b><i>[3.5.0]
+<br>
+</i></b>
+<br>
+В том случае, когда в&nbsp;качестве родительского класса выступает другой пользовательский класс, необходимо <a href="opuse.htm">подключить</a> модуль, в&nbsp;котором он находится, а&nbsp;также объявить класс базовым (</span><code><b>@BASE</b></code><span>).
+<br>
+</span><code><b>
+<br>
+</b></code><span>Для того чтобы пользоваться методами и&nbsp;полями родительских классов, необходимо использовать следующие конструкции:
+<br>
+
+<br>
+</span><code><b>^класс:метод[</b><b><a href="params.htm">параметры</a></b><b>]</b></code><span>&nbsp;- вызов метода родительского класса<i> (примечание: хотя такой синтаксис вызова метода и&nbsp;похож на&nbsp;синтаксис вызова статического метода, фактически в&nbsp;случае динамического метода происходит динамический вызов метода родительского класса)</i>, для&nbsp;обращения к&nbsp;своему ближайшему родительскому классу (базовому классу) можно использовать конструкции </span><code><b>^BASE:конструктор[</b><b><a href="params.htm">параметры</a></b><b>]</b></code><span> и&nbsp;</span><code><b>^BASE:метод[</b><b><a href="params.htm">параметры</a></b><b>]</b></code><span>. 
+<br>
+
+<br>
+<i>Примечание: аналогично можно обращаться </i><i>к&nbsp;</i><i><a href="props.htm">свойствам</a></i><i> </i><i>базового класса&nbsp;- </i></span><code><b><i>$BASE:свойство</i></b></code><span><i> и&nbsp;</i></span><code><b><i>$BASE:свойство[значение]</i></b></code><span><i>.</i></span><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.4.5]
+<br>
+</i></b>
+<br>
+С помощью </span><code><b>@OPTIONS</b></code><span> можно определить дополнительное поведение класса.</span><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.3.0]
+<br>
+</i></b><i>Примечание: пробельные символы в&nbsp;конце </i><b><i>@USE</i></b><i>, </i><b><i>@CLASS</i></b><i>, </i><b><i>@BASE</i></b><i>, </i><b><i>@OPTIONS </i></b><i>игнорируются.</i></span><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.4.1]
+<br>
+</i></b></span><span>
+<br>
+</span><span>Так, указанная опция </span><code><b>locals</b></code><span> автоматически объявит локальными все переменные во всех методах определяемого класса. Если она указана, то&nbsp;для&nbsp;записи в&nbsp;поля объекта или класса необходимо пользоваться системной переменной <a href="definemethod.htm">self</a>.</span><span>
+<br>
+
+<br>
+</span><span>С помощью опции </span><code><b>partial</b></code><span> можно разрешить последующую подгрузку методов в&nbsp;класс. Если впоследствии будет сделан <a href="opuse.htm">use</a> файла, в&nbsp;котором указано такое&nbsp;же имя класса и&nbsp;эта&nbsp;же опция, то&nbsp;вместо создания нового класса с&nbsp;таким&nbsp;же именем описанные в&nbsp;подключаемом файле методы будут добавлены к&nbsp;ранее загруженному классу. Опция может быть удобна для&nbsp;условного добавления в&nbsp;класс громоздких и&nbsp;редко используемых методов. После создания класса с&nbsp;использованием данной опции возможно лишь добавление методов классу, но&nbsp;не&nbsp;изменение его родительского класса.
+<br>
+
+<br>
+С помощью опций </span><code><b>static</b></code><span> и&nbsp;</span><code><b>dynamic</b></code><span> можно задать возможный тип вызова определяемых в&nbsp;файле методов класса. По&nbsp;умолчанию описываемые в&nbsp;файле методы могут вызываться как динамически, так и&nbsp;статически, что может быть не&nbsp;всегда безопасно, и&nbsp;эти опции помогут запретить небезопасные вызовы.
+<br>
+</span><code><b>
+<br>
+</b></code><span><b>Пример</b></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>@CLASS
+<br>
+my
+<br>
+
+<br>
+@OPTIONS
+<br>
+dynamic
+<br>
+
+<br>
+#&nbsp;вызов&nbsp;$object[^my::create[]]&nbsp;будет&nbsp;допустим,&nbsp;а&nbsp;вызов&nbsp;$var[^my:create[]]&nbsp;будет&nbsp;вызывать&nbsp;исключение
+<br>
+@create[]
+<br>
+Код
+<br>
+
+<br>
+#&nbsp;вызов&nbsp;^object.method1[]&nbsp;будет&nbsp;допустим,&nbsp;а&nbsp;вызов&nbsp;^my:method1[]&nbsp;будет&nbsp;вызывать&nbsp;исключение
+<br>
+@method1[]
+<br>
+Код
+<br>
+
+<br>
+#&nbsp;вызов&nbsp;^my:method2[]&nbsp;будет&nbsp;допустим,&nbsp;а&nbsp;вызов&nbsp;^object.method2[]&nbsp;будет&nbsp;вызывать&nbsp;исключение
+<br>
+@static:method2[]
+<br>
+Код
+<br>
+</b></code></span><span>
+<br>
+
+<br>
+</span><span><b>Работа с&nbsp;переменными в&nbsp;статических методах
+<br>
+</b></span><span>Поиск значения переменной (</span><code><b>$name</b></code><span>) происходит:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>в списке <a href="definemethod.htm">локальных</a> переменных;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>текущем классе или его родителях.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Запись значения переменной  (</span><code><b>$name[value]</b></code><span>)  производится в&nbsp;уже имеющуюся переменную (см.&nbsp;область поиска выше), если таковая имеется. В противном случае создается новая переменная (поле) в&nbsp;текущем классе. 
+<br>
+
+<br>
+Область поиска значения может быть сужена указанием </span><code><b>$self.</b></code><span> или&nbsp;</span><code><b>$</b><b>класс</b><b>:</b></code><span>.
+<br>
+
+<br>
+</span><span><b>Работа с&nbsp;переменными в&nbsp;динамических методах</b></span><span>
+<br>
+Поиск значения переменной  (</span><code><b>$name</b></code><span>) происходит:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>в списке <a href="definemethod.htm">локальных</a> переменных;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>текущем объекте;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>классе текущего объекта или его родителях.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Запись значения переменной  (</span><code><b>$name[value]</b></code><span>) производится в&nbsp;уже имеющуюся локальную переменную, если таковая имеется. В противном случае запись происходит в&nbsp;переменную (поле) в&nbsp;текущем объекте.&nbsp;&nbsp;&nbsp;<b><i>[3.4.5]
+<br>
+
+<br>
+</i></b>Область поиска значения может быть сужена указанием </span><code><b>$self.</b></code><span> или </span><code><b>$</b><b>класс</b><b>:</b></code><span>.
+<br>
+
+<br>
+<i>Примечание: следует всячески избегать использования полей класса не&nbsp;из&nbsp;методов класса, кроме простейших случаев! По&nbsp;возможности следует общаться с&nbsp;объектом только через его методы.
+<br>
+</i>
+<br>
+</span><span><b>Системное поле класса: CLASS
+<br>
+</b></span><code><b>$имя_класса:CLASS</b></code><span>&nbsp;- хранит ссылку на&nbsp;класс объекта. 
+<br>
+
+<br>
+Это удобно при задании контекста компиляции кода (см.&nbsp;«<a href="opprocess.htm">process. Компиляция и исполнение строки</a>»).
+<br>
+
+<br>
+По&nbsp;этой ссылке также доступны статические поля класса, пример:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@main[]
+<br>
+^method[$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="cookieclass.htm">cookie</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>:CLASS]
+<br>
+
+<br>
+@method[storage]
+<br>
+$storage.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="cookiestats.htm">field</a></b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Этот код напечатает значение </span><code><b><a href="cookiestats.htm">$cookie:field</a></b></code><span>.
+<br>
+
+<br>
+
+<br>
+</span><span><b>Системное поле класса: CLASS_NAME
+<br>
+</b></span><code><b>$объект.CLASS_NAME</b></code><span>&nbsp;- хранит имя класса объекта. 
+<br>
+
+<br>
+<b>Пример</b>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$var[123]
+<br>
+$var.CLASS_NAME</b></code></span><span><b>
+<br>
+
+<br>
+</b>Выведет 'string'.<b>
+<br>
+</b></span></span>

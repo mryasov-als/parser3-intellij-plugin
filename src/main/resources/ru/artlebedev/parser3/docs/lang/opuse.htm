@@ -1,0 +1,74 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">use. Подключение модулей</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^use[файл]
+<br>
+^use[файл;опции]</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.3]</i></b></code><code><b>
+<br>
+</b></code><span>
+<br>
+</span><code><b>$.replace(true)
+<br>
+</b></code><span>
+<br>
+Оператор позволяет использовать модуль из&nbsp;указанного файла. Если путь к&nbsp;файлу начинается с&nbsp;косой черты&nbsp;«</span><code>/</code><span>», то&nbsp;считается, что это путь от&nbsp;корня веб-пространства (а не&nbsp;от корня диска!). В любом другом случае Parser будет искать модуль сначала относительно файла, из&nbsp;которого происходит подключение модуля, а&nbsp;затем&nbsp;- двигаться по&nbsp;путям, определенным в&nbsp;переменной </span><code><b>$CLASS_PATH</b></code><span> в&nbsp;<a href="parserconfmethod.htm">Конфигурационном методе</a>. 
+<br>
+
+<br>
+<i>Внимание: до&nbsp;версии </i><b><i>3.4.1 </i></b><i>поиск подключаемых модулей производился не&nbsp;относительно файла, в&nbsp;котором написаны </i></span><code><b>@USE/^use[]</b></code><span><i>, а&nbsp;осуществлялся либо относительно корня веб-пространства, либо&nbsp;по&nbsp;путям, определенным в&nbsp;</i></span><code><b>$CLASS_PATH</b></code><span><i>.</i>
+<br>
+
+<br>
+<i>Внимание: начиная с&nbsp;версии </i><b><i>3.4.3</i></b><i> в&nbsp;случае загрузки класса с&nbsp;именем, которое уже существует у&nbsp;ранее загруженного класса, выдается </i><i><a href="exceptions.htm">исключение</a></i><i>. Вернуть поведение без&nbsp;исключения можно с&nbsp;помощью указания вновь появившейся опции </i></span><code><b>$.replace(true)</b></code><span><i>.</i>
+<br>
+
+<br>
+Для подключения модулей также можно воспользоваться конструкцией:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@USE
+<br>
+имя&nbsp;файла&nbsp;1
+<br>
+имя&nbsp;файла&nbsp;2
+<br>
+…</b></code></span><span>
+<br>
+
+<br>
+Разница между этими конструкциями состоит в&nbsp;том, что использование </span><code><b>@USE</b></code><span> подключает файлы с&nbsp;модулями до&nbsp;начала выполнения кода, в&nbsp;то время как оператор </span><code><b>use</b></code><span> может быть вызван непосредственно из&nbsp;тела программы, например:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^if(условие){
+<br>
+&nbsp;&nbsp;&nbsp;^use[модуль1]
+<br>
+}{
+<br>
+&nbsp;&nbsp;&nbsp;^use[модуль2]
+<br>
+}</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+</span><code><b>@USE</b></code><span> начиная с&nbsp;версии <b><i>3.4.5</i></b> вызывает оператор </span><code><b>^use[]</b></code><span>, который, как и&nbsp;любой другой оператор, можно переопределить. Это позволяет реализовать свою логику загрузки модулей. Реализация логики оператора </span><code><b>^use[]</b></code><span> на&nbsp;Parser доступна по&nbsp;<span style="color:#7F97E1" class="blue"><u><a href="http://cvsview.parser.ru/cgi/viewcvs.cgi/parser3/tests/366.html?view=markup" target="_blank">ссылке</a></u></span></span><span>.
+<br>
+
+<br>
+Начиная с&nbsp;версии <b><i>3.4.6</i></b>, при указании опции </span><code><b>$.main(true)</b></code><span> перед загрузкой файла будут загружены все существующие </span><code>auto.p</code><span>, начиная от&nbsp;корня веб-пространства до&nbsp;директории с&nbsp;файлом&nbsp;- то&nbsp;есть так&nbsp;же, как это происходит при <a href="mainclass.htm">обработке запроса к странице</a>.
+<br>
+
+<br>
+<i>Замечание: попытки подключить уже подключенные ранее модули не&nbsp;приводят к&nbsp;повторному считыванию файлов с&nbsp;диска.</i>
+<br>
+</span></span>

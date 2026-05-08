@@ -1,0 +1,48 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">compact. Сборка мусора</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^memory:compact[]
+<br>
+</b><span>
+<br>
+Метод собирает мусор в&nbsp;памяти, освобождая ее для&nbsp;повторного использования кодом. Мусором считается память, более не&nbsp;используемая кодом, т.&nbsp;е. та, на&nbsp;которую в&nbsp;коде нет ссылок.
+<br>
+
+<br>
+Например,
+<br>
+</code><code><span style="color:#7F97E1" class="blue"><b>$table[^table::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablesql.htm">sql</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{</b></code></span><code><b>SQL-запрос</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="vars.htm">$table[]</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+#&nbsp;освободит&nbsp;память,&nbsp;занимаемую&nbsp;результатом&nbsp;выполнения&nbsp;SQL-запроса
+<br>
+^memory:compact[]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Parser по&nbsp;умолчанию не&nbsp;собирает мусор автоматически, полагаясь в&nbsp;данном вопросе на&nbsp;кодера: следует поставить вызов </span><code><b>compact</b></code><span> в&nbsp;той точке (точках), где ожидается максимальная выгода, например перед&nbsp;<a href="xdoctransform.htm">XSL-преобразованием</a>.
+<br>
+
+<br>
+</span><code><b><a href="statusmemory.htm">$status:memory</a></b></code><span> поможет в&nbsp;отладке и&nbsp;поиске мест, наиболее выгодных для&nbsp;сборки мусора.
+<br>
+
+<br>
+<i>Важно: необходимо как можно более интенсивно использовать локальные переменные и&nbsp;обнулить глобальные, которые не&nbsp;понадобятся для&nbsp;дальнейшей работы кода. Это поможет&nbsp;</i></span><code><b>compact</b></code><span><i> освободить больше памяти.
+<br>
+</i><i>
+<br>
+</i><i>Важно: не&nbsp;гарантируется, что будет освобождена абсолютно вся неиспользуемая память.
+<br>
+</i></span></span>

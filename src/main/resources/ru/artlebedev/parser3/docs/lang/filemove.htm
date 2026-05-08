@@ -1,0 +1,42 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">move. Перемещение или переименование файла</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file:move[</b><b><a href="app1.htm">старое имя файла</a></b><b>;</b><b><a href="app1.htm">новое имя файла</a></b><b>]
+<br>
+^file:move[</b><b><a href="app1.htm">старое имя файла</a></b><b>;</b><b><a href="app1.htm">новое имя файла</a></b><b>;</b><b>опции]</b><span><b><i>&nbsp;&nbsp;&nbsp;</i></b><b><i>[3.4.3]</i></b></code><span>
+<br>
+</span><span>
+<br>
+Метод переименовывает или перемещает файл и&nbsp;каталог (для платформы Win32 объекты нельзя перемещать через границу диска). Новый каталог создается с&nbsp;правами </span><code>775</code><span>. Каталог старого файла удаляется, если после выполнения метода он остается пустым.
+<br>
+
+<br>
+Можно задать <a href="hash.htm">хеш</a> </span><code><b>опций</b></code><span>:
+<br>
+</span><code><b>$.</b><b>keep-empty-dirs</b><b>(true)</b></code><span> - не&nbsp;удалять пустые каталоги, если таковые остались после перемещения файла.
+<br>
+
+<br>
+<i>Внимание: необходимо крайне осторожно относиться к&nbsp;возможности записи в&nbsp;веб-пространстве, поскольку возможностью что-нибудь куда-нибудь записать нередко пользуются современные геростраты.
+<br>
+</i>
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^file:move[</b></code></span><code><b>/path/file1</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>/file1</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+переместит файл </span><code><b>file1</b></code><span> в&nbsp;корень веб-пространства.
+<br>
+</span></span>

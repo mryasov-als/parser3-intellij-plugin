@@ -1,0 +1,72 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Операторы, определяемые пользователем</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Иногда оказывается, что каких-то операторов в&nbsp;языке не&nbsp;хватает. Parser позволяет определить собственные операторы, которые затем можно будет использовать наравне с&nbsp;системными. Операторами в&nbsp;Parser считаются методы класса <code><b><a href="mainclass.htm">MAIN</a></b></code><span>. Добавляя новые методы в&nbsp;этот класс, мы расширяем базовый набор операторов.
+<br>
+
+<br>
+<i>Внимание! При описании оператора можно использовать и&nbsp;не&nbsp;локальные переменные, при этом происходит чтение и&nbsp;запись в&nbsp;поля класса&nbsp;</i></span><code><b><a href="mainclass.htm">MAIN</a></b></code><span><i>.
+<br>
+</i>
+<br>
+Пользовательские операторы могут определяться и&nbsp;в&nbsp;отдельных текстовых файлах без&nbsp;заголовка </span><code><b>@CLASS</b></code><span>, которые <a href="opuse.htm">подключаются</a> к&nbsp;нужным разделам сайта. Если в&nbsp;таком файле определить оператор (написав, скажем, </span><code><b>@</b><b><a href="opprocess.htm">include</a></b><b>[]</b></code><span>), то&nbsp;при обращении </span><code><b>^include</b><b>[…]</b></code><span> всегда будет вызываться пользовательский оператор. 
+<br>
+
+<br>
+<i>Внимание! Если определить оператор, одноименный с&nbsp;системным, то&nbsp;всегда будет вызываться пользовательский. При этом системный оператор вызвать нельзя никак. Стоит делать как можно меньше пользовательских операторов, используя вместо них статические методы пользовательских классов.
+<br>
+</i>
+<br>
+Создавать классы и&nbsp;пользоваться их методами гораздо удобнее, чем пользовательскими операторами. Простой пример: есть несколько разделов сайта, и&nbsp;для каждого из&nbsp;них нужно сделать раздел помощи. Создав несколько файлов, описывающих разные классы, можно получить одноименные методы разных классов. Вызывая методы как статические, мы имеем совершенно ясную картину, что к&nbsp;какому разделу относится:
+<br>
+
+<br>
+</span><code><b>^news:help[]
+<br>
+^forum:help[]
+<br>
+^search:help[]
+<br>
+</b></code><span>
+<br>
+</span><span><b>Примеры</b>
+<br>
+Поместим этот код:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@default[a;b]
+<br>
+^if(</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="exprops.htm">def</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;$a){$a}{$b}
+<br>
+</b></code></span><span>
+<br>
+в&nbsp;файл </span><code>operators.p</code><span>, в&nbsp;корень сайта.
+<br>
+
+<br>
+Там, где необходимы дополнительные операторы, <a href="opuse.htm">нужно подключить</a> этот модуль. Например, в&nbsp;корневом </span><code>auto.p</code><span> напишем:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opuse.htm">USE</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+/operators.p
+<br>
+</b></code></span><span>
+<br>
+Теперь не&nbsp;только на&nbsp;любой странице, но, главное, в&nbsp;любом пользовательском <a href="defineclass.htm">классе</a> можно будет воспользоваться конструкцией
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^default[$form:name;</b></code></span><code><b>Аноним</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><span>
+<br>
+</span><span>
+<br>
+Подробности&nbsp;- в&nbsp;разделе <a href="definemethod.htm">«Определяемые пользователем методы и операторы»</a>.
+<br>
+</span></span>

@@ -1,0 +1,252 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">send. Отправка сообщения по&nbsp;электронной почте</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^mail:send[сообщение]
+<br>
+</b><span>
+<br>
+Метод отправляет </code><code><b>сообщение</b></code><span> на&nbsp;заданный адрес электронной почты. Можно указать несколько адресов через запятую.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^mail:send[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.from[</b></code></span><code><b>Вася&nbsp;&lt;vasya@hotmail.ru&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.to[</b></code></span><code><b>Петя&nbsp;&lt;petya@hotmail.ru&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.subject[</b></code></span><code><b>как&nbsp;дела</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.text[</b></code></span><code><b>Как&nbsp;у&nbsp;тебя&nbsp;дела?&nbsp;У&nbsp;меня&nbsp;-&nbsp;изумительно!</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+</b></code></span><span>
+<br>
+В результате будет отправлено сообщение для&nbsp;</span><code><b>petya@hotmail.ru</b></code><span>  с&nbsp;содержимым «Как у&nbsp;тебя дела? У&nbsp;меня&nbsp;- изумительно!»
+<br>
+
+<br>
+</span><code><b>сообщение</b></code><span> - <a href="hash.htm">хеш</a>, в&nbsp;котором могут быть заданы такие ключи:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>поле_заголовка
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>text
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>html
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>file
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>charset
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>options</b></code><span><b><i>
+&nbsp;<br>
+</i></b></span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><b><i></i></b></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>print-debug</b></code><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.0]</i></b></span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><code><b></b></code></td><td></td></tr></table><code></span><span>
+<br>
+</code><code><b>charset</b></code><span> - если задан этот ключ, то&nbsp;заголовок и&nbsp;текстовые блоки сообщения будут перекодированы в&nbsp;указанную кодировку. По&nbsp;умолчанию сообщение отправляется в&nbsp;кодировке, заданной в&nbsp;</span><code><b><a href="responsecharset.htm">$request:charset</a></b><b>&nbsp;</b></code><span>(т.&nbsp;е. не&nbsp;перекодируется).
+<br>
+</span><code><b>
+<br>
+</b></code><span><b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$.charset[</b></code></span><code><b>koi8-r</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><b>
+<br>
+options</b></code><span> - эти опции будут переданы в&nbsp;командную строку программе </span><code>sendmail</code><span> (только под UNIX).</span><code><b>
+<br>
+</b><b>
+<br>
+</b><b>print-debug</b></code><span> - при указании этой опции письмо не&nbsp;будет отправлено, вместо этого будет выведен полный сформированный текст письма, что может быть удобно при отладке сложных HTML-писем.</span><code><b>
+<br>
+</b><b>
+<br>
+</b></code><span>Также можно задать все поля заголовка сообщения, передав их значение в&nbsp;таком виде (короткая форма):
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$.поле_заголовка[</b></code></span><code><b>строка</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+или с&nbsp;параметрами (полная форма):
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$.поле_заголовка[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.value[</b></code></span><code><b>строка</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.параметр[</b></code></span><code><b>строка</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+<b>Примеры
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$.from</b></code></span><code><b>[Вася&nbsp;&lt;vasya@hotmail.ru&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$.to[</b></code></span><code><b>Петя&nbsp;&lt;petya@hotmail.ru&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$.subject[</b></code></span><code><b>Как&nbsp;у&nbsp;тебя&nbsp;дела?&nbsp;У&nbsp;меня&nbsp;-&nbsp;изумительно!</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$.x-mailer[</b></code></span><code><b>Parser&nbsp;3</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Кроме заголовка, можно передать один или оба текстовых блока: </span><code><b>text</b></code><span>, </span><code><b>html</b></code><span>, а&nbsp;также любое количество блоков </span><code><b>file</b></code><span> и&nbsp;</span><code><b>message</b></code><span> (см.&nbsp;ниже). Если будут переданы оба текстовых блока, будет сформирована секция&nbsp;</span><code>MULTIPART/ALTERNATIVE</code><span>, при прочтении полученного сообщения современные почтовые клиенты покажут HTML, а&nbsp;устаревшие&nbsp;- простой текст.
+<br>
+
+<br>
+Короткая форма:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$.text[</b></code></span><code><b>строка</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Полная форма:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$.text[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.value[</b></code></span><code><b>строка</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$</b></code></span><code><b>.</b><span style="color:#7F97E1" class="blue"><b>поле_заголовка[</b></code></span><code><b>значение</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]</b></code></span><span>
+<br>
+
+<br>
+…где </span><code><b>value</b></code><span> - значение тестового блока, предусмотрена возможность задать все поля заголовка сообщения, передав их в&nbsp;хеше, как у&nbsp;</span><code><b>сообщение</b></code><span> (см.&nbsp;выше).
+<br>
+
+<br>
+<i>Внимание: можно не&nbsp;передавать заголовок </i></span><code>content-type</code><span><i>, он будет сформирован автоматически. Этот заголовок не&nbsp;влияет на&nbsp;перекодирование, а&nbsp;влияет только на&nbsp;ту кодировку, в&nbsp;которой почтовый клиент будет отображать сообщение.
+<br>
+</i>
+<br>
+Отправка HTML. Короткая форма:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$.html{</b></code></span><code><b>строка</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>
+<br>
+</b></code><span>Полная форма:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$.html[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.value{</b></code></span><code><b>строка</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.поле_заголовка[</b></code></span><code><b>значение</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]</b></code></span><code><b>
+<br>
+</b></code><span><i>
+<br>
+Фигурные скобки нужны для&nbsp;переключения </i><i><a href="tainting.htm">вида преобразования</a></i><i> по&nbsp;умолчанию на&nbsp;</i></span><code>HTML</code><span><i>.</i>
+<br>
+
+<br>
+Вложение файла. Короткая форма:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$.file[</b></code></span><code><b>файл</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Полная форма:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$.file[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.value[</b></code></span><code><b>файл</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$.name[</b></code></span><code><b>имя_файла</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$.content-id[</b></code></span><code><b>X</b><b>YZ</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$.format[</b></code></span><code><b>uue</b>|<b>base64</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;$</b></code></span><code><b>.</b><span style="color:#7F97E1" class="blue"><b>поле_заголовка[</b></code></span><code><b>значение</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b><b>
+<br>
+Файл</b></code><span>&nbsp;- объект класса </span><code><b><a href="fileclass.htm">file</a></b></code><span>, который будет прикреплен к&nbsp;сообщению. MIME-тип данных (</span><code>content-type</code><span> заголовок части) определяется по&nbsp;таблице </span><code><b>MIME-TYPES</b></code><span> (см.&nbsp;<a href="parserconfmethod.htm">Конфигурационный метод</a>).
+<br>
+</span><code><b>
+<br>
+Имя_файла</b></code><span>&nbsp;- имя, под которым файл будет передан.
+<br>
+<i>
+<br>
+По&nbsp;умолчанию файл будет передан </i><i>в&nbsp;формате&nbsp;uuencode</i><i> (uue)</i><i> до&nbsp;</i><i>версии&nbsp;</i><b><i>3.4.0</i></b><i> и&nbsp;в&nbsp;формате </i><i>base64</i><i>, начиная с&nbsp;версии&nbsp;</i><b><i>3.4.0</i></b><i>.
+<br>
+</i>
+<br>
+Вложение сообщения:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$.message[</b></code></span><code><b>сообщение</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Формат сообщения такой же, как у&nbsp;параметра всего метода.
+<br>
+
+<br>
+Вложений может быть несколько, для&nbsp;чего после имени следует добавить целое число. Пример:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;$.file
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.file</b></code></span><code><b>2</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.message
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.message</b></code></span><code><b>2</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+Пример с&nbsp;альтернативными блоками и&nbsp;вложениями:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^mail:send[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.from[</b></code></span><code><b>Вася&nbsp;&lt;vasya@hotmail.ru&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.to[</b></code></span><code><b>Петя&nbsp;&lt;petya@hotmail.ru&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.subject[</b></code></span><code><b>как&nbsp;дела</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.text[</b></code></span><code><b>Как&nbsp;у&nbsp;тебя&nbsp;дела?&nbsp;У&nbsp;меня&nbsp;изумительно!</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.html{</b></code></span><code><b>Как&nbsp;у&nbsp;тебя&nbsp;дела?&nbsp;У&nbsp;меня&nbsp;&lt;b&gt;изумительно&lt;/b&gt;!
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;br&nbsp;/&gt;&lt;img&nbsp;src="cid:pic2"&nbsp;width="100"&nbsp;height="50"&nbsp;border="0"&nbsp;/&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.file[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="fileload.htm">file::load</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[binary;</b></code></span><code><b>perfect_life1.jpg</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.file2[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.value[^file::load[binary;</b></code></span><code><b>perfect_life2.jpg</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.name[</b></code></span><code><b>изумительная_жизнь2.jpg</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.content-id[</b></code></span><code><b>pic2</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;]
+<br>
+]
+<br>
+</b></code></span><span>
+<br>
+В результате будет отправлено сообщение для&nbsp;</span><code><b>petya@hotmail.ru</b></code><span> с&nbsp;содержимым «Как у&nbsp;тебя дела? У&nbsp;меня&nbsp;- изумительно!» в&nbsp;простом тексте и&nbsp;HTML. Сообщение будет содержать два изображения: </span><code>perfect_life1.jpg</code><span>&nbsp;- в&nbsp;виде аттачмента и&nbsp;</span><code>perfect_life2.jpg</code><span>&nbsp;- в&nbsp;теле письма.  
+<br>
+</span></span>

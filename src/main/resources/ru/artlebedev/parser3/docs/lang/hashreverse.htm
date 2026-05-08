@@ -1,0 +1,56 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">reverse. Обратный порядок элементов</b><code><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.</i></b><b><i>4</i></b><b><i>.6]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^хеш.</b><b>reverse</b><b>[]</b>
+<br>
+<span>
+<br>
+Метод возращает новый хеш, в&nbsp;котором элементы идут в&nbsp;порядке, обратном порядку добавления элементов в&nbsp;исходный хеш.
+<br>
+
+<br>
+<b>Пример</b></code><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$man[
+<br>
+&nbsp;&nbsp;&nbsp;$.name[</b></code></span><code><b>Вася</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.age[</b></code></span><code><b>22</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.gender[</b></code></span><code><b>m</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+$man[^man.reverse[]]
+<br>
+^man.foreach[key;value]{
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$key</b></code></span><code><b>=</b><span style="color:#7F97E1" class="blue"><b>$value
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>}[</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Выведет на&nbsp;экран:
+<br>
+</span><code><b>gender=m</b><b>
+<br>
+</b><b>age=22
+<br>
+name=Вася
+<br>
+</b></code><span>
+<br>
+</span></span>

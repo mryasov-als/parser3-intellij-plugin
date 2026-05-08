@@ -1,0 +1,136 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">process. Компиляция и&nbsp;исполнение строки</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^process{строка}
+<br>
+^process[контекст]{строка}
+<br>
+^process[контекст]{строка}[опции]&nbsp;&nbsp;&nbsp;</b><span><b><i>[</i></b><b><i>3.1.2</i></b><b><i>]</i></b></code><code><b>
+<br>
+</b></code><span>
+<br>
+</span><code><b>Строка</b></code><span> будет скомпилирована и&nbsp;выполнена как код на&nbsp;Parser в&nbsp;указанном </span><code><b>контексте</b></code><span> или в&nbsp;текущем контексте. В качестве </span><code><b>контекста</b></code><span> можно указать <a href="obj.htm">объект</a> или <a href="defineclass.htm">класс</a>, но&nbsp;не&nbsp;</span><code><b>метод</b></code><span> (т.&nbsp;е. если внутри метода будет вызван </span><code><b>process</b></code><span>, то&nbsp;внутри выполняемого с&nbsp;помощью process кода не&nbsp;будут доступны локальные переменные вызывающего метода).
+<br>
+
+<br>
+Этот метод удобно использовать, если какие-то части кода  или собственные методы необходимо хранить не&nbsp;в&nbsp;файлах HTML, которые обрабатываются Parser, а&nbsp;в&nbsp;каких-то других или в&nbsp;базе данных.
+<br>
+
+<br>
+Также можно указать ряд </span><code><b>опций</b></code><span> (<a href="hash.htm">хеш</a>):
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.main[</b></code><span>новое имя для&nbsp;метода </span><code><b>main</b></code><span>, описанного в&nbsp;коде </span><code><b>строки]</b></code><span>
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.file[</b></code><span>имя файла, из&nbsp;которого взята данная </span><code><b>строка]</b></code><span>
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.lineno(</b></code><span>номер строки в&nbsp;файле, откуда взята данная </span><code><b>строка</b></code><span>,&nbsp;- <i>может быть отрицательным</i></span><code><b>)</b></code><span>
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.replace(true|false)</b></code><span>
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+<i>Внимание: начиная с&nbsp;версии 3.4.3 в&nbsp;случае создания класса с&nbsp;именем, которое уже существует у&nbsp;ранее загруженного или созданного класса, выдается </i><i><a href="exceptions.htm">исключение</a></i><i>.</i><i> Вернуть поведение без&nbsp;исключений можно с&nbsp;помощью </i><i>указания вновь </i><i>появившейся опции </i></span><code><b><i>$.replace(true)</i></b></code><span><i>.</i>
+<br>
+
+<br>
+<b>Простые примеры
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^process{</b></code></span><code><b>@extra[]
+<br>
+&nbsp;&nbsp;&nbsp;Здоровья&nbsp;прежде&nbsp;всего…
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>Метод </span><code><b>extra</b></code><span> будет добавлен к&nbsp;текущему классу, и&nbsp;его можно будет вызывать в&nbsp;дальнейшем.
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^process[$engine:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="defineclass.htm">CLASS</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{</b></code></span><code><b>@start[]
+<br>
+&nbsp;&nbsp;&nbsp;Мотор…
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Метод </span><code><b>start</b></code><span> будет добавлен к&nbsp;пользовательскому классу </span><code><b>engine</b></code><span>.
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$running_man[^man</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="obj.htm">::</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>create[Вася]]
+<br>
+^process[$running_man]{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>Имя:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$name</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+Код будет выполнен в&nbsp;контексте объекта </span><code><b>$running_man</b></code><span>, соответственно, может воспользоваться полем </span><code><b>name</b></code><span> этого объекта, выдаст «</span><code><b>Вася</b></code><span>».
+<br>
+
+<br>
+<b>Оператор include
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@include[filename][file]
+<br>
+$file[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="fileload.htm">file::load</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[text;$filename]]
+<br>
+^process[$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="definemethod.htm">caller.self</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="optaint.htm">taint</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[as-is][$file.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="filefields.htm">text</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]}[
+<br>
+&nbsp;&nbsp;&nbsp;$.file[$filename]
+<br>
+]
+<br>
+</b></code></span><span>
+<br>
+Код загружает указанный файл и&nbsp;выполняет его в&nbsp;контексте объекта или класса, вызвавшего </span><code><b>include</b></code><span>. Опция </span><code><b>file</b></code><span> позволяет указать имя файла, откуда был загружен код. Если возникнет ошибка, будет отображено это «</span><code><b>имя&nbsp;файла</b></code><span>».
+<br>
+
+<br>
+<i>Важно: контекст вызова не&nbsp;включает локальные переменные и&nbsp;параметры вызывающего метода!
+<br>
+</i>
+<br>
+<b>Сложный пример
+<br>
+</b>Часто удобно помещать компилируемый код в&nbsp;некоторый метод с&nbsp;именем, вычисляющимся по&nbsp;ходу работы:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>#&nbsp;это&nbsp;исходный&nbsp;код,&nbsp;следует&nbsp;обратить&nbsp;внимание,&nbsp;на&nbsp;^^
+<br>
+$source_code[</b></code></span><code><b>2*2=</b><b><a href="stringlit.htm">^^</a></b><b>eval(2*2)</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+#&nbsp;по&nbsp;ходу&nbsp;работы&nbsp;выясняется,&nbsp;что&nbsp;необходимо&nbsp;создать&nbsp;метод&nbsp;с&nbsp;именем&nbsp;method1
+<br>
+$method_name[method1]
+<br>
+#&nbsp;компилируем&nbsp;исходный&nbsp;код,&nbsp;помещаем&nbsp;его&nbsp;в&nbsp;новый&nbsp;метод
+<br>
+^process{$source_code}[
+<br>
+&nbsp;&nbsp;&nbsp;$.main[$method_name]
+<br>
+]
+<br>
+…
+<br>
+#&nbsp;далее&nbsp;по&nbsp;коду&nbsp;можно&nbsp;вызывать&nbsp;метод&nbsp;method1
+<br>
+^method1[]
+<br>
+</b></code></span><span>
+<br>
+Данный пример будет продолжать работать, даже если в&nbsp;</span><code><b>$source_code</b></code><span> будет определен ряд методов, поскольку </span><code><b>опция&nbsp;main</b></code><span> задает новое имя методу </span><code><b>main</b></code><span>.</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span></span>

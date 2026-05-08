@@ -1,0 +1,32 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">join. Объединение двух таблиц</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица1.join[таблица2]
+<br>
+^таблица1.join[таблица2;</b><b><a href="tablecopylocateoptions.htm">опции</a></b><b>]
+<br>
+</b><span>
+<br>
+Метод добавляет в&nbsp;конец </code><code><b>таблицы1</b></code><span> записи из&nbsp;</span><code><b>таблицы2</b></code><span>. При этом берутся значения из&nbsp;тех столбцов </span><code><b>таблицы2</b></code><span>, имена которых совпадают со&nbsp;столбцами </span><code><b>таблицы1</b></code><span>, остальные столбцы будут содержать пустые строки. Также можно задать ряд опций, контролирующих добавление, см.&nbsp;«<a href="tablecopylocateoptions.htm">Опции копирования и поиска</a>».
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^stuff.join[$just_hired_people]</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>Все записи таблицы </span><code><b>$j</b><b>ust_hired_people</b></code><span> будут добавлены в&nbsp;таблицу </span><code><b>$s</b><b>tuff</b></code><span>.
+<br>
+</span></span>

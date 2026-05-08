@@ -1,0 +1,40 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Получение значения поля запроса</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$env:HTTP_ПОЛЕ_ЗАПРОСА</b><b>
+<br>
+$</b><b><a href="requestheaders.htm">request:headers</a></b><b>.</b><b>ПОЛЕ_ЗАПРОСА</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.4]</i></b></code><code><b>
+<br>
+</b></code><span>
+<br>
+Такая конструкция возвращает значение поля запроса, передаваемое браузером веб-серверу (по&nbsp;HTTP-протоколу).
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^if(^env:HTTP_USER_AGENT.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="stringpos.htm">pos</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[MSIE]&gt;=0){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Пользователь,&nbsp;вероятно,&nbsp;использует&nbsp;Microsoft&nbsp;Internet&nbsp;Explorer&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Поля запроса имеют имена в&nbsp;верхнем регистре, начинающиеся с&nbsp;</span><code><b>HTTP_</b></code><span>, и&nbsp;знаки «-» в&nbsp;них заменены на&nbsp;«_».
+<br>
+
+<br>
+<i>Подробности&nbsp;- в&nbsp;документации используемого веб-сервера.</i><i>
+<br>
+</i></span></span>

@@ -1,0 +1,236 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Приложение 4. Perl-совместимые регулярные выражения</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Подробная информация о&nbsp;Perl-совместимых регулярных выражениях (Perl Compatible Regular Expressions, PCRE) доступна в&nbsp;документации к&nbsp;Perl (см.&nbsp;<a href="http://perldoc.perl.org/perlre" target="_blank">perldoc.perl.org/perlre</a>) в&nbsp;документации к&nbsp;использованной в&nbsp;Parser&nbsp;3 библиотеке PCRE (см.&nbsp;<a href="http://www.pcre.org/current/doc/html/" target="_blank">pcre.org/current/doc/html/</a>), а&nbsp;также большом количестве специальной литературы, содержащей, помимо всего остального, множество практических примеров. Особенно детально использование регулярных выражений описано в&nbsp;книге&nbsp;Дж.&nbsp;Фридла «Регулярные выражения» издательства&nbsp;O'Reilly (ISBN&nbsp;1-56592-257-3), перевод книги на&nbsp;русский язык: издательство «Питер» (ISBN&nbsp;5-272-00331-4, второе издание; ISBN&nbsp;5-318-00056-8, первое издание).
+<br>
+
+<br>
+Краткое описание, которое приводится тут, имеет справочный характер.
+<br>
+
+<br>
+Регулярное выражение&nbsp;- это шаблон для&nbsp;поиска подстроки, который должен совпасть с&nbsp;подстрокой слева направо в&nbsp;строке поиска. Большинство символов в&nbsp;этом шаблоне представлены сами собой, и&nbsp;при поиске просто проверяется наличие этих символов в&nbsp;строке поиска в&nbsp;заданной последовательности. В качестве простейшего примера можно привести шаблон для&nbsp;поиска «шустрая лиса», который должен совпасть с&nbsp;аналогичным набором символов в&nbsp;строке поиска. Мощь регулярных выражений состоит в&nbsp;том, что, помимо обычных символов, они позволяют включать в&nbsp;шаблоны альтернативные варианты выбора и&nbsp;повторяющиеся фрагменты с&nbsp;помощью метасимволов. Эти метасимволы ничего не&nbsp;значат сами по&nbsp;себе, но&nbsp;при использовании их в&nbsp;регулярных выражениях они обрабатываются особым образом. 
+<br>
+
+<br>
+Существует два различных набора метасимволов: 
+<br>
+
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>1)</span></td><td><span>распознаваемые в&nbsp;любой части шаблона, не&nbsp;заключенной в&nbsp;квадратные скобки;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>2)</span></td><td><span>распознаваемые в&nbsp;частях шаблона, заключенных в&nbsp;квадратные скобки.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+К метасимволам, распознаваемым вне квадратных скобок, относятся следующие:
+<br>
+
+<br>
+</span><span><table border="0" cellpadding="1"><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>\
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>общее обозначение для&nbsp;escape-последовательностей; предусматривают различное использование, рассмотрены ниже
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>^
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>совпадает с&nbsp;началом фрагмента для&nbsp;поиска или перед началом строки в&nbsp;многострочном режиме
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>$</b><span>
+<br>
+</code></span></p></td><td align="left" valign="top" width="415">
+<span>совпадает с&nbsp;концом фрагмента для&nbsp;поиска или перед концом строки в&nbsp;многострочном режиме
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>.
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>символьный класс, содержащий все символы; этот метасимвол совпадает с&nbsp;любым символом, кроме символа новой строки по&nbsp;умолчанию.
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>[...]
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>символьный класс; совпадает с&nbsp;любым элементом из&nbsp;списка, заданного в&nbsp;квадратных скобках
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>|
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>метасимвол, означающий «или»; позволяет объединить несколько регулярных выражений в&nbsp;одно, совпадающее с&nbsp;любым из выражений-компонентов
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>(...)
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>ограничение подстроки поиска в&nbsp;общем шаблоне поиска
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>?
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>совпадает с&nbsp;одним необязательным символом
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>*
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>совпадает с&nbsp;неограниченным количеством любых необязательных символов, указанных слева
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>+
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>совпадает с&nbsp;неограниченным количеством символов, указанных слева; для совпадения требуется хотя бы один произвольный символ
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>{мин,&nbsp;макс}
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>интервальный квантификатор&nbsp;- требуется минимум экземпляров, допускается максимум экземпляров
+<br>
+
+<br>
+</span></td></tr></table>
+<br>
+</span><span>
+<br>
+Часть шаблона, заключенная в&nbsp;квадратные скобки, называется символьным классом. В описании символьного класса допустимо использовать только следующие метасимволы:
+<br>
+
+<br>
+</span><span><table border="0" cellpadding="1"><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>\
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>escape-символ
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>^
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>инвертированный символьный класс, метасимвол обязательно должен быть первым символом в&nbsp;описании класса; совпадение будет происходить с&nbsp;любыми символами, не&nbsp;входящими в&nbsp;символьный класс
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>-
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>обозначение интервала символов
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="113">
+<p align="center"><code><b>[...]
+<br>
+</b></code></p></td><td align="left" valign="top" width="415">
+<span>ограничитель символьного класса
+<br>
+
+<br>
+</span></td></tr></table>
+<br>
+</span><span>
+<br>
+<b>Использование метасимвола «\»
+<br>
+</b>
+<br>
+Обратная косая черта предусматривает несколько вариантов использования. В случае если вслед за&nbsp;ним следует символ, не&nbsp;обозначающий букву алфавита, она выполняет функцию экранирования и&nbsp;отменяет специальное значение, которое может иметь этот символ. Такое использование этого метасимвола возможно как внутри символьного класса, так и&nbsp;вне его. Если, например, необходимо найти символ «</span><code><b>*</b></code><span>», то&nbsp;используется следующая запись в&nbsp;шаблоне «</span><code><b>\*</b></code><span>». В случае необходимости экранировать сам символ «</span><code><b>\</b></code><span>» используется запись «</span><code><b>\\</b></code><span>».
+<br>
+
+<br>
+Второй вариант использования этого метасимвола&nbsp;- описание управляющих символов в&nbsp;шаблоне. Можно использовать следующие escape-последовательности:
+<br>
+
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\а</b></code><span>&nbsp;&nbsp;&nbsp;сигнал;&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\cx</b></code><span>    &nbsp;&nbsp;&nbsp;control-x, где </span><code><b>х</b></code><span>&nbsp;- любой символ;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\е</b></code><span>&nbsp;&nbsp;&nbsp;ASCII-символ escape;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\f</b></code><span>     &nbsp;&nbsp;&nbsp;подача бумаги;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\n</b></code><span>     &nbsp;&nbsp;&nbsp;новая строка;&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\r</b></code><span>     &nbsp;&nbsp;&nbsp;возврат курсора&nbsp;&nbsp;&nbsp;;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\t</b></code><span>     &nbsp;&nbsp;&nbsp;табуляция;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\xhh</b></code><span>   &nbsp;&nbsp;&nbsp;шестнадцатеричный код символа </span><code><b>hh</b></code><span>;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\ddd</b></code><span>   &nbsp;&nbsp;&nbsp;восьмеричный код символа </span><code><b>ddd.</b></code><span>&nbsp;&nbsp;&nbsp;
+<br>
+
+<br>
+
+<br>
+Третий вариант&nbsp;- определение специфических символьных классов:
+<br>
+
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\d</b></code><span>     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;любая десятичная цифра </span><code><b>[0-9]</b></code><span>;&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\s</b></code><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;пропуск, пробел, обычно </span><code><b>[&nbsp;\f\n\r\t]</b></code><span> (первый символ в&nbsp;квадратных скобках&nbsp;- пробел);</span><span>
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\w&nbsp;&nbsp;&nbsp;</b></code><span>     &nbsp;&nbsp;&nbsp;символ слова, обычно </span><code><b>[a-zA-Z0-9_]</b></code><span>;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\D&nbsp;&nbsp;\S&nbsp;&nbsp;\W</b></code><span>&nbsp;&nbsp;&nbsp;отрицание </span><code><b>\d&nbsp;\s&nbsp;\w</b></code><span>.
+<br>
+
+<br>
+Четвертый вариант&nbsp;- обозначение мнимых символов. В&nbsp;PCRE существуют символы, которые соответствуют не&nbsp;какой-либо литере или литерам, а&nbsp;означают выполнение определенного условия, поэтому в&nbsp;английском языке они называются утверждениями (assertion). Их&nbsp;целесообразно рассматривать как мнимые символы нулевого размера, расположенные на&nbsp;границе между реальными символами в&nbsp;точке, которая соответствует определенному условию. Эти утверждения не&nbsp;могут использоваться в&nbsp;символьных классах (</span><code><b>\b</b></code><span> имеет дополнительное значение и&nbsp;обозначает возврат каретки внутри символьного класса).
+<br>
+
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\b</b></code><span>     &nbsp;&nbsp;&nbsp;граница слова&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\B</b></code><span>     &nbsp;&nbsp;&nbsp;отсутствие границы слова&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\A</b></code><span>     &nbsp;&nbsp;&nbsp;«истинное» начало строки&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\Z</b></code><span>     &nbsp;&nbsp;&nbsp;«истинный» конец строки или позиция перед символом начала новой строки, 
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;расположенного в&nbsp;«истинном» конце строки&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;\z</b></code><span>     &nbsp;&nbsp;&nbsp;«истинный» конец строки
+<br>
+</span></span>

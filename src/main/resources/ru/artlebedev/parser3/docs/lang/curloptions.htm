@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">options. Задание опций для&nbsp;сессии</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^curl:options[</b><b><a href="curloptionsdesc.htm">опции</a></b><b>]
+<br>
+</b><span>
+<br>
+</code><span>Метод может быть вызван только внутри <a href="curlsession.htm">сессии</a>. Все последующие вызовы <a href="curlload.htm">метода загрузки файлов</a> в&nbsp;рамках данной сессии будут использовать установленные этим методом опции до&nbsp;тех пор, пока они не&nbsp;будут переопределены другим вызовом данного метода или перекрыты в&nbsp;методе загрузки файла. Но если есть необходимость задать путь к&nbsp;библиотеке </span><code><b>libcurl</b></code><span>, это нужно сделать до&nbsp;начала использования curl.
+<br>
+</span><span>
+<br>
+</span><span><b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^curl:options[</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;$.library[libcurl.so.4]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^curl:session{
+<br>
+&nbsp;&nbsp;&nbsp;^curl:options[</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.charset[UTF-8]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.timeout(1</b></code></span><code><b>0</b><span style="color:#7F97E1" class="blue"><b>)
+<br>
+&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;…</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>}</b></code></span><span>
+<br>
+</span></span>

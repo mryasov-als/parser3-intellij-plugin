@@ -1,0 +1,78 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">locate. Поиск в&nbsp;таблице</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица.locate[столбец;искомое_значение]
+<br>
+^таблица.locate[столбец;искомое_значение;</b><b><a href="tablecopylocateoptions.htm">опции</a></b><b>]</b><span>
+<br>
+</code><code><b>^таблица.locate(логическое_выражение)
+<br>
+^таблица.locate(логическое_выражение)[</b><b><a href="tablecopylocateoptions.htm">опции</a></b><b>]
+<br>
+</b></code><span>
+<br>
+Метод ищет в&nbsp;указанном </span><code><b>столбце</b></code><span> значение, равное </span><code><b>искомому</b></code><span>, и&nbsp;возвращает логическое значение «истина&nbsp;/&nbsp;ложь» в&nbsp;зависимости от&nbsp;успеха поиска. В случае если искомое значение найдено, строка, его содержащая, делается текущей. Если искомое значение найдено не&nbsp;было, указатель текущей строки не&nbsp;меняется. 
+<br>
+
+<br>
+Второй вариант вызова метода ищет первую запись, для&nbsp;которой истинно </span><code><b>логическое&nbsp;выражение</b></code><span>. Также можно задать ряд опций, контролирующих поиск, см.&nbsp;«<a href="tablecopylocateoptions.htm">Опции поиска</a>».
+<br>
+
+<br>
+Поиск чувствителен к&nbsp;регистру букв.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$stuff[^table::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablecreate.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pos&nbsp;&nbsp;&nbsp;status
+<br>
+</b></code></span><code><b>Александр&nbsp;&nbsp;&nbsp;босс&nbsp;&nbsp;&nbsp;1
+<br>
+Сергей&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;технолог&nbsp;&nbsp;&nbsp;1
+<br>
+Тема&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;арт-директор&nbsp;&nbsp;&nbsp;2</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+}]
+<br>
+^if(^stuff.locate[name;Тема]){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Запись&nbsp;найдена&nbsp;в&nbsp;строке&nbsp;номер&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^stuff.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tableline.htm">line</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]</b></code></span><code><b>.&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>$stuff.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">name</a></b></code></span><code><b>:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$stuff.pos</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Запись&nbsp;не&nbsp;найдена
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+
+<br>
+На&nbsp;экран будет выведено:
+<br>
+</span><code><b>Запись&nbsp;найдена&nbsp;в&nbsp;строке&nbsp;номер&nbsp;3.
+<br>
+Тема:&nbsp;арт-директор
+<br>
+</b></code><span>
+<br>
+Достаточно подставить такой поиск в&nbsp;пример:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^stuff.locate($stuff.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">status</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&gt;1)
+<br>
+</b></code></span><span>
+<br>
+и будет найдена первая запись со&nbsp;значением статуса, превышающим&nbsp;1.
+<br>
+</span></span>

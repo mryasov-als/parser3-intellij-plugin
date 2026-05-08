@@ -1,0 +1,138 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">untaint. Задание преобразований данных</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^untaint{код}
+<br>
+^untaint[вид&nbsp;преобразования]{код}
+<br>
+</b><span>
+<br>
+Оператор </code><code><b>untaint</b></code><span> выполняет переданный ему </span><code><b>код</b></code><span> и&nbsp;помечает как нуждающиеся в&nbsp;преобразовании заданного </span><code><b>вида</b></code><span> только неопределенно «грязные» части результата выполнения кода (т.&nbsp;е. те, которые не&nbsp;являлись частью кода на&nbsp;Parser, написанного разработчиком в&nbsp;теле документов, а&nbsp;поступили извне или которые были помечены как </span><code><b>tainted</b></code><span> с&nbsp;помощью оператора </span><code><b>taint</b></code><span> без&nbsp;первого параметра). Он не&nbsp;трогает те части, для&nbsp;которых уже задан конкретный вид преобразования. Если вид преобразования не&nbsp;указан, оператор </span><code><b>untaint</b></code><span> помечает неопределенно «грязные» части результата выполнения кода как&nbsp;</span><code><b>as-is</b></code><span>.
+<br>
+
+<br>
+Данный оператор лишь делает пометки в&nbsp;тексте о&nbsp;виде преобразования, которое Parser должен будет произвести </span><code><b>позже</b></code><span>, но&nbsp;не&nbsp;производит его сиюминутно. Сами преобразования Parser выполняет или при выполнении оператора </span><code><b>apply-taint</b></code><span>, или при выдаче текста в&nbsp;браузер, перед выдачей SQL-серверу, при сохранении в&nbsp;файл, при отправке письма и&nbsp;т.&nbsp;п.
+<br>
+
+<br>
+В некоторых случаях результаты работы </span><code><span style="color:#7F97E1" class="blue"><b>^taint[вид&nbsp;преобразования][</b></code></span><code><b>текст</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><span> и&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b>^untaint[вид&nbsp;преобразования]{</b></code></span><code><b>текст</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><span> одинаковые: это происходит тогда, когда весь обрабатываемый текст является неопределенно «грязным» (например, </span><code><span style="color:#7F97E1" class="blue"><b><a href="formfield.htm">$form:field</a></b></code></span><span>). Однако нужно быть внимательным: применение к&nbsp;неопределенно «грязному» тексту этих операторов без&nbsp;первого параметра даст совершенно разные результаты, т.&nbsp;к. опущенные значения первого параметра у&nbsp;них различны.
+<br>
+
+<br>
+Схема автоматического преобразования Parser при выдаче данных в&nbsp;браузер - </span><code><b>optimized-html</b></code><span>, и&nbsp;в&nbsp;общем виде можно представить весь набираемый разработчиком код следующим образом:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^untaint[optimized-html]{весь&nbsp;код,&nbsp;как&nbsp;набранный&nbsp;разработчиком,&nbsp;так&nbsp;и&nbsp;пришедший&nbsp;извне}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>Это означает, что, если написать в&nbsp;теле страницы </span><code><span style="color:#7F97E1" class="blue"><b>$form:field</b></code></span><span> (без всяких </span><code><b>taint/untaint</b></code><span>), то&nbsp;даже при&nbsp;обращении к&nbsp;ней с&nbsp;параметром «</span><code><b>?field=&lt;/html&gt;</b></code><span>», это не&nbsp;«поломает» страницу из-за досрочно выведенного в&nbsp;нее закрывающего тега </span><code><b>&lt;/html&gt;</b></code><span>, т.&nbsp;к. содержимое </span><code><span style="color:#7F97E1" class="blue"><b>$form:field</b></code></span><span> </span><span>неопределенно «грязное», и&nbsp;поэтому к&nbsp;нему будет применено автоматическое преобразование </span><code><b>optimized-html</b></code><span>, с&nbsp;помощью которого символы &lt; и&nbsp;&gt; будут заменены </span><code><b>&amp;lt;</b></code><span> и&nbsp;</span><code><b>&amp;gt;</b></code><span> соответственно.
+<br>
+
+<br>
+<b>Пример</b>
+<br>
+</span><code><b>&lt;form&gt;
+<br>
+&lt;input&nbsp;</b><b>type="text"&nbsp;</b><b>name="field"&nbsp;/&gt;
+<br>
+&lt;input&nbsp;type="submit"&nbsp;/&gt;
+<br>
+&lt;/form&gt;
+<br>
+
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>$tainted[$form:field]
+<br>
+</b></code></span><code><b>«Грязные»&nbsp;данные&nbsp;-&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$tainted</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+«Чистые»&nbsp;данные&nbsp;-&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^untaint{$tainted}</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+В квадратных скобках оператора </span><code><b>untaint</b></code><span> задается вид выполняемого преобразования. Здесь мы опускаем квадратные скобки в&nbsp;операторе </span><code><b>untaint</b></code><span> и&nbsp;используем значение преобразования по&nbsp;умолчанию&nbsp;</span><code><b>[as-is]</b></code><span>.
+<br>
+
+<br>
+Внимание! Если оператор </span><code><b>untaint</b></code><span> без&nbsp;указания вида преобразования полностью эквивалентен оператору </span><code><b>untaint</b></code><span> с&nbsp;указанием вида преобразования </span><code><b>as-is</b></code><span>, то&nbsp;для&nbsp;оператора </span><code><b>taint</b></code><span> не&nbsp;существует такого вида преобразования, который равнозначен оператору </span><code><b>taint</b></code><span> без&nbsp;указания оного.
+<br>
+</span><span><b>
+<br>
+</b></span><span>Может возникнуть вопрос, для&nbsp;чего вообще нужен оператор </span><code><b>untaint</b></code><span>. Продемонстрируем пару вариантов его практического применения. 
+<br>
+
+<br>
+Во-первых, иногда его использование позволяет уменьшить количество операторов </span><code><b>taint</b></code><span> в&nbsp;коде, например, при выводе данных в&nbsp;форму, содержащую много полей, и&nbsp;при&nbsp;необходимости отключить оптимизацию пробельных символов. В этом случае вместо того, чтобы писать </span><code><b>^taint[html][...]</b></code><span> вокруг вывода содержимого каждой textarea, можно написать один раз </span><code><b>^untaint[html]{...}</b></code><span> вокруг всей формы.
+<br>
+
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><b>Выдача&nbsp;даннных&nbsp;(могут&nbsp;содержать&nbsp;теги),&nbsp;пришедших&nbsp;от&nbsp;пользователя&nbsp;или&nbsp;из&nbsp;БД</b><b>
+<br>
+</b><b>в&nbsp;большую&nbsp;форму&nbsp;для&nbsp;редактирования&nbsp;с&nbsp;сохранением&nbsp;пробельных&nbsp;символов&lt;br&nbsp;/&gt;</b><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^if(def&nbsp;$form:title){
+<br>
+&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$data[</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$form:fields</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+}{
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>^connect[$SQL.connect-string]{
+<br>
+&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;$data[^table::sql{</b></code></span><code><b>SELECT&nbsp;</b><b>title,&nbsp;lead,&nbsp;body</b><b>&nbsp;FROM&nbsp;news&nbsp;WHERE&nbsp;news_id&nbsp;=&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$id}]
+<br>
+&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+^untaint[html]{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;p&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;b&gt;Заголовок:&lt;/b&gt;&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;textarea&nbsp;name="title"&gt;</b><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>data.title</b></code></span><code><b>&lt;/textarea&gt;
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;&lt;/p&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;p&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b><b>&lt;b&gt;Анонс</b><b>:</b><b>&lt;/b&gt;</b><b>&lt;br&nbsp;/&gt;</b></code><span>
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;textarea&nbsp;name="lead"&gt;</b><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>data.lead</b></code></span><code><b>&lt;/textarea&gt;
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;&lt;/p&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;p&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b><b>&lt;b&gt;Текст&nbsp;новости</b><b>:</b><b>&lt;/b&gt;</b><b>&lt;br&nbsp;/&gt;</b></code><span>
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;textarea&nbsp;name="body"&gt;</b><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>data.body</b></code></span><code><b>&lt;/textarea&gt;</b></code><span>
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&lt;/p&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><span>
+<br>
+
+<br>
+И во-вторых, когда нам нужно выдать в&nbsp;браузер xml, а&nbsp;не&nbsp;html (например, для&nbsp;ajax, RSS, SOAP и&nbsp;т.&nbsp;п.). В&nbsp;этом случае автоматическое преобразование (</span><code><b>optimized-html</b></code><span>) не&nbsp;подходит, поэтому вокруг всего кода нужно написать </span><code><b>^untaint</b><b>[optimized-xml]{...}</b></code><span> и&nbsp;расслабиться :)
+<br>
+
+<br>
+
+<br>
+</span></span>

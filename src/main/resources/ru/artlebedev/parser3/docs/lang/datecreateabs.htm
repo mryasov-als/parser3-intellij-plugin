@@ -1,0 +1,36 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Произвольная дата</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^date::create(year;month)
+<br>
+^date::create(year;month;day)
+<br>
+^date::create(year;month;day;hour;minute;second)
+<br>
+^date::create(year;month;day;hour;minute;second)</b><b>[TZ]</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.</i></b><b><i>5</i></b><b><i>]</i></b></code><code><b>
+<br>
+</b></code><span>
+<br>
+Создает объект класса </span><code><b>date</b></code><span>, содержащий значение произвольной даты с&nbsp;точностью до&nbsp;секунды. Обязательными параметрами конструктора являются значения года и&nbsp;месяца. Параметры конструктора </span><code><b>day</b></code><span>, </span><code><b>hour</b></code><span>, </span><code><b>minute</b></code><span>, </span><code><b>second</b></code><span>, </span><code><b>TZ</b></code><span> являются необязательными. Если они не&nbsp;заданы, подставляются первый день, нулевые час, минута и&nbsp;секунда, а&nbsp;также текущий часовой пояс. 
+<br>
+
+<br>
+<b>Пример</b></span><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$president_on_tv_at[^date::create(2001;12;31;23;55)]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+В результате выполнения данного кода создается объект класса </span><code><b>date</b></code><span>, значения полей которого соответствуют времени появления президента на&nbsp;телевизионном экране в&nbsp;комнате с&nbsp;веб-сервером.
+<br>
+</span></span>

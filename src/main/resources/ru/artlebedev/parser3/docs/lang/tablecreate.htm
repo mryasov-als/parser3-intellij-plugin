@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Создание объекта на&nbsp;основе заданной таблицы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^table::create{табличные_данные}
+<br>
+^table::create[nameless]{табличные_данные}</b><b>
+<br>
+</b><b>^table::create{табличные_данные}[</b><b><a href="tableoptionsfmt.htm">опции формата</a></b><b>]
+<br>
+</b><span>
+<br>
+Конструктор создает объект класса&nbsp;</code><code><b>table</b></code><span>, используя </span><code><b>табличные&nbsp;данные</b></code><span>, которые определены в&nbsp;самом конструкторе.
+<br>
+
+<br>
+</span><code><b>Табличные&nbsp;данные</b></code><span>&nbsp;- данные в&nbsp;формате tab-delimited, то&nbsp;есть поля записи разделяются символом табуляции, а&nbsp;строки&nbsp;- символом перевода строки. При этом части первой строки, разделенные символом табуляции, рассматриваются как имена столбцов и&nbsp;создается именованная таблица. Пустые строки игнорируются. Если необходимо получить таблицу без&nbsp;имен столбцов (что не&nbsp;рекомендуется), то&nbsp;перед заданием табличных данных необходимо указать параметр </span><code><b>nameless</b></code><span>. В этом случае столбцы первой строки воспринимаются конструктором как данные таблицы, а&nbsp;в&nbsp;качестве имен столбцов выступают их порядковые номера, начиная с&nbsp;нулевого.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$tab[^table::create{name&nbsp;&nbsp;&nbsp;age</b></code></span><code><b>
+<br>
+Вова&nbsp;&nbsp;&nbsp;27
+<br>
+Леша&nbsp;&nbsp;&nbsp;22</b><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Будет создан объект </span><code><b>tab</b></code><span> класса </span><code><b>table</b></code><span>, содержащий таблицу из&nbsp;двух строк с&nbsp;именами столбцов&nbsp;</span><code><b>name</b></code><span> и&nbsp;</span><code><b>age</b></code><span>.</span><span>
+<br>
+</span></span>

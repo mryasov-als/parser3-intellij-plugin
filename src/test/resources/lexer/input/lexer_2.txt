@@ -1,0 +1,107 @@
+^if(
+	|| ^text.pos[^#0A]
+	|| 'a ^#no'
+	|| ^int:sql{select count(*) from ')' or ")"} #data
+	|| 'a ^#no'
+)
+
+
+^if(
+	^int:sql{select count(*) from #a and ')'}
+}
+
+^while(
+	^text.pos[^#0A]
+	|| ^test.mid(
+		12	#12
+	) #15
+	|| '#15'
+	|| "asdf("
+	|| ^int:sql{select count(*) from #a and ')'} #(
+){
+
+}
+^if(
+	|| ^int:sql{select count(*) from ')' or ")"} #data
+	|| ^int:sql{select count(*) from ')' or ")" OR "#x" || 'y' || '(' || "("} #data
+	|| ^method{x #y} # comment
+	($a eq 'b') #comment
+	|| 'string'
+	|| "string"
+	|| ^text.pos[^#0A]
+	|| 'a ^#no'
+	||
+	^void:sql{
+		AND age > ^eval($min_age + 5)
+		AND age > ^eval[
+			$min_age + 5
+			]
+		AND x = ^method[
+				asdf
+			]
+			# no comment
+		AND x = ^method{
+			'15'
+		}
+	} # comment
+	&& $var
+)
+
+^res.save[_tmp/$part.cfg]
+^res.save[_tmp/${part}.cfg]
+^res.save[_tmp/${part} .cfg]
+=${part}.cfg=
+
+$isShow($show ||
+	($uri ne '/x/' && (
+#		^uri.pos[/x] == 0
+		^uri.pos[/people/x/1] == 0
+		|| ^uri.pos[/people/x/2] == 0
+		#	|| ^uri.pos[/people/x/3] == 0
+		|| ^uri.pos[/people/x/y] == 0
+		&& (
+			$form:uri eq "xx"
+		)
+	)) || $form:show eq 'show_2'
+)
+
+
+^if($a){
+	^if(
+		^int:sql{select count(*) from ')'}
+		# || ^)
+		|| $a eq ")"
+		|| true
+	){
+		a
+	}
+}
+^if(
+	$var #comment
+)
+^if($a){
+	^if(
+		$var # comment
+	)
+}
+
+<div>
+	<strong>
+		^if($a){
+			^if(
+				^int:sql{select count(*) from #a and ')'} # comment
+				|| $var
+				|| ')' # asdf
+				|| ")" # asdf
+				|| $var eq ^)
+			){
+
+			}
+		}
+	</strong>
+</div>
+
+$_tmp[^uri.match[^^(.+?)/^$][i]{
+	$id($match.1)
+	$filename[${match.1}.p]
+}]

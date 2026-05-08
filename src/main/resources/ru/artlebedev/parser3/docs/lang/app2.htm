@@ -1,0 +1,88 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Приложение 2. Форматные строки преобразования числа в&nbsp;строку</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Форматная строка определяет форму представления значения  числа. В&nbsp;общем случае она имеет вид <code><b>%Длина.ТочностьТип</b></code><span>
+<br>
+</span><span>
+<br>
+</span><code><b>Длина</b></code><span>&nbsp;- количество знаков, отводимое для&nbsp;значения. Может получиться так, что для&nbsp;отображения полученного значения требуется меньше символов, чем указано в&nbsp;блоке «</span><code><b>Длина</b></code><span>». Например, указана длина </span><code><b>10</b></code><span>, а&nbsp;получено значение </span><code><b>123</b></code><span>. В&nbsp;этом случае слева к&nbsp;значению будет приписано семь пробелов. Если нужно, чтобы слева приписывались не&nbsp;пробелы, а&nbsp;нули, следует в&nbsp;начало блока «</span><code><b>Длина</b></code><span>» поместить </span><code><b>0</b></code><span>, например, написать не&nbsp;</span><code><b>10</b></code><span>, а&nbsp;</span><code><b>010</b></code><span>. Блок «</span><code><b>Длина</b></code><span>» может отсутствовать, тогда для&nbsp;значения будет отведено ровно столько символов, сколько требуется для&nbsp;его отображения.
+<br>
+</span><code><b>
+<br>
+Точность</b></code><span>&nbsp;- точность представления дробной части, т.&nbsp;е. количество знаков после запятой. Если для&nbsp;отображения дробной части значения требуется больше знаков, то&nbsp;значение округляется. Обычно точность указывают в&nbsp;том случае, если используется тип преобразования </span><code><b>f</b></code><span>. Для других типов указывать точность не&nbsp;рекомендуется. Если точность не&nbsp;указана, то&nbsp;для типа преобразования </span><code><b>f</b></code><span> она по&nbsp;умолчанию принимается равной </span><code><b>6</b></code><span>. Если указана точность </span><code><b>0</b></code><span>, то&nbsp;число выводится без&nbsp;дробной части.
+<br>
+</span><code><b>
+<br>
+Тип</b></code><span>&nbsp;- определяет способ преобразования числа в&nbsp;строку. 
+<br>
+
+<br>
+Существуют следующие типы:
+<br>
+
+<br>
+</span><code><b><table border="0" cellpadding="1"><tr><td align="left" valign="top" width="37">
+<span><b>d</b>
+<br>
+</code></td><td align="left" valign="top" width="511">
+<span>- десятичное целое число со&nbsp;знаком;
+<br>
+<code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="37">
+<code><b>u</b>
+<br>
+</code></td><td align="left" valign="top" width="511">
+<span>- десятичное целое число без&nbsp;знака;
+<br>
+<code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="37">
+<code><b>o</b>
+<br>
+</code></td><td align="left" valign="top" width="511">
+<span>- восьмеричное целое число без&nbsp;знака;
+<br>
+<code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="37">
+<code><b>x</b>
+<br>
+</code></td><td align="left" valign="top" width="511">
+<span>- шестнадцатеричное целое число без&nbsp;знака; для&nbsp;вывода цифр, превышающих&nbsp;9, используются буквы a, b, c, d, e, f;
+<br>
+<code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="37">
+<code><b>X</b>
+<br>
+</code></td><td align="left" valign="top" width="511">
+<span>- шестнадцатеричное целое число без&nbsp;знака; для&nbsp;вывода цифр, превышающих&nbsp;9, используются буквы A, B, C, D, E, F;
+<br>
+<code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="37">
+<code><b>f</b>
+<br>
+</code></td><td align="left" valign="top" width="511">
+<span>- действительное число<code>.
+<br>
+</code></span></td></tr></table>
+<br>
+
+<br>
+</b></span><span>
+<br>
+
+<br>
+</span></span>

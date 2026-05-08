@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">sql. Запрос к&nbsp;БД, не&nbsp;возвращающий результата</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^void:sql{SQL-запрос}
+<br>
+^void:sql{SQL-запрос}[$.</b><b><a href="app7.htm">bind</a></b><b>[variables&nbsp;hash]</b><b>]</b><span>
+<br>
+</code><span>
+<br>
+Метод выполняет </span><code><b>SQL-запрос</b></code><span>, который не&nbsp;возвращает результат (операции по&nbsp;управлению данными в&nbsp;базе данных). Для работы этого метода необходимо установленное соединение с&nbsp;сервером базы данных (см.&nbsp;оператор </span><code><b><a href="opconnect.htm">connect</a></b></code><span>).
+<br>
+
+<br>
+Возможно использование дополнительного параметра конструктора:
+<br>
+</span><code><b>$.bind[hash]</b></code><span>&nbsp;- связанные переменные, см.&nbsp;«<a href="app7.htm">Работа с IN/OUT-переменными</a>».
+<br>
+
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opconnect.htm">connect</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="app3.htm">строка подключения</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{
+<br>
+&nbsp;&nbsp;&nbsp;^void:sql{</b></code></span><code><b>create&nbsp;table&nbsp;users</b><b>&nbsp;</b><b>(id&nbsp;int,</b><b>&nbsp;</b><b>name&nbsp;text,</b><b>&nbsp;</b><b>email&nbsp;text)</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+</span><span>В результате выполнения этого кода в&nbsp;базе данных будет создана таблица </span><code>users</code><span>, при этом запрос не&nbsp;вернет никакого результата. Пример дан для&nbsp;СУБД MySQL.
+<br>
+</span></span>

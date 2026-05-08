@@ -1,0 +1,26 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">fields_reference. Ссылка на&nbsp;поля объекта</b><span><b>&nbsp;&nbsp;&nbsp;</span>&nbsp;<link-to-docs /><span><b><i>[3.4.</i></b><b><i>5</i></b><b><i>]
+<br>
+</i></b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^reflection:fields_reference[объект]
+<br>
+</b><b>
+<br>
+</b><span>Метод возвращает специальный ссылающийся хеш, непосредственно связанный с&nbsp;полями </code><code><b>объекта</b></code><span>. При добавлении, изменении или удалении элементов этого хеша такие&nbsp;же изменения произойдут с&nbsp;полями объекта, на&nbsp;который он ссылается, и&nbsp;наоборот, изменение полей объекта отражается в&nbsp;ссылающемся хеше. Ссылающийся хеш отличается от&nbsp;обычного еще и&nbsp;отсутствием </span><code><b>$_default</b></code><span>.
+<br>
+
+<br>
+<i>Замечание: использование метода</i><i> </i></span><code><b>^reflection:fields_reference[$n]</b></code><span><i> </i><i>для&nbsp;получения списка полей объекта эффективнее, чем </i></span><code><b>^reflection:fields[$n]</b></code><span><i> </i><i>и </i></span><code><b>^hash::create[$n]</b></code><span><i>.
+<br>
+</i></span></span>

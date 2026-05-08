@@ -1,0 +1,86 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Для ODBC</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code>odbc://строка_соединения_смотрите_документацию_по_ODBC?
+<br>
+&nbsp;&nbsp;&nbsp;<a href="app3clientcharset.htm">ClientCharset</a>=кодировка&amp;<b>
+<br>
+</b>&nbsp;&nbsp;&nbsp;autocommit=1&amp;&nbsp;<span><b><i>[3.3.0]</i></b><b><i>
+<br>
+&nbsp;&nbsp;&nbsp;</i></b></code><code>SQL=MSSQL|FireBird|Pervasive&nbsp;</code><span><b><i>[3.3.0]</i></b><b><i>
+<br>
+</i></b>
+<br>
+</span><code><a href="app3clientcharset.htm">ClientCharset</a></code><span> - задает кодировку, в&nbsp;которой необходимо общаться с&nbsp;SQL-сервером, перекодированием занимается драйвер;
+<br>
+
+<br>
+</span><code>autocommit</code><span> - по&nbsp;умолчанию Parser&nbsp;3 автоматически выполняет </span><code>COMMIT</code><span> после каждого успешно выполненного запроса; если указать опцию </span><code>autocommit=0</code><span>, то&nbsp;такое поведение будет изменено и&nbsp;все запросы, написанные внутри одного оператора </span><code><a href="opconnect.htm">connect</a></code><span>, будут выполняться в&nbsp;рамках одной транзакции;
+<br>
+
+<br>
+</span><code>SQL</code><span> - если указана, то&nbsp;Parser&nbsp;3 будет использовать специфику для&nbsp;указанного сервера при модифицировании запросов с&nbsp;</span><code>limit/offset</code><span>; в&nbsp;настоящий момент драйвер понимает только значения </span><code>MSSQL</code><span>, </span><code>Pervasive</code><span> и&nbsp;</span><code>FireBird</code><span>; для первых двух серверов SQL-запрос модифицируется путем добавления в&nbsp;него </span><code>TOP&nbsp;(limit+offset)</code><span>, для&nbsp;последнего&nbsp;- </span><code>FIRST&nbsp;(limit)&nbsp;SKIP&nbsp;(offset)</code><span>.
+<br>
+
+<br>
+Рекомендуем сайт <a href="http://www.connectionstrings.com/" target="_blank">connectionstrings.com</a>, где собраны строки соединения ко всевозможным базам данных.
+<br>
+
+<br>
+<i>Внимание: при работе с&nbsp;MS-SQL при языковой настройке, отличной от&nbsp;английской, возникают неудобства при форматировании дат и&nbsp;чисел: SQL-сервер форматирует их согласно языковой настройке, что обычно совершенно неудобно при их программной обработке. Настоятельно рекомендуем сразу после соединения с&nbsp;сервером выполнить команду переключения языковой настройки в&nbsp;us_english, что обеспечит поддержку дат в&nbsp;формате&nbsp;ANSI&nbsp;SQL92 и&nbsp;чисел с&nbsp;десятичным разделителем «точка»:
+<br>
+</i></span><code><b>^void:sql{SET&nbsp;LANGUAGE&nbsp;us_english}</b><b><u>
+<br>
+</u></b></code><span><u>
+<br>
+
+<br>
+</u><b>Примеры
+<br>
+</b>MS-SQL:</span><code>
+<br>
+odbc://DRIVER={SQL&nbsp;Server}^;SERVER=сервер^;DATABASE=база^;UID=пользователь^;PWD=пароль
+<br>
+
+<br>
+</code><span>Microsoft Access (</span><code>.mdb</code><span> файл):</span><code>
+<br>
+odbc://Driver={Microsoft&nbsp;Access&nbsp;Driver&nbsp;(*.mdb)}^;Dbq=C:\полный\путь\к\файлу.mdb
+<br>
+
+<br>
+</code><span>Ссылка на&nbsp;<i>системный</i> источник данных, созданный в&nbsp;Пуск|Настройки|Панель управления|Источники данных (ODBC).
+<br>
+</span><code>odbc://DSN=dsn^;UID=пользователь^;PWD=пароль
+<br>
+
+<br>
+</code><span><i>Замечание. В коде Parser&nbsp;3 символ ";" в&nbsp;строке подключения к&nbsp;БД необходимо </i><i><a href="stringlit.htm">предварять</a></i><i> символом "^".
+<br>
+
+<br>
+
+<br>
+</i><b>Пример
+<br>
+</b>Допустим, данные хранятся на&nbsp;MS-SQL-сервере в&nbsp;кодировке windows-1251, тогда строку подключения стоит написать&nbsp;так:
+<br>
+</span><code>odbc://DRIVER={SQL&nbsp;Server}^;SERVER=сервер;UID=пользователь^;PWD=пароль?<a href="app3clientcharset.htm">ClientCharset</a>=windows-1251&amp;SQL=MSSQL
+<br>
+
+<br>
+
+<br>
+</code><span>
+<br>
+</span></span>

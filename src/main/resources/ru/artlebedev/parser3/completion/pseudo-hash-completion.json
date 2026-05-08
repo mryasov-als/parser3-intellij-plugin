@@ -1,0 +1,3012 @@
+[
+	{
+		"targets": [
+			{
+				"class": "date",
+				"staticMethod": "calendar",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "rus",
+				"comment": "Календарь с неделей от понедельника."
+			},
+			{
+				"text": "eng",
+				"comment": "Календарь с неделей от воскресенья."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "date",
+				"dynamicMethod": "sql-string",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "datetime",
+				"comment": "Дата и время в SQL-формате."
+			},
+			{
+				"text": "date",
+				"comment": "Только дата в SQL-формате."
+			},
+			{
+				"text": "time",
+				"comment": "Только время в SQL-формате."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "response",
+				"builtinProperty": "content-type",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "application/json",
+				"comment": "JSON-ответ."
+			},
+			{
+				"text": "text/html",
+				"comment": "HTML-ответ."
+			},
+			{
+				"text": "text/plain",
+				"comment": "Текстовый ответ."
+			},
+			{
+				"text": "text/xml",
+				"comment": "XML как текст."
+			},
+			{
+				"text": "application/xml",
+				"comment": "XML-документ."
+			},
+			{
+				"text": "application/octet-stream",
+				"comment": "Бинарный поток."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "response",
+				"builtinProperty": "refresh",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "value",
+				"brackets": "()",
+				"comment": "Задержка перед обновлением или редиректом в секундах."
+			},
+			{
+				"name": "url",
+				"brackets": "[]",
+				"comment": "Адрес для перехода."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "curl",
+				"staticMethod": "load",
+				"type": "params"
+			},
+			{
+				"class": "curl",
+				"staticMethod": "options",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "library",
+				"brackets": "[]",
+				"comment": "Имя или полный дисковый путь динамической библиотеки libcurl в системе. Задается вызовом ^curl:options[] до начала использования curl."
+			},
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Кодировка документов на удаленном сервере. В эту кодировку перекодируется строка запроса. Из этой кодировки перекодируется ответ сервера, если в HTTP-ответе не указана кодировка."
+			},
+			{
+				"name": "response-charset",
+				"brackets": "[]",
+				"comment": "Принудительно указывает, в какой кодировке был получен ответ от сервера."
+			},
+			{
+				"name": "name",
+				"brackets": "[]",
+				"comment": "Имя файла создаваемого объекта класса file."
+			},
+			{
+				"name": "mode",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "text",
+						"comment": "Текстовый объект file."
+					},
+					{
+						"text": "binary",
+						"comment": "Бинарный объект file."
+					}
+				],
+				"comment": "Тип создаваемого объекта класса file."
+			},
+			{
+				"name": "content-type",
+				"brackets": "[]",
+				"comment": "Поле content-type создаваемого объекта класса file."
+			},
+			{
+				"name": "accept_encoding",
+				"brackets": "[]",
+				"comment": "Метод упаковки ответа: gzip или deflate. (Старое название параметра - encoding - тоже поддерживается)."
+			},
+			{
+				"name": "autoreferer",
+				"brackets": "()",
+				"comment": "Автоматическое создание заголовка Referer."
+			},
+			{
+				"name": "cainfo",
+				"brackets": "[]",
+				"comment": "См. документацию по libcurl."
+			},
+			{
+				"name": "capath",
+				"brackets": "[]",
+				"comment": "См. документацию по libcurl."
+			},
+			{
+				"name": "connecttimeout",
+				"brackets": "()",
+				"comment": "Тай-маут ожидания соединения в секундах."
+			},
+			{
+				"name": "connecttimeout_ms",
+				"brackets": "()",
+				"comment": "Тайм-аут ожидания соединения в миллисекундах."
+			},
+			{
+				"name": "cookie",
+				"brackets": "[]",
+				"comment": "Строка с cookies."
+			},
+			{
+				"name": "cookielist",
+				"brackets": "[]",
+				"comment": "Строка с cookies в формате, соответствующем документации libcurl (отличном от формата cookie в Parser)."
+			},
+			{
+				"name": "cookiesession",
+				"brackets": "()",
+				"comment": "Поставить cookies на всю сессию."
+			},
+			{
+				"name": "copypostfields",
+				"brackets": "[]",
+				"comment": "Тело пост-запроса (с копированием)."
+			},
+			{
+				"name": "crlfile",
+				"brackets": "[]",
+				"comment": "См. документацию по libcurl."
+			},
+			{
+				"name": "customrequest",
+				"brackets": "[]",
+				"comment": "Другой HTTP-метод."
+			},
+			{
+				"name": "failonerror",
+				"brackets": "()",
+				"comment": "Выдавать ошибку, если HTTP-статус больше или равен 400."
+			},
+			{
+				"name": "followlocation",
+				"brackets": "()",
+				"comment": "Обрабатывать редиректы в ответе сервера."
+			},
+			{
+				"name": "forbid_reuse",
+				"brackets": "()",
+				"comment": "См. документацию по libcurl."
+			},
+			{
+				"name": "fresh_connect",
+				"brackets": "()",
+				"comment": "Создавать новое соединение при каждом запросе в сессии."
+			},
+			{
+				"name": "http_version",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "1.0",
+						"comment": "HTTP/1.0."
+					},
+					{
+						"text": "1.1",
+						"comment": "HTTP/1.1."
+					},
+					{
+						"text": "2",
+						"comment": "HTTP/2."
+					},
+					{
+						"text": "2.0",
+						"comment": "HTTP/2.0."
+					},
+					{
+						"text": "2TLS",
+						"comment": "HTTP/2 по TLS."
+					},
+					{
+						"text": "2ONLY",
+						"comment": "Только HTTP/2."
+					}
+				],
+				"comment": "Версия HTTP-протокола. Допустимые значения: 1.0, 1.1, 2, 2.0, 2TLS, 2ONLY."
+			},
+			{
+				"name": "http_content_decoding",
+				"brackets": "()",
+				"comment": "См. документацию по libcurl."
+			},
+			{
+				"name": "http_transfer_decoding",
+				"brackets": "()",
+				"comment": "См. документацию по libcurl."
+			},
+			{
+				"name": "httpauth",
+				"brackets": "()",
+				"comment": "Тип HTTP-авторизации CURLAUTH_NONE = 0, CURLAUTH_BASIC = (1<<0), CURLAUTH_DIGEST = (1<<1), CURLAUTH_GSSNEGOTIATE = (1<<2), CURLAUTH_NTLM = (1<<3), CURLAUTH_DIGEST_IE = (1<<4), CURLAUTH_NTLM_WB = (1<<5), CURLAUTH_ONLY = (1<<31), CURLAUTH_ANY = (~CURLAUTH_DIGEST_IE), CURLAUTH_ANYSAFE = (~(CURLAUTH_BASIC|CURLAUTH_DIGEST_IE))."
+			},
+			{
+				"name": "httpget",
+				"brackets": "()",
+				"comment": "Передать запрос методом GET."
+			},
+			{
+				"name": "httpheader",
+				"brackets": "[]",
+				"comment": "HTTP-заголовки запроса.",
+				"params": [
+					{
+						"name": "Arhorization",
+						"brackets": "[]",
+						"comment": "Значение HTTP-заголовка Authorization."
+					},
+					{
+						"name": "Content-Type",
+						"brackets": "[]",
+						"comment": "Тип содержимого запроса."
+					}
+				]
+			},
+			{
+				"name": "httppost",
+				"brackets": "[]",
+				"comment": "Поля пост-запроса, заданные аналогично полю form для file::load."
+			},
+			{
+				"name": "httpproxytunnel",
+				"brackets": "()",
+				"comment": "Включить тунелирование запросов через прокси."
+			},
+			{
+				"name": "ignore_content_length",
+				"brackets": "()",
+				"comment": "Игнорировать заголовок Content-Length ответа сервера."
+			},
+			{
+				"name": "interface",
+				"brackets": "[]",
+				"comment": "Имя сетевого интерфейса."
+			},
+			{
+				"name": "ipresolve",
+				"brackets": "()",
+				"comment": "1 - использовать IPv4 (по умолчанию), 2 - использовать IPv6."
+			},
+			{
+				"name": "issuercert",
+				"brackets": "[]",
+				"comment": "Имя файла с сертификатом CA."
+			},
+			{
+				"name": "keypasswd",
+				"brackets": "[]",
+				"comment": "Пароль для ключа (passphrase)."
+			},
+			{
+				"name": "low_speed_limit",
+				"brackets": "()",
+				"comment": "Минимальная скорость передачи, Б/сек."
+			},
+			{
+				"name": "low_speed_time",
+				"brackets": "()",
+				"comment": "Максимальное время, когда скорость передачи может быть меньше low_speed_limit."
+			},
+			{
+				"name": "maxconnects",
+				"brackets": "()",
+				"comment": "Максимальное количество постоянных соединений в рамках сессии."
+			},
+			{
+				"name": "maxfilesize",
+				"brackets": "()",
+				"comment": "Максимальный размер ответа в байтах."
+			},
+			{
+				"name": "maxredirs",
+				"brackets": "()",
+				"comment": "Максимальное число редиректов."
+			},
+			{
+				"name": "nobody",
+				"brackets": "()",
+				"comment": "Передать запрос методом HEAD."
+			},
+			{
+				"name": "password",
+				"brackets": "[]",
+				"comment": "Пароль."
+			},
+			{
+				"name": "port",
+				"brackets": "()",
+				"comment": "Порт."
+			},
+			{
+				"name": "post",
+				"brackets": "()",
+				"comment": "Передать запрос методом POST."
+			},
+			{
+				"name": "postfields",
+				"brackets": "[]",
+				"comment": "Тело пост-запроса."
+			},
+			{
+				"name": "postredir",
+				"brackets": "()",
+				"comment": "См. документацию по libcurl."
+			},
+			{
+				"name": "proxy",
+				"brackets": "[]",
+				"comment": "Адрес прокси-сервера."
+			},
+			{
+				"name": "proxyauth",
+				"brackets": "()",
+				"comment": "Тип авторизации (см. параметр httpauth)."
+			},
+			{
+				"name": "proxyport",
+				"brackets": "()",
+				"comment": "Порт прокси-сервера."
+			},
+			{
+				"name": "proxytype",
+				"brackets": "()",
+				"comment": "Тип прокси: 0 - HTTP, 1 - HTTP_1_0, 4 - SOCKS4, 5 - SOCKS5, 6 - SOCKS4A, 7 - SOCKS5_HOSTNAME."
+			},
+			{
+				"name": "proxyuserpwd",
+				"brackets": "[]",
+				"comment": "Имя пользователя и пароль для прокси."
+			},
+			{
+				"name": "range",
+				"brackets": "[]",
+				"comment": "Вернуть части ответа, находящиеся в указанном диапазоне."
+			},
+			{
+				"name": "referer",
+				"brackets": "[]",
+				"comment": "Заголовок Referer."
+			},
+			{
+				"name": "ssl_cipher_list",
+				"brackets": "[]",
+				"comment": "См. документацию по libcurl."
+			},
+			{
+				"name": "ssl_sessionid_cache",
+				"brackets": "()",
+				"comment": "Включить SSL session-ID кеш."
+			},
+			{
+				"name": "ssl_verifyhost",
+				"brackets": "()",
+				"comment": "Проверять сертификат хоста."
+			},
+			{
+				"name": "ssl_verifypeer",
+				"brackets": "()",
+				"comment": "Проверять сертификат пира."
+			},
+			{
+				"name": "sslcert",
+				"brackets": "[]",
+				"comment": "Имя файла с SSL-сертификатом."
+			},
+			{
+				"name": "sslcerttype",
+				"brackets": "[]",
+				"comment": "Тип SSL-сертификата."
+			},
+			{
+				"name": "sslengine",
+				"brackets": "[]",
+				"comment": "См. документацию по libcurl."
+			},
+			{
+				"name": "sslengine_default",
+				"brackets": "[]",
+				"comment": "См. документацию по libcurl."
+			},
+			{
+				"name": "sslkey",
+				"brackets": "[]",
+				"comment": "Имя файла с SSL-ключом."
+			},
+			{
+				"name": "sslkeytype",
+				"brackets": "[]",
+				"comment": "Тип SSL-ключа."
+			},
+			{
+				"name": "sslversion",
+				"brackets": "()",
+				"comment": "Версия протокола SSL/TLS-соединения: 0 - по умолчанию 1 - TLSv1 (TLS 1.x), 2 - SSLv2, 3 - SSLv3, 4 - TLSv1_0, 5 - TLSv1_1, 6 - TLSv1_2."
+			},
+			{
+				"name": "stderr",
+				"brackets": "[]",
+				"comment": "Имя файла, в который будет переадресован вывод из stderr."
+			},
+			{
+				"name": "timeout",
+				"brackets": "()",
+				"comment": "Таймаут с секундах."
+			},
+			{
+				"name": "timeout_ms",
+				"brackets": "()",
+				"comment": "Таймаут в миллисекундах."
+			},
+			{
+				"name": "unrestricted_auth",
+				"brackets": "()",
+				"comment": "Повторно отсылать параметры HTTP-авторизации, если при редиректе сменилось имя сервера."
+			},
+			{
+				"name": "url",
+				"brackets": "[]",
+				"comment": "URL-адрес."
+			},
+			{
+				"name": "useragent",
+				"brackets": "[]",
+				"comment": "Заголовок User-Agent."
+			},
+			{
+				"name": "username",
+				"brackets": "[]",
+				"comment": "Имя пользователя."
+			},
+			{
+				"name": "userpwd",
+				"brackets": "[]",
+				"comment": "Имя пользователя и пароль."
+			},
+			{
+				"name": "verbose",
+				"brackets": "()",
+				"comment": "Выводить подробную информацию в процессе обработки запроса в stderr."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "json",
+				"staticMethod": "parse",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "depth",
+				"brackets": "()",
+				"comment": "Максимальная глубина разбора JSON."
+			},
+			{
+				"name": "double",
+				"brackets": "()",
+				"comment": "Преобразовывать вещественные числа в объекты double."
+			},
+			{
+				"name": "int",
+				"brackets": "()",
+				"comment": "Преобразовывать целые числа в объекты int."
+			},
+			{
+				"name": "distinct",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "first",
+						"comment": "Оставлять первое значение."
+					},
+					{
+						"text": "last",
+						"comment": "Оставлять последнее значение."
+					},
+					{
+						"text": "all",
+						"comment": "Сохранять все значения."
+					}
+				],
+				"comment": "Режим обработки повторяющихся ключей."
+			},
+			{
+				"name": "object",
+				"brackets": "[]",
+				"comment": "Обработчик JSON-объектов."
+			},
+			{
+				"name": "array",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "array",
+						"comment": "JSON-массив как массив."
+					},
+					{
+						"text": "hash",
+						"comment": "JSON-массив как хеш с числовыми ключами."
+					}
+				],
+				"comment": "Тип контейнера для JSON-массивов."
+			},
+			{
+				"name": "taint",
+				"brackets": "[]",
+				"comment": "Уровень доверия к данным JSON."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"constructor": "create",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "from-charset",
+				"brackets": "[]",
+				"comment": "Исходная кодировка текста."
+			},
+			{
+				"name": "to-charset",
+				"brackets": "[]",
+				"comment": "Кодировка создаваемого файла."
+			},
+			{
+				"name": "content-type",
+				"brackets": "[]",
+				"comment": "Content-Type создаваемого файла."
+			},
+			{
+				"name": "name",
+				"brackets": "[]",
+				"comment": "Имя создаваемого файла."
+			},
+			{
+				"name": "mode",
+				"brackets": "[]",
+				"comment": "Формат создаваемого файла."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"constructor": "create",
+				"type": "colon3"
+			}
+		],
+		"params": [
+			{
+				"name": "from-charset",
+				"brackets": "[]",
+				"comment": "Исходная кодировка текста."
+			},
+			{
+				"name": "to-charset",
+				"brackets": "[]",
+				"comment": "Кодировка создаваемого файла."
+			},
+			{
+				"name": "content-type",
+				"brackets": "[]",
+				"comment": "Content-Type создаваемого файла."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"constructor": "load",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "text",
+				"comment": "Загрузить файл как текст."
+			},
+			{
+				"text": "binary",
+				"comment": "Загрузить файл как бинарные данные."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"constructor": "load",
+				"type": "colon2"
+			},
+			{
+				"class": "file",
+				"constructor": "load",
+				"type": "colon3"
+			}
+		],
+		"params": [
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Кодировка документа на удалённом сервере или локального текстового файла."
+			},
+			{
+				"name": "response-charset",
+				"brackets": "[]",
+				"comment": "Принудительная кодировка ответа HTTP-сервера."
+			},
+			{
+				"name": "timeout",
+				"brackets": "()",
+				"comment": "Время ожидания ответа HTTP-сервера."
+			},
+			{
+				"name": "method",
+				"brackets": "[]",
+				"comment": "HTTP-метод запроса."
+			},
+			{
+				"name": "enctype",
+				"brackets": "[]",
+				"comment": "Content-Type исходящего запроса."
+			},
+			{
+				"name": "form",
+				"brackets": "[]",
+				"comment": "Параметры HTTP-запроса."
+			},
+			{
+				"name": "body",
+				"brackets": "[]",
+				"comment": "Текст тела HTTP-запроса."
+			},
+			{
+				"name": "cookies",
+				"brackets": "[]",
+				"comment": "Cookies для передачи удалённому серверу."
+			},
+			{
+				"name": "headers",
+				"brackets": "[]",
+				"comment": "Дополнительные HTTP-заголовки запроса."
+			},
+			{
+				"name": "any-status",
+				"brackets": "()",
+				"comment": "Не считать статус ответа, отличный от 200, ошибкой."
+			},
+			{
+				"name": "omit-post-charset",
+				"brackets": "()",
+				"comment": "Не добавлять charset в content-type POST-запроса."
+			},
+			{
+				"name": "user",
+				"brackets": "[]",
+				"comment": "Пользователь для HTTP-авторизации."
+			},
+			{
+				"name": "password",
+				"brackets": "[]",
+				"comment": "Пароль для HTTP-авторизации."
+			},
+			{
+				"name": "offset",
+				"brackets": "()",
+				"comment": "Смещение начала загрузки в байтах."
+			},
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Максимальное число загружаемых байтов."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"constructor": "sql",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Ограничение количества строк."
+			},
+			{
+				"name": "offset",
+				"brackets": "()",
+				"comment": "Смещение начала выборки."
+			},
+			{
+				"name": "bind",
+				"brackets": "[]",
+				"comment": "Хеш связанных переменных."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"operator": "process",
+				"type": "colon2"
+			}
+		],
+		"params": [
+			{
+				"name": "main",
+				"brackets": "[]",
+				"comment": "Новое имя метода main для загружаемой строки."
+			},
+			{
+				"name": "file",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "text",
+						"comment": "Файл как текст."
+					},
+					{
+						"text": "base64",
+						"comment": "Файл как base64."
+					},
+					{
+						"text": "stat",
+						"comment": "Файл как hash свойств."
+					}
+				],
+				"comment": "Имя файла, из которого взята строка."
+			},
+			{
+				"name": "lineno",
+				"brackets": "()",
+				"comment": "Номер исходной строки в файле."
+			},
+			{
+				"name": "replace",
+				"brackets": "()",
+				"comment": "Разрешить замену уже существующего класса."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"operator": "use",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "replace",
+				"brackets": "()",
+				"comment": "Разрешить замену уже загруженного класса."
+			},
+			{
+				"name": "main",
+				"brackets": "()",
+				"comment": "Перед загрузкой выполнить auto.p по пути файла."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "date",
+				"dynamicMethod": "iso-string",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "colon",
+				"brackets": "()",
+				"comment": "Оставлять двоеточие во временной зоне."
+			},
+			{
+				"name": "ms",
+				"brackets": "()",
+				"comment": "Добавлять миллисекунды .000."
+			},
+			{
+				"name": "z",
+				"brackets": "()",
+				"comment": "Показывать UTC как Z/00:00."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "date",
+				"dynamicMethod": "roll",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "year",
+				"comment": "Сдвиг по году."
+			},
+			{
+				"text": "month",
+				"comment": "Сдвиг по месяцу."
+			},
+			{
+				"text": "day",
+				"comment": "Сдвиг по дню."
+			},
+			{
+				"text": "TZ",
+				"comment": "Работа с часовым поясом."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "date",
+				"staticMethod": "roll",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "TZ",
+				"comment": "Часовой пояс по умолчанию."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "json",
+				"staticMethod": "string",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "skip-unknown",
+				"brackets": "()",
+				"comment": "Пропускать неизвестные типы вместо исключения."
+			},
+			{
+				"name": "indent",
+				"brackets": "()",
+				"comment": "Включить форматирование JSON."
+			},
+			{
+				"name": "indent",
+				"brackets": "[]",
+				"comment": "Строка отступа для форматирования."
+			},
+			{
+				"name": "date",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "sql-string",
+						"comment": "Сериализовать даты как sql-string."
+					},
+					{
+						"text": "gmt-string",
+						"comment": "Сериализовать даты как gmt-string."
+					},
+					{
+						"text": "iso-string",
+						"comment": "Сериализовать даты как iso-string."
+					},
+					{
+						"text": "unix-timestamp",
+						"comment": "Сериализовать даты как unix-timestamp."
+					}
+				],
+				"comment": "Формат сериализации дат."
+			},
+			{
+				"name": "void",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "null",
+						"comment": "Выводить null."
+					},
+					{
+						"text": "string",
+						"comment": "Выводить пустую строку."
+					}
+				],
+				"comment": "Как сериализовать значения void."
+			},
+			{
+				"name": "table",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "object",
+						"comment": "Таблица как массив объектов."
+					},
+					{
+						"text": "array",
+						"comment": "Таблица как массив массивов."
+					},
+					{
+						"text": "compact",
+						"comment": "Таблица в компактном виде."
+					}
+				],
+				"comment": "Как сериализовать таблицы."
+			},
+			{
+				"name": "array",
+				"brackets": "[]",
+				"comment": "Как сериализовать массивы."
+			},
+			{
+				"name": "file",
+				"brackets": "[]",
+				"comment": "Как сериализовать файлы."
+			},
+			{
+				"name": "xdoc",
+				"brackets": "[]",
+				"comment": "Параметры сериализации xdoc."
+			},
+			{
+				"name": "_default",
+				"brackets": "[]",
+				"comment": "Обработчик по умолчанию для неизвестных классов."
+			},
+			{
+				"name": "one-line",
+				"brackets": "()",
+				"comment": "Сериализовать в одну строку."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "xdoc",
+				"dynamicMethod": "file",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "method",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "xml",
+						"comment": "Выводить документ как XML."
+					},
+					{
+						"text": "html",
+						"comment": "Выводить документ как HTML."
+					},
+					{
+						"text": "text",
+						"comment": "Выводить документ как текст."
+					}
+				],
+				"comment": "Метод вывода документа: xml, html или text."
+			},
+			{
+				"name": "indent",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "no",
+						"comment": "Не форматировать результат."
+					}
+				],
+				"comment": "Режим форматирования результата."
+			},
+			{
+				"name": "omit-xml-declaration",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "yes",
+						"comment": "Не выводить XML-декларацию."
+					}
+				],
+				"comment": "Не выводить XML-заголовок."
+			},
+			{
+				"name": "encoding",
+				"brackets": "[]",
+				"comment": "Явная кодировка результирующего текста."
+			},
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Кодировка для создаваемого текста."
+			},
+			{
+				"name": "media-type",
+				"brackets": "[]",
+				"comment": "Значение media-type для результата."
+			},
+			{
+				"name": "file",
+				"brackets": "[]",
+				"comment": "Имя создаваемого объекта file."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "xdoc",
+				"dynamicMethod": "save",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "method",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "xml",
+						"comment": "Выводить документ как XML."
+					},
+					{
+						"text": "html",
+						"comment": "Выводить документ как HTML."
+					},
+					{
+						"text": "text",
+						"comment": "Выводить документ как текст."
+					}
+				],
+				"comment": "Метод вывода документа: xml, html или text."
+			},
+			{
+				"name": "indent",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "no",
+						"comment": "Не форматировать результат."
+					}
+				],
+				"comment": "Режим форматирования результата."
+			},
+			{
+				"name": "omit-xml-declaration",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "yes",
+						"comment": "Не выводить XML-декларацию."
+					}
+				],
+				"comment": "Не выводить XML-заголовок."
+			},
+			{
+				"name": "encoding",
+				"brackets": "[]",
+				"comment": "Явная кодировка результирующего текста."
+			},
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Кодировка для создаваемого текста."
+			},
+			{
+				"name": "media-type",
+				"brackets": "[]",
+				"comment": "Значение media-type для результата."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "xdoc",
+				"dynamicMethod": "string",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "method",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "xml",
+						"comment": "Выводить документ как XML."
+					},
+					{
+						"text": "html",
+						"comment": "Выводить документ как HTML."
+					},
+					{
+						"text": "text",
+						"comment": "Выводить документ как текст."
+					}
+				],
+				"comment": "Метод вывода документа: xml, html или text."
+			},
+			{
+				"name": "indent",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "no",
+						"comment": "Не форматировать результат."
+					}
+				],
+				"comment": "Режим форматирования результата."
+			},
+			{
+				"name": "omit-xml-declaration",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "yes",
+						"comment": "Не выводить XML-декларацию."
+					}
+				],
+				"comment": "Не выводить XML-заголовок."
+			},
+			{
+				"name": "encoding",
+				"brackets": "[]",
+				"comment": "Явная кодировка результирующего текста."
+			},
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Кодировка для создаваемого текста."
+			},
+			{
+				"name": "media-type",
+				"brackets": "[]",
+				"comment": "Значение media-type для результата."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "image",
+				"constructor": "measure",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "video",
+				"brackets": "()",
+				"comment": "Определять размеры MP4/MOV."
+			},
+			{
+				"name": "exif",
+				"brackets": "()",
+				"comment": "Считывать EXIF из JPEG."
+			},
+			{
+				"name": "xmp",
+				"brackets": "()",
+				"comment": "Считывать XMP из JPEG."
+			},
+			{
+				"name": "xmp-charset",
+				"brackets": "[]",
+				"comment": "Кодировка XMP-данных."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "inet",
+				"staticMethod": "ip2name",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "ipv",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "4",
+						"comment": "Обрабатывать только IPv4-адреса."
+					},
+					{
+						"text": "6",
+						"comment": "Обрабатывать только IPv6-адреса."
+					},
+					{
+						"text": "any",
+						"comment": "Обрабатывать любые IP-адреса."
+					}
+				],
+				"comment": "Выбор версии IP: 4, 6 или any."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "inet",
+				"staticMethod": "name2ip",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "ipv",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "4",
+						"comment": "Обрабатывать только IPv4-адреса."
+					},
+					{
+						"text": "6",
+						"comment": "Обрабатывать только IPv6-адреса."
+					},
+					{
+						"text": "any",
+						"comment": "Обрабатывать любые IP-адреса."
+					}
+				],
+				"comment": "Выбор версии IP: 4, 6 или any."
+			},
+			{
+				"name": "table",
+				"brackets": "()",
+				"paramText": [
+					{
+						"text": "true",
+						"comment": "Вернуть все адреса таблицей."
+					},
+					{
+						"text": "false",
+						"comment": "Вернуть адрес строкой."
+					}
+				],
+				"comment": "Вернуть все адреса в виде таблицы."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "math",
+				"staticMethod": "convert",
+				"type": "colon3"
+			}
+		],
+		"params": [
+			{
+				"name": "format",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "string",
+						"comment": "Вернуть строку."
+					},
+					{
+						"text": "file",
+						"comment": "Вернуть объект file."
+					}
+				],
+				"comment": "Формат результата: string или file."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "math",
+				"staticMethod": "digest",
+				"type": "colon2"
+			}
+		],
+		"params": [
+			{
+				"name": "format",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "hex",
+						"comment": "Hex-представление."
+					},
+					{
+						"text": "base64",
+						"comment": "Base64-представление."
+					},
+					{
+						"text": "file",
+						"comment": "Результат как file."
+					}
+				],
+				"comment": "Формат результата: hex, base64 или file."
+			},
+			{
+				"name": "hmac",
+				"brackets": "[]",
+				"comment": "Секретный ключ для HMAC."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "math",
+				"staticMethod": "uid64",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "lower",
+				"brackets": "()",
+				"comment": "Выдавать идентификатор в нижнем регистре."
+			},
+			{
+				"name": "format",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "uue",
+						"comment": "Результат в uuencode."
+					},
+					{
+						"text": "base64",
+						"comment": "Результат в base64."
+					}
+				],
+				"comment": "Формат результата."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "math",
+				"staticMethod": "uuid",
+				"type": "params"
+			},
+			{
+				"class": "math",
+				"staticMethod": "uuid7",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "lower",
+				"brackets": "()",
+				"comment": "Выдавать UUID в нижнем регистре."
+			},
+			{
+				"name": "solid",
+				"brackets": "()",
+				"comment": "Убирать дефисы из результата."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "reflection",
+				"staticMethod": "create",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "class",
+				"brackets": "[]",
+				"comment": "Имя класса для создаваемого объекта."
+			},
+			{
+				"name": "constructor",
+				"brackets": "[]",
+				"comment": "Имя вызываемого конструктора."
+			},
+			{
+				"name": "arguments",
+				"brackets": "[]",
+				"comment": "Аргументы конструктора по порядку.",
+				"params": [
+					{
+						"name": "1",
+						"brackets": "[]",
+						"comment": "Первый аргумент конструктора."
+					},
+					{
+						"name": "2",
+						"brackets": "[]",
+						"comment": "Второй аргумент конструктора."
+					},
+					{
+						"name": "3",
+						"brackets": "[]",
+						"comment": "Третий аргумент конструктора."
+					}
+				]
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "reflection",
+				"staticMethod": "methods",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "max_params",
+				"brackets": "()",
+				"comment": "Максимально допустимое количество параметров метода."
+			},
+			{
+				"name": "call_type",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "static",
+						"comment": "Только статические методы."
+					},
+					{
+						"text": "dynamic",
+						"comment": "Только динамические методы."
+					},
+					{
+						"text": "any",
+						"comment": "Любой тип вызова."
+					}
+				],
+				"comment": "Допустимый тип вызова метода."
+			},
+			{
+				"name": "reverse",
+				"brackets": "()",
+				"comment": "Порядок методов как при добавлении, а не в обратном."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "reflection",
+				"staticMethod": "mixin",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "to",
+				"brackets": "[]",
+				"comment": "Класс-получатель для копирования."
+			},
+			{
+				"name": "name",
+				"brackets": "[]",
+				"comment": "Копировать только указанный метод или поле."
+			},
+			{
+				"name": "methods",
+				"brackets": "()",
+				"comment": "Копировать методы источника."
+			},
+			{
+				"name": "fields",
+				"brackets": "()",
+				"comment": "Копировать статические поля источника."
+			},
+			{
+				"name": "overwrite",
+				"brackets": "()",
+				"comment": "Разрешить перезапись одноимённых членов."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "reflection",
+				"staticMethod": "stack",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "args",
+				"brackets": "()",
+				"comment": "Добавлять хеш аргументов кадра."
+			},
+			{
+				"name": "locals",
+				"brackets": "()",
+				"comment": "Добавлять локальные переменные кадра."
+			},
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Ограничить число кадров."
+			},
+			{
+				"name": "offset",
+				"brackets": "()",
+				"comment": "Пропустить первые кадры."
+			},
+			{
+				"name": "type",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "bad.command",
+						"comment": "Только исключение bad.command."
+					}
+				],
+				"comment": "Фильтр по типу исключения."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"constructor": "cgi",
+				"type": "colon"
+			},
+			{
+				"class": "file",
+				"constructor": "cgi",
+				"type": "colon2"
+			},
+			{
+				"class": "file",
+				"constructor": "exec",
+				"type": "colon"
+			},
+			{
+				"class": "file",
+				"constructor": "exec",
+				"type": "colon2"
+			}
+		],
+		"params": [
+			{
+				"name": "stdin",
+				"brackets": "[]",
+				"comment": "Текст для стандартного потока ввода."
+			},
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Кодировка входа и выхода скрипта."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"constructor": "load",
+				"type": "colon2"
+			},
+			{
+				"class": "file",
+				"constructor": "load",
+				"type": "colon3"
+			}
+		],
+		"params": [
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Кодировка удалённого документа."
+			},
+			{
+				"name": "response-charset",
+				"brackets": "[]",
+				"comment": "Принудительная кодировка ответа."
+			},
+			{
+				"name": "timeout",
+				"brackets": "()",
+				"comment": "Таймаут HTTP-запроса."
+			},
+			{
+				"name": "method",
+				"brackets": "[]",
+				"comment": "HTTP-метод запроса."
+			},
+			{
+				"name": "form",
+				"brackets": "[]",
+				"comment": "Поля формы для запроса."
+			},
+			{
+				"name": "enctype",
+				"brackets": "[]",
+				"comment": "Content-Type для отправки формы."
+			},
+			{
+				"name": "body",
+				"brackets": "[]",
+				"comment": "Тело HTTP-запроса."
+			},
+			{
+				"name": "cookies",
+				"brackets": "[]",
+				"comment": "Cookies для запроса."
+			},
+			{
+				"name": "headers",
+				"brackets": "[]",
+				"comment": "HTTP-заголовки запроса.",
+				"params": [
+					{
+						"name": "User-Agent",
+						"brackets": "[]",
+						"comment": "Значение заголовка User-Agent."
+					},
+					{
+						"name": "Authorization",
+						"brackets": "[]",
+						"comment": "Значение заголовка Authorization."
+					},
+					{
+						"name": "Content-Type",
+						"brackets": "[]",
+						"comment": "Значение заголовка Content-Type."
+					}
+				]
+			},
+			{
+				"name": "any-status",
+				"brackets": "()",
+				"comment": "Не считать не-200 ответ ошибкой."
+			},
+			{
+				"name": "omit-post-charset",
+				"brackets": "()",
+				"comment": "Не добавлять charset в POST."
+			},
+			{
+				"name": "user",
+				"brackets": "[]",
+				"comment": "Пользователь для авторизации."
+			},
+			{
+				"name": "password",
+				"brackets": "[]",
+				"comment": "Пароль для авторизации."
+			},
+			{
+				"name": "offset",
+				"brackets": "()",
+				"comment": "Смещение при диапазонной загрузке."
+			},
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Ограничение объёма загрузки."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"constructor": "base64",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "text",
+				"comment": "Создать текстовый файл."
+			},
+			{
+				"text": "binary",
+				"comment": "Создать бинарный файл."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"constructor": "base64",
+				"type": "colon3"
+			}
+		],
+		"params": [
+			{
+				"name": "strict",
+				"brackets": "()",
+				"comment": "Падать, если декодировать удалось не всё."
+			},
+			{
+				"name": "url-safe",
+				"brackets": "()",
+				"comment": "Использовать URL-safe алфавит."
+			},
+			{
+				"name": "pad",
+				"brackets": "()",
+				"comment": "Ожидать паддинг '='."
+			},
+			{
+				"name": "content-type",
+				"brackets": "[]",
+				"comment": "Content-Type создаваемого файла."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"dynamicMethod": "base64",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "wrap",
+				"brackets": "()",
+				"comment": "Формировать результат с переносами строк."
+			},
+			{
+				"name": "url-safe",
+				"brackets": "()",
+				"comment": "Использовать URL-safe алфавит."
+			},
+			{
+				"name": "pad",
+				"brackets": "()",
+				"comment": "Добавлять символы паддинга."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"dynamicMethod": "save",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "text",
+				"comment": "Сохранить файл в текстовом формате."
+			},
+			{
+				"text": "binary",
+				"comment": "Сохранить файл в бинарном формате."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "string",
+				"dynamicMethod": "save",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "append",
+				"comment": "Добавить строку в конец файла."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"dynamicMethod": "save",
+				"type": "colon2"
+			},
+			{
+				"class": "string",
+				"dynamicMethod": "save",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Кодировка сохраняемого текста."
+			},
+			{
+				"name": "append",
+				"brackets": "()",
+				"comment": "Дописывать в конец существующего файла."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"staticMethod": "copy",
+				"type": "colon2"
+			}
+		],
+		"params": [
+			{
+				"name": "append",
+				"brackets": "()",
+				"comment": "Дописывать в конец существующего файла."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"staticMethod": "delete",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "keep-empty-dirs",
+				"brackets": "()",
+				"comment": "Не удалять оставшиеся пустые каталоги."
+			},
+			{
+				"name": "exception",
+				"brackets": "()",
+				"comment": "Не бросать исключение при ошибке удаления."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"staticMethod": "list",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "filter",
+				"brackets": "[]",
+				"comment": "Регулярное выражение для отбора файлов."
+			},
+			{
+				"name": "stat",
+				"brackets": "()",
+				"comment": "Заполнять размер и даты файлов."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"staticMethod": "move",
+				"type": "colon2"
+			}
+		],
+		"params": [
+			{
+				"name": "keep-empty-dirs",
+				"brackets": "()",
+				"comment": "Не удалять оставшиеся пустые каталоги."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "file",
+				"constructor": "sql",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "name",
+				"brackets": "[]",
+				"comment": "Имя создаваемого файла."
+			},
+			{
+				"name": "content-type",
+				"brackets": "[]",
+				"comment": "Пользовательский content-type."
+			},
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Ограничить число строк выборки."
+			},
+			{
+				"name": "offset",
+				"brackets": "()",
+				"comment": "Отбросить первые строки выборки."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "regex",
+				"constructor": "create",
+				"type": "colon"
+			},
+			{
+				"class": "string",
+				"dynamicMethod": "match",
+				"type": "colon"
+			}
+		],
+		"paramText": [
+			{
+				"text": "i",
+				"comment": "Не учитывать регистр."
+			},
+			{
+				"text": "x",
+				"comment": "Разрешить пробелы и комментарии в шаблоне."
+			},
+			{
+				"text": "s",
+				"comment": "Считать $ концом всего текста."
+			},
+			{
+				"text": "m",
+				"comment": "Считать $ концом строки."
+			},
+			{
+				"text": "U",
+				"comment": "Инвертировать жадность квантификаторов."
+			},
+			{
+				"text": "g",
+				"comment": "Найти все вхождения."
+			},
+			{
+				"text": "n",
+				"comment": "Вернуть число совпадений."
+			},
+			{
+				"text": "'",
+				"comment": "Добавить prematch, match и postmatch."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "string",
+				"staticMethod": "base64",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "strict",
+				"brackets": "()",
+				"comment": "Падать, если декодировать удалось не всё."
+			},
+			{
+				"name": "url-safe",
+				"brackets": "()",
+				"comment": "Использовать URL-safe алфавит."
+			},
+			{
+				"name": "pad",
+				"brackets": "()",
+				"comment": "Ожидать или сохранять паддинг '='."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "string",
+				"staticMethod": "unescape",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "js",
+				"comment": "Декодировать JavaScript escape."
+			},
+			{
+				"text": "uri",
+				"comment": "Декодировать URI-строку."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "string",
+				"staticMethod": "unescape",
+				"type": "colon2"
+			}
+		],
+		"params": [
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Перекодировать результат из указанной кодировки."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "string",
+				"dynamicMethod": "base64",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "wrap",
+				"brackets": "()",
+				"comment": "Формировать результат с переносами строк."
+			},
+			{
+				"name": "url-safe",
+				"brackets": "()",
+				"comment": "Использовать URL-safe алфавит."
+			},
+			{
+				"name": "pad",
+				"brackets": "()",
+				"comment": "Добавлять символы паддинга."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "string",
+				"staticMethod": "sql",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Ограничить число строк выборки."
+			},
+			{
+				"name": "offset",
+				"brackets": "()",
+				"comment": "Отбросить первые строки выборки."
+			},
+			{
+				"name": "bind",
+				"brackets": "[]",
+				"comment": "Хеш связанных переменных."
+			},
+			{
+				"name": "default",
+				"brackets": "{}",
+				"comment": "Код для значения по умолчанию."
+			},
+			{
+				"name": "default",
+				"brackets": "()",
+				"comment": "Выражение для значения по умолчанию."
+			},
+			{
+				"name": "default",
+				"brackets": "[]",
+				"comment": "Строка по умолчанию."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"dynamicMethod": "sort",
+				"type": "colon"
+			},
+			{
+				"class": "array",
+				"dynamicMethod": "sort",
+				"type": "colon"
+			},
+			{
+				"class": "hash",
+				"dynamicMethod": "sort",
+				"type": "colon"
+			}
+		],
+		"paramText": [
+			{
+				"text": "asc",
+				"comment": "Сортировка по возрастанию."
+			},
+			{
+				"text": "desc",
+				"comment": "Сортировка по убыванию."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "array",
+				"staticMethod": "sql",
+				"type": "colon"
+			},
+			{
+				"class": "hash",
+				"staticMethod": "sql",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Ограничить число строк выборки."
+			},
+			{
+				"name": "offset",
+				"brackets": "()",
+				"comment": "Отбросить первые строки выборки."
+			},
+			{
+				"name": "bind",
+				"brackets": "[]",
+				"comment": "Хеш связанных переменных."
+			},
+			{
+				"name": "distinct",
+				"brackets": "()",
+				"comment": "Разрешить дубликаты ключей."
+			},
+			{
+				"name": "type",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "hash",
+						"comment": "Значение как hash."
+					},
+					{
+						"text": "string",
+						"comment": "Значение как string."
+					},
+					{
+						"text": "table",
+						"comment": "Значение как table."
+					}
+				],
+				"comment": "Тип значения: hash, string или table."
+			},
+			{
+				"name": "sparse",
+				"brackets": "()",
+				"comment": "Создать разрежённый массив по первому столбцу."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "void",
+				"staticMethod": "sql",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "bind",
+				"brackets": "[]",
+				"comment": "Хеш связанных переменных."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "int",
+				"staticMethod": "sql",
+				"type": "colon"
+			},
+			{
+				"class": "double",
+				"staticMethod": "sql",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Ограничить число строк выборки."
+			},
+			{
+				"name": "offset",
+				"brackets": "()",
+				"comment": "Отбросить первые строки выборки."
+			},
+			{
+				"name": "default",
+				"brackets": "()",
+				"comment": "Выражение для значения по умолчанию."
+			},
+			{
+				"name": "default",
+				"brackets": "{}",
+				"comment": "Код для значения по умолчанию."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"constructor": "create",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "separator",
+				"brackets": "[]",
+				"comment": "Разделитель столбцов в файле."
+			},
+			{
+				"name": "encloser",
+				"brackets": "[]",
+				"comment": "Обрамляющий символ для значений."
+			},
+			{
+				"name": "offset",
+				"brackets": "()",
+				"comment": "Пропустить первые строки при копировании таблицы."
+			},
+			{
+				"name": "offset",
+				"brackets": "[]",
+				"comment": "Начать копирование с текущей строки."
+			},
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Ограничить число копируемых строк."
+			},
+			{
+				"name": "reverse",
+				"brackets": "()",
+				"comment": "Копировать строки в обратном порядке."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"constructor": "load",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "nameless",
+				"comment": "Загружать таблицу без имён столбцов."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"constructor": "load",
+				"type": "colon"
+			},
+			{
+				"class": "table",
+				"constructor": "load",
+				"type": "colon2"
+			}
+		],
+		"params": [
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Кодировка удалённого документа."
+			},
+			{
+				"name": "response-charset",
+				"brackets": "[]",
+				"comment": "Принудительная кодировка ответа."
+			},
+			{
+				"name": "timeout",
+				"brackets": "()",
+				"comment": "Таймаут HTTP-запроса."
+			},
+			{
+				"name": "method",
+				"brackets": "[]",
+				"comment": "HTTP-метод запроса."
+			},
+			{
+				"name": "headers",
+				"brackets": "[]",
+				"comment": "HTTP-заголовки запроса.",
+				"params": [
+					{
+						"name": "User-Agent",
+						"brackets": "[]",
+						"comment": "Значение заголовка User-Agent."
+					}
+				]
+			},
+			{
+				"name": "separator",
+				"brackets": "[]",
+				"comment": "Разделитель столбцов во входных данных."
+			},
+			{
+				"name": "encloser",
+				"brackets": "[]",
+				"comment": "Обрамляющий символ для значений."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"dynamicMethod": "count",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "columns",
+				"comment": "Вернуть число столбцов."
+			},
+			{
+				"text": "cells",
+				"comment": "Вернуть число ячеек в текущей строке."
+			},
+			{
+				"text": "rows",
+				"comment": "Вернуть число строк."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"dynamicMethod": "csv-string",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "nameless",
+				"comment": "Выводить CSV без имён столбцов."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"dynamicMethod": "csv-string",
+				"type": "params"
+			},
+			{
+				"class": "table",
+				"dynamicMethod": "csv-string",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "separator",
+				"brackets": "[]",
+				"comment": "Разделитель столбцов в CSV."
+			},
+			{
+				"name": "encloser",
+				"brackets": "[]",
+				"comment": "Символ обрамления значений."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"dynamicMethod": "hash",
+				"type": "colon"
+			},
+			{
+				"class": "table",
+				"dynamicMethod": "hash",
+				"type": "colon2"
+			}
+		],
+		"params": [
+			{
+				"name": "type",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "hash",
+						"comment": "Значения как hash."
+					},
+					{
+						"text": "string",
+						"comment": "Значения как string."
+					},
+					{
+						"text": "table",
+						"comment": "Значения как table."
+					}
+				],
+				"comment": "Тип значений: hash, string или table."
+			},
+			{
+				"name": "distinct",
+				"brackets": "()",
+				"comment": "Режим обработки повторяющихся ключей."
+			},
+			{
+				"name": "distinct",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "tables",
+						"comment": "Создать хеш таблиц с одинаковым ключом."
+					}
+				],
+				"comment": "Спецрежим tables для группировки строк."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"dynamicMethod": "join",
+				"type": "colon"
+			},
+			{
+				"class": "table",
+				"dynamicMethod": "locate",
+				"type": "colon"
+			},
+			{
+				"class": "table",
+				"dynamicMethod": "locate",
+				"type": "colon2"
+			},
+			{
+				"class": "table",
+				"dynamicMethod": "select",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "offset",
+				"brackets": "()",
+				"comment": "Пропустить первые подходящие строки."
+			},
+			{
+				"name": "offset",
+				"brackets": "[]",
+				"comment": "Начать с текущей строки."
+			},
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Ограничить число обрабатываемых строк."
+			},
+			{
+				"name": "reverse",
+				"brackets": "()",
+				"comment": "Перебирать строки в обратном порядке."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"dynamicMethod": "save",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "nameless",
+				"comment": "Сохранить таблицу без имён столбцов."
+			},
+			{
+				"text": "append",
+				"comment": "Добавить таблицу в конец файла."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "table",
+				"dynamicMethod": "save",
+				"type": "colon"
+			},
+			{
+				"class": "table",
+				"dynamicMethod": "save",
+				"type": "colon2"
+			}
+		],
+		"params": [
+			{
+				"name": "separator",
+				"brackets": "[]",
+				"comment": "Разделитель столбцов в выходном файле."
+			},
+			{
+				"name": "encloser",
+				"brackets": "[]",
+				"comment": "Символ обрамления значений."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "array",
+				"dynamicMethod": "_at",
+				"type": "params"
+			},
+			{
+				"class": "array",
+				"dynamicMethod": "at",
+				"type": "params"
+			},
+			{
+				"class": "hash",
+				"dynamicMethod": "_at",
+				"type": "params"
+			},
+			{
+				"class": "hash",
+				"dynamicMethod": "at",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "first",
+				"comment": "Первый элемент."
+			},
+			{
+				"text": "last",
+				"comment": "Последний элемент."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "array",
+				"dynamicMethod": "at",
+				"type": "colon"
+			},
+			{
+				"class": "hash",
+				"dynamicMethod": "at",
+				"type": "colon"
+			}
+		],
+		"paramText": [
+			{
+				"text": "key",
+				"comment": "Вернуть ключ элемента."
+			},
+			{
+				"text": "value",
+				"comment": "Вернуть значение элемента."
+			},
+			{
+				"text": "hash",
+				"comment": "Вернуть хеш из одного элемента."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "array",
+				"dynamicMethod": "select",
+				"type": "colon2"
+			},
+			{
+				"class": "hash",
+				"dynamicMethod": "select",
+				"type": "colon2"
+			}
+		],
+		"params": [
+			{
+				"name": "limit",
+				"brackets": "()",
+				"comment": "Ограничить число отобранных элементов."
+			},
+			{
+				"name": "reverse",
+				"brackets": "()",
+				"comment": "Перебирать элементы в обратном порядке."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "hash",
+				"dynamicMethod": "intersection",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "order",
+				"brackets": "[]",
+				"paramText": [
+					{
+						"text": "self",
+						"comment": "Порядок текущего hash."
+					},
+					{
+						"text": "arg",
+						"comment": "Порядок пересекаемого hash."
+					}
+				],
+				"comment": "Порядок элементов результата: self или arg."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "image",
+				"dynamicMethod": "html",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "border",
+				"brackets": "[]",
+				"comment": "Ширина рамки изображения."
+			},
+			{
+				"name": "alt",
+				"brackets": "[]",
+				"comment": "Альтернативная надпись для тега img."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "image",
+				"dynamicMethod": "font",
+				"type": "colon"
+			}
+		],
+		"params": [
+			{
+				"name": "space",
+				"brackets": "()",
+				"comment": "Ширина пробела в пикселях."
+			},
+			{
+				"name": "width",
+				"brackets": "()",
+				"comment": "Ширина символа для моноширинного шрифта."
+			},
+			{
+				"name": "spacing",
+				"brackets": "()",
+				"comment": "Межсимвольное расстояние."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "memcached",
+				"constructor": "open",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "server",
+				"brackets": "[]",
+				"comment": "Адрес сервера memcached."
+			},
+			{
+				"name": "binary-protocol",
+				"brackets": "()",
+				"comment": "Использовать бинарный протокол."
+			},
+			{
+				"name": "connect-timeout",
+				"brackets": "()",
+				"comment": "Таймаут соединения с сервером."
+			},
+			{
+				"name": "tcp-keepalive",
+				"brackets": "()",
+				"comment": "Включить TCP keepalive."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"class": "mail",
+				"staticMethod": "send",
+				"type": "params"
+			}
+		],
+		"params": [
+			{
+				"name": "text",
+				"brackets": "[]",
+				"comment": "Текстовая часть сообщения.",
+				"params": [
+					{
+						"name": "value",
+						"brackets": "[]",
+						"comment": "Текст блока."
+					}
+				]
+			},
+			{
+				"name": "html",
+				"brackets": "[]",
+				"comment": "HTML-часть сообщения.",
+				"params": [
+					{
+						"name": "value",
+						"brackets": "{}",
+						"comment": "HTML-код блока."
+					}
+				]
+			},
+			{
+				"name": "file",
+				"brackets": "[]",
+				"comment": "Вложение файла.",
+				"params": [
+					{
+						"name": "value",
+						"brackets": "[]",
+						"comment": "Файл для вложения."
+					},
+					{
+						"name": "name",
+						"brackets": "[]",
+						"comment": "Имя вложения."
+					},
+					{
+						"name": "content-id",
+						"brackets": "[]",
+						"comment": "Идентификатор вложения."
+					},
+					{
+						"name": "format",
+						"brackets": "[]",
+						"paramText": [
+							{
+								"text": "uue",
+								"comment": "Кодировать вложение в uuencode."
+							},
+							{
+								"text": "base64",
+								"comment": "Кодировать вложение в base64."
+							}
+						],
+						"comment": "Формат кодирования вложения."
+					}
+				]
+			},
+			{
+				"name": "charset",
+				"brackets": "[]",
+				"comment": "Кодировка заголовков и текстовых блоков."
+			},
+			{
+				"name": "options",
+				"brackets": "[]",
+				"comment": "Опции командной строки sendmail."
+			},
+			{
+				"name": "print-debug",
+				"brackets": "()",
+				"comment": "Вывести собранное письмо вместо отправки."
+			},
+			{
+				"name": "message",
+				"brackets": "[]",
+				"comment": "Вложенное сообщение."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
+				"operator": "taint",
+				"type": "params"
+			},
+			{
+				"operator": "untaint",
+				"type": "params"
+			},
+			{
+				"operator": "apply-taint",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "as-is",
+				"comment": "Без преобразования."
+			},
+			{
+				"text": "HTTP-header",
+				"comment": "Преобразование для HTTP-заголовков."
+			},
+			{
+				"text": "mail-header",
+				"comment": "Преобразование для почтовых заголовков."
+			},
+			{
+				"text": "sql",
+				"comment": "Преобразование для SQL."
+			},
+			{
+				"text": "js",
+				"comment": "Преобразование для JavaScript."
+			},
+			{
+				"text": "json",
+				"comment": "Преобразование для JSON."
+			},
+			{
+				"text": "parser-code",
+				"comment": "Преобразование для кода Parser3."
+			},
+			{
+				"text": "regex",
+				"comment": "Преобразование для регулярных выражений."
+			},
+			{
+				"text": "xml",
+				"comment": "Преобразование для XML."
+			},
+			{
+				"text": "optimized-as-is",
+				"comment": "Без преобразования с оптимизацией пробельных символов."
+			},
+			{
+				"text": "optimized-xml",
+				"comment": "Преобразование для XML с оптимизацией пробелов."
+			},
+			{
+				"text": "html",
+				"comment": "Преобразование для HTML."
+			},
+			{
+				"text": "optimized-html",
+				"comment": "Преобразование для HTML с оптимизацией пробелов."
+			},
+			{
+				"text": "uri",
+				"comment": "Преобразование для URI."
+			},
+			{
+				"text": "file-spec",
+				"comment": "Преобразование для файлового пути."
+			}
+		]
+	}
+]

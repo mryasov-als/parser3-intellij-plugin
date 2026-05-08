@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">open. Открытие</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^memcached::open[</b><b><a href="memcachedoptions.htm">параметры соединения</a></b><b>]
+<br>
+^memcached::open[</b><b><a href="memcachedoptions.htm">параметры соединения</a></b><b>](время&nbsp;хранения&nbsp;записей&nbsp;по&nbsp;умолчанию,&nbsp;в&nbsp;секундах)
+<br>
+</b><b>
+<br>
+</b><span><b>
+<br>
+</b></code><span><b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$memcached[^memcached::open[</b></code></span><code><b>server1:port1,server2</b><span style="color:#7F97E1" class="blue"><b>]]</b></code></span><code><b>
+<br>
+
+<br>
+
+<br>
+</b></code><span><b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$memcached[^memcached::open[
+<br>
+&nbsp;&nbsp;&nbsp;$.server[</b></code></span><code><b>server1:port1</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.binary-protocol(</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="boolclass.htm">true</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>)
+<br>
+&nbsp;&nbsp;&nbsp;$.connect-timeout(</b></code></span><code><b>5</b><span style="color:#7F97E1" class="blue"><b>)</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+</b></code></span><span>
+<br>
+</span></span>

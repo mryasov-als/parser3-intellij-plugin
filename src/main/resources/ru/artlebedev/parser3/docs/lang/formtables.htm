@@ -1,0 +1,72 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">tables. Получение множества значений поля</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$form:tables</b><span>
+<br>
+</code><span>
+<br>
+Поле возвращает редактируемый <a href="hash.htm">хеш</a> со&nbsp;всеми элементами формы или параметрами, переданными через&nbsp;URL. Имена ключей хеша&nbsp;- это названия элементов формы, значениями&nbsp;же являются таблицы, см.&nbsp;ниже.
+<br>
+
+<br>
+</span><code><b>$form:tables.поле_формы</b></code><span>&nbsp;&nbsp;&nbsp;
+<br>
+</span><span>
+<br>
+Если поле формы имеет хотя&nbsp;бы одно значение, такая конструкция возвращает таблицу (объект класса&nbsp;</span><code><b><a href="tableclass.htm">table</a></b></code><span>) с&nbsp;одним столбцом </span><code><b>field</b></code><span>, содержащим все значения поля. Используется для&nbsp;получения множества значений поля.
+<br>
+
+<br>
+<i>Внимание: перед использованием таблицы нужно проверить ее&nbsp;определенность.
+<br>
+</i>
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><b>Выберите,&nbsp;чем&nbsp;вы&nbsp;увлекаетесь&nbsp;в&nbsp;свободное&nbsp;время:
+<br>
+&lt;form&nbsp;method="POST"&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;p&gt;&lt;input&nbsp;type=checkbox&nbsp;name=hobby&nbsp;value="Театр"&gt;Театром&lt;/p&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;p&gt;&lt;input&nbsp;type=checkbox&nbsp;name=hobby&nbsp;value="Кино"&gt;Кино&lt;/p&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;p&gt;&lt;input&nbsp;type=checkbox&nbsp;name=hobby&nbsp;value="Книги"&gt;Книгами&lt;/p&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;p&gt;&lt;input&nbsp;type=submit&nbsp;value="OK"&gt;&lt;/p&gt;
+<br>
+&lt;/form&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>$hobby[$form:tables.hobby]
+<br>
+^if($hobby){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Ваши&nbsp;хобби:&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;^hobby.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablemenu.htm">menu</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$hobby.field
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}[</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Ничего&nbsp;не&nbsp;выбрано
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Пример выведет на&nbsp;экран выбранные варианты или напишет, что ничего не&nbsp;выбрано.
+<br>
+</span></span>

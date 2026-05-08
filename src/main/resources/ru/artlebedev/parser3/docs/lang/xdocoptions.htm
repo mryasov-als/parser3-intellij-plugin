@@ -1,0 +1,100 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Параметры преобразования документа в&nbsp;текст</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>В ряде методов можно задать <a href="hash.htm">хеш</a><code><b>&nbsp;Параметры_преобразования_в_текст</b></code><span>.
+<br>
+
+<br>
+Они идентичны атрибутам элемента </span><code><span style="color:#7F97E1" class="blue"><b><a href="http://www.w3.org/TR/xslt#output" target="_blank">&lt;xsl:output … /&gt;</a></b></code></span><span>.
+<br>
+Исключениями являются атрибуты </span><code><b>doctype-public</b></code><span> и&nbsp;</span><code><b>doctype-system</b></code><span>, которые так задать нельзя.
+<br>
+<span>Пока также является исключением </span></span><code><span><b>cdata-section-elements</b></code></span><span><span>.</span></span><span>
+<br>
+
+<br>
+По&nbsp;умолчанию текст создается в&nbsp;кодировке </span><code><b><a href="requestcharset.htm">$request:charset</a></b></code><span>, однако в&nbsp;XML-заголовке или в&nbsp;элементе&nbsp;</span><code><b>meta</b></code><span> для&nbsp;HTML-метода Parser указывает кодировку </span><code><b><a href="responsecharset.htm">$response:charset</a></b></code><span>. Такое поведение можно изменить, явно указав кодировку в&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b><a href="http://www.w3.org/TR/xslt#output" target="_blank">&lt;xsl:output … /&gt;</a></b></code></span><span> или соответствующем параметре преобразования.
+<br>
+
+<br>
+При создании объекта класса </span><code><b><a href="xdocfile.htm">file</a></b></code><span> можно задать параметр </span><code><span style="color:#7F97E1" class="blue"><b>media-type</b></code></span><span>, при <a href="responsebody.htm">задании нового тела ответа</a> заголовок ответа </span><code><b>content-type</b></code><span> получит значение этого параметра.
+<br>
+
+<br>
+
+<br>
+<b>Пример</b></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+^document.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="xdocstring.htm">string</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[
+<br>
+&nbsp;&nbsp;&nbsp;$.method[html]
+<br>
+&nbsp;&nbsp;&nbsp;$.indent[no]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;$.omit-xml-declaration[yes]
+<br>
+&nbsp;&nbsp;&nbsp;$.encoding[windows-1251]
+<br>
+#&nbsp;&nbsp;&nbsp;$.charset[windows-1251]&nbsp;&nbsp;&nbsp;</b></code></span><span>&nbsp;&nbsp;&nbsp;<b><i>[3.4.2] </i></b>опция не&nbsp;может быть использована совместно с&nbsp;опцией&nbsp;</span><code><b>$.encoding[]</b></code><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+
+<br>
+</b></code><span>Будет выдан документ в&nbsp;HTML-представлении без&nbsp;отступов и&nbsp;XML-декларации.
+<br>
+</span><code><b>
+<br>
+
+<br>
+</b></code><span><b>Выдача XHTML
+<br>
+</b>Если необходимо выдать <a href="http://www.w3.org/TR/xhtml1/" target="_blank">XHTML</a>, следует использовать следующие атрибуты элемента&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b><a href="http://www.w3.org/TR/xslt#stylesheet-element" target="_blank">&lt;xsl:stylesheet … /&gt;</a></b></code></span><span>:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>&lt;xsl:stylesheet&nbsp;version="1.0"
+<br>
+&nbsp;&nbsp;&nbsp;xmlns="h</b></code></span><code><span style="color:#7F97E1" class="blue"><b>ttp</b></code></span><code><span style="color:#7F97E1" class="blue"><b>://www.w3.org/1999/xhtml"
+<br>
+&nbsp;&nbsp;&nbsp;xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<br>
+&gt;
+<br>
+</b></code></span><span>
+<br>
+Xmlns указывается  без&nbsp;префикса: так необходимо делать, чтобы все создаваемые в&nbsp;шаблоне элементы без&nbsp;префикса попадали в&nbsp;пространство имен </span><code>xhtml</code><span>. Необходимо задавать </span><code><span style="color:#7F97E1" class="blue"><b>xmlns</b></code></span><span> без&nbsp;префикса в&nbsp;каждом&nbsp;XSL-файле, этот параметр не&nbsp;распространяется на&nbsp;включаемые файлы.
+<br>
+
+<br>
+Помимо этого, требуется задать следующие атрибуты элемента </span><code><span style="color:#7F97E1" class="blue"><b><a href="http://www.w3.org/TR/xslt#output" target="_blank">&lt;xsl:output … /&gt;</a></b></code></span><span>:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>&lt;xsl:output&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;doctype-public="-//W3C//DTD&nbsp;XHTML&nbsp;1.0&nbsp;Strict//EN"
+<br>
+&nbsp;&nbsp;&nbsp;doctype-system="DTD/xhtml1-strict.dtd"
+<br>
+/&gt;
+<br>
+</b></code></span><span>
+<br>
+<i>Внимание: атрибут </i></span><code><b>method</b></code><span><i> не&nbsp;задается.</i> <i>XHTML</i>&nbsp;<i>- это разновидность метода&nbsp;</i></span><code><b>xml</b></code><span><i>, включающаяся при использовании следующих doctype:
+<br>
+</i></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;-//W3C//DTD&nbsp;XHTML&nbsp;1.0&nbsp;Strict//EN
+<br>
+&nbsp;&nbsp;&nbsp;-//W3C//DTD&nbsp;XHTML&nbsp;1.0&nbsp;Frameset//EN
+<br>
+&nbsp;&nbsp;&nbsp;-//W3C//DTD&nbsp;XHTML&nbsp;1.0&nbsp;Transitional//EN
+<br>
+</b></code></span></span>

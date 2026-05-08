@@ -1,0 +1,80 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">polyline. Рисование ломаных линий по&nbsp;координатам узлов</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^картинка.polyline(цвет)[таблица&nbsp;с&nbsp;координатами&nbsp;точек]&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+</b><span>
+<br>
+Метод рисует линию по&nbsp;координатам узлов, задаваемым в&nbsp;таблице. Он используется для&nbsp;создания ломаных линий.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></code><code><span style="color:#7F97E1" class="blue"><b>$coordinates[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablecreate.htm">table::create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{x&nbsp;&nbsp;&nbsp;y
+<br>
+10&nbsp;&nbsp;&nbsp;0
+<br>
+10&nbsp;&nbsp;&nbsp;100
+<br>
+20&nbsp;&nbsp;&nbsp;100
+<br>
+20&nbsp;&nbsp;&nbsp;50
+<br>
+50&nbsp;&nbsp;&nbsp;50
+<br>
+50&nbsp;&nbsp;&nbsp;40
+<br>
+20&nbsp;&nbsp;&nbsp;40
+<br>
+20&nbsp;&nbsp;&nbsp;10
+<br>
+60&nbsp;&nbsp;&nbsp;10
+<br>
+65&nbsp;&nbsp;&nbsp;15
+<br>
+65&nbsp;&nbsp;&nbsp;0
+<br>
+10&nbsp;&nbsp;&nbsp;0
+<br>
+}]
+<br>
+$square[^image::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="imagecreate.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>(100;100;0xFFFFFF)]
+<br>
+
+<br>
+$square.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="imagefields.htm">line-style</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[***&nbsp;&nbsp;&nbsp;]
+<br>
+$square.line-width(2)
+<br>
+
+<br>
+^square.polyline(0xFF00FF)[$coordinates]
+<br>
+
+<br>
+$file_withgif[^square.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="imagegif.htm">gif</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]]
+<br>
+^file_withgif.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="filesave.htm">save</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[binary;</b></code></span><code><b>letter_F.gif</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+
+<br>
+$letter_F[^image::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="imageload.htm">load</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>letter_F.gif</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+^letter_F.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="imagehtml.htm">html</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]
+<br>
+</b></code></span><span>
+<br>
+В браузере будет выведена буква F, нарисованная пунктирной линией на&nbsp;белом фоне. В&nbsp;рабочем каталоге будет создан файл&nbsp;</span><code>letter.gif</code><span>. В&nbsp;этом примере используются объекты класса&nbsp;</span><code><b>image</b></code><span> двух различных типов. В&nbsp;таблице задаются координаты точек ломаной линии. Затем на&nbsp;созданном с&nbsp;помощью конструктора&nbsp;</span><code><b><a href="imagecreate.htm">create</a></b></code><span> фоне рисуется линия по&nbsp;указанным координатам узлов. Созданный объект класса&nbsp;</span><code><b>image</b></code><span> кодируется в&nbsp;формат GIF. Полученный в&nbsp;результате этого объект класса&nbsp;</span><code><b><a href="fileclass.htm">file</a></b></code><span> сохраняется на&nbsp;диск. Затем создается новый объект класса&nbsp;</span><code><b>image</b></code><span> на&nbsp;основе сохраненного файла. Этот объект выводится на&nbsp;экран браузера методом </span><code><b><a href="imagehtml.htm">html</a></b></code><span>.
+<br>
+</span></span>

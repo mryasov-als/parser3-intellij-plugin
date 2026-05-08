@@ -1,0 +1,52 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">sql. Загрузка файла с&nbsp;SQL-сервера</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file::sql{запрос}
+<br>
+^file::sql{запрос}[$.name[имя]&nbsp;$.content-type[пользовательский&nbsp;тип]&nbsp;</b><b>$.limit(1)&nbsp;</b><b>$.offset(n)]
+<br>
+</b><span>
+<br>
+Загружает файл с&nbsp;SQL-сервера. Результатом выполнения запроса должна быть одна запись (при&nbsp;необходимости следует воспользоваться опцией </code><code>limit</code><span>). 
+<br>
+
+<br>
+Считается, что:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>первая колонка содержит данные файла;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>вторая колонка содержит имя файла;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>третья колонка содержит </span><code>content-type</code><span> файла (если не&nbsp;указан, он будет определен по&nbsp;таблице&nbsp;</span><code><b><a href="parserconfmethod.htm">$MIME-TYPES</a></b></code><span>).
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Необязательные параметры:</span><span>
+<br>
+</span><code><b>$.limit(1)</b></code><span>&nbsp;- в&nbsp;ответе заведомо будет содержаться только одна строка;<b><i> [3.</i></b><b><i>3</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]</i></b>
+<br>
+</span><code><b>$.offset(n)</b></code><span>&nbsp;- отбросить первые </span><code><b>n</b></code><span> записей выборки;<b><i> [3.</i></b><b><i>3</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]</i></b>
+<br>
+</span><code><b>$.content-type[пользовательский&nbsp;тип]</b></code><span> - задать пользовательский </span><code>content-type</code><span>;
+<br>
+</span><code><b>$.name[имя]</b></code><span> - задать имя файла.
+<br>
+
+<br>
+Имя файла и&nbsp;его </span><code>content-type</code><span> будут переданы посетителю при </span><code><b><a href="responsedownload.htm">$response:download</a></b></code><span>.
+<br>
+
+<br>
+<i>Примечание: пока работает только с&nbsp;MySQL-сервером.</i>
+<br>
+</span></span>

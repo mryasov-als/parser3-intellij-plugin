@@ -1,0 +1,64 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">offset и&nbsp;line. Получение смещения указателя текущей строки</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица.offset[]
+<br>
+</b><span>
+<br>
+Метод </code><code><b>offset</b></code><span> без&nbsp;параметров возвращает текущее смещение указателя текущей строки от&nbsp;начала таблицы.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$men[^table::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablecreate.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{name
+<br>
+</b></code></span><code><b>Вася
+<br>
+Петя
+<br>
+Сережа</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+}]
+<br>
+^men.menu{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;^men.offset[]&nbsp;-&nbsp;$men.name
+<br>
+}[</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+
+<br>
+</b></code></span><span>Выдаст:
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;-&nbsp;Вася&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;-&nbsp;Петя&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;-&nbsp;Сережа</b></code><span><b>
+<br>
+</b></span><span>
+<br>
+
+<br>
+Людям более привычно считать записи, начиная с&nbsp;единицы. Для удобного вывода нумерованных списков имеется метод&nbsp;</span><code><b>line</b></code><span>:
+<br>
+
+<br>
+</span><code><b>^таблица.line[]
+<br>
+</b></code><span>
+<br>
+Метод позволяет сразу получить номер записи из&nbsp;таблицы в&nbsp;привычном виде, когда номер первой строки равен&nbsp;1. Если в&nbsp;примере использовать </span><code><b>^men.line[]</b></code><span>, то&nbsp;нумерация будет идти от&nbsp;1&nbsp;до&nbsp;3.
+<br>
+</span></span>

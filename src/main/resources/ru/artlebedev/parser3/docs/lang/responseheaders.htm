@@ -1,0 +1,36 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">headers. Заданные заголовки HTTP-ответа</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$response:headers&nbsp;
+<br>
+</b><span>
+<br>
+Возвращает&nbsp;<a href="hash.htm">хеш</a> со&nbsp;всеми заголовками HTTP-ответа, которые были <a href="responsefields.htm">заданы</a> в&nbsp;коде на&nbsp;данный момент. Заголовки имеют имена в&nbsp;верхнем регистре.<b><i>&nbsp;&nbsp;&nbsp;[3.4.4]</i></b><i>
+<br>
+</i>
+<br>
+<b>Пример</b><b>
+<br>
+</b></code><code><b>$response:</b><b><a href="responsefields.htm">expires</a></b><b>[^</b><b><a href="dateclass.htm">date</a></b><b>::</b><b><a href="datenow.htm">now</a></b><b>(+1)]
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^response:headers.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="hashforeach.htm">foreach</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[header;value]{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>header</b></code></span><code><b>&nbsp;-&nbsp;</b><b>^if(</b><span style="color:#7F97E1" class="blue"><b>$value</b></code></span><code><b>&nbsp;is&nbsp;"string"&nbsp;||&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$value</b></code></span><code><b>&nbsp;is&nbsp;"int"&nbsp;||&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$value</b></code></span><code><b>&nbsp;is&nbsp;"double"){</b><span style="color:#7F97E1" class="blue"><b>$value</b></code></span><code><span style="color:#7F97E1" class="blue"><b>}{not&nbsp;printable}</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}[</b></code></span><code><b>&lt;br</b><b>&nbsp;/</b><b>&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Пример выведет на&nbsp;экран все заданные ранее заголовки HTTP-ответа.
+<br>
+</span></span>

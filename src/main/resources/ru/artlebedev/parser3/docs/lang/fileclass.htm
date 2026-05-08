@@ -1,0 +1,30 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">file (класс)</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Класс <code><b>file</b></code><span> предназначен для&nbsp;работы с&nbsp;файлами. Объекты класса могут быть созданы различными способами:
+<br>
+
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>1)</span></span></td><td><span>методом </span><code><b>POST</b></code><span> через поле формы </span><code><b>&lt;form&nbsp;method="post"&nbsp;enctype="multipart/form-data"&gt;…&lt;input&nbsp;name="photo"&nbsp;type="file"&gt;</b></code><span>
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>2)</span></td><td><span>одним из&nbsp;конструкторов класса </span><code><b>file</b></code><span>
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+При передаче файлов клиентам (например, методом </span><code><span style="color:#7F97E1" class="blue"><b><u><a href="mailclass.htm">mail:send</a></u></b></code></span><span> или через поле </span><code><b><a href="responseclass.htm">response:body</a></b></code><span>) необходимо задавать HTTP-заголовок </span><code><b>content-type</b></code><span>. В Parser для&nbsp;определения типа файла по&nbsp;расширению его имени существует таблица </span><code><b>MIME-TYPES</b></code><span>, определенная в&nbsp;<a href="parserconfmethod.htm">Конфигурационном методе</a> (см.&nbsp;главу <a href="install.htm">«Установка и настройка Parser»</a>). По&nbsp;ней, в&nbsp;зависимости от&nbsp;расширения файла, Parser автоматически определяет нужный тип данных для&nbsp;передачи в&nbsp;строке </span><code><b>content-type</b></code><span>. Если тип данных не&nbsp;удается определить по&nbsp;таблице, используется тип </span><code>application/octet-stream</code><span>.
+<br>
+
+<br>
+</span><span>Для проверки существования файлов и&nbsp;каталогов есть специальные <a href="opsfd.htm">операторы</a>.
+<br>
+</span></span>

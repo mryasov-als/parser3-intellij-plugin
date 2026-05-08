@@ -1,0 +1,70 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Дата или время в стандартном формате для СУБД</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^date::create[год]
+<br>
+^date::create[</b><b>год-месяц</b><b>]
+<br>
+^date::create[</b><b>год-месяц-день</b><b>]
+<br>
+^date::create[</b><b>год-месяц-день&nbsp;часы</b><b>]
+<br>
+^date::create[</b><b>год-месяц-день&nbsp;часы:минуты</b><b>]
+<br>
+^date::create[</b><b>год-месяц-день&nbsp;часы:минуты:секунды</b><b>]
+<br>
+^date::create[</b><b>год-месяц-день&nbsp;часы:минуты:секунды.миллисекунды</b><b>]
+<br>
+^date::create[</b><b>часы:минуты</b><b>]
+<br>
+^date::create[</b><b>часы:минуты:секунды</b><b>]
+<br>
+</b><span>
+<br>
+Создает объект класса </code><code><b>date</b></code><span>, содержащий значение произвольной даты и&nbsp;(или)&nbsp;времени с&nbsp;точностью до&nbsp;секунды. Обязательными частями строки-параметра являются: значение </span><code><b>года</b></code><span> или </span><code><b>часа</b></code><span> и&nbsp;</span><code><b>минуты</b></code><span>. </span><code><b>Месяц</b></code><span>, </span><code><b>день</b></code><span>, </span><code><b>часы</b></code><span>,  </span><code><b>минуты</b></code><span>,  </span><code><b>секунды</b></code><span>, </span><code><b>миллисекунды</b></code><span> являются необязательными, если не&nbsp;заданы, подставляются первый день, нулевые час, минута, секунда или текущий день.
+<br>
+
+<br>
+<i>Замечание: значение </i></span><code><b>миллисекунды</b></code><span><i> игнорируется.</i>
+<br>
+
+<br>
+Удобно использовать этот конструктор для&nbsp;работы с&nbsp;датами, полученными из&nbsp;базы данных, ведь из&nbsp;запроса получаются значения полей с&nbsp;датой, временем или и&nbsp;датой, и&nbsp;временем в&nbsp;виде строк.
+<br>
+
+<br>
+<b>Пример</b></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>#&nbsp;считаем&nbsp;новыми&nbsp;статьи&nbsp;за&nbsp;последние&nbsp;3&nbsp;дня
+<br>
+$new_after[^date::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datenow.htm">now</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>(-3)]
+<br>
+$articles[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablesql.htm">table::sql</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{select&nbsp;id,&nbsp;title,&nbsp;last_update&nbsp;from&nbsp;articles&nbsp;where&nbsp;…}]
+<br>
+^articles.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablemenu.htm">menu</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$last_update[^date::create[$articles.last_update]]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;a&nbsp;href=</b><span style="color:#7F97E1" class="blue"><b>${articles.id}</b></code></span><code><b>.html&gt;</b><span style="color:#7F97E1" class="blue"><b>$articles.title</b></code></span><code><b>&lt;/a&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;^if($last_update&nbsp;&gt;&nbsp;$new_after){</b></code></span><code><b>новая</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&lt;br</b><b>&nbsp;/</b><b>&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+<i>Вниманию пользователей Oracle: чтобы получать дату и&nbsp;время в&nbsp;удобном формате, в&nbsp;строке соединения с&nbsp;сервером нужно указать формат даты и&nbsp;времени, рекомендованный в&nbsp;</i><i><a href="app3oracle.htm">Приложении 3</a></i><i>.
+<br>
+</i></span></span>

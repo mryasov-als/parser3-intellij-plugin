@@ -1,0 +1,74 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">menu. Последовательный перебор всех строк таблицы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица.menu{код}&nbsp;&nbsp;
+<br>
+^таблица.menu{код}[разделитель]&nbsp;&nbsp;
+<br>
+^таблица.menu{код}{разделитель}</b>&nbsp;<b>&nbsp;&nbsp;&nbsp;
+<br>
+</b><span>
+<br>
+Метод </code><code><b>menu</b></code><span> выполняет код для&nbsp;каждой строки </span><code><b>таблицы</b></code><span>, последовательно перебирая все строки. 
+<br>
+
+<br>
+</span><code><b>Разделитель</b></code><span>&nbsp;- код, который вставляется перед каждым не&nbsp;пустым не&nbsp;первым телом. Разделитель в&nbsp;квадратных скобках вычисляется один раз, в&nbsp;фигурных&nbsp;- многократно по&nbsp;ходу вызова.
+<br>
+
+<br>
+<i>Примечание</i><i>: </i><i>если </i></span><code><b>разделитель</b></code><span><i> задан в&nbsp;виде кода, то&nbsp;этот код выполняется после следующего не&nbsp;пустого тела цикла.
+<br>
+</i>
+<br>
+В любой момент можно принудительно выйти из&nbsp;цикла с&nbsp;помощью оператора </span><code><span style="color:#7F97E1" class="blue"><b><a href="opbreak.htm">break</a></b></code></span><span> или принудительно закончить текущую итерацию и&nbsp;перейти к&nbsp;следующей с&nbsp;помощью оператора </span><code><span style="color:#7F97E1" class="blue"><b><a href="opcontinue.htm">continue</a></b></code></span><span>.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$goods[^table::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablecreate.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{&nbsp;&nbsp;&nbsp;pos&nbsp;&nbsp;&nbsp;good&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;price
+<br>
+</b></code></span><code><b>1&nbsp;&nbsp;&nbsp;Монитор&nbsp;&nbsp;&nbsp;1000
+<br>
+2&nbsp;&nbsp;&nbsp;Системный&nbsp;блок&nbsp;&nbsp;&nbsp;1500
+<br>
+3&nbsp;&nbsp;&nbsp;Клавиатура&nbsp;&nbsp;&nbsp;15</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+</b></code></span><code><b>&lt;table&nbsp;border=1&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^goods.menu{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;tr&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;td&gt;</b><span style="color:#7F97E1" class="blue"><b>$goods.pos</b></code></span><code><b>&lt;/td&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;td&gt;</b><span style="color:#7F97E1" class="blue"><b>$goods.good</b></code></span><code><b>&lt;/td&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;td&gt;</b><span style="color:#7F97E1" class="blue"><b>$goods.price</b></code></span><code><b>&lt;/td&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;/tr&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><code><b>&lt;/table&gt;
+<br>
+</b></code><span>
+<br>
+
+<br>
+Пример выводит содержимое таблицы </span><code><b>$goods</b></code><span> в&nbsp;виде HTML-таблицы.
+<br>
+</span></span>

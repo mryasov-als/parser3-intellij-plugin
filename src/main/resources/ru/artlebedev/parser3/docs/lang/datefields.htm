@@ -1,0 +1,84 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Поля объектов класса date</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Через поля объектов класса <code><b>date</b></code><span> могут быть получены следующие величины:
+<br>
+
+<br>
+</span><code><b>$date.month</b></code><span>  месяц&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>$date.year</b></code><span>  год&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>$date.day</b></code><span>  день&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>$date.hour</b></code><span>  часы&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>$date.minute</b></code><span>  минуты&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>$date.second</b></code><span>  секунды
+<br>
+</span><code><b>$date.weekday</b></code><span>  день недели (</span><code>0</code><span> - воскресенье, </span><code>1</code><span> - понедельник, …)
+<br>
+</span><code><b>$date.week</b></code><span>  номер недели в&nbsp;году (согласно стандарту </span><code>ISO&nbsp;8601</code><span>)
+<br>
+</span><code><b>$date.weekyear</b></code><span>  год, к&nbsp;которому принадлежит неделя (согласно стандарту </span><code>ISO&nbsp;8601</code><span>)
+<br>
+</span><code><b>$date.yearday</b></code><span>  день года (</span><code>0</code><span> - 1&nbsp;января, </span><code>1</code><span> - 2&nbsp;января, …)
+<br>
+</span><code><b>$date.daylightsaving</b></code><span>  </span><code>1</code><span> - летнее время, </span><code>0</code><span> - стандартное время
+<br>
+</span><code><b>$date.TZ&nbsp;</b></code><span> часовой пояс; содержит значение, оно было задано этой дате<b><i>
+<br>
+</i></b>
+<br>
+Значения полей </span><code><b>year,</b></code><span> </span><code><b>month,</b></code><span> </span><code><b>day,</b></code><span> </span><code><b>hour,</b></code><span> </span><code><b>minute,</b></code><span> </span><code><b>second</b></code><span> можно менять.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$date_now[^date::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datenow.htm">now</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]]&nbsp;
+<br>
+$date_now.year</b></code></span><code><b>&lt;br&nbsp;/&gt;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+$date_now.month</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+$date_now.day</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+$date_now.hour</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+$date_now.minute</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>$date_now.second</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+$date_now.weekday</b></code></span><span>
+<br>
+</span><span>
+<br>
+В результате выполнения данного кода создается объект класса </span><code><b>date</b></code><span>, содержащий значение текущей даты, а&nbsp;на&nbsp;экран будет выведено значение:
+<br>
+</span><code><b>год
+<br>
+месяц
+<br>
+день
+<br>
+час
+<br>
+минута
+<br>
+секунда
+<br>
+день&nbsp;недели</b></code><span>
+<br>
+</span></span>

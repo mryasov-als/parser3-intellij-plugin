@@ -1,0 +1,60 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">mixin. Дополнение типа&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.4.</i></b><b><i>5</i></b><b><i>]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^reflection:mixin[источник;опции]
+<br>
+</b><span>
+<br>
+Метод копирует в&nbsp;класс методы и&nbsp;поля другого класса.
+<br>
+
+<br>
+Можно задать <a href="hash.htm">хеш</a> опций.
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></code></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.</b><b>to</b><b>[получатель]</b></code><span> - Класс, в&nbsp;который будут копироваться методы и&nbsp;поля источника. По&nbsp;умолчанию&nbsp;- класс, из&nbsp;которого вызвали </span><code><b>mixin</b></code><span>.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.name[имя]</b></code><span> - Копировать только метод или поле с&nbsp;указанным именем. По&nbsp;умолчанию&nbsp;- копируется все.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.methods(true|false)</b></code><span> - Копировать&nbsp;ли методы класса-источника. По&nbsp;умолчанию&nbsp;- копировать.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.fields(true|false)</b></code><span> - Копировать&nbsp;ли статические поля класса-источника. По&nbsp;умолчанию&nbsp;- копировать.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.overwrite(false|true)</b></code><span> - Перезаписывать&nbsp;ли одноименные методы и&nbsp;поля класса-получателя. По&nbsp;умолчанию&nbsp;- не&nbsp;перезаписывать.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><b>
+<br>
+@CLASS
+<br>
+B
+<br>
+
+<br>
+@auto[]
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^reflection:mixin[$A:CLASS;&nbsp;$.fields(false)&nbsp;]
+<br>
+</b></code></span><span>
+<br>
+При загрузке класса&nbsp;B скопирует в&nbsp;него  методы класса&nbsp;A.
+<br>
+
+<br>
+</span></span>

@@ -1,0 +1,180 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">sql. Создание хеша на&nbsp;основе выборки из&nbsp;базы данных</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^hash::sql{запрос}&nbsp;&nbsp;
+<br>
+^hash::sql{запрос}[$.limit(n)&nbsp;$.offset(n)&nbsp;$.distinct(true|false)&nbsp;$.</b><b><a href="app7.htm">bind</a></b><b>[variables&nbsp;hash]&nbsp;$.type[hash|string|table]]</b><span><b>
+<br>
+</b></code><span>
+<br>
+Конструктор создает хеш, в&nbsp;котором имена ключей совпадают со&nbsp;значениями первого столбца выборки. По умолчанию каждый элемент - тоже хеш, где имена столбцов используются в качестве ключей, а соответствующие им значения - это данные столбцов.
+<br>
+Если&nbsp;же запрос возвращает только один столбец, формируется хеш, где значения столбца формируют ключи хеша, и&nbsp;им ставится в&nbsp;соответствие логическое значение «</span><code><b>истина</b></code><span>».
+<br>
+
+<br>
+Дополнительные параметры конструктора:
+<br>
+<table border="0" cellpadding="1"><tr><td align="left" valign="top" width="206">
+<code><b>$.limit(n)</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="484">
+<span>получить только <code><b>n</b></code><span> записей
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="206">
+<code><b>$.offset(n)</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="484">
+<span>отбросить первые <code><b>n</b></code><span> записей выборки
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="206">
+<code><b>$.bind[hash]</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="484">
+<span>связанные переменные, см. «<a href="app7.htm">Работа с IN/OUT-переменными</a>»
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="206">
+<code><b>$.distinct(</b><b>true|false</b><b>)</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="484">
+<code><b>false</b><span> или </code><code><b>0</b></code><span>&nbsp;= считать наличие дубликата ошибкой (по&nbsp;умолчанию);
+<br>
+</span><code><b>true</b></code><span> или </span><code><b>1</b></code><span>&nbsp;= выбрать из&nbsp;таблицы записи с&nbsp;уникальным ключом.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="206">
+<code><b>$.type[hash/string/table]&nbsp;</b><span> <b><i>[3.3.0]</i></b>
+<br>
+</code></span></td><td align="left" valign="top" width="484">
+<code><b>hash</b><span>&nbsp;= значение каждого элемента&nbsp;- хеш (по&nbsp;умолчанию);
+<br>
+</code><code><b>string</b></code><span>&nbsp;= значение каждого элемента&nbsp;- строка, при этом нужно указать ровно <i>два</i> столбца в&nbsp;SQL-запросе;
+<br>
+</span><code><b>table</b></code><span>&nbsp;= значение каждого элемента - таблица со всеми колонками результата.
+<br>
+</span></span></td></tr></table>
+<br>
+
+<br>
+По&nbsp;умолчанию наличие в&nbsp;ключевом столбце одинаковых значений считается ошибкой. Если наличие дубликатов допустимо, следует задать опцию </span><code><b>$.distinct(</b><b><a href="boollit.htm">true</a></b><b>)</b></code><span>. В этом случае в качестве данных для каждого ключа используется первая встреченная строка, последующие строки с тем же ключом игнорируются без ошибки. А если задать </span><code><b>$.type[table]</b></code><span>, для каждого ключа формируется таблица со всеми записями, имеющими этот ключ.
+<br>
+
+<br>
+<b>Пример hash of hash
+<br>
+</b>В БД содержится таблица </span><code>hash_table</code><span>:
+<br>
+</span><code><b><i>pet&nbsp;&nbsp;&nbsp;food&nbsp;&nbsp;&nbsp;aggressive</i></b></code><span><b>
+<br>
+</b></span><code><b>cat&nbsp;&nbsp;&nbsp;milk&nbsp;&nbsp;&nbsp;very</b></code><span><b>
+<br>
+</b></span><code><b>dog&nbsp;&nbsp;&nbsp;bone&nbsp;&nbsp;&nbsp;never</b></code><span><b>
+<br>
+</b></span><span>
+<br>
+Выполнение кода:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opconnect.htm">connect</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="app3.htm">строка подключения</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{
+<br>
+&nbsp;&nbsp;&nbsp;$hash_of_hash[^hash::sql{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>select&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pet,
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;food,
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aggressive
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hash_table
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;}]
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+даст хеш такой структуры:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$hash_of_hash[
+<br>
+&nbsp;&nbsp;&nbsp;$.cat[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.food[</b></code></span><code><b>milk</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.aggressive[</b></code></span><code><b>very</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;]
+<br>
+&nbsp;&nbsp;&nbsp;$.dog[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.food[</b></code></span><code><b>bone</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.aggressive[</b></code></span><code><b>never</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;]
+<br>
+]
+<br>
+</b></code></span><span>
+<br>
+из которого можно эффективно извлекать информацию, например, так:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$animal[cat]
+<br>
+$animal</b></code></span><code><b>&nbsp;любит&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$hash_of_hash.$animal.food
+<br>
+
+<br>
+</b></code></span><span><b>Пример hash of bool
+<br>
+</b>В БД содержится таблица </span><code>participants</code><span>:
+<br>
+</span><code><b><i>name
+<br>
+</i></b><b>Константин
+<br>
+Александр
+<br>
+</b></code><span>
+<br>
+Выполнение кода:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opconnect.htm">connect</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="app3.htm">строка подключения</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{
+<br>
+&nbsp;&nbsp;&nbsp;$participants[^hash::sql{</b></code></span><code><b>select&nbsp;</b><b><i>name</i></b><b>&nbsp;from&nbsp;participants</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+даст хеш такой структуры:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$participants[
+<br>
+&nbsp;&nbsp;&nbsp;$.Константин(</b></code></span><code><b><a href="boollit.htm">true</a></b><span style="color:#7F97E1" class="blue"><b>)
+<br>
+&nbsp;&nbsp;&nbsp;$.Александр(true)
+<br>
+]
+<br>
+</b></code></span><span>
+<br>
+из которого можно эффективно извлекать информацию, например, так:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$name[</b></code></span><code><b>Иван</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$name&nbsp;^if($participants.$name){</b></code></span><code><b>участвует</b><span style="color:#7F97E1" class="blue"><b>}{</b></code></span><code><b>не&nbsp;участвует</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>&nbsp;в&nbsp;мероприятии</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span></span>

@@ -1,0 +1,68 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Передача параметров</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Параметры могут передаваться в&nbsp;разных скобках, которые определяют способ обработки параметра:
+<br>
+
+<br>
+<code><b>{код}</b></code><span> -  выполнение кода параметра происходит при каждом обращении к&nbsp;нему внутри вызванного метода;
+<br>
+</span><code><b>(выражение)</b></code><span> -  вычисление значения выражения в&nbsp;параметре происходит при каждом обращении к&nbsp;нему внутри вызванного метода;
+<br>
+</span><code><b>[код]</b></code><span> - выполнение кода параметра происходит один раз перед вызовом метода.
+<br>
+
+<br>
+Пример на&nbsp;различие скобок, в&nbsp;которых передаются параметры:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@main[]
+<br>
+$a(20)
+<br>
+$b(10)
+<br>
+^sum[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opeval.htm">eval</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>($a+$b)]
+<br>
+</b></code></span><code><b>&lt;hr</b><b>&nbsp;/</b><b>&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^sum($a+$b)
+<br>
+
+<br>
+@sum[c]
+<br>
+^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opfor.htm">for</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[b](100;110){
+<br>
+&nbsp;&nbsp;&nbsp;$c
+<br>
+}[</b></code></span><code><b>&lt;br</b><b>&nbsp;/</b><b>&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Здесь хорошо видно, что в&nbsp;первом случае код был вычислен один раз перед вызовом метода </span><code><b>sum</b></code><span>, и&nbsp;методу передался результат кода&nbsp;- число&nbsp;30. Во втором случае вычисление кода происходило при каждом обращении к&nbsp;параметру, поэтому результат менялся в&nbsp;зависимости от&nbsp;значения счетчика.
+<br>
+
+<br>
+Параметров может быть сколь угодно много или не&nbsp;быть совсем. Если в&nbsp;однотипных скобках указано несколько параметров, то&nbsp;они могут отделяться друг от&nbsp;друга точкой с&nbsp;запятой. Допустимы любые комбинации различных типов параметров.
+<br>
+
+<br>
+Например…
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opif.htm">if</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>(условие){когда&nbsp;да;когда&nbsp;нет}
+<br>
+</b></code></span><span>…эквивалентно…</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;^if(условие){когда&nbsp;да}{когда&nbsp;нет}</b></code></span><span>
+<br>
+</span></span>

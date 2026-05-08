@@ -1,0 +1,64 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Копирование существующей таблицы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^table::create[таблица]
+<br>
+^table::create[таблица;</b><b><a href="tablecopylocateoptions.htm">опции</a></b><b>]
+<br>
+
+<br>
+</b><span>Конструктор создает объект класса </code><code><b>table</b></code><span>, копируя данные из&nbsp;другой </span><code><b>таблицы</b></code><span>. Также можно задать ряд опций, контролирующих копирование (см.&nbsp;«<a href="tablecopylocateoptions.htm">Опции копирования и поиска</a>»).
+<br>
+</span><code><b>
+<br>
+</b></code><span><b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$orig[^table::create{name</b></code></span><code><b>
+<br>
+Вася
+<br>
+Коля
+<br>
+Маша
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+
+<br>
+#сдвигает&nbsp;текущую&nbsp;запись&nbsp;таблицы&nbsp;orig&nbsp;на&nbsp;«Коля»
+<br>
+^orig.offset(1)
+<br>
+
+<br>
+#копирует,&nbsp;начиная&nbsp;с&nbsp;текущей&nbsp;записи&nbsp;в&nbsp;orig,&nbsp;не&nbsp;больше&nbsp;10&nbsp;записей
+<br>
+$copy[^table::create[$orig;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.offset[cur]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.limit(10)
+<br>
+]]
+<br>
+
+<br>
+^copy.menu{$copy.name}[,</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><b>
+<br>
+</b></code><span>Выведет…
+<br>
+</span><code><b>Коля,&nbsp;Маша</b></code><span>
+<br>
+</span></span>

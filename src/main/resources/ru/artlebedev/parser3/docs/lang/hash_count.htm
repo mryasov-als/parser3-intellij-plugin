@@ -1,0 +1,48 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">count. Количество ключей хеша</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^хеш._count[]</b>&nbsp;&nbsp;&nbsp;<span>
+<br>
+</code><code><b>^хеш.count[]</b></code><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.4]</i></b></span><span>
+<br>
+</span><span>
+<br>
+Метод возвращает количество ключей хеша.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$man[
+<br>
+&nbsp;&nbsp;&nbsp;$.name[</b></code></span><code><b>Вася</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.age[</b></code></span><code><b>22</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.gender[</b></code></span><code><b>m</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+^man.count[]
+<br>
+</b></code></span><span>
+<br>
+Вернет: </span><code><b>3</b></code><span>.
+<br>
+
+<br>
+В выражениях числовое значение хеша равно количеству ключей:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^if($man&nbsp;&gt;&nbsp;2){</b></code></span><code><b>больше</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><span>
+<br>
+</span></span>

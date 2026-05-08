@@ -1,0 +1,60 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">unescape. Декодирование JavaScript- или&nbsp;URI-кодирования</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.4]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^string:unescape[js|uri;закодированное]
+<br>
+^string:unescape[js|uri;закодированное;опции]
+<br>
+</b><span>
+<br>
+<i>Примечание: именно статический метод, не&nbsp;конструктор!
+<br>
+</i><i>
+<br>
+</i>С параметром </code><code><b>js</b></code><span> метод эквивалентен методу </span><code><b><a href="stringjsunescape.htm">js-unescape</a></b></code><span> и&nbsp;выполняет преобразование строки, аналогичное методу&nbsp;</span><code><b>unescape</b></code><span>, который описан в&nbsp;ECMA-262. Предусмотрена возможность декодировать строки, закодированные в&nbsp;браузере с&nbsp;помощью функции </span><code><b>escape</b></code><span>.
+<br>
+<i>
+<br>
+</i>С параметром </span><code><b>uri</b></code><span> метод выполняет декодирование URI-кодированных (процентно кодированных) строк. Возможно декодировать, например, </span><code><b><a href="requesturi.htm">$request:uri</a></b></code><span>.
+<br>
+<b><i>
+<br>
+</i></b>Поддерживаемые опции:
+<br>
+
+<br>
+</span><span><table border="0" cellpadding="1"><tr><td align="left" valign="top" width="240">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="103">
+<span><b>По&nbsp;умолчанию</b><b>
+<br>
+</b></span></td><td align="left" valign="top" width="240">
+<span><b>Описание</b><b>
+<br>
+</b></span></td></tr><tr><td align="left" valign="top" width="240">
+<code><b>$.</b><b>charset[</b><b>название&nbsp;кодировки]</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="103">
+<span>не определен
+<br>
+</span></td><td align="left" valign="top" width="240">
+<span>После декодирования преобразовать результат из&nbsp;указанной кодировки в&nbsp;<a href="requestcharset.htm">кодировку на сервере</a>.
+<br>
+</span></td></tr></table>
+<br>
+</span><span>
+<br>
+</span></span>

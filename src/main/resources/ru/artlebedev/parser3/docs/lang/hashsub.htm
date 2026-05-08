@@ -1,0 +1,48 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">sub. Вычитание хешей</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^хеш.sub[хеш-вычитаемое]</b>&nbsp;&nbsp;&nbsp;<span>
+<br>
+</code><span>
+<br>
+Метод вычитает из&nbsp;</span><code><b>хеша</b></code><span> другой </span><code><b>хеш-вычитаемое</b></code><span>, удаляя ключи, общие для&nbsp;обоих хешей.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$man[
+<br>
+&nbsp;&nbsp;&nbsp;$.name[</b></code></span><code><b>Вася</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.age[</b></code></span><code><b>22</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.gender[</b></code></span><code><b>m</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+$woman[
+<br>
+&nbsp;&nbsp;&nbsp;$.name[</b></code></span><code><b>Маша</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.age[</b></code></span><code><b>20</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+^man.sub[$woman]
+<br>
+</b></code></span><span>
+<br>
+В результате в&nbsp;хеше </span><code><b>$man</b></code><span> останется только один ключ </span><code><b>$man.gender</b></code><span> со&nbsp;значением </span><code><b>m</b></code><span>.
+<br>
+</span></span>

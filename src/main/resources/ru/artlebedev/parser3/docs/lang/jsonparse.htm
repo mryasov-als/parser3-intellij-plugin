@@ -1,0 +1,180 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">parse. Преобразование JSON-строки в&nbsp;хеш</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^json:parse[JSON-строка;опции&nbsp;преобразования]
+<br>
+</b><b>
+<br>
+</b><span>Метод преобразует JSON-строку в&nbsp;хеш.
+<br>
+</code><span>
+<br>
+</span><code><b>Опции</b></code><span> </span><code><b>преобразования</b></code><span> - хеш, в&nbsp;котором можно указать опции, рассмотренные ниже.
+<br>
+
+<br>
+</span><span><table border="0" cellpadding="1"><tr><td align="left" valign="top" width="234">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="255">
+<span><b>По&nbsp;умолчанию
+<br>
+</b></span></td><td align="left" valign="top" width="474">
+<span><b>Описание
+<br>
+</b></span></td></tr><tr><td align="left" valign="top" width="234">
+<code><b>$.depth(</b><span>число</code><code><b>)</b></code><span>
+<br>
+</span></span></td><td align="left" valign="top" width="255">
+<span>19
+<br>
+</span></td><td align="left" valign="top" width="474">
+<span>Максимальная глубина вложенности.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="234">
+<code><b>$.double(</b><span><a href="boolclass.htm">true|false</a></code><code><b>)</b></code><span>
+<br>
+</span></span></td><td align="left" valign="top" width="255">
+<span>true
+<br>
+</span></td><td align="left" valign="top" width="474">
+<span>Преобразовывать вещественные числа в&nbsp;объекты класса&nbsp;<code><b><a href="intdoubleclasses.htm">double</a></b></code><span>. Если указано значение </span><code><b>false</b></code><span>, то&nbsp;числовые значения будут оставаться в&nbsp;виде строк.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="234">
+<code><b>$.int(</b><span><a href="boolclass.htm">true|false</a></code><code><b>)</b>
+<br>
+</code></span></td><td align="left" valign="top" width="255">
+<span>true<code>
+<br>
+</code></span></td><td align="left" valign="top" width="474">
+<span>Преобразовывать целые числа в&nbsp;объекты класса&nbsp;<code><b><a href="intdoubleclasses.htm">int</a></b></code><span>. Если указано значение </span><code><b>false</b></code><span>, то&nbsp;числовые значения будут оставаться в&nbsp;виде строк.&nbsp;&nbsp;&nbsp;<b><i>[3.4.4]</i></b></span><code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="234">
+<code><b>$.distinct[</b><span>first|last|all</code><code><b>]</b>
+<br>
+</code></span></td><td align="left" valign="top" width="255">
+<span>не определен<code>
+<br>
+</code></span></td><td align="left" valign="top" width="474">
+<span>Способ обработки дублирующих ключей:
+<br>
+<code><b>first</b></code><span>&nbsp;- будет оставлен первый встретившийся элемент;
+<br>
+</span><code><b>last</b></code><span>&nbsp;- будет оставлен последний встретившийся элемент;
+<br>
+</span><code><b>all</b></code><span>&nbsp;- в&nbsp;результат попадут все элементы, при этом элементы, начиная со&nbsp;второго, получат суффиксы&nbsp;_2, _3 и&nbsp;т.&nbsp;д.
+<br>
+</span><code><b>по&nbsp;умолчанию</b></code><span>&nbsp;- в&nbsp;случае обнаружения дублирующихся ключей будет выдано исключение (exception).</span><code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="234">
+<code><b>$.object[</b><span><a href="junctionclass.htm">ссылка на метод</a></code><code><b>]</b>
+<br>
+</code></span></td><td align="left" valign="top" width="255">
+<span>не определен<code>
+<br>
+</code></span></td><td align="left" valign="top" width="474">
+<span>Опция позволяет указать пользовательский метод с&nbsp;двумя параметрами, который будет вызываться для всех объектов. Возвращаемый методом объект (в&nbsp;том числе пользовательского типа) и&nbsp;будет помещаться в&nbsp;результирующую структуру.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="234">
+<code><b>$.array[</b><span>array|hash|<a href="junctionclass.htm">ссылка на метод</a></code><code><b>]</b>
+<br>
+</code></span></td><td align="left" valign="top" width="255">
+<code><b>$json:array</b><span>, значение которого по умолчанию </code><code><b>array</b></code><span>, можно поменять на </span><code><b>hash</b><b>&nbsp;</b></code><span><b><i>[3.</i></b><b><i>5</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]</i></b>
+<br>
+</span><code>
+<br>
+</code></span></td><td align="left" valign="top" width="474">
+<span>Опция позволяет указать пользовательский метод с&nbsp;двумя параметрами, который будет вызываться для всех массивов. Возвращаемый методом объект (в&nbsp;том числе пользовательского типа) и&nbsp;будет помещаться в&nbsp;результирующую структуру.
+<br>
+При задании значения <code><b>array</b></code><span> создается <a href="array.htm">массив</a>, при задании значения </span><code><b>hash</b></code><span> создается <a href="hash.htm">хеш</a> с цифровыми ключами, начинающимися с 0.&nbsp;&nbsp;&nbsp;<b><i>[3.5.0]</i></b>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="234">
+<code><b>$.taint[</b><span><a href="optaint.htm">язык преобразования</a></code><code><b>]</b>
+<br>
+</code></span></td><td align="left" valign="top" width="255">
+<span>не определен<code>
+<br>
+</code></span></td><td align="left" valign="top" width="474">
+<span>Задает язык преобразования для всех строк в&nbsp;результирующем хеше.&nbsp;&nbsp;&nbsp;<b><i>[3.4.2]</i></b><b><i>
+<br>
+</i></b></span></td></tr></table>
+<br>
+
+<br>
+</span><span>Если JSON пришел из&nbsp;внешнего источника, то&nbsp;при его разборе необходимо обозначить доверие данным, например через&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b>^taint[clean;$form:json]</b></code></span><span>.
+<br>
+</span><span>
+<br>
+</span><span><b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@main[]
+<br>
+$json_string[</b></code></span><code><b>{
+<br>
+&nbsp;&nbsp;&nbsp;"a1":{"b":&nbsp;1,&nbsp;"c":&nbsp;"abc",&nbsp;"d":&nbsp;"xyz"},
+<br>
+&nbsp;&nbsp;&nbsp;"a2":{"b":&nbsp;1.1,&nbsp;"b":&nbsp;2.2,&nbsp;"b":&nbsp;3.3,&nbsp;"d":&nbsp;{"da":&nbsp;11,&nbsp;"db":&nbsp;22}}
+<br>
+}</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+
+<br>
+$h[^json:parse[$json_string;
+<br>
+&nbsp;&nbsp;&nbsp;$.double(false)
+<br>
+&nbsp;&nbsp;&nbsp;$.distinct[all]
+<br>
+&nbsp;&nbsp;&nbsp;$.object[$object_handler]
+<br>
+]]
+<br>
+
+<br>
+@object_handler[key;value]
+<br>
+$result[^if($key&nbsp;eq&nbsp;"d"){object&nbsp;with&nbsp;key='$key'&nbsp;and&nbsp;^eval($value)&nbsp;fields}{$value}]
+<br>
+</b></code></span><span>
+<br>
+В результате разбора указанной JSON-строки хеш будет содержать:
+<br>
+</span><code><b>$h[
+<br>
+&nbsp;&nbsp;&nbsp;$.a1[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.b(1)
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.c[abc]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.d[xyz]
+<br>
+&nbsp;&nbsp;&nbsp;]
+<br>
+&nbsp;&nbsp;&nbsp;$.a2[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.b[1.1]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.b_2[2.2]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.b_3[3.3]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.d[object&nbsp;with&nbsp;key='d'&nbsp;and&nbsp;2&nbsp;fields]
+<br>
+&nbsp;&nbsp;&nbsp;]
+<br>
+]</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+
+<br>
+</b></code></span></span>

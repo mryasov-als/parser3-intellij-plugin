@@ -1,0 +1,23 @@
+$data[
+#	$.key[]
+	$.key2[
+#		$.jey3[]
+	]
+]
+^data[
+#	$.key[]
+]
+^data(
+#	$.key[]
+)
+^data{
+#	$.key[]
+}
+
+^if(1){
+	$var ^rem{коммент}
+}(def $var){
+# commment
+}(def $var && $var == 123){
+
+}

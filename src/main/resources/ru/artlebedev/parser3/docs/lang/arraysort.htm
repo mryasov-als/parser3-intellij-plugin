@@ -1,0 +1,82 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">sort. Сортировка массива</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^иассив.sort[ключ;значение]{функция_сортировки_по_строке}
+<br>
+^иассив.sort[ключ;значение]{функция_сортировки_по_строке}[направление_сортировки]
+<br>
+^иассив.sort[ключ;значение](функция_сортировки_по_числу)
+<br>
+^иассив.sort[ключ;значение](функция_сортировки_по_числу)[направление_сортировки]
+<br>
+</b><span> 
+<br>
+Метод осуществляет сортировку определенных элементов в&nbsp;массиве по&nbsp;указанной функции.
+<br>
+
+<br>
+</code><code><b>Функция&nbsp;сортировки</b></code><span>&nbsp;- произвольная функция, по&nbsp;текущему значению которой принимается решение о&nbsp;положении поля в&nbsp;отсортированном массиве. Значением функции может быть строка (значения сравниваются в&nbsp;лексикографическом порядке) или число (значения сравниваются как действительные числа).
+<br>
+
+<br>
+</span><code><b>Направление&nbsp;сортировки</b></code><span>&nbsp;- параметр, задающий направление сортировки. Принимает значения:
+<br>
+</span><code><b>desc</b></code><span>&nbsp;- по&nbsp;убыванию;
+<br>
+</span><code><b>asc</b></code><span> &nbsp;- по&nbsp;возрастанию.
+<br>
+По&nbsp;умолчанию используется сортировка по&nbsp;возрастанию.
+<br>
+
+<br>
+<b>Пример</b>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$men[</b></code></span><code><b>&nbsp;&nbsp;&nbsp;</b><b>$.name[</b><b>Serge</b><b>]&nbsp;$.age</b><b>(</b><b>26</b><b>);&nbsp;$.name[</b><b>Alex</b><b>]&nbsp;$.age</b><b>(</b><b>20</b><b>);&nbsp;</b><b>$.</b><b>name[</b><b>Misha</b><b>]&nbsp;$.age</b><b>(</b><b>29</b><b>)</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^men.sort[;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>m</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>m.</b></code></span><code><span style="color:#7F97E1" class="blue"><b>name}
+<br>
+^men.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="hashforeach.htm">foreach</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>m</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>m.</b></code></span><code><span style="color:#7F97E1" class="blue"><b>name</b></code></span><code><b>:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>m.</b></code></span><code><span style="color:#7F97E1" class="blue"><b>age
+<br>
+}[</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+В результате записи массива </span><code><b>$men</b></code><span> будут отсортированы по&nbsp;строке с именем:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>Alex:&nbsp;20</b></code><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>Misha:&nbsp;29&nbsp;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>Serge:&nbsp;26&nbsp;
+<br>
+</b></code><span>
+<br>
+А можно отсортировать записи хеша по&nbsp;числу прожитых лет по&nbsp;убыванию (</span><code><b>desc</b></code><span>), если изменить в&nbsp;примере вызов </span><code><b>sort</b></code><span> на&nbsp;такой:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^men.sort</b></code></span><code><span style="color:#7F97E1" class="blue"><b>[;m]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>($</b></code></span><code><span style="color:#7F97E1" class="blue"><b>m.</b></code></span><code><span style="color:#7F97E1" class="blue"><b>age)[desc]
+<br>
+</b></code></span><span>
+<br>
+…получится…
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Misha:&nbsp;29</b></code><span><b>
+<br>
+</b></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Serge:&nbsp;26
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Alex:&nbsp;20</b></code><span>
+<br>
+
+<br>
+</span></span>

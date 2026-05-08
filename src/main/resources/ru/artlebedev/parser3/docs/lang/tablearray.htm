@@ -1,0 +1,82 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">array. Преобразование таблицы в массив&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.5.0]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица.</b><b>array</b><b>[]
+<br>
+^таблица.</b><b>array</b><b>[название&nbsp;колонки]
+<br>
+^таблица.</b><b>array{</b><b>код</b><b>}</b><b>
+<br>
+</b><span>
+<br>
+Метод возвращает массив, где каждый элемент соответствует одной строке таблицы. Переданный параметр определяет значение элемента массива:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></code></span></td><td><span>при вызове без параметра  - хeш с названиями колонок в качестве ключей и соответствующими значениями колонок;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>при вызове с названием колонки - строка со значением указанной колонки;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>при вызове с кодом  - результат выполнения переданного кода.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+<b>Пример</b>
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^таблица.array[]
+<br>
+^таблица.array[</b></code></span><code><b>колонка1</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^таблица.array{&nbsp;</b></code></span><code><b>$таблица.колонка1&nbsp;+&nbsp;$таблица.колонка1&nbsp;</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Создаст следующие массивы:
+<br>
+
+<br>
+</span><code><b>[
+<br>
+&nbsp;&nbsp;{"колонка1":&nbsp;"значение1",&nbsp;"колонка2":&nbsp;"значение2"},
+<br>
+&nbsp;&nbsp;{"колонка1":&nbsp;"значение3",&nbsp;"колонка2":&nbsp;"значение4"},
+<br>
+&nbsp;&nbsp;...
+<br>
+]
+<br>
+[
+<br>
+&nbsp;&nbsp;"значение1",
+<br>
+&nbsp;&nbsp;"значение3",
+<br>
+&nbsp;&nbsp;...
+<br>
+]
+<br>
+[
+<br>
+&nbsp;&nbsp;"&nbsp;значение1&nbsp;+&nbsp;значение2&nbsp;",
+<br>
+&nbsp;&nbsp;"&nbsp;значение3&nbsp;+&nbsp;значение4&nbsp;",
+<br>
+&nbsp;&nbsp;...
+<br>
+]
+<br>
+</b></code><span>
+<br>
+</span></span>

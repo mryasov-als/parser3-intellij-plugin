@@ -1,0 +1,68 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">method_info. Информация о&nbsp;методе</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^reflection:method_info[имя&nbsp;класса;имя&nbsp;метода]
+<br>
+</b><b>^reflection:method_info[метод]</b><span><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.5]
+<br>
+</i></b>
+<br>
+Метод возвращает хеш с&nbsp;параметрами либо указанного метода указанного класса, либо указанного метода.
+<br>
+
+<br>
+Для методов системных классов возвращается хеш следующего вида:
+<br>
+</span><code><b>$хеш[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.inherited[имя&nbsp;класса-предка,&nbsp;в&nbsp;котором&nbsp;метод&nbsp;был&nbsp;определен]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.min_params(минимально&nbsp;необходимое&nbsp;количество&nbsp;параметров&nbsp;метода)
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.max_params(максимально&nbsp;допустимое&nbsp;количество&nbsp;параметров&nbsp;метода)
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.call_type[допустимый&nbsp;тип&nbsp;вызова&nbsp;метода:&nbsp;static,&nbsp;dynamic&nbsp;или&nbsp;any]
+<br>
+]
+<br>
+
+<br>
+</b></code><span>Для методов пользовательских классов возвращается хеш следующего вида:
+<br>
+</span><code><b>$хеш[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.inherited[имя&nbsp;класса-предка,&nbsp;в&nbsp;котором&nbsp;метод&nbsp;был&nbsp;определен]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.overridden[имя&nbsp;класса-предка,&nbsp;в&nbsp;котором&nbsp;был&nbsp;определен&nbsp;перекрытый&nbsp;метод]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.1]
+<br>
+</i></b></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;$.file[полный&nbsp;путь&nbsp;к&nbsp;файлу,&nbsp;в&nbsp;котором&nbsp;определен&nbsp;метод]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.1]
+<br>
+</i></b></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;$.max_params(максимально&nbsp;допустимое&nbsp;количество&nbsp;параметров&nbsp;метода)&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.3]
+<br>
+</i></b></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;$.call_type[допустимый&nbsp;тип&nbsp;вызова&nbsp;метода:&nbsp;static,&nbsp;dynamic&nbsp;или&nbsp;any]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.3]
+<br>
+</i></b></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;$.extra_param[имя&nbsp;входной&nbsp;переменной,&nbsp;принимающей&nbsp;неограниченное&nbsp;число&nbsp;параметров]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.3]
+<br>
+</i></b></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;$.</b><b>named</b><b>_params[массив&nbsp;имен&nbsp;именованных&nbsp;параметров]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.</i></b><b><i>5</i></b><b><i>.0]
+<br>
+</i></b></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;$.0[имя&nbsp;первого&nbsp;параметра&nbsp;метода]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.1[имя&nbsp;второго&nbsp;параметра&nbsp;метода]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;…
+<br>
+]</b></code><span>
+<br>
+
+<br>
+</span></span>

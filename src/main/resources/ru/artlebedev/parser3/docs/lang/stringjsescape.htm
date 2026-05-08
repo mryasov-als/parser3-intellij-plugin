@@ -1,0 +1,46 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">js-escape. Кодирование, аналогичное функции escape в&nbsp;JavaScript&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.</i></b><b><i>3</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]<br></i></span>&nbsp;<link-to-docs /></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^строка.</b><b>js-</b><b>escape[]
+<br>
+</b><span>
+<br>
+Метод выполняет преобразование строки, аналогичное методу </code><code><b>escape</b></code><span>, описанному в&nbsp;ECMA-262. Чтобы выполнить обратное преобразование, необходимо воспользоваться
+<br>
+</span><code><b>^string:</b><b><a href="stringjsunescape.htm">js-unescape</a></b><b>[закодированное]
+<br>
+</b></code><span>
+<br>
+Строки, закодированные данным методом, могут быть раскодированы в&nbsp;браузере с&nbsp;помощью функции </span><code><b>unescape</b></code><span>.
+<br>
+
+<br>
+<i>Подробная информация  о&nbsp;</i><i>ECMA-262</i><i> доступна по&nbsp;ссылке: </i><i><a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm" target="_blank">ecma-international.org/publications/standards/Ecma-262.htm</a></i><i> (B.2.1)
+<br>
+</i>
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$value[</b></code></span><code><b>abcd&nbsp;`+-=~!@#%&amp;*()_&nbsp;[]{}&lt;&gt;:'",./?абвгд</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^value.js-escape[]
+<br>
+</b></code></span><span>
+<br>
+Выведет…
+<br>
+</span><code><b>abcd%20%60+-%3D%7E%21@%23%25%26*%28%29_%20%5B%5D%7B%7D%3C%3E%3A%27%22%2C./%3F%u0430%u0431%u0432%u0433%u0434</b></code><span>
+<br>
+</span></span>

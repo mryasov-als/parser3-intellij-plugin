@@ -1,0 +1,58 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">js-unescape. Декодирование, аналогичное функции unescape в&nbsp;JavaScript&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.</i></b><b><i>3</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]<br></i></span>&nbsp;<link-to-docs /></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^string:js-unescape[закодированное]
+<br>
+</b><span>
+<br>
+<i>Примечание: именно статический метод, не&nbsp;конструктор!</i>
+<br>
+<i>
+<br>
+</i>Метод выполняет преобразование строки, аналогичное методу </code><code><b>unescape</b></code><span>, описанному в&nbsp;ECMA-262. Для кодирования следует использовать&nbsp;
+<br>
+</span><code><b>^string.</b><b><a href="stringjsescape.htm">js-escape</a></b><b>[]
+<br>
+</b></code><span><i>
+<br>
+</i>С помощью данного метода возможно декодировать строки, закодированные в&nbsp;браузере с&nbsp;помощью функции&nbsp;</span><code><b>escape</b></code><span>.
+<br>
+<i>
+<br>
+</i><i>Подробная информация  о&nbsp;ECMA-262 доступна по&nbsp;ссылке: </i><i><a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm" target="_blank">ecma-international.org/publications/standards/Ecma-262.htm</a></i><i> (B.2.2)
+<br>
+</i><i>
+<br>
+Примечание: метод также декодирует символы, закодированные в&nbsp;виде&nbsp;</i></span><code><b>\uXXXX</b></code><span><i>.</i></span><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.4.1]
+<br>
+</i></b>
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$escaped[</b></code></span><code><b>abcd%20%60+-%3D%7E%21@%23%25%26*%28%29_%20%5B%5D%7B%7D%3C%3E%3A%27%22%2C./%3F%u0430%u0431%u0432%u0433%u0434</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$original[^string:js-unescape[$escaped]]
+<br>
+$original
+<br>
+</b></code></span><span>
+<br>
+Выведет…
+<br>
+</span><code><b>abcd&nbsp;`+-=~!@#%&amp;*()_&nbsp;[]{}&lt;&gt;:'",./?абвгд
+<br>
+</b></code><span>
+<br>
+</span></span>

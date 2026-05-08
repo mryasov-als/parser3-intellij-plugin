@@ -1,0 +1,36 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">iso-string. Вывод даты в&nbsp;виде строки в&nbsp;формате ISO 8601</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.4]</i></b><b></span>&nbsp;<link-to-docs /></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^date.iso-string[]
+<br>
+^date.iso-string[&nbsp;$.colon(true|false)&nbsp;$.ms(false|false)&nbsp;$.z(false|true)&nbsp;]</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.5]
+<br>
+</i></b></code><code><b>
+<br>
+</b></code><span>Метод преобразует дату к&nbsp;строке в&nbsp;формате <span style="color:#7F97E1" class="blue"><u><a href="http://www.w3.org/TR/NOTE-datetime" target="_blank">ISO 8601</a></u></span></span><span> (например, 2002-04-29T12:00:00+03:00). Этот метод полезен, если нужно сохранить информацию о&nbsp;часовом поясе.
+<br>
+
+<br>
+Можно задать <a href="hash.htm">хеш</a> опций.
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.</b><b>colon</b><b>(true|false)</b></code><span> - исключать двоеточие из&nbsp;временной зоны (2002-04-29T12:00:00+0300). По&nbsp;умолчанию&nbsp;- не&nbsp;исключать.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.ms(false|true)</b></code><span> - добавлять миллисекунды, всегда .000  (2002-04-29T12:00:00.000+03:00). По&nbsp;умолчанию&nbsp;- не&nbsp;добавлять.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.z(false|true)</b></code><span> - записывать временную зону UTC в&nbsp;виде 00:00 (2002-04-29T09:00:00+00:00). По&nbsp;умолчанию записывается Z (2002-04-29T09:00:00Z).
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+
+<br>
+</span></span>

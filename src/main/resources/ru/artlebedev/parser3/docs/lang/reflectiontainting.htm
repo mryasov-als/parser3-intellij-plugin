@@ -1,0 +1,166 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">tainting. Преобразования строки</b><span><b><i>&nbsp;&nbsp;&nbsp;</i></span>&nbsp;<link-to-docs /><span><b><i>[3.4.</i></b><b><i>5</i></b><b><i>]
+<br>
+</i></b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^reflection:tainting[строка]
+<br>
+^reflection:tainting[вид преобразования;строка]
+<br>
+
+<br>
+</b><span>Метод позволяет узнать, в&nbsp;каких преобразованиях нуждается </code><code><b>строка</b></code><span>. Результатом является строка, в&nbsp;которой каждому символу исходной строки соответствует символ с&nbsp;кодом преобразования. При указании&nbsp;</span><code><b>вида&nbsp;преобразования</b></code><span> с&nbsp;помощью </span><code><b>+</b></code><span> выделяются символы, подлежащие преобразованию указанного вида. Кроме имени преобразования, можно указать значение </span><code><b>tainted</b></code><span> для&nbsp;показа неопределенно грязных символов и&nbsp;</span><code><b>optimized</b></code><span> для&nbsp;показа символов, нуждающихся в&nbsp;оптимизации при выводе.
+<br>
+
+<br>
+
+<br>
+<b>Коды преобразований
+<br>
+
+<br>
+</b><table border="1" cellpadding="1"><tr><td align="left" valign="top" width="149">
+<code><b>clean</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>0
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>as-is</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>A
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>tainted</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>T
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>file</b><b>-spec
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>F
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>uri</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>U
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>http-header
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>h
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>mail-header
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>m
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>sql</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>Q
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>js</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>J
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>json</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>S
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>parser-code
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>p
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>regex</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>R
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>xml</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>X
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>html
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>H
+<br>
+</b></code></p></td></tr><tr><td align="left" valign="top" width="149">
+<code><b>cookie
+<br>
+</b></code></td><td align="left" valign="top" width="36">
+<p align="center"><code><b>C
+<br>
+</b></code></p></td></tr></table>
+<br>
+
+<br>
+
+<br>
+<b>Пример
+<br>
+</b>
+<br>
+</span><code><b>$s[clean&nbsp;^taint[&lt;tainted&gt;]&nbsp;^taint[uri;&amp;]&nbsp;^taint[json;"json"]]
+<br>
+
+<br>
+^taint[as-is;$s]
+<br>
+^reflection:tainting[$s]
+<br>
+^reflection:tainting[tainted;$s]
+<br>
+
+<br>
+Applied:&nbsp;$s
+<br>
+</b></code><span>
+<br>
+
+<br>
+Выведет:
+<br>
+
+<br>
+</span><code><b>clean&nbsp;&lt;tainted&gt;&nbsp;&amp;&nbsp;"json"
+<br>
+000000TTTTTTTTT0U0SSSSSS
+<br>
+------+++++++++---------
+<br>
+
+<br>
+Applied:&nbsp;clean&nbsp;&amp;lt;tainted&amp;gt;&nbsp;%26&nbsp;\"json\"
+<br>
+</b></code><span>
+<br>
+</span></span>

@@ -1,0 +1,66 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Заголовки HTTP-ответа</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$response:поле[значение]</b><span>
+<br>
+</code><code><b>$response:поле</b></code><span>
+<br>
+</span><span>
+<br>
+</span><code><b>Поле</b></code><span> соответствует заголовку HTTP-ответа, выдаваемого Parser. Его можно как задавать, так и&nbsp;считывать. Значением может быть <a href="dateclass.htm">дата</a>, <a href="stringclass.htm">строка</a> или <a href="hashclass.htm">хеш</a> с&nbsp;обязательным ключом </span><code><b>value</b></code><span>. Дата может использоваться и&nbsp;в&nbsp;качестве значения поля, и&nbsp;в&nbsp;качестве значения атрибута поля, при этом она будет стандартно отформатирована.
+<br>
+
+<br>
+<b><i>Примечания</i></b><i>
+<br>
+Прежде чем будет задано или считано значение, имя поля преобразуется в&nbsp;верхний регистр.</i><b><i>&nbsp;&nbsp;&nbsp;[3.4.4]
+<br>
+</i></b><i>При выдаче браузеру имя HTTP-заголовка приводится к&nbsp;формату, в&nbsp;котором первые буквы слов делаются заглавными, а&nbsp;остальные&nbsp;- строчными. Например, </i></span><code><b>CONTENT-TYPE</b></code><span><i> будет преобразован в&nbsp;</i></span><code><b>Content-Type</b></code><span><i>).&nbsp;&nbsp;&nbsp;</i><b><i>[3.4.0]
+<br>
+</i></b><i>При задании пустого значения поле удаляется.</i><b><i>&nbsp;&nbsp;&nbsp;[3.4.4]
+<br>
+</i></b><i>При задании </i></span><code><b>$response:status</b></code><span><i> значения  меньше&nbsp;100 это значение будет возвращено в&nbsp;виде кода выхода процесса Parser.</i><b><i>&nbsp;&nbsp;&nbsp;[3.4.5]
+<br>
+</i></b>
+<br>
+<b>Пример перенаправления браузера на&nbsp;стартовую страницу
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>#работает,&nbsp;если&nbsp;администратор&nbsp;веб-сервера&nbsp;правильно&nbsp;настроил&nbsp;передачу&nbsp;параметра&nbsp;SERVER_NAME
+<br>
+#обычно&nbsp;настроено&nbsp;все&nbsp;правильно
+<br>
+$response:location[HTTP://$env:SERVER_NAME/]</b></code></span><code><b>
+<br>
+
+<br>
+</b></code><span><b>Другой пример перенаправления браузера на&nbsp;стартовую страницу
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>#работает&nbsp;вне&nbsp;зависимости&nbsp;от&nbsp;правильности&nbsp;SERVER_NAME
+<br>
+$response:refresh[
+<br>
+&nbsp;&nbsp;&nbsp;$.value(0)
+<br>
+&nbsp;&nbsp;&nbsp;$.url[/]
+<br>
+]
+<br>
+</b></code></span><span>
+<br>
+<b>Пример задания заголовку expires значения «завтра» 
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$response:expires[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="dateclass.htm">date</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datenow.htm">now</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>(+1)]
+<br>
+</b></code></span><span>
+<br>
+</span></span>

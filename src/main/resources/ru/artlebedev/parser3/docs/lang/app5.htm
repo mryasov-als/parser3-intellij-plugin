@@ -1,0 +1,76 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Приложение 5. Как правильно назначить имя переменной, функции, классу</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Имя должно быть понятно как минимум самому разработчику, а&nbsp;в&nbsp;идеале&nbsp;- любому человеку, читающему написанный&nbsp;код. Имя может быть набрано русскими или латинскими буквами, главное&nbsp;- единообразие. Рекомендуем все&nbsp;же пользоваться английским. Слова в&nbsp;именах лучше использовать в&nbsp;единственном числе. Составные имена рекомендуется записывать в&nbsp;виде&nbsp;<code><b>column_color</b></code><span>. Глядя на&nbsp;такое имя, можно сразу понять, что оно означает.
+<br>
+
+<br>
+Parser&nbsp;3 чувствителен к&nbsp;регистру! 
+<br>
+
+<br>
+</span><code><b>$Parser</b></code><span> и&nbsp;</span><code><b>$parser</b></code><span>&nbsp;- разные переменные.
+<br>
+
+<br>
+Есть определенные ограничения на&nbsp;использование в&nbsp;именах символов. Для Parser&nbsp;3 имя всегда заканчивается перед:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>пробелом;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>табуляцией;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>переводом строки;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>символами </span><code><b>;&nbsp;]&nbsp;}&nbsp;)&nbsp;"&nbsp;&lt;&nbsp;&gt;&nbsp;#&nbsp;+&nbsp;*&nbsp;/&nbsp;%&nbsp;&amp;&nbsp;|&nbsp;=&nbsp;!&nbsp;'&nbsp;,&nbsp;?</b></code><span>;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>символом «</span><code><b>-</b></code><span>» минуса (в выражениях).
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Код:
+<br>
+</span><code><b>$var[значение_из_переменной]
+<br>
+$var&gt;text</b></code><span>
+<br>
+</span><span>
+<br>
+выдаст на&nbsp;экран:
+<br>
+</span><code><b>значение_из_переменной&gt;text</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+Т.&nbsp;е. символ «</span><code><b>&gt;</b></code><span>» Parser&nbsp;3 считает окончанием имени переменной </span><code><b>$var</b></code><span> и&nbsp;подставляет ее значение, поэтому вышеуказанные символы не&nbsp;следует использовать при составлении имен. 
+<br>
+
+<br>
+Если есть необходимость сразу после значения переменной (т.&nbsp;е. без&nbsp;пробела, который является концом имени) вывести символ, который не&nbsp;указан выше (например, нам нужно поставить точку сразу после значения переменной), используется следующий синтаксис:
+<br>
+</span><code><b>${var}</b><b>.</b><b>text
+<br>
+</b></code><span>
+<br>
+выдаст:
+<br>
+</span><code><b>значение_из_переменной</b><b>.</b><b>text</b></code><span><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></span></span><span>
+<br>
+Нельзя пользоваться в&nbsp;именах символами "</span><span><span><b>.</b></span></span><span>", "</span><span><span><b>:</b></span></span><span>", "</span><span><span><b>^</b></span></span><span>", поскольку они будут расцениваться как часть кода Parser&nbsp;3, что приведет к&nbsp;ошибкам при обработке написанного кода.
+<br>
+
+<br>
+Все остальные символы использовать в&nbsp;именах, в&nbsp;принципе, можно, но&nbsp;лучше всего отказаться от&nbsp;использования в&nbsp;именах каких-либо служебных и&nbsp;специальных символов, кроме случаев крайней необходимости (на практике не&nbsp;встречаются), за&nbsp;исключением знака подчеркивания, который не&nbsp;используется Parser&nbsp;3 и&nbsp;достаточно нагляден при использовании в&nbsp;именах.
+<br>
+</span></span>

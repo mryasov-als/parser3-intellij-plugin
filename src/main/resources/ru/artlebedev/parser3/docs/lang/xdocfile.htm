@@ -1,0 +1,46 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">file. Преобразование документа в&nbsp;объект класса file</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^документ.file[</b><b><a href="xdocoptions.htm">Параметры_преобразования_в_текст</a></b><b>]</b><span>
+<br>
+
+<br>
+Метод преобразует документ в&nbsp;тип&nbsp;</code><code><b><a href="fileclass.htm">file</a></b></code><span>. Возможно задание </span><code><b>параметров_преобразования</b></code><span> в&nbsp;текст.
+<br>
+По&nbsp;умолчанию создается XML-представление документа с&nbsp;заголовком </span><code><span style="color:#7F97E1" class="blue"><b>&lt;?xml&nbsp;…&nbsp;?&gt;</b></code></span><span> (можно отключить вывод заголовка, задав <a href="xdocoptions.htm">соответствующий параметр</a>).
+<br>
+
+<br>
+Метод понимает опцию </span><code><b>$.file[имя&nbsp;файла]</b></code><span>, с&nbsp;помощью которой можно задать имя создаваемому объекту типа </span><code><span style="color:#7F97E1" class="blue"><b><a href="fileclass.htm">file</a></b></code></span><span>.&nbsp;&nbsp;&nbsp;<b><i>[3.4.2]</i></b><b><i>
+<br>
+
+<br>
+</i></b>
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$document[</b></code></span><code><b>^xdoc::</b><b><a href="xdoccreatexml.htm">create</a></b><b>{&lt;?xml&nbsp;version="1.0"&nbsp;encoding="windows-1251"&nbsp;?&gt;
+<br>
+&lt;document&gt;
+<br>
+строка1&lt;br/&gt;
+<br>
+строка2&lt;br/&gt;
+<br>
+&lt;/document&gt;}</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="responseclass.htm">response</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="responsebody.htm">body</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[^document.file[]]</b></code></span><span>
+<br>
+</span></span>

@@ -1,0 +1,68 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">delete. Удаление поля объекта&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.4.2]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^reflection:delete[объект;имя&nbsp;поля]
+<br>
+^reflection:delete[класс;имя&nbsp;поля]
+<br>
+</b><b>
+<br>
+</b><span>Метод удаляет </code><code><b>поле</b></code><span> с&nbsp;указанным именем у указанного </span><code><b>объекта</b></code><span> или </span><code><b>класса</b></code><span>. Метод аналогичен методу </span><code><b>^хеш.</b><b><a href="hashdelete.htm">delete</a></b><b>[ключ]</b></code><span>, но&nbsp;работает для&nbsp;объектов и&nbsp;классов.</span><code><b>
+<br>
+
+<br>
+</b></code><span><b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@main[][a;h]
+<br>
+$a[^a::create[]]
+<br>
+^reflection:delete[$a;b]
+<br>
+
+<br>
+$h[^hash::create[$x]]
+<br>
+^h.foreach[k;v]{$k='$v'}[,&nbsp;]
+<br>
+
+<br>
+
+<br>
+@CLASS
+<br>
+a
+<br>
+
+<br>
+@create[]
+<br>
+$a[1]
+<br>
+$b[2]
+<br>
+$c[3]
+<br>
+
+<br>
+
+<br>
+</b></code></span><span>Вернет:
+<br>
+</span><code><b>a='1',&nbsp;c='3'
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span></span>

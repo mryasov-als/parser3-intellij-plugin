@@ -1,0 +1,86 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Для Oracle</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code>oracle://user:password@service?
+<br>
+&nbsp;&nbsp;&nbsp;<a href="app3clientcharset.htm">ClientCharset</a>=кодировка&amp;<b>
+<br>
+</b>&nbsp;&nbsp;&nbsp;LowerCaseColumnNames=0&amp;<span><b><i>
+<br>
+&nbsp;&nbsp;&nbsp;</i></b></code><code>DisableQueryModification=0&amp;&nbsp;</code><span><b><i>[3.</i></b><b><i>3</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]</i></b><b><i>
+<br>
+</i></b></span><code>&nbsp;&nbsp;&nbsp;NLS_LANG=RUSSIAN_AMERICA.CL8MSWIN1251&amp;
+<br>
+&nbsp;&nbsp;&nbsp;NLS_DATE_FORMAT=YYYY-MM-DD&nbsp;HH24:MI:SS&amp;
+<br>
+&nbsp;&nbsp;&nbsp;NLS_LANGUAGE=language-dependent&nbsp;conventions&amp;
+<br>
+&nbsp;&nbsp;&nbsp;NLS_TERRITORY=territory-dependent&nbsp;conventions&amp;
+<br>
+&nbsp;&nbsp;&nbsp;NLS_DATE_LANGUAGE=language&nbsp;for&nbsp;day&nbsp;and&nbsp;month&nbsp;names&amp;
+<br>
+&nbsp;&nbsp;&nbsp;NLS_NUMERIC_CHARACTERS=decimal&nbsp;character&nbsp;and&nbsp;group&nbsp;separator&amp;
+<br>
+&nbsp;&nbsp;&nbsp;NLS_CURRENCY=local&nbsp;currency&nbsp;symbol&amp;
+<br>
+&nbsp;&nbsp;&nbsp;NLS_ISO_CURRENCY=ISO&nbsp;currency&nbsp;symbol&amp;
+<br>
+&nbsp;&nbsp;&nbsp;NLS_SORT=sort&nbsp;sequence&amp;
+<br>
+&nbsp;&nbsp;&nbsp;ORA_ENCRYPT_LOGIN=TRUE
+<br>
+</code><span>
+<br>
+</span><code><a href="app3clientcharset.htm">ClientCharset</a></code><span>&nbsp;- задает кодировку, в&nbsp;которой необходимо общаться с&nbsp;SQL-сервером, перекодированием занимается драйвер.
+<br>
+
+<br>
+Если имена колонок в&nbsp;запросе </span><code><b>select</b></code><span> не&nbsp;взять в&nbsp;кавычки, Oracle преобразует их&nbsp;в&nbsp;ВЕРХНИЙ регистр. Parser&nbsp;3&nbsp;же по&nbsp;умолчанию преобразует их&nbsp;в&nbsp;нижний регистр. Указав параметр&nbsp;</span><code>LowerCaseColumnNames=0</code><span>, можно отключить преобразование в&nbsp;нижний регистр.
+<br>
+
+<br>
+При выполнении запроса с&nbsp;</span><code>limit/offset</code><span> драйвер модифицирует текст запроса для&nbsp;отсечения ненужных данных средствами SQL-сервера. Однако в&nbsp;случае возникновения проблем это поведение можно отключить с&nbsp;помощью параметра&nbsp;</span><code>DisableQueryModification=1</code><span>.
+<br>
+
+<br>
+Информацию по&nbsp;остальным параметрам можно найти в&nbsp;документации по&nbsp;Environment variables для&nbsp;Oracle. Однако, мы рекомендуем всегда задавать параметры </span><code>NLS_LANG</code><span> и&nbsp;</span><code>NLS_DATE_FORMAT</code><span> так, как указано выше.
+<br>
+
+<br>
+
+<br>
+<b>Пример
+<br>
+</b>Допустим, данные в&nbsp;базе хранятся в&nbsp;кодировке </span><code>windows-1251</code><span>, строку подключения стоит написать так:
+<br>
+</span><code>oracle://user:password@service?<a href="app3clientcharset.htm">ClientCharset</a>=windows-1251&amp;NLS_LANG=RUSSIAN_AMERICA.CL8MSWIN1251&amp;NLS_DATE_FORMAT=YYYY-MM-DD&nbsp;HH24:MI:SS
+<br>
+</code><span>
+<br>
+
+<br>
+<i>Примечание. Существует специальная конструкция для&nbsp;записи больших строковых литералов. Oracle не&nbsp;умеет работать с&nbsp;большими строковыми литералами. Если передаваемая, например, из&nbsp;формы строка будет содержать больше 2000 [Oracle 7.x] или 4000 [Oracle 8.x] букв, сервер выдаст ошибку «Слишком длинный литерал». Если пытаться хитрить, комбинируя «2000&nbsp;букв» + «2000&nbsp;букв», то&nbsp;также будет выдана ошибка «Слишком длинная сумма». Для хранения таких конструкций используется тип данных CLOB[Oracle] и&nbsp;OID[Postgres], а&nbsp;для того чтобы SQL-команды были максимально просты, при записи таких строк необходимо лишь добавить управляющий комментарий, который драйвер соответствующего SQL-сервера обработает нужным образом:
+<br>
+</i></span><code><b>
+<br>
+</b>insert&nbsp;into&nbsp;news&nbsp;text&nbsp;values&nbsp;(/**text**/'$form:text')
+<br>
+</code><span><i>
+<br>
+Слово </i></span><code>text</code><span><i> в&nbsp;записи </i></span><code>/**text**/</code><span><i>&nbsp;- это имя колонки, в&nbsp;которую предназначен следующий за&nbsp;этой конструкцией строковый литерал. Пробелы здесь недопустимы.
+<br>
+</i>
+<br>
+
+<br>
+</span></span>

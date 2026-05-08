@@ -1,0 +1,96 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">font. Загрузка файла шрифта для&nbsp;нанесения надписей на&nbsp;изображение</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^картинка.font[набор_букв;имя_файла_шрифта.gif](ширина_пробела)
+<br>
+^картинка.font[набор_букв;имя_файла_шрифта.gif](ширина_пробела;ширина_символа)
+<br>
+^картинка.font[набор_букв;имя_файла_шрифта.gif][хеш&nbsp;с&nbsp;параметрами]</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]
+<br>
+</i></b>
+<br>
+Помимо методов для&nbsp;рисования, Parser также предусматривает возможность нанесения надписей на&nbsp;рисунки. Для реализации этой возможности требуется наличие специальных файлов с&nbsp;изображением шрифтов. Можно либо использовать готовые файлы шрифтов, либо самостоятельно создавать собственные с&nbsp;нужным набором символов. 
+<br>
+
+<br>
+После загрузки такого файла с&nbsp;помощью метода </code><code><b>font</b></code><span> набору букв, заданных в&nbsp;параметрах метода, ставятся в&nbsp;соответствие фрагменты изображения из&nbsp;файла. Данный файл должен иметь формат GIF с&nbsp;прозрачным фоном и&nbsp;содержать изображение необходимого набора символов в&nbsp;приведенном ниже виде.
+<br>
+
+<br>
+Пример файла </span><code>digits.gif</code><span> с&nbsp;изображением цифр:
+<br>
+</span><code>0
+<br>
+1
+<br>
+2
+<br>
+3
+<br>
+4
+<br>
+5
+<br>
+6
+<br>
+7
+<br>
+8
+<br>
+9
+<br>
+</code><span>
+<br>
+Высота каждого символа определяется как отношение высоты рисунка к&nbsp;количеству букв в&nbsp;наборе. Методу передаются следующие параметры:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>Набор букв</b></code><span> - перечень символов, входящих в&nbsp;файл шрифта;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>Имя</b></code><span> и&nbsp;</span><code><b>путь</b></code><span> к&nbsp;файлу шрифта;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>Ширина пробела</b></code><span> в пикселях;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>Ширина символа</b></code><span> - необязательный параметр.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Некоторые параметры могут быть переданы в&nbsp;третьем параметре в&nbsp;виде хеша:
+<br>
+</span><code><b>$.space(0)</b></code><span>&nbsp;&nbsp;&nbsp; - ширина пробела (по&nbsp;умолчанию равна ширине GIF со&nbsp;шрифтом);
+<br>
+</span><code><b>$.width(x)</b></code><span>&nbsp;&nbsp;&nbsp; - ширина символа для&nbsp;моноширинного шрифта (по&nbsp;умолчанию шрифт&nbsp;пропорциональный);
+<br>
+</span><code><b>$.width(0)&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;</b></code><span>включить моноширинный шрифт с&nbsp;автоматическим определением ширины символов (будет равна ширине GIF со&nbsp;шрифтом);
+<br>
+</span><code><b>$.spacing(0)&nbsp;-&nbsp;</b></code><span>межсимвольное расстояние (по&nbsp;умолчанию = 1).
+<br>
+
+<br>
+По&nbsp;умолчанию при загрузке файла шрифта автоматически измеряется ширина всех его символов и&nbsp;при&nbsp;выводе текста используется пропорциональный (proportional) шрифт. Если задать ширину символа, то&nbsp;шрифт будет моноширинным.
+<br>
+
+<br>
+Все символы следует располагать непосредственно у&nbsp;левого края изображения.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$square[^image::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="imagecreate.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>(100;100;0x00FF00)]
+<br>
+^square.font[0123456789;</b></code></span><code><b>digits.gif</b><span style="color:#7F97E1" class="blue"><b>](0)</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+В данном случае будет загружен файл, содержащий изображения цифр от&nbsp;0 до&nbsp;9, и&nbsp;набору цифр от&nbsp;0 до&nbsp;9 будет поставлено в&nbsp;соответствие их графическое изображение. После того как будет определен шрифт для&nbsp;нанесения надписи, можно использовать метод </span><code><b>text</b></code><span> для&nbsp;нанесения надписей.
+<br>
+</span></span>

@@ -1,0 +1,58 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">replace. Замена подстрок в&nbsp;строке</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^строка.replace[$таблица_подстановок]</b><span>
+<br>
+</code><code><b>^строка.replace[что;на&nbsp;что]</b>&nbsp;&nbsp;&nbsp;</code><span><b><i>[3.4.2]</i></b></span><span>
+<br>
+</span><span>
+<br>
+Метод эффективно заменяет подстроки в&nbsp;строке в&nbsp;соответствии с&nbsp;</span><code><b>таблицей&nbsp;подстановок</b></code><span>, работает существенно быстрее </span><code><b><a href="stringmatchreplace.htm">match</a></b></code><span>.
+<br>
+
+<br>
+</span><code><b>Таблица&nbsp;подстановок</b></code><span>&nbsp;- объект класса </span><code><b><a href="tableclass.htm">table</a></b></code><span>, содержащий два столбца: 
+<br>
+первый&nbsp;- подстрока, которую нужно заменить, 
+<br>
+второй&nbsp;- подстрока, которая появится на&nbsp;месте подстроки из&nbsp;первого столбца после замены.
+<br>
+
+<br>
+Имена столбцов несущественны, можно называть их </span><code><b>from/to</b></code><span> или вообще никак не&nbsp;называть, воспользовавшись </span><code><b><a href="tablecreate.htm">nameless</a></b></code><span>-таблицей.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$s[</b></code></span><code><b>A&nbsp;magic&nbsp;moment&nbsp;I'll&nbsp;remember!</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><b>Исходная&nbsp;строка:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$s</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+$rep[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablecreate.htm">table::create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{from&nbsp;&nbsp;&nbsp;to
+<br>
+A&nbsp;An
+<br>
+magic&nbsp;&nbsp;&nbsp;ugly}]
+<br>
+</b></code></span><code><b>Исковерканная&nbsp;строка:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^s.replace[$rep]
+<br>
+</b></code></span><span>
+<br>
+Выведет на&nbsp;экран:
+<br>
+</span><code><b>Исходная&nbsp;строка:&nbsp;A&nbsp;magic&nbsp;moment&nbsp;I'll&nbsp;remember!
+<br>
+Исковерканная&nbsp;строка:&nbsp;An&nbsp;ugly&nbsp;moment&nbsp;I'll&nbsp;remember!</b></code><span>
+<br>
+</span></span>

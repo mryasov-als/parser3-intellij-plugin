@@ -1,0 +1,56 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">list. Получение оглавления каталога</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file:list[путь]</b><span>
+<br>
+</code><code><b>^file:list[путь;фильтр]</b><b>
+<br>
+^file:list[</b><b>путь</b><b>;</b><b>опции</b><b>]</b></code><span><b><i>&nbsp;&nbsp;&nbsp;</i></b><b><i>[3.4.3]
+<br>
+</i></b>
+<br>
+Можно задать <a href="hash.htm">хеш</a> </span><code><b>опций</b></code><span>:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.</b><b>filter</b><b>[фильтр]</b></code><span> - строка с&nbsp;регулярным выражением или объект класса </span><code><b><a href="regexclass.htm">regex</a></b></code><span>;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.</b><b>stat</b><b>(true|false)</b></code><span> - </span><code><b>true</b></code><span> - заполнить столбцы </span><code><b>size</b></code><span>, </span><code><b>cdate</b></code><span>, </span><code><b>mdate</b></code><span> и&nbsp;</span><code><b>adate</b></code><span>.</span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><code><b></b></code></td><td></td></tr></table><code></span><span>
+<br>
+Метод формирует таблицу (объект класса </code><code><span style="color:#7F97E1" class="blue"><b><u><a href="tableclass.htm">table</a></u></b></code></span><span>) со&nbsp;столбцами </span><code><b>name</b></code><span>, </span><code><b>dir</b></code><span>, </span><code><b>size</b></code><span>, </span><code><b>cdate</b></code><span>, </span><code><b>mdate</b></code><span> и&nbsp;</span><code><b>adate</b></code><span> (до&nbsp;версии <b><i>[3.4.3]</i></b> возвращался только столбец&nbsp;</span><code><b>name</b></code><span>), содержащую файлы и&nbsp;каталоги по&nbsp;указанному пути, имена которых удовлетворяют шаблону, если он задан. Для каждой записи, являющейся каталогом, в&nbsp;результирующей таблице значение в&nbsp;столбце </span><code><b>dir</b></code><span> будет иметь значение </span><code><b>1</b></code><span>.
+<br>
+
+<br>
+<i>Внимание: без&nbsp;указания опции </i></span><code><b><i>$.stat(true)</i></b></code><span><i> значения столбцов  </i></span><code><b><i>size</i></b></code><span><i>, </i></span><code><b><i>cdate</i></b></code><span><i>, </i></span><code><b><i>mdate</i></b></code><span><i> и&nbsp;</i></span><code><b><i>adate</i></b></code><span><i> в&nbsp;результирующей таблице будут пусты.</i>
+<br>
+
+<br>
+</span><code><b>фильтр</b></code><span> - строка с&nbsp;регулярным выражением (см.&nbsp;метод&nbsp;</span><code><b><a href="stringmatch.htm">match</a></b></code><span> класса&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b><u><a href="stringclass.htm">string</a></u></b></code></span><span>)  или объект&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b><a href="regexclass.htm">regex</a></b></code></span><span><b><i> [3.4.0]</i></b>. Без&nbsp;указания фильтра будут выведены все найденные по&nbsp;заданному пути файлы.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$list[^file:list[/;\.zip^$]]
+<br>
+^list.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablemenu.htm">menu</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{
+<br>
+&nbsp;&nbsp;&nbsp;$list.name</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+</b></code><span><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></span></span><span>
+<br>
+выведет имена всех архивных файлов с&nbsp;расширением имени </span><code>.zip</code><span>, находящихся в&nbsp;корневом каталоге веб-сервера.
+<br>
+</span></span>

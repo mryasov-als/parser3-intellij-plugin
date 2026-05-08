@@ -1,0 +1,54 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">for. Перебор всех</b><b> </b><b>элементов массива</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^массив.for[индекс;значение]{тело}
+<br>
+^массив.for[индекс;значение]{тело}[разделитель]
+<br>
+^массив.for[индекс;значение]{тело}{разделитель}
+<br>
+</b><span>
+<br>
+Метод перебирает все элементы массива, включая неинициализированные («дырки»). Он аналогичен методу </code><code><b><a href="arrayforeach.htm">foreach</a></b></code><span>, но итерируется по всем индексам массива.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$man[</b></code></span><code><b>Вася</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>22</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>m</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^man.delete(1)
+<br>
+
+<br>
+^man.for[key;value]{
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$key</b></code></span><code><b>=</b><span style="color:#7F97E1" class="blue"><b>$value
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>}[</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Выведет на&nbsp;экран:
+<br>
+</span><code><b>0=Вася
+<br>
+</b><b>1</b><b>=
+<br>
+2=m
+<br>
+</b></code><span>
+<br>
+
+<br>
+</span></span>

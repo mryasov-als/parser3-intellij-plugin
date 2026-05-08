@@ -1,0 +1,30 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">body-charset, post-charset. Получение кодировки пришедшего POST-запроса&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.</i></b><b><i>3</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$request:post-charset
+<br>
+$request:body-charset</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.4]</i></b></code><code><b>
+<br>
+</b></code><span>
+<br>
+Если в&nbsp;HTTP-заголовке content-type пришедшего POST-запроса содержится информация о&nbsp;кодировке, то&nbsp;ее название доступно в&nbsp;этом поле. При разборе полей формы подобного POST-запроса данные перекодируются из&nbsp;указанной в&nbsp;этом заголовке кодировки, а&nbsp;не из&nbsp;того, что задано в&nbsp;</span><code><b><a href="responsecharset.htm">$response:charset</a></b></code><span>.
+<br>
+
+<br>
+<i>Внимание</i><i>: если кодировка, указанная в&nbsp;</i><i>упомянутом </i><i>HTTP-заг</i><i>оловке, не&nbsp;была подключена (например, в&nbsp;конфигурационном методе), то&nbsp;будет выдано сообщение об ошибке.
+<br>
+</i></span><span>
+<br>
+</span></span>

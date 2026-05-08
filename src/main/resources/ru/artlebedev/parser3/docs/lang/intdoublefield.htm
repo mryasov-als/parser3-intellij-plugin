@@ -1,0 +1,101 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">int, double, bool. Преобразование объектов в&nbsp;числа или bool</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b><table border="0" cellpadding="1"><tr><td align="left" valign="top" width="117">
+<span><b>^имя.int[]</b>
+<br>
+</code></td><td align="left" valign="top" width="73">
+<p align="center"><span>или<code>
+<br>
+</code></span></p></td><td align="left" valign="top" width="179">
+<code><b>^имя.int(default)</b>
+<br>
+</code></td></tr><tr><td align="left" valign="top" width="117">
+<code><b>^имя.double[]</b>
+<br>
+</code></td><td align="left" valign="top" width="73">
+<p align="center"><span>или<code>
+<br>
+</code></span></p></td><td align="left" valign="top" width="179">
+<code><b>^имя.double(default)</b>
+<br>
+</code></td></tr><tr><td align="left" valign="top" width="117">
+<code><b>^</b><b>имя</b><b>.bool[]</b>
+<br>
+</code></td><td align="left" valign="top" width="73">
+<p align="center"><span>или<code>
+<br>
+</code></span></p></td><td align="left" valign="top" width="179">
+<code><b>^</b><b>имя</b><b>.bool(true|false)</b>
+<br>
+</code></td></tr></table>
+<br>
+</b><span>
+<br>
+Методы преобразуют значение переменной </span><code><b>$имя</b></code><span> в&nbsp;целое число, вещественное число либо&nbsp;логическое значение и&nbsp;возвращают это значение. При преобразовании вещественного числа к&nbsp;целому дробная часть отбрасывается. 
+<br>
+
+<br>
+Можно задать значение по&nbsp;умолчанию, которое будет получено, если преобразование невозможно, строка пуста или состоит только из&nbsp;white spaces (символов пробела, табуляции, перевода строки). 
+<br>
+
+<br>
+Значение по&nbsp;умолчанию можно использовать при обработке данных, получаемых интерактивно от&nbsp;пользователей. Это позволит избежать появления текстовых значений в&nbsp;математических выражениях при вводе некорректных данных, например строки вместо ожидаемого числа.
+<br>
+
+<br>
+Метод </span><code><b>bool</b></code><span> умеет преобразовать в&nbsp;</span><code><b><a href="boolclass.htm">bool</a></b></code><span> строки, содержащие числа (значение 0 будет преобразовано в&nbsp;</span><code><b>false</b></code><span>, не&nbsp;0 - в&nbsp;</span><code><b>true</b></code><span>), а&nbsp;также строки, содержащие значения&nbsp;</span><code><b>true</b></code><span> и&nbsp;</span><code><b>false</b></code><span> (без&nbsp;учета регистра). При применении метода </span><code><b>bool</b></code><span> к&nbsp;числам, любое не&nbsp;нулевое значение будет преобразовано в&nbsp;</span><code><b>true</b></code><span>, нулевое - в&nbsp;</span><code><b>false</b></code><span>.
+<br>
+
+<br>
+<i>Внимание: использование пустой строки в&nbsp;математических </i><i><a href="stringclass.htm">выражениях</a></i><i> не&nbsp;является ошибкой, ее значение считается нулем.
+<br>
+</i><i>
+<br>
+</i><i>Внимание: преобразование строки, не&nbsp;являющейся целым числом, в&nbsp;целое число является ошибкой (пример: строка «1.5» не&nbsp;является целым числом).
+<br>
+</i>
+<br>
+<b>Примеры</b>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>Штука</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^str.int(</b></code></span><code><b>1024</b><span style="color:#7F97E1" class="blue"><b>)</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Выведет число </span><code><b>1024</b></code><span>, поскольку объект </span><code><b>str</b></code><span> нельзя преобразовать в&nbsp;целое число без&nbsp;исключения.
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$double(1.5)
+<br>
+^double.int[]</b></code></span><span>
+<br>
+
+<br>
+Выведет число </span><code><b>1</b></code><span>, поскольку дробная часть будет отброшена.
+<br>
+
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^if(^form:search_in_text.bool(false)){
+<br>
+&nbsp;&nbsp;&nbsp;</b></code></span><code><b>...ищем&nbsp;в&nbsp;тексте...</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+</span></span>

@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">idna. Кодирование в&nbsp;IDNA</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.4]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^строка.idna[]
+<br>
+</b><span>
+<br>
+Метод позволяет преобразовать строку в&nbsp;формат IDNA&nbsp;(может потребоваться для&nbsp;работы с&nbsp;кириллическими доменами). Для обратного преобразования строки из&nbsp;IDNA в&nbsp;исходный вид необходимо воспользоваться
+<br>
+</code><code><b>^string:</b><b><a href="stringidna.htm">idna</a></b><b>[закодированное]
+<br>
+</b></code><span>
+<br>
+<i>Подробная информация  о&nbsp;IDNA доступна по&nbsp;ссылкам: </i><i><a href="https://tools.ietf.org/html/rfc3490" target="_blank">tools.ietf.org/html/rfc3490</a></i><i> и&nbsp;</i><i><a href="https://ru.wikipedia.org/wiki/IDN" target="_blank">wikipedia.org/wiki/IDN</a></i><i>
+<br>
+</i>
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$original[</b></code></span><code><b>пример.испытание</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><b>&lt;pre&gt;</b><span style="color:#7F97E1" class="blue"><b>^original.idna[]</b></code></span><code><b>&lt;/pre&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+Выведет…
+<br>
+</span><code><b>xn--e1afmkfd.xn--80akhbyknj4f</b></code><span>
+<br>
+</span></span>

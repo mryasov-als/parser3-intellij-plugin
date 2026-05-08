@@ -1,0 +1,40 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Описание формата файла, описывающего кодировку</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Данные представляются в&nbsp;формате tab-delimited со&nbsp;столбцами, указанными ниже.
+<br>
+
+<br>
+<code><b>char</b></code><span>&nbsp;- Символ или его код, заданный в&nbsp;десятичной или шестнадцатеричной форме&nbsp;(0xHH) в&nbsp;той кодировке, которую определяет этот файл.
+<br>
+
+<br>
+</span><code><b>white-space</b></code><span>, </span><code><b>digit</b></code><span>, </span><code><b>hex-digit</b></code><span>, </span><code><b>letter</b></code><span>, </span><code><b>word</b></code><span>&nbsp;- Набор флажков, задающих класс этого символа. Пустое содержимое означает непринадлежность символа к&nbsp;этому классу, непустое [например, x]&nbsp;- принадлежность. 
+<br>
+
+<br>
+Подробнее о&nbsp;символьных классах см.&nbsp;описание регулярных выражений в&nbsp;литературе.
+<br>
+
+<br>
+</span><code><b>lowercase</b></code><span>&nbsp;- Если символ имеет пару в&nbsp;нижнем регистре, то&nbsp;символ или код парного символа. Скажем, у&nbsp;буквы&nbsp;W есть парная&nbsp;w. Используется в&nbsp;регулярных выражениях для&nbsp;поиска, не&nbsp;чувствительного к&nbsp;регистру символов, а&nbsp;также в&nbsp;методах&nbsp;</span><code><b>lower</b></code><span> и&nbsp;</span><code><b>upper</b></code><span> класса&nbsp;</span><code><b>string</b></code><span>.
+<br>
+
+<br>
+</span><code><b>unicode1</b></code><span>&nbsp;- Основной Unicode-код символа. Если совпадает с&nbsp;кодом символа, то&nbsp;можно не&nbsp;указывать. Например, у&nbsp;буквы&nbsp;W он совпадает, а&nbsp;у&nbsp;буквы&nbsp;Я&nbsp;- нет.
+<br>
+
+<br>
+</span><code><b>unicode2</b></code><span>&nbsp;- Дополнительный Unicode-код символа, если имеется.
+<br>
+</span></span>

@@ -1,0 +1,64 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">sql. Получение числа из&nbsp;базы данных</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^int:sql{запрос}&nbsp;&nbsp;
+<br>
+^int:sql{запрос}[$.limit(1)&nbsp;$.offset(n)&nbsp;$.default(выражение)]&nbsp;&nbsp;
+<br>
+^double:sql{запрос}&nbsp;&nbsp;
+<br>
+^double:sql{запрос}[$.limit(1)&nbsp;$.offset(n)&nbsp;$.default(выражение)]&nbsp;&nbsp;&nbsp;
+<br>
+</b><span>
+<br>
+Метод возвращает число, полученное в&nbsp;результате SQL-запроса к&nbsp;серверу баз данных. Запрос должен возвращать значение из&nbsp;одного столбца одной строки.
+<br>
+
+<br>
+</code><code><b>Запрос</b></code><span>&nbsp;- Запрос к&nbsp;базе данных, написанный на&nbsp;языке SQL.
+<br>
+</span><code><b>$.offset(n)</b></code><span>&nbsp;- Отбрасывание первых </span><code><b>n</b></code><span>&nbsp;записей выборки.
+<br>
+
+<br>
+Если ответ SQL-сервера был пуст (0 записей), то&nbsp;в&nbsp;зависимости от&nbsp;значения параметра </span><code><b>default</b></code><span> 
+<br>
+
+<br>
+</span><code><b>$.default</b></code><span> не&nbsp;задан&nbsp;- будет выдано сообщение об&nbsp;ошибке;
+<br>
+</span><code><b>$.default{код}</b></code><span>&nbsp;- будет выполнен указанный </span><code><b>код</b></code><span>, и&nbsp;число, которое он возвратит, будет результатом метода;
+<br>
+</span><code><b>$.default(выражение)</b></code><span>&nbsp;- будет вычислено указанное </span><code><b>выражение</b></code><span>, и&nbsp;оно будет результатом метода.
+<br>
+
+<br>
+
+<br>
+Для работы этого метода необходимо установленное соединение с&nbsp;сервером базы данных (см.&nbsp;оператор </span><code><b><a href="opconnect.htm">connect</a></b></code><span>).
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opconnect.htm">connect</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="app3.htm">строка подключения</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{
+<br>
+&nbsp;&nbsp;&nbsp;^int:sql{</b></code></span><code><b>select&nbsp;count(*)&nbsp;from&nbsp;news</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+}</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Вернет количество записей в&nbsp;таблице </span><code><b>news</b></code><span>.</span><span>
+<br>
+</span></span>

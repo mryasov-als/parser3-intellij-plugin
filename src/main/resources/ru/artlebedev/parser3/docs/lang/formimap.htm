@@ -1,0 +1,60 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">imap. Получение координат нажатия в&nbsp;ISMAP</b><b></span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$form:imap</b>
+<br>
+<span>
+<br>
+Если пользователь нажал на&nbsp;картинку с&nbsp;атрибутом </code><code><b>ISMAP</b></code><span>, такая конструкция возвращает <a href="hash.htm">хеш</a> с&nbsp;полями </span><code><b>x</b></code><span> и&nbsp;</span><code><b>y</b></code><span>, в&nbsp;которых доступны координаты нажатия.
+<br>
+</span><span><b>
+<br>
+</b></span><span><b>Пример</b></span><span><b>
+<br>
+</b></span><span>В файле </span><code>/go.html</code><span> нужно написать:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$clicked[$form:imap]
+<br>
+^if(def&nbsp;$clicked){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Посетитель&nbsp;нажал&nbsp;на&nbsp;ISMAP-ссылку:&lt;br&nbsp;/&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x=</b><span style="color:#7F97E1" class="blue"><b>$clicked.x</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y=</b><span style="color:#7F97E1" class="blue"><b>$clicked.y</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><span>
+<br>
+
+<br>
+В файле </span><code>/test.html</code><span> нужно написать:
+<br>
+</span><code><b>&lt;a&nbsp;href="/go.html?a=b"&gt;&lt;img&nbsp;src="map.png"&nbsp;ismap</b><b>&nbsp;/</b><b>&gt;&lt;/a&gt;
+<br>
+</b></code><span>
+<br>
+Если открыть в&nbsp;браузере </span><code>/test.html</code><span> и&nbsp;кликнуть мышкой на&nbsp;картинке, это приведет к&nbsp;переходу по&nbsp;адресу:
+<br>
+</span><code>/go.html?a=b?10,30
+<br>
+</code><span>
+<br>
+и отобразится:
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Посетитель&nbsp;нажал&nbsp;на&nbsp;ISMAP-ссылку:
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;x=10
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y=30</b></code><span>
+<br>
+</span></span>

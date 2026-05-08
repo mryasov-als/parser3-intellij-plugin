@@ -1,0 +1,84 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Приложение 7. SQL-серверы, работа с&nbsp;IN/OUT-переменными</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>При работе с&nbsp;SQL-сервером Oracle поддерживается работа со&nbsp;связанными переменными (bind variables), поддерживаются <code><b>IN</b></code><span>-, </span><code><b>OUT</b></code><span>- и&nbsp;</span><code><b>IN/OUT</b></code><span>-переменные, которые связываются с&nbsp;передаваемым в&nbsp;запрос <a href="hash.htm">хешем</a>.
+<br>
+
+<br>
+При прямом использовании конструкций </span><code><b>CALL</b></code><span> и&nbsp;</span><code><b>EXECUTE</b></code><span> в&nbsp;некоторых версиях Oracle имеются известные проблемы, рекомендуется пользоваться PL/SQL-оберткой (</span><code><b>begin&nbsp;…;&nbsp;end;</b></code><span>), не&nbsp;забывая <a href="stringlit.htm">экранировать</a> знак&nbsp;«;».
+<br>
+
+<br>
+<i>Примечание: значение типа </i></span><code><b><a href="voidclass.htm">void</a></b></code><span><i> соответствует </i></span><code><b>NULL</b></code><span><i>. Во&nbsp;втором примере </i></span><code><b>days</b></code><span><i> имеет начальное значение </i></span><code><b>NULL</b></code><span><i>.
+<br>
+</i>
+<br>
+
+<br>
+<b>Пример использования IN-переменных
+<br>
+</b></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>#procedure&nbsp;ban_user(user_id&nbsp;in&nbsp;number,&nbsp;days&nbsp;in&nbsp;number)</b></code></span><code><b>
+<br>
+
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^void:sql{</b></code></span><code><b>begin&nbsp;ban_user(:user_id,&nbsp;:days)^;&nbsp;end^;</b><span style="color:#7F97E1" class="blue"><b>}[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.bind[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.user_id(7319)
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.days(10)
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;]
+<br>
+]
+<br>
+</b></code></span><span>
+<br>
+
+<br>
+<b>Пример использования IN- и&nbsp;OUT-переменных
+<br>
+</b></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>#procedure&nbsp;read_user_ban_days(user_id&nbsp;in&nbsp;number,&nbsp;days&nbsp;out&nbsp;number)</b></code></span><code><b>
+<br>
+
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>$variables[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.user_id(7319)
+<br>
+#несмотря&nbsp;на&nbsp;то&nbsp;что&nbsp;параметр&nbsp;OUT,&nbsp;все&nbsp;равно&nbsp;необходимо&nbsp;его&nbsp;передать
+<br>
+#его&nbsp;текущее&nbsp;значение&nbsp;будет&nbsp;проигнорировано
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.days[]
+<br>
+]
+<br>
+
+<br>
+^void:sql{</b></code></span><code><b>begin&nbsp;read_user_ban_days(:user_id,&nbsp;:days)^;&nbsp;end^;</b><span style="color:#7F97E1" class="blue"><b>}[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.bind[$variables]
+<br>
+]
+<br>
+</b></code></span><code><b>
+<br>
+Пользователь&nbsp;выключен&nbsp;на&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$variables.days!</b></code></span><span>
+<br>
+</span></span>

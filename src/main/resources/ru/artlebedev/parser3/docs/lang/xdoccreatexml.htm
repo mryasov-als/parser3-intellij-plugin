@@ -1,0 +1,36 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Создание  документа на&nbsp;основе заданного XML</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^xdoc::create{XML-код}
+<br>
+^xdoc::create[</b><b><a href="xdocuriparam.htm">базовый_путь</a></b><b>]{XML-код}
+<br>
+</b><span>
+<br>
+Конструктор создает объект класса </code><code><b>xdoc</b></code><span> из&nbsp;</span><code><b>XML-кода</b></code><span>. Возможно задание </span><code><b>базового&nbsp;пути</b></code><span>, относительно которого указываются имена подключаемых файлов. 
+<br>
+</span><code><b>
+<br>
+</b></code><span><b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$document[^xdoc::create{</b></code></span><code><b>&lt;?xml&nbsp;version="1.0"&nbsp;encoding="windows-1251"&nbsp;?&gt;
+<br>
+&lt;document&gt;
+<br>
+текст
+<br>
+&lt;/document&gt;</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="responseclass.htm">response</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="responsebody.htm">body</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[^document.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="xdocstring.htm">string</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]]
+<br>
+</b></code></span></span>

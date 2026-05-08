@@ -1,0 +1,981 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Опции работы с&nbsp;библиотекой cURL</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>В качестве опций у&nbsp;методов <b>^curl:</b><b><a href="curloptions.htm">options</a></b><b>[]</b> и&nbsp;<b>^curl:</b><b><a href="curlload.htm">load</a></b><b>[]</b> можно указывать любую из&nbsp;опций, доступную в&nbsp;библиотеке <code><b>libcurl</b></code><span>, установленной в&nbsp;системе (см.&nbsp;<a href="http://curl.haxx.se/libcurl/c/curl_easy_setopt.html" target="_blank">документацию</a>). Имена опций нужно писать в&nbsp;нижнем регистре и&nbsp;без&nbsp;префикса </span><code><b>CURLOPT_</b></code><span>.</span><span>
+<br>
+
+<br>
+</span><span>Кроме этого, поддерживаются следующие опции Parser:</span><span>&nbsp;&nbsp;&nbsp;
+<br>
+</span><span>
+<br>
+</span><code><table border="1" cellpadding="1"><tr><td align="left" valign="top" width="227">
+<span><b>Опция
+<br>
+</b></code></td><td align="left" valign="top" width="188">
+<span><b>По умолчанию
+<br>
+</b></span></td><td align="left" valign="top" width="212">
+<span><b>Значение
+<br>
+</b></span></td></tr><tr><td align="left" valign="top" width="227">
+<span>$.library[/путь/к/libcurl.so]
+<br>
+</span></td><td align="left" valign="top" width="188">
+<span>unix&nbsp;&nbsp;&nbsp;- <span>libcurl.so
+<br>
+</span><span>win32&nbsp;&nbsp;&nbsp;- </span><span>libcurl.dll
+<br>
+</span></span></td><td align="left" valign="top" width="212">
+<span>Имя или полный дисковый путь динамической библиотеки <span>libcurl</span><span> в&nbsp;системе. Задается вызовом </span><span>^curl:<a href="curloptions.htm">options</a>[]</span><span> до&nbsp;начала использования </span><span>curl</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="227">
+<span>$.charset[кодировка]
+<br>
+</span></td><td align="left" valign="top" width="188">
+<span>Соответствует<span>&nbsp;$request:charset
+<br>
+</span></span></td><td align="left" valign="top" width="212">
+<span>Кодировка документов на&nbsp;удаленном сервере. В эту кодировку перекодируется строка запроса. Из этой кодировки перекодируется ответ сервера, если в&nbsp;HTTP-ответе не указана кодировка.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="227">
+<span>$.response-charset[кодировка]
+<br>
+</span></td><td align="left" valign="top" width="188">
+<span>Берется из&nbsp;заголовка HTTP-ответа<code>
+<br>
+</code></span></td><td align="left" valign="top" width="212">
+<span>Принудительно указывает, в&nbsp;какой кодировке был получен ответ от сервера<code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="227">
+<span>$.name[имя файла]
+<br>
+</span></td><td align="left" valign="top" width="188">
+<span>NONAME.DAT
+<br>
+</span></td><td align="left" valign="top" width="212">
+<span>Имя файла создаваемого объекта класса&nbsp;<span>file</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="227">
+<span>$.mode[text|binary]
+<br>
+</span></td><td align="left" valign="top" width="188">
+<span>text
+<br>
+</span></td><td align="left" valign="top" width="212">
+<span>Тип создаваемого объекта класса&nbsp;<span>file</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="227">
+<span>$.content-type[CONTENT-TYPE]
+<br>
+</span></td><td align="left" valign="top" width="188">
+<span>Берется из&nbsp;заголовка HTTP-ответа
+<br>
+</span></td><td align="left" valign="top" width="212">
+<span>Поле <span>content-type</span><span> создаваемого объекта класса&nbsp;</span><span>file</span><span>.
+<br>
+</span></span></td></tr></table>
+<br>
+</span><span>
+<br>
+</span><span>Поддерживаемые опции libcurl в&nbsp;алфавитном порядке:
+<br>
+
+<br>
+</span><span><table border="1" cellpadding="1"><tr><td align="left" valign="top" width="139">
+<span><b>Название
+<br>
+</b></span></td><td align="left" valign="top" width="66">
+<span><b>Тип
+<br>
+</b></span></td><td align="left" valign="top" width="200">
+<span><b>Аналог в&nbsp;</b><b>libcurl</b><b>
+<br>
+</b></span></td><td align="left" valign="top" width="216">
+<span><b>Описание
+<br>
+</b></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>accept_encoding
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_ACCEPT_ENCODING.html" target="_blank">CURLOPT_ACCEPT_ENCODING</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Метод упаковки ответа: <span>gzip</span><span> или </span><span>deflate</span><span>. (Старое название параметра&nbsp;- </span><span>encoding</span><span>&nbsp;- тоже поддерживается).
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>autoreferer
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_AUTOREFERER.html" target="_blank">CURLOPT_AUTOREFERER</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Автоматическое создание заголовка&nbsp;<span>Referer</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>cainfo
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_CAINFO.html" target="_blank">CURLOPT_CAINFO</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>См.&nbsp;документацию по&nbsp;<span>libcurl</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>capath
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_CAPATH.html" target="_blank">CURLOPT_CAPATH</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>См.&nbsp;документацию по&nbsp;<span>libcurl</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>connecttimeout
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT.html" target="_blank">CURLOPT_CONNECTTIMEOUT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Тай-маут ожидания соединения в&nbsp;секундах.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>connecttimeout_ms
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_CONNECTTIMEOUT_MS.html" target="_blank">CURLOPT_CONNECTTIMEOUT_MS</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Тайм-аут ожидания соединения в&nbsp;миллисекундах.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>cookie
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_COOKIE.html" target="_blank">CURLOPT_COOKIE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Строка с&nbsp;<span>cookies</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>cookielist
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_COOKIELIST.html" target="_blank">CURLOPT_COOKIELIST</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Строка с&nbsp;<span>cookies</span><span> в&nbsp;формате, соответствующем документации </span><span>libcurl&nbsp;</span><span>(отличном от&nbsp;формата </span><span>cookie</span><span> в&nbsp;Parser).
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>cookiesession
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_COOKIESESSION.html" target="_blank">CURLOPT_COOKIESESSION</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Поставить <span>cookies</span><span> на&nbsp;всю сессию.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>copypostfields
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>, </span><span><a href="fileclass.htm">file</a></span><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_COPYPOSTFIELDS.html" target="_blank">CURLOPT_COPYPOSTFIELDS</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Тело пост-запроса (с копированием).
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>crlfile
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_CRLFILE.html" target="_blank">CURLOPT_CRLFILE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>См.&nbsp;документацию по&nbsp;<span>libcurl</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>customrequest
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_CUSTOMREQUEST.html" target="_blank">CURLOPT_CUSTOMREQUEST</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Другой HTTP-метод.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>failonerror
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_FAILONERROR.html" target="_blank">CURLOPT_FAILONERROR</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Выдавать ошибку, если HTTP-статус больше или равен 400.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>followlocation
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_FOLLOWLOCATION.html" target="_blank">CURLOPT_FOLLOWLOCATION</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Обрабатывать редиректы в&nbsp;ответе сервера.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>forbid_reuse
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_FORBID_REUSE.html" target="_blank">CURLOPT_FORBID_REUSE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>См.&nbsp;документацию по&nbsp;<span>libcurl</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>fresh_connect
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_FRESH_CONNECT.html" target="_blank">CURLOPT_FRESH_CONNECT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Создавать новое соединение при каждом запросе в&nbsp;сессии.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>http_version
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a>
+<br>
+</span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.se/libcurl/c/CURLOPT_HTTP_VERSION.html" target="_blank">CURLOPT_HTTP_VERSION</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Версия HTTP-протокола. Допустимые значения: <span>1.0</span><span>, </span><span>1.1</span><span>, </span><span>2</span><span>, </span><span>2.0</span><span>, </span><span>2TLS</span><span>, </span><span>2ONLY</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>http_content_decoding
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_HTTP_CONTENT_DECODING.html" target="_blank">CURLOPT_HTTP_CONTENT_DECODING</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>См.&nbsp;документацию по&nbsp;<span>libcurl</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>http_transfer_decoding
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_HTTP_TRANSFER_DECODING.html" target="_blank">CURLOPT_HTTP_TRANSFER_DECODING</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>См.&nbsp;документацию по&nbsp;<span>libcurl</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>httpauth
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_HTTPAUTH.html" target="_blank">CURLOPT_HTTPAUTH</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Тип HTTP-авторизации 
+<br>
+CURLAUTH_NONE = 0, 
+<br>
+CURLAUTH_BASIC = (1&lt;&lt;0), 
+<br>
+CURLAUTH_DIGEST = (1&lt;&lt;1), 
+<br>
+CURLAUTH_GSSNEGOTIATE = (1&lt;&lt;2), 
+<br>
+CURLAUTH_NTLM = (1&lt;&lt;3), 
+<br>
+CURLAUTH_DIGEST_IE = (1&lt;&lt;4), 
+<br>
+CURLAUTH_NTLM_WB = (1&lt;&lt;5), 
+<br>
+CURLAUTH_ONLY = (1&lt;&lt;31), 
+<br>
+CURLAUTH_ANY = (~CURLAUTH_DIGEST_IE), 
+<br>
+CURLAUTH_ANYSAFE = (~(CURLAUTH_BASIC|CURLAUTH_DIGEST_IE)).
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>httpget
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_HTTPGET.html" target="_blank">CURLOPT_HTTPGET</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Передать запрос методом <span>GET</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>httpheader
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="hashclass.htm">hash</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_HTTPHEADER.html" target="_blank">CURLOPT_HTTPHEADER</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>HTTP-заголовки запроса.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>httppost
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="hashclass.htm">hash</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_HTTPPOST.html" target="_blank">CURLOPT_HTTPPOST</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Поля пост-запроса, заданные аналогично полю <span>form</span><span> для </span><span>file::load</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>httpproxytunnel
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_HTTPPROXYTUNNEL.html" target="_blank">CURLOPT_HTTPPROXYTUNNEL</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Включить тунелирование запросов через прокси.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>ignore_content_length
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_IGNORE_CONTENT_LENGTH.html" target="_blank">CURLOPT_IGNORE_CONTENT_LENGTH</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Игнорировать заголовок&nbsp;<span>Content-Length</span><span> ответа сервера.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>interface
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_INTERFACE.html" target="_blank">CURLOPT_INTERFACE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Имя сетевого интерфейса.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>ipresolve<span>
+<br>
+</span></span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_IPRESOLVE.html" target="_blank">CURLOPT_IPRESOLVE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>1<span>&nbsp;- использовать IPv4 (по&nbsp;умолчанию),
+<br>
+</span><span>2</span><span>&nbsp;- использовать IPv6.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>issuercert
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_ISSUERCERT.html" target="_blank">CURLOPT_ISSUERCERT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Имя файла с&nbsp;сертификатом CA.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>keypasswd
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_KEYPASSWD.html" target="_blank">CURLOPT_KEYPASSWD</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Пароль для ключа (<span>passphrase</span><span>).
+<br>
+</span></span></td></tr></table>
+<br>
+
+<br>
+</span><span><table border="1" cellpadding="1"><tr><td align="left" valign="top" width="139">
+<span>localport
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_LOCALPORT.html" target="_blank">CURLOPT_LOCALPORT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Локальный порт.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>low_speed_limit
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_LIMIT.html" target="_blank">CURLOPT_LOW_SPEED_LIMIT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Минимальная скорость передачи, Б/сек.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>low_speed_time
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_LOW_SPEED_TIME.html" target="_blank">CURLOPT_LOW_SPEED_TIME</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Максимальное время, когда скорость передачи может быть меньше <span>low_speed_limit</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>maxconnects
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_MAXCONNECTS.html" target="_blank">CURLOPT_MAXCONNECTS</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Максимальное количество постоянных соединений в&nbsp;рамках сессии.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>maxfilesize
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_MAXFILESIZE.html" target="_blank">CURLOPT_MAXFILESIZE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Максимальный размер ответа в&nbsp;байтах.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>maxredirs
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_MAXREDIRS.html" target="_blank">CURLOPT_MAXREDIRS</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Максимальное число редиректов.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>nobody
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_NOBODY.html" target="_blank">CURLOPT_NOBODY</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Передать запрос методом <span>HEAD</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>password
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_PASSWORD.html" target="_blank">CURLOPT_PASSWORD</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Пароль.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>port
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_PORT.html" target="_blank">CURLOPT_PORT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Порт.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>post
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_POST.html" target="_blank">CURLOPT_POST</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Передать запрос методом <span>POST</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>postfields
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>, </span><span><a href="fileclass.htm">file</a></span><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_POSTFIELDS.html" target="_blank">CURLOPT_POSTFIELDS</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Тело пост-запроса.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>postredir
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_POSTREDIR.html" target="_blank">CURLOPT_POSTREDIR</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>См.&nbsp;документацию по&nbsp;<span>libcurl</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>proxy
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_PROXY.html" target="_blank">CURLOPT_PROXY</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Адрес прокси-сервера.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>proxyauth
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_PROXYAUTH.html" target="_blank">CURLOPT_PROXYAUTH</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Тип авторизации (см.&nbsp;параметр httpauth).
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>proxyport
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_PROXYPORT.html" target="_blank">CURLOPT_PROXYPORT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Порт прокси-сервера.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>proxytype
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_PROXYTYPE.html" target="_blank">CURLOPT_PROXYTYPE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Тип прокси:
+<br>
+<span>0</span><span>&nbsp;- </span><span>HTTP</span><span>,
+<br>
+</span><span>1</span><span>&nbsp;- </span><span>HTTP_1_0</span><span>, 
+<br>
+</span><span>4</span><span>&nbsp;- </span><span>SOCKS4</span><span>,
+<br>
+</span><span>5</span><span>&nbsp;- </span><span>SOCKS5</span><span>, 
+<br>
+</span><span>6</span><span>&nbsp;- </span><span>SOCKS4A</span><span> , 
+<br>
+</span><span>7</span><span>&nbsp;- </span><span>SOCKS5_HOSTNAME</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>proxyuserpwd
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_PROXYUSERPWD.html" target="_blank">CURLOPT_PROXYUSERPWD</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Имя пользователя и&nbsp;пароль для прокси.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>range
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_RANGE.html" target="_blank">CURLOPT_RANGE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Вернуть части ответа, находящиеся в&nbsp;указанном диапазоне.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>referer
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_REFERER.html" target="_blank">CURLOPT_REFERER</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Заголовок <span>Referer</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>ssl_cipher_list
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSL_CIPHER_LIST.html" target="_blank">CURLOPT_SSL_CIPHER_LIST</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>См.&nbsp;документацию по&nbsp;<span>libcurl</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>ssl_sessionid_cache
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSL_SESSIONID_CACHE.html" target="_blank">CURLOPT_SSL_SESSIONID_CACHE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Включить SSL session-ID кеш.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>ssl_verifyhost
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYHOST.html" target="_blank">CURLOPT_SSL_VERIFYHOST</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Проверять сертификат хоста.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>ssl_verifypeer
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html" target="_blank">CURLOPT_SSL_VERIFYPEER</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Проверять сертификат пира.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>sslcert
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSLCERT.html" target="_blank">CURLOPT_SSLCERT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Имя файла с&nbsp;SSL-сертификатом.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>sslcerttype
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSLCERTTYPE.html" target="_blank">CURLOPT_SSLCERTTYPE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Тип SSL-сертификата.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>sslengine
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSLENGINE.html" target="_blank">CURLOPT_SSLENGINE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>См.&nbsp;документацию по&nbsp;<span>libcurl</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>sslengine_default
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSLENGINE_DEFAULT.html" target="_blank">CURLOPT_SSLENGINE_DEFAULT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>См.&nbsp;документацию по&nbsp;<span>libcurl</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>sslkey
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSLKEY.html" target="_blank">CURLOPT_SSLKEY</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Имя файла с&nbsp;SSL-ключом.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>sslkeytype
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSLKEYTYPE.html" target="_blank">CURLOPT_SSLKEYTYPE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Тип SSL-ключа.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>sslversion
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_SSLVERSION.html" target="_blank">CURLOPT_SSLVERSION</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Версия протокола SSL/TLS-соединения:
+<br>
+<span>0</span><span>&nbsp;- по умолчанию
+<br>
+</span><span>1</span><span>&nbsp;- </span><span>TLSv1</span><span>  (</span><span>TLS&nbsp;1.x</span><span>),
+<br>
+</span><span>2</span><span>&nbsp;- </span><span>SSLv2</span><span>,
+<br>
+</span><span>3</span><span>&nbsp;- </span><span>SSLv3</span><span>,
+<br>
+</span><span>4</span><span>&nbsp;- </span><span>TLSv1_0</span><span>,
+<br>
+</span><span>5</span><span>&nbsp;- </span><span>TLSv1_1</span><span>,
+<br>
+</span><span>6</span><span>&nbsp;- </span><span>TLSv1_2</span><span>.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>stderr
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_STDERR.html" target="_blank">CURLOPT_STDERR</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Имя файла, в&nbsp;который будет переадресован вывод из&nbsp;<span>stderr</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>timeout
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT.html" target="_blank">CURLOPT_TIMEOUT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Таймаут с&nbsp;секундах.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>timeout_ms
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_TIMEOUT_MS.html" target="_blank">CURLOPT_TIMEOUT_MS</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Таймаут в&nbsp;миллисекундах.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>unrestricted_auth
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_UNRESTRICTED_AUTH.html" target="_blank">CURLOPT_UNRESTRICTED_AUTH</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Повторно отсылать параметры HTTP-авторизации, если при редиректе сменилось имя сервера.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>url
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_URL.html" target="_blank">CURLOPT_URL</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>URL-адрес.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>useragent
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_USERAGENT.html" target="_blank">CURLOPT_USERAGENT</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Заголовок <span>User-Agent</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>username
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_USERNAME.html" target="_blank">CURLOPT_USERNAME</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Имя пользователя.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>userpwd
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="stringclass.htm">string</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_USERPWD.html" target="_blank">CURLOPT_USERPWD</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Имя пользователя и&nbsp;пароль.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>verbose
+<br>
+</span></td><td align="left" valign="top" width="66">
+<p align="center"><span><a href="intdoubleclasses.htm">int</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="200">
+<span><span style="color:#7F97E1" class="blue"><u><a href="https://curl.haxx.se/libcurl/c/CURLOPT_VERBOSE.html" target="_blank">CURLOPT_VERBOSE</a></u></span><span>
+<br>
+</span></span></td><td align="left" valign="top" width="216">
+<span>Выводить подробную информацию в&nbsp;процессе обработки запроса в&nbsp;<span>stderr</span><span>.
+<br>
+</span></span></td></tr></table>
+<br>
+</span><span>
+<br>
+
+<br>
+</span></span>

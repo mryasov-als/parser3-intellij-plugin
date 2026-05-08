@@ -1,0 +1,72 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">load. Загрузка таблицы с&nbsp;диска или HTTP-сервера</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^table::load[</b><b><a href="app1.htm">имя файла</a></b><b>]&nbsp;
+<br>
+^table::load[</b><b><a href="app1.htm">имя файла</a></b><b>;опции&nbsp;загрузки]&nbsp;
+<br>
+^table::load[nameless;</b><b><a href="app1.htm">имя файла</a></b><b>]</b><span>
+<br>
+</code><code><b>^table::load[nameless;</b><b><a href="app1.htm">имя файла</a></b><b>;опции&nbsp;загрузки]</b></code><span>
+<br>
+</span><span>
+<br>
+Конструктор создает объект, используя таблицу, определенную в&nbsp;некотором </span><code><b>файле</b></code><span> или документе на&nbsp;HTTP-сервере. Данные должны быть представлены в&nbsp;формате tab-delimited (см.&nbsp;</span><code><b><a href="tablecreate.htm">table::create</a></b></code><span>).
+<br>
+
+<br>
+</span><code><b>Имя&nbsp;файла</b></code><span>&nbsp;- Имя файла с&nbsp;<a href="app1.htm">путем</a> или URL документа на&nbsp;HTTP-сервере.
+<br>
+
+<br>
+</span><code><b>Опции&nbsp;загрузки</b></code><span> - Основные опции описаны в&nbsp;разделе «<a href="app1.htm">Приложение 1. Пути к файлам и каталогам, работа с HTTP-серверами</a>», также доступны дополнительные опции, см.&nbsp;«<a href="tableoptionsfmt.htm">Опции формата файла</a>».
+<br>
+
+<br>
+Параметр </span><code><b>nameless</b></code><span> используется так&nbsp;же, как и&nbsp;в&nbsp;конструкторе </span><code><b><a href="tablecreate.htm">table::create</a></b></code><span>.
+<br>
+
+<br>
+
+<br>
+<b>Пример загрузки таблицы с&nbsp;диска
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$loaded_table[^table::load[</b></code></span><code><b>/addresses.cfg</b><span style="color:#7F97E1" class="blue"><b>]]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Пример создает объект класса </span><code><b>table</b></code><span>. Он&nbsp;содержит именованную таблицу, определенную в&nbsp;файле </span><code>addresses.cfg</code><span>, который находится в&nbsp;корневом каталоге сайта.
+<br>
+
+<br>
+
+<br>
+<b>Пример загрузки таблицы с&nbsp;HTTP-сервера
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$table[^table::load[nameless;</b></code></span><code><b>HTTP://www.parser.ru/</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;$.headers[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="app1.htm">USER-AGENT</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>table&nbsp;load&nbsp;example</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;]
+<br>
+]]
+<br>
+</b></code></span><code><b>Количество&nbsp;строк:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^table.count[]
+<br>
+</b></code></span><code><b>&lt;hr</b><b>&nbsp;/</b><b>&gt;
+<br>
+&lt;pre&gt;</b><span style="color:#7F97E1" class="blue"><b>$table.0</b></code></span><code><b>&lt;/pre&gt;</b></code><span>
+<br>
+</span></span>

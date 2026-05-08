@@ -1,0 +1,106 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Для PostgreSQL</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code>pgsql://user:password@host[:port]|[local]/database?
+<br>
+&nbsp;&nbsp;&nbsp;charset=значение&amp;
+<br>
+&nbsp;&nbsp;&nbsp;<a href="app3clientcharset.htm">ClientCharset</a>=кодировка&amp;<span><b><i>
+<br>
+</i></b></code><code>&nbsp;&nbsp;&nbsp;autocommit=1&amp;</code><span><b><i>&nbsp;&nbsp;&nbsp;[3.3.0]
+<br>
+</i></b></span><code>&nbsp;&nbsp;&nbsp;standard_conforming_strings=0&amp;</code><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.3]</i></b></span><code>
+<br>
+&nbsp;&nbsp;&nbsp;datestyle=ISO,SQL,Postgres,European,US,German&nbsp;[</code><span>по умолчанию ISO]
+<br>
+
+<br>
+Необязательные параметры:
+<br>
+</span><code>port</code><span>&nbsp;- номер порта. 
+<br>
+
+<br>
+Можно задать:
+<br>
+</span><code>user:password@host:port/database</code><span>,
+<br>
+</span><span>
+<br>
+а можно:
+<br>
+</span><code>user:password@local/database</code><span>
+<br>
+</span><span>
+<br>
+В этом случае произойдет соединение с&nbsp;сервером, расположенным на&nbsp;локальной машине.
+<br>
+
+<br>
+</span><code>charset</code><span> - сразу после соединения с&nbsp;сервером выполняет команду </span><code>SET&nbsp;CLIENT_ENCODING=значение</code><span>;</span><span>
+<br>
+</span><code><a href="app3clientcharset.htm">ClientCharset</a></code><span>&nbsp;- задает кодировку, в&nbsp;которой необходимо общаться с&nbsp;SQL-сервером, перекодированием занимается драйвер;
+<br>
+
+<br>
+</span><code>autocommit</code><span> - по&nbsp;умолчанию Parser&nbsp;3 автоматически выполняет </span><code>COMMIT</code><span> после каждого успешно выполненного запроса; если указать опцию </span><code>autocommit=0</code><span>, то&nbsp;такое поведение будет изменено и&nbsp;все запросы, написанные внутри одного оператора </span><code><a href="opconnect.htm">connect</a></code><span>, будут выполняться в&nbsp;рамках одной транзакции;
+<br>
+
+<br>
+</span><code>datestyle</code><span>&nbsp;- если задан этот параметр, то&nbsp;сразу после соединения с&nbsp;сервером драйвер выполнит команду&nbsp;</span><code>SET&nbsp;DATESTYLE=значение</code><span>;
+<br>
+</span><code>
+<br>
+standard_conforming_strings</code><span>&nbsp;- если установлен в&nbsp;1, то&nbsp;отключается эскейпинг символа '\' для&nbsp;соответствия SQL-стандартам.
+<br>
+</span><span><b>
+<br>
+
+<br>
+</b></span><span><b>Пример: перекодирование средствами SQL-сервера (рекомендуется)
+<br>
+</b>Допустим, данные в&nbsp;базе хранятся в&nbsp;кодировке </span><code>UTF-8</code><span>, а&nbsp;сайт работает в&nbsp;кодировке </span><code>windows-1251</code><span>, в&nbsp;этом случае</span><span> нужно использовать следующую строку подключения:
+<br>
+</span><code>pgsql://user:password@host/database?charset=win</code><span>
+<br>
+</span><span><b>
+<br>
+</b></span><span>Тогда сразу после соединения SQL-серверу будет выдана команда </span><code>SET&nbsp;CLIENT&nbsp;ENCODING=win</code><span> и&nbsp;сервер сам будет перекодировать принимаемые данные из&nbsp;кодировки </span><code>win</code><span> в&nbsp;кодировку, в&nbsp;которой данные хранятся у&nbsp;него в&nbsp;таблице, и&nbsp;обратно.
+<br>
+</span><span><b>
+<br>
+</b></span><span><i>Внимание: в&nbsp;этом случае следует указать кодировку, в&nbsp;которой работает сайт. Эта опция выполняет команду Postgres, поэтому необходимо использовать названия кодировок Postgres-сервера, которые отличаются от&nbsp;названий кодировок Parser&nbsp;3, определяемых в&nbsp;</i><i><a href="parserconfmethod.htm">конфигурационном файле</a></i><i>.
+<br>
+</i></span><span><b>
+<br>
+
+<br>
+</b></span><span><b>Пример: перекодирование драйвером (работает со&nbsp;всеми версиями Postgres-сервера)
+<br>
+</b>В редких случаях бывает, что невозможно использовать функции перекодирования, предоставляемые Postgres-сервером. Тогда можно задействовать механизмы перекодирования драйвера, используя опцию </span><code>ClientCharset</code><span>.
+<br>
+Допустим, данные в&nbsp;базе хранятся в&nbsp;кодировке </span><code>windows-1251</code><span>, а&nbsp;сайт работает в&nbsp;кодировке </span><code>koi8-r</code><span>, в&nbsp;этом случае можно использовать такую строку подключения:
+<br>
+</span><code>pgsql://user:password@host/database?<a href="app3clientcharset.htm">ClientCharset</a>=windows-1251
+<br>
+
+<br>
+</code><span>Тогда данные, отправляемые SQL-серверу, будут перекодироваться драйвером из&nbsp;кодировки </span><code><b><a href="requestcharset.htm">$request:charset</a></b></code><span> (в&nbsp;данном примере </span><code>koi8-r</code><span>) в&nbsp;кодировку </span><code>windows-1251</code><span>, а&nbsp;принимаемые от&nbsp;SQL-сервера данные&nbsp;- обратно.
+<br>
+</span><span><b>
+<br>
+</b></span><span><i>Внимание: в&nbsp;этом случае нужно указать кодировку, в&nbsp;которой данные хранятся в&nbsp;БД. В&nbsp;этой опции нужно указать названия кодировок Parser&nbsp;3, которые определяются в&nbsp;</i><i><a href="parserconfmethod.htm">конфигурационном файле</a></i><i>.
+<br>
+</i>
+<br>
+</span></span>

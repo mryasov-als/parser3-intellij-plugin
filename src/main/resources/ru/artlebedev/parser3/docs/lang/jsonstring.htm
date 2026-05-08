@@ -1,0 +1,273 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">string. Преобразование объекта Parser в&nbsp;JSON-строку</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^json:string[объект;опции преобразования]
+<br>
+</b><b>
+<br>
+</b><span>Метод преобразует системный или пользовательский объект в&nbsp;JSON-строку. По&nbsp;умолчанию объект пользовательского класса преобразуеытся в&nbsp;хеш. Результат - «чистая» строка, при необходимости сохранения в базу данных обработайте оператором </code><code><b><a href="optaint.htm">taint</a></b></code><span>.
+<br>
+</span><code><b>
+<br>
+Опции</b></code><span> </span><code><b>преобразования</b></code><span> - хеш, в&nbsp;котором можно указать опции, рассмотренные ниже.
+<br>
+
+<br>
+</span><span><table border="0" cellpadding="1"><tr><td align="left" valign="top" width="272">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="103">
+<span><b>По&nbsp;умолчанию
+<br>
+</b></span></td><td align="left" valign="top" width="357">
+<span><b>Описание
+<br>
+</b></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$.skip-unknown(</b><span><a href="boolclass.htm">true|false</a></code><code><b>)
+<br>
+</b></code></span></td><td align="left" valign="top" width="103">
+<span>false
+<br>
+</span></td><td align="left" valign="top" width="357">
+<span>При указании значения <code><b>true</b></code><span> вместо exception в&nbsp;результирующую JSON-строку будут выдаваться значения </span><code><b>null</b></code><span> при сериализации объектов с типами, отличными от&nbsp;</span><code><b><a href="voidclass.htm">void</a></b></code><span>, </span><code><b><a href="boolclass.htm">bool</a></b></code><span>, </span><code><b><a href="stringclass.htm">string</a></b></code><span>, </span><code><b><a href="intdoubleclasses.htm">int</a></b></code><span>, </span><code><b><a href="intdoubleclasses.htm">double</a></b></code><span>, </span><code><b><a href="dateclass.htm">date</a></b></code><span>, </span><code><b><a href="tableclass.htm">table</a></b></code><span>, </span><code><b><a href="hashclass.htm">hash</a></b></code><span> и&nbsp;</span><code><b><a href="fileclass.htm">file</a></b></code><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$.indent(</b><span><a href="boolclass.htm">true|false</a></code><code><b>)
+<br>
+$.indent[строка]
+<br>
+</b></code></span></td><td align="left" valign="top" width="103">
+<span>false
+<br>
+</span></td><td align="left" valign="top" width="357">
+<span>При указании значения <code><b>true</b></code><span> будет включено форматирование результирующей JSON-строки символами табуляции по&nbsp;глубине вложенности.
+<br>
+Можно указать строковое значение, которое будет использоваться как префикс при формировании строки с&nbsp;отступами. <b><i>[3.4.3]
+<br>
+</i></b></span></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$.date[</b><span>sql-string|gmt-string|iso-string|unix-timestamp</code><code><b>]
+<br>
+</b></code></span></td><td align="left" valign="top" width="103">
+<span>sql-string<code>
+<br>
+</code></span></td><td align="left" valign="top" width="357">
+<span>Опция определяет вид, в&nbsp;котором значения объектов класса <code><b><a href="dateclass.htm">date</a></b></code><span> будут попадать в&nbsp;результирующую JSON-строку (см.&nbsp;одноименные методы объекта класса&nbsp;</span><code><b>date</b></code><span>).
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$.void[</b><span>null|string</code><code><b>]
+<br>
+</b></code></span></td><td align="left" valign="top" width="103">
+<span>null<code>
+<br>
+</code></span></td><td align="left" valign="top" width="357">
+<span>Опция определяет вид, в&nbsp;котором значения объектов класса <code><b><a href="voidclass.htm">void</a></b></code><span> будут попадать в&nbsp;результирующую JSON-строку. По&nbsp;умолчанию выводится null, но возможна выдача в&nbsp;виде пустой строки.&nbsp;&nbsp;&nbsp;<b><i> [3.4.4]
+<br>
+</i></b></span></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$.table[</b><span>object|array|compact</code><code><b>]
+<br>
+</b></code></span></td><td align="left" valign="top" width="103">
+<span>object<code>
+<br>
+</code></span></td><td align="left" valign="top" width="357">
+<span>Опция определяет вид, в&nbsp;котором значения объектов класса&nbsp;<code><b><a href="tableclass.htm">table</a></b></code><span> будут попадать в&nbsp;результирующую JSON-строку.
+<br>
+</span><code><b>object:&nbsp;[{"col1":"val11","col2":"val12",...},&nbsp;{"col1":"val21","col2":"val22",...},...]</b></code><span>;</span><code><b>
+<br>
+array:&nbsp;[["col1","col2",...]&nbsp;||&nbsp;null&nbsp;</b></code><span>(для nameless-таблиц)</span><code><b>,["val11","val12",...],...]</b></code><span>;</span><code><b>
+<br>
+compact:&nbsp;["value11"&nbsp;||&nbsp;["val11",&nbsp;"val12",...],...]</b></code><span>.</span><code><b>
+<br>
+</b></code></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$.array[</b><span>compact|array|object</code><code><b>]</b></code><span>&nbsp;&nbsp;&nbsp;<b><i>[3.5.0]</i></b></span><code>
+<br>
+</code></span></td><td align="left" valign="top" width="103">
+<span>compact<code>
+<br>
+</code></span></td><td align="left" valign="top" width="357">
+<span>Опция определяет вид, в&nbsp;котором значения объектов класса&nbsp;<code><b><a href="array.htm">array</a></b></code><span> будут попадать в&nbsp;результирующую JSON-строку.
+<br>
+</span><code><b>compact:&nbsp;["v0","v2",...]</b></code><span>;</span><code><b>
+<br>
+array:&nbsp;["v0",null,"v2",...]</b></code><span>;</span><code><b>
+<br>
+object:&nbsp;{"0":"v0","2":"v2",...}</b></code><span>.</span><code><b>
+<br>
+</b>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$.file[</b><span>text|base64|stat</code><code><b>]
+<br>
+</b></code></span></td><td align="left" valign="top" width="103">
+<span>не определена<span>
+<br>
+</span></span></td><td align="left" valign="top" width="357">
+<span>Опция определяет вид, в&nbsp;котором значения объектов типа <code><b><a href="fileclass.htm">file</a></b></code><span> будут попадать в&nbsp;результирующую JSON-строку.
+<br>
+Если опция не&nbsp;определена или ее значение равно </span><code><b>stat</b></code><span>, в&nbsp;результирующую JSON-строку попадает информация об&nbsp;объектах класса&nbsp;</span><code><b>file</b></code><span> (имя файла, размер, </span><code>content-type</code><span>, </span><code>mode</code><span>), но&nbsp;их&nbsp;содержимое не&nbsp;попадает.</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$.xdoc[</b><span><a href="xdocoptions.htm">параметры преобразования в текст</a></code><code><b>]
+<br>
+</b></code></span></td><td align="left" valign="top" width="103">
+<span>не определена<code>
+<br>
+</code></span></td><td align="left" valign="top" width="357">
+<span>Опция преобразования объекта класса&nbsp;<code><b>xdoc</b></code><span> в&nbsp;строку&nbsp;&nbsp;&nbsp;<b><i>[3.4.2]
+<br>
+</i></b></span></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$.класс[</b><span><a href="junctionclass.htm">ссылка на метод</a></code><code><b>]
+<br>
+</b></code></span></td><td align="left" valign="top" width="103">
+<span>не определена<span>
+<br>
+</span></span></td><td align="left" valign="top" width="357">
+<span>Любой класс (включая вышеупомянутые&nbsp;<code><b>date</b></code><span>, </span><code><b>table</b></code><span> и&nbsp;</span><code><b>file</b></code><span>) можно вывести, применяя пользовательский метод, который должен принимать три&nbsp;параметра: ключ, объект и&nbsp;опции вызова </span><code><b>^json:string[]&nbsp;</b></code><span>(последнее нужно для рекурсивного вывода пользовательских объектов).
+<br>
+Поиск методов происходит во&nbsp;всех родительских классах.<b><i>&nbsp;&nbsp;&nbsp;[3.4.2]
+<br>
+</i></b></span></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$._default[</b><span><a href="junctionclass.htm">ссылка на метод</a></code><code><b>]
+<br>
+</b></code></span></td><td align="left" valign="top" width="103">
+<span>не определена<code>
+<br>
+</code></span></td><td align="left" valign="top" width="357">
+<span>Если опция определена, то&nbsp;метод будет вызываться для вывода всех объектов пользовательских классов (кроме тех, вывод которых явно задан с&nbsp;помощью опции&nbsp;<code><b>$.класс[</b></code><span><a href="junctionclass.htm">ссылка на метод</a></span><code><b>]</b></code><span>). Метод должен принимать три&nbsp;параметра: ключ, объект и&nbsp;опции вызова.&nbsp;&nbsp;&nbsp;<b><i>[3.4.2]
+<br>
+</i></b></span></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$._</b><b>default</b><b>[</b><span>название метода</code><code><b>]</b>
+<br>
+
+<br>
+</code></span></td><td align="left" valign="top" width="103">
+<span>не определена<code>
+<br>
+
+<br>
+</code></span></td><td align="left" valign="top" width="357">
+<span>Если опция определена и&nbsp;метод с&nbsp;указанным именем есть у&nbsp;объекта пользовательского класса, метод будет вызван для  вывода объекта (кроме объектов тех классов, вывод которых явно задан с&nbsp;помощью опции&nbsp;<code><b>$.класс[</b></code><span><a href="junctionclass.htm">ссылка на метод</a></span><code><b>]</b></code><span>). Метод должен принимать два&nbsp;параметра: ключ и&nbsp;опции вызова.&nbsp;&nbsp;&nbsp;<b><i>[3.4.4]</i></b></span><code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="272">
+<code><b>$.one-line(</b><span><a href="boolclass.htm">true|false</a></code><code><b>)
+<br>
+</b></code></span></td><td align="left" valign="top" width="103">
+<span>false<code>
+<br>
+</code></span></td><td align="left" valign="top" width="357">
+<span>При указании значения <code><b>true</b></code><span> результат будет возвращен в&nbsp;виде одной строки.&nbsp;&nbsp;&nbsp;<b><i>[3.4.5]</i></b></span><code>
+<br>
+</code></span></td></tr></table>
+<br>
+
+<br>
+</span><span><b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@main[]
+<br>
+$h[
+<br>
+&nbsp;&nbsp;&nbsp;$.void[]
+<br>
+&nbsp;&nbsp;&nbsp;$.bool(true)
+<br>
+&nbsp;&nbsp;&nbsp;$.double(1/2)
+<br>
+&nbsp;&nbsp;&nbsp;$.string[</b></code></span><code><b>русские&nbsp;буквы</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.hash[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.e[ee]
+<br>
+&nbsp;&nbsp;&nbsp;]
+<br>
+&nbsp;&nbsp;&nbsp;$.date[^date::create(2006;08;18;06;09;00)]
+<br>
+&nbsp;&nbsp;&nbsp;$.table[^table::create{c1&nbsp;&nbsp;&nbsp;c2&nbsp;&nbsp;&nbsp;c3^#0Av1&nbsp;&nbsp;&nbsp;v2&nbsp;&nbsp;&nbsp;v3^#0Av4&nbsp;&nbsp;&nbsp;v5&nbsp;&nbsp;&nbsp;v6}]
+<br>
+&nbsp;&nbsp;&nbsp;$.file[^file::create[text;</b></code></span><code><b>zigi.txt</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>file-content</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+&nbsp;&nbsp;&nbsp;$.img[^image::create(100;100;0)]
+<br>
+]
+<br>
+^json:string[$h;
+<br>
+&nbsp;&nbsp;&nbsp;$.indent(true)
+<br>
+&nbsp;&nbsp;&nbsp;$.table[array]
+<br>
+&nbsp;&nbsp;&nbsp;$.file[base64]
+<br>
+&nbsp;&nbsp;&nbsp;$.image[$image_handler]
+<br>
+]
+<br>
+
+<br>
+@image_handler[key;value;params]
+<br>
+"</b></code></span><code><b>custom&nbsp;value&nbsp;of&nbsp;image&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$key"
+<br>
+
+<br>
+</b></code></span><span>В результате выполнения будет выведено:
+<br>
+</span><code><b>{
+<br>
+&nbsp;&nbsp;&nbsp;"void":"",
+<br>
+&nbsp;&nbsp;&nbsp;"bool":true,
+<br>
+&nbsp;&nbsp;&nbsp;"double":0.5,
+<br>
+&nbsp;&nbsp;&nbsp;"string":"русские&nbsp;буквы",
+<br>
+&nbsp;&nbsp;&nbsp;"hash":{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"e":"ee"
+<br>
+&nbsp;&nbsp;&nbsp;},
+<br>
+&nbsp;&nbsp;&nbsp;"date":"2006-08-18&nbsp;06:09:00",
+<br>
+&nbsp;&nbsp;&nbsp;"table":[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;["c1","c2","c3"],
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;["v1","v2","v3"],
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;["v4","v5","v6"]
+<br>
+&nbsp;&nbsp;&nbsp;],
+<br>
+&nbsp;&nbsp;&nbsp;"file":{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"class":"file",
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name":"zigi.txt",
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"size":12,
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"content-type":"text\/plain",
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"mode":"text",
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"base64":"ZmlsZS1jb250ZW50"
+<br>
+&nbsp;&nbsp;&nbsp;},
+<br>
+&nbsp;&nbsp;&nbsp;"img":"custom&nbsp;value&nbsp;of&nbsp;image&nbsp;img"
+<br>
+}
+<br>
+</b></code></span>

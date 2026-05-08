@@ -1,0 +1,346 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Урок 1. Меню навигации</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Начнем с&nbsp;самого начала. Итак, мы собираемся сделать сайт (узел, сервер). Первым делом необходимо уяснить, каким образом на&nbsp;сайте будет упорядочена та или иная информация. Сколько будет категорий, подразделов и&nbsp;т.&nbsp;д. Все эти вопросы возникают на&nbsp;первом этапе&nbsp;- «Организация сайта». 
+<br>
+
+<br>
+А какой должна быть навигация сайта? Требований к&nbsp;хорошей навигации много. Она должна быть понятной, легкоузнаваемой, единообразной и&nbsp;удобной в&nbsp;использовании, быстро загружаться, давать четкое понятие о&nbsp;текущем местоположении. При этом на&nbsp;сайте не&nbsp;должно возникать 404-й ошибки, т.&nbsp;е. все ссылки должны работать. Тем, у&nbsp;кого есть опыт создания сайтов, наверняка приходилось сталкиваться с&nbsp;проблемой создания грамотной навигации. 
+<br>
+
+<br>
+Хочется иметь какое-то решение, которое всегда будет под рукой и&nbsp;позволит автоматизировать весь этот процесс. Что-то такое, что даст возможность единственный раз написать код и&nbsp;потом в&nbsp;одном месте дописывать столько разделов, сколько нужно. 
+<br>
+
+<br>
+Создание меню, которое ориентирует пользователя на&nbsp;сайте, не&nbsp;дает ему заблудиться&nbsp;- вот задача, с&nbsp;которой нам хочется начать повествование о&nbsp;Parser. Почему именно это? Прежде всего потому, что большое количество тегов
+<br>
+
+<br>
+<code><b>&lt;a&nbsp;href="страница_сайта.html"&gt;
+<br>
+</b></code><span>
+<br>
+трудно контролировать. А если необходимо добавить еще один раздел? Придется вносить изменения в&nbsp;каждую страницу, а&nbsp;человеку свойственно делать ошибки. При этом не&nbsp;исключено, что после такой «модернизации» в&nbsp;ответ на&nbsp;запросы пользователей ресурс сообщит о&nbsp;том, что «данная страница не&nbsp;найдена». Вот где проблема, которую с&nbsp;помощью Parser можно решить очень легко.
+<br>
+
+<br>
+Решение следующее. Создаем некую функцию на&nbsp;Parser, которая будет генерировать нужный нам фрагмент HTML-кода. В терминологии Parser функции называются методами. В тех местах, где этот код понадобится, будем просто давать указание «Вставить меню навигации»&nbsp;- и&nbsp;сразу&nbsp;же будет создана страница, содержащая меню. Для этого сделаем несколько простых шагов.
+<br>
+
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>1)</span></span></td><td><span>Всю информацию о&nbsp;наших ссылках будем хранить в&nbsp;одном файле, что позволит впоследствии вносить необходимые изменения только в&nbsp;него. В корневом каталоге будущего сайта создаем файл </span><code>sections.cfg</code><span>, в&nbsp;который помещаем следующую информацию:
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+<table border="1" cellpadding="1"><tr><td align="left" valign="top" width="70">
+<p align="center"><span><i>section_id
+<br>
+</i></span></p></td><td align="left" valign="top" width="159">
+<span><i>name
+<br>
+</i></span></td><td align="left" valign="top" width="158">
+<span><i>uri</i><u>
+<br>
+</u></span></td></tr><tr><td align="left" valign="top" width="70">
+<p align="center"><span>1
+<br>
+</span></p></td><td align="left" valign="top" width="159">
+<span>Главная
+<br>
+</span></td><td align="left" valign="top" width="158">
+<code>/<span>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="70">
+<p align="center"><span>2
+<br>
+</span></p></td><td align="left" valign="top" width="159">
+<span>Новости
+<br>
+</span></td><td align="left" valign="top" width="158">
+<code>/news/<span><b>
+<br>
+</b></code></span></td></tr><tr><td align="left" valign="top" width="70">
+<p align="center"><span>3
+<br>
+</span></p></td><td align="left" valign="top" width="159">
+<span>Контакты
+<br>
+</span></td><td align="left" valign="top" width="158">
+<code>/contacts/<span><b>
+<br>
+</b></code></span></td></tr><tr><td align="left" valign="top" width="70">
+<p align="center"><span>4
+<br>
+</span></p></td><td align="left" valign="top" width="159">
+<span>Цены
+<br>
+</span></td><td align="left" valign="top" width="158">
+<code>/price/<span><b>
+<br>
+</b></code></span></td></tr><tr><td align="left" valign="top" width="70">
+<p align="center"><span>5
+<br>
+</span></p></td><td align="left" valign="top" width="159">
+<span>Ваше мнение
+<br>
+</span></td><td align="left" valign="top" width="158">
+<code>/gbook/<span><b>
+<br>
+</b></code></span></td></tr></table>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+<i>Здесь используется так называемый формат tab-delimited. Столбцы разделяются знаком табуляции, а&nbsp;строки&nbsp;- переводом каретки. При копировании этой таблицы в&nbsp;текстовый редактор данное форматирование будет создано автоматически, но&nbsp;если таблица будет создаваться вручную, необходимо это учитывать. </i> <i>Для таблиц по умолчанию применяется формат tab-delimited.
+<br>
+</i>
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>2)</span></span></td><td><span>В том&nbsp;же каталоге, где содержится </span><code>sections.cfg</code><span>, создаем файл </span><code>auto.p</code><span><b> </b>. В нем мы будем хранить все те кирпичики, из&nbsp;которых впоследствии Parser соберет наш сайт. AUTO означает, что все эти кирпичики будут всегда доступны для&nbsp;Parser в&nbsp;нужный момент, а&nbsp;расширение .p&nbsp;- это… правильно! Он самый!&nbsp;&nbsp;&nbsp;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>3)</span></td><td><span>В файл </span><code>auto.p</code><span> вставим следующий код:
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span></span><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@navigation[]
+<br>
+$sections[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tableload.htm">table::load</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[sections.cfg]]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+
+<br>
+</b></code></span><code><b>&lt;nav&gt;
+<br>
+</b></code><span><b>&nbsp;&nbsp;&nbsp;</b></span><code><span style="color:#7F97E1" class="blue"><b>^sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablemenu.htm">menu</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{</b></code></span><code><span style="color:#7F97E1" class="blue">
+<br>
+</code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a&nbsp;href="</b><span style="color:#7F97E1" class="blue"><b>$sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">uri</a></b></code></span><code><b>"&gt;</b><span style="color:#7F97E1" class="blue"><b>$sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">name</a></b></code></span><code><b>&lt;/a&gt;
+<br>
+&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>|</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+&lt;/nav&gt;
+<br>
+</b></code><span>
+<br>
+Данные из&nbsp;этого файла и&nbsp;будут служить основой для&nbsp;нашего навигационного меню.
+<br>
+
+<br>
+Вот и&nbsp;все, подготовительные работы закончены. Теперь открываем код страницы,  где все это должно появиться (например, <b>index.html</b>), и&nbsp;говорим: «Вставить меню навигации». На&nbsp;Parser это называется «вызов метода» и&nbsp;пишется так:
+<br>
+
+<br>
+</span><code><b>^navigation[]
+<br>
+</b></code><span>
+<br>
+Осталось только открыть в&nbsp;браузере файл, в&nbsp;который мы вставили вызов метода, и&nbsp;посмотреть на&nbsp;готовое меню навигации. Теперь в&nbsp;любом месте на&nbsp;любой странице мы можем написать заветное </span><code><b>^navigation[]</b></code><span>, и&nbsp;Parser вставит туда наше меню. Страница будет сформирована «на&nbsp;лету». Что хотели, то&nbsp;и&nbsp;получили. 
+<br>
+
+<br>
+Если все получилось именно так, как описано выше, погружение в&nbsp;мир динамических файлов можно считать состоявшимся. Не&nbsp;за&nbsp;горами использование баз данных для&nbsp;формирования страниц и&nbsp;многое другое. 
+<br>
+
+<br>
+Однако не&nbsp;будем радоваться раньше времени. Сперва разберемся, что&nbsp;же мы сделали, чтобы добиться такого результата. Предлагаем взглянуть на&nbsp;код в&nbsp;</span><code>auto.p</code><span>. Если кажется, что все непонятно, не&nbsp;надо бежать прочь. Уверяем, через несколько минут все встанет на&nbsp;свои места. Итак, посмотрим на&nbsp;первую строчку:
+<br>
+
+<br>
+</span><code><b>@navigation[]
+<br>
+</b></code><span>
+<br>
+Она аналогична строке </span><code><b>^navigation[]</b></code><span>, которую мы вставили в&nbsp;текст страницы для&nbsp;создания меню. Различие только в&nbsp;первом символе: </span><code>^</code><span> и&nbsp;</span><code>@</code><span>. Однако логический смысл этого выражения совершенно иной: здесь мы определяем метод, который вызовем позже. Символ </span><code>@</code><span> («собака») в&nbsp;первой колонке строки в&nbsp;Parser означает, что мы хотим описать некоторый блок, которым воспользуемся в&nbsp;дальнейшем. Следующее слово определяет имя нашего метода: </span><code><b>navigation</b></code><span>. И&nbsp;это только наше решение, как его назвать. Вполне допустимы имена вида </span><code><b>а_ну_ка_вставь_меню_быстро</b></code><span>. Но читаться такая программа будет хуже, впрочем, кому как понятнее.
+<br>
+
+<br>
+<i>Жизненно необходимо давать методам простые, понятные имена. Они должны точно соответствовать тому, что именуемый объект будет хранить и&nbsp;делать. Настоятельно рекомендуется крайне внимательно относиться к&nbsp;именам, чтобы сохранить нервы и&nbsp;время себе, а&nbsp;также всем тем, кому впоследствии придется разбираться в&nbsp;написанном коде. Имена могут быть написаны как латинскими, так и&nbsp;русскими символами, главное&nbsp;- соблюдать единообразие: все или по-русски, или по-английски.
+<br>
+</i>
+<br>
+Идем дальше. 
+<br>
+</span><span>
+<br>
+</span><code><b>$sections[^</b><b><a href="tableload.htm">table::load</a></b><b>[sections.cfg]]
+<br>
+</b></code><span>
+<br>
+Это ключевая строка нашего кода. Она достаточно большая, поэтому лучше разобрать ее по&nbsp;частям. 
+<br>
+
+<br>
+Строка начинается символом </span><code><b>$</b></code><span> (доллар) и&nbsp;следующим сразу за&nbsp;ним именем </span><code><b>sections</b></code><span>. Так&nbsp;в&nbsp;Parser обозначаются переменные. Это надо запомнить. Все просто: видим  в&nbsp;тексте </span><code>$var</code><span>&nbsp;- имеем  дело с&nbsp;переменной </span><code>var</code><span>. Переменная может содержать любые данные: числа, строки, таблицы, файлы, рисунки и&nbsp;даже часть кода. Присвоение переменной </span><code><b>$parser_home_url&nbsp;</b></code><span>значения </span><code><b>www.parser3.ru</b></code><span> на&nbsp;Parser выглядит так: </span><code><b>$parser_home_url[www.parser3.ru]</b></code><span>. После этого мы можем обратиться к&nbsp;переменной по&nbsp;имени, т.&nbsp;е. написать </span><code><b>$parser_home_url</b></code><span> и&nbsp;получить значение </span><code><b>www.parser3.ru</b></code><span>.
+<br>
+
+<br>
+Еще раз то&nbsp;же самое:</span><span>
+<br>
+</span><span>
+<br>
+<table border="0" cellpadding="1"><tr><td align="left" valign="top" width="103">
+<code><b>$var[…]</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="167">
+<span>- присваиваем
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="103">
+<code><b>$var</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="167">
+<span>- получаем
+<br>
+</span></td></tr></table>
+<br>
+
+<br>
+<i>Подробнее&nbsp;- см.&nbsp;в&nbsp;разделе «</i><i><a href="vars.htm">Переменные</a></i><i>».</i>
+<br>
+
+<br>
+В нашем случае переменная </span><code><b>$sections</b></code><span> будет хранить таблицу из&nbsp;файла </span><code><b>sections.cfg</b></code><span>.
+<br>
+
+<br>
+Любую таблицу Parser рассматривает как самостоятельный объект, с&nbsp;которым он умеет производить только вполне определенные действия, например добавлять или удалять из&nbsp;нее строки. Поскольку переменная может хранить любые данные, необходимо указать, что значение, присвоенное переменной, является именно таблицей. 
+<br>
+
+<br>
+
+<br>
+<b>Лирическое отступление 
+<br>
+</b><i>Пример из&nbsp;жизни. Всю автомобильную технику можно грубо разделить на&nbsp;несколько классов: легковые автомашины, грузовики, трактора и&nbsp;гусеничная техника. Любой автомобиль является объектом одного из&nbsp;этих классов. При необходимости легко определить, к&nbsp;какому классу относится автомобиль, поскольку их все объединяют общие характеристики, такие как вес, масса перевозимого груза и&nbsp;т.&nbsp;д. Любой автомобиль может совершать действия: двигаться, стоять или ломаться. Каждый из&nbsp;автомобилей обладает своими собственными свойствами. И главное, автомобиль не&nbsp;может появиться сам собой, его нужно создать. Когда конструктор придумывает новую модель автомобиля, он точно знает, автомобиль какого класса он создает, какими свойствами будет наделено его творение и&nbsp;что оно сможет делать. Так&nbsp;же и&nbsp;в&nbsp;Parser: каждый объект относится к&nbsp;определенному классу, объект класса создается конструктором этого класса и&nbsp;наделяется характеристиками (полями) и&nbsp;методами (действиями), общими для&nbsp;всех подобных объектов.
+<br>
+</i></span><span><i>
+<br>
+</i></span><span><b>Итог
+<br>
+</b></span><span>Любой </span><code><b>объект</b></code><span> в&nbsp;Parser принадлежит конкретному </span><code><b>классу</b></code><span>, характеризуется </span><code><b>полями</b></code><span> и&nbsp;</span><code><b>методами</b></code><span> именно этого класса. Чтобы он появился, его нужно создать. Делает это </span><code><b>конструктор</b></code><span> данного класса. Это базовая терминология, ее нужно усвоить перед дальнейшим изучением. 
+<br>
+
+<br>
+Продолжим. Переменной </span><code><b>$sections</b></code><span> мы присвоили вот что: 
+<br>
+
+<br>
+</span><code><b>^table::load[sections.cfg]
+<br>
+</b></code><span>
+<br>
+Буквально это означает следующее: мы создали объект класса </span><code><b>table</b></code><span> при помощи конструктора </span><code>load</code><span>. Общее правило для&nbsp;создания объекта записывается так:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>^имя_класса::конструктор[параметры_конструктора]
+<br>
+</b></code><span>
+<br>
+<i>Подробнее&nbsp;- см.&nbsp;в&nbsp;разделе «</i><i><a href="params.htm">Передача параметров</a></i><i>».</i>
+<br>
+
+<br>
+В качестве параметра конструктору мы передали имя файла с&nbsp;таблицей и&nbsp;путь к&nbsp;нему. 
+<br>
+
+<br>
+Теперь переменная </span><code><b>$sections</b></code><span> содержит таблицу с&nbsp;разделами нашего сайта. Parser считает ее объектом класса </span><code><b>table</b></code><span> и&nbsp;точно знает, какие действия с&nbsp;ней можно выполнить. Пока нам понадобится только один метод этого класса&nbsp;- </span><code><b>menu</b></code><span>, который последовательно перебирает все строки таблицы. Также нам потребуются значения из&nbsp;полей самой таблицы. Синтаксис вызова методов объекта:
+<br>
+
+<br>
+</span><code><b>^объект.метод_класса[параметры]
+<br>
+</b><b>
+<br>
+</b></code><span>Получение значений полей объекта (мы ведь имеем дело с&nbsp;вполне определенной таблицей с&nbsp;заданными нами&nbsp;же полями):
+<br>
+
+<br>
+</span><code><b>$объект.имя_поля
+<br>
+</b></code><span>
+<br>
+Знания, полученные выше, теперь позволяют без&nbsp;труда разобраться в&nbsp;последней части нашего кода:
+<br>
+
+<br>
+</span><code><b>&lt;nav&gt;
+<br>
+</b></code><span><b>&nbsp;&nbsp;&nbsp;</b></span><code><span style="color:#7F97E1" class="blue"><b>^sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablemenu.htm">menu</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{</b></code></span><code><span style="color:#7F97E1" class="blue">
+<br>
+</code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;a&nbsp;href="</b><span style="color:#7F97E1" class="blue"><b>$sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">uri</a></b></code></span><code><b>"&gt;</b><span style="color:#7F97E1" class="blue"><b>$sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">name</a></b></code></span><code><b>&lt;/a&gt;
+<br>
+&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>[|]
+<br>
+&lt;/nav&gt;
+<br>
+</b><b>
+<br>
+</b></code><span>Мы формируем HTML-меню, в&nbsp;каждый пункт которого помещаем значения, содержащиеся в&nbsp;полях нашей таблицы </span><code><b>$sections</b></code><span>: </span><code><b>uri</b></code><span>&nbsp;- адрес и&nbsp;</span><code><b>name</b></code><span>&nbsp;- имя. При помощи метода </span><code><b>menu</b></code><span> мы автоматически перебираем все строки таблицы. В первом параметре, переданном в фигурных скобках, задан код, который нужно выполнить для каждой строки таблицы. Во втором параметре, переданном в прямых скобках, задана строка, разделяющая пункты меню. Таким образом, даже если у&nbsp;нас будет несколько десятков разделов, ни&nbsp;один из&nbsp;них не&nbsp;будет потерян или пропущен. Мы можем свободно добавлять разделы, удалять их и&nbsp;даже менять местами. Изменения вносятся только в&nbsp;файл </span><code>sections.cfg</code><span>. Логика работы не&nbsp;нарушается. Все просто и&nbsp;красиво.
+<br>
+
+<br>
+Подведем итоги первого урока. 
+<br>
+
+<br>
+</span><span><b>Что мы сделали:</b></span><span> написали свой первый код на&nbsp;Parser, а&nbsp;именно&nbsp;- научились создавать меню навигации на&nbsp;любой странице сайта, опираясь на&nbsp;данные, хранящиеся в&nbsp;отдельном файле.
+<br>
+
+<br>
+</span><span><b>Что узнали:</b></span><span> познакомились c концептуальными понятиями языка (класс, объект, свойство, метод), а&nbsp;также некоторыми базовыми конструкциями Parser. 
+<br>
+
+<br>
+</span><span><b>Что надо запомнить:</b></span><span> Parser использует объектную модель. Любой объект языка принадлежит какому-то классу, имеет собственные свойства и&nbsp;наделен методами своего класса. Для того чтобы создать объект, необходимо воспользоваться конструктором класса.</span><span>
+<br>
+</span><span>
+<br>
+Синтаксис работы с&nbsp;объектами:
+<br>
+
+<br>
+<table border="1" cellpadding="1"><tr><td align="left" valign="top" width="350">
+<span><b>$переменная[значение]</b><span>
+<br>
+</span></span></td><td align="left" valign="top" width="251">
+<span>- задаем значение<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="350">
+<span><b>$переменная</b><span>
+<br>
+</span></span></td><td align="left" valign="top" width="251">
+<span>- получаем значение<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="350">
+<span><b>$переменная[^имя_класса::конструктор[параметры]]</b><code><b>&nbsp;</b></code><span>
+<br>
+</span></span></td><td align="left" valign="top" width="251">
+<span>- создаем объект класса <span><b>имя_класса</b></span><span> и&nbsp;присваиваем его переменной</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="350">
+<span><b>$переменная.имя_поля</b><span>
+<br>
+</span></span></td><td align="left" valign="top" width="251">
+<span>- получаем поле самого объекта, хранящегося в&nbsp;переменной<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="350">
+<span><b>^переменная.метод[]</b><span>
+<br>
+</span></span></td><td align="left" valign="top" width="251">
+<span>- вызываем действие (метод класса, к&nbsp;которому принадлежит объект, хранящийся в&nbsp;переменной)<span>
+<br>
+</span></span></td></tr></table>
+<br>
+
+<br>
+</span><span><b>Что будем делать дальше:</b></span><span> заниматься модернизацией меню. Ведь пока оно не&nbsp;отвечает многим требованиям: ставит лишнюю ссылку на&nbsp;текущий раздел, выдает столбцы разной ширины. На&nbsp;втором уроке мы исправим все эти недостатки и&nbsp;сделаем еще кое-что.
+<br>
+</span></span>

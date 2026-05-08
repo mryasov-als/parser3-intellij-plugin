@@ -1,0 +1,40 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Переменная CLASS_PATH</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>В <a href="parserconfmethod.htm">конфигурационном методе</a> может быть задана переменная или таблица <code><b>CLASS_PATH</b></code><span>, в&nbsp;которой задается путь (пути) к&nbsp;каталогу с&nbsp;файлами классов. Если имя подключаемого модуля указано относительно, то&nbsp;файл ищется по&nbsp;</span><code><b>CLASS_PATH</b></code><span> (если </span><code><b>CLASS_PATH</b></code><span>&nbsp;- таблица, то&nbsp;каталоги в&nbsp;ней перебираются снизу вверх).
+<br>
+
+<br>
+
+<br>
+<b>Пример таблицы </b></span><code><b>CLASS_PATH</b></code><span><b>:
+<br>
+</b>
+<br>
+</span><code><b>$CLASS_PATH[^</b><b><a href="tablecreate.htm">table::create</a></b><b>{path
+<br>
+/classes/common
+<br>
+/classes/specific
+<br>
+}]
+<br>
+</b></code><span>
+<br>
+Теперь по&nbsp;относительному пути </span><code>my/class.p</code><span> поиск файла будет происходить в&nbsp;таком порядке:
+<br>
+</span><code>/classes/specific/my/class.p
+<br>
+/classes/common/my/class.p</code><span>
+<br>
+</span></span>

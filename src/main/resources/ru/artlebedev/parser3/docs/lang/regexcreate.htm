@@ -1,0 +1,46 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Создание нового объекта</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^regex::create[шаблон]
+<br>
+^regex::create[шаблон][опции&nbsp;поиска]
+<br>
+</b><span>
+<br>
+</code><span>Шаблон&nbsp;- это строка с&nbsp;<i>регулярным выражением</i>, совместимым с&nbsp;PCRE (Perl compatible regular expressions). Частичный перевод описания PCRE приведен в&nbsp;«<a href="app4.htm">Приложение 4. Perl-совместимые регулярные выражения</a>».
+<br>
+
+<br>
+Предусмотрены следующие опции поиска:
+<br>
+</span><code><b>i</b></code><span>&nbsp;- не&nbsp;учитывать регистр;
+<br>
+</span><code><b>x</b></code><span>&nbsp;- игнорировать символы white space и&nbsp;разрешить </span><code><b>#комментарий&nbsp;до&nbsp;конца&nbsp;строки</b></code><span>;
+<br>
+</span><code><b>s</b></code><span>&nbsp;- символ </span><code><b>$</b></code><span> считать концом всего текста (опция по&nbsp;умолчанию);
+<br>
+</span><code><b>m</b></code><span>&nbsp;- символ </span><code><b>$</b></code><span> считать концом строки, но&nbsp;не&nbsp;всего текста;
+<br>
+</span><code><b>U</b></code><span>&nbsp;- инвертировать «жадность» квантификаторов (они становятся не&nbsp;«жадными», чтобы сделать их «жадными», необходимо поставить после них символ «</span><code><b>?</b></code><span>»);<b><i> [3.3.0]
+<br>
+</i></b></span><code><b>g</b></code><span>&nbsp;- найти все вхождения строки (а не&nbsp;только первое);
+<br>
+</span><code><b>n</b></code><span>&nbsp;- вернуть число с&nbsp;количеством совпадений вместо таблицы;
+<br>
+</span><code><b>'</b></code><span>&nbsp;- вычислять значения столбцов </span><code><b>prematch</b></code><span>, </span><code><b>match</b></code><span>, </span><code><b>postmatch</b></code><span>.
+<br>
+
+<br>
+Поскольку символы </span><code><b>^</b></code><span> и&nbsp;</span><code><b>$</b></code><span> используются в&nbsp;Parser, в&nbsp;шаблоне вместо символа&nbsp;</span><code><b>^</b></code><span> используется строка&nbsp;</span><code><b>^^</b></code><span>, а&nbsp;вместо символа&nbsp;</span><code><b>$</b></code><span>&nbsp;- строка </span><code><b>^$&nbsp;</b></code><span>(см.&nbsp;«<a href="exprlit.htm">Литералы</a>»).</span><span>
+<br>
+</span></span>

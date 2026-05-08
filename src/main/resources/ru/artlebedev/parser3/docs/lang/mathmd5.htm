@@ -1,0 +1,46 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">md5. MD5-отпечаток строки</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^math:md5[строка]
+<br>
+</b><span>
+<br>
+Метод получает «отпечаток» размером 16&nbsp;байт из&nbsp;переданной </code><code><b>строки</b></code><span>. Выдает его представление в&nbsp;виде строки&nbsp;- байты представлены в&nbsp;шестнадцатеричном виде без&nbsp;разделителей, в&nbsp;нижнем регистре.
+<br>
+
+<br>
+Считается, что практически невозможно: 
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>создать две строки, имеющие одинаковый «отпечаток»;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>восстановить исходную строку по&nbsp;ее «отпечатку».
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+<b>Пример
+<br>
+</b>В качестве имени cache-файла возьмем «отпечаток» строки </span><code><b><a href="requesturi.htm">$request:uri</a></b></code><span>, это обеспечит взаимно-однозначное соответствие имени строке запроса, а&nbsp;также избавит нас от&nbsp;необходимости укорачивать строку запроса и&nbsp;очищать ее от&nbsp;спецсимволов.
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opcache.htm">cache</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[$cache_directory/^math:md5[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="requesturi.htm">$request:uri</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]]($cache_time){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;…
+<br>
+}</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+<i>Подробная информация  о&nbsp;MD5 доступна по&nbsp;ссылке: </i><i><a href="http://www.ietf.org/rfc/rfc1321.txt" target="_blank">ietf.org/rfc/rfc1321.txt</a></i><i>
+<br>
+</i></span></span>

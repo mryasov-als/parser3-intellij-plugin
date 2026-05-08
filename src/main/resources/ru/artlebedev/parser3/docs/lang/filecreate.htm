@@ -1,0 +1,84 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Создание файла</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file::create[формат;имя;текст]
+<br>
+^file::create[формат;имя;текст;опции]</b><span><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]</i></b><b><i>
+<br>
+</i></b></span><code><b>^file::create[строка;расширенные&nbsp;опции]</b></code><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>2</i></b><b><i>]</i></b></span><code><b>
+<br>
+^file::create[файл;расширенные&nbsp;опции]</b></code><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>2</i></b><b><i>]</i></b></span><code><b>
+<br>
+</b></code><span>
+<br>
+Создает объект класса </span><code><b>file</b></code><span> с&nbsp;указанными </span><code><b>именем</b></code><span> и&nbsp;содержимым.
+<br>
+При создании текстовых файлов производится нормализация символов переводов строк.</span><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>2</i></b><b><i>]</i></b>
+<br>
+
+<br>
+</span><code><b>Формат</b></code><span> - формат представления создаваемого файла. До&nbsp;версии <b><i>3.4.2</i></b> поддерживался только текстовый (</span><code><b>text</b></code><span>) формат.
+<br>
+</span><code><b>Опции</b></code><span> - хеш, в&nbsp;котором можно указать </span><code><b>$.</b><b>from-</b><b>charset[</b></code><span>кодировка</span><code><b>]</b></code><span>, </span><span>или </span><code><b>$.</b><b>to-</b><b>charset[</b></code><span>кодировка</span><code><b>]</b></code><span>, и</span><span>ли </span><code><b>$.content-type[...]</b></code><span>. <b><i>[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>1</i></b><b><i>] [</i></b><b><i>3.4.</i></b><b><i>5]</i></b>
+<br>
+</span><code><b>Расширенные&nbsp;о</b><b>пции</b></code><span> - хеш, в&nbsp;котором, помимо обычных опций, можно указать еще и&nbsp;</span><code><b>$.name[</b></code><span>имя&nbsp;файла</span><code><b>]</b></code><span>, </span><code><b>$.mode[</b></code><span>формат</span><code><b>]</b></code><span>
+<br>
+
+<br>
+<i>Примечание: если нужно строку сохранить на&nbsp;диск </i>сервера<i>, есть более простой подход: </i></span><code><b>^</b><b><a href="stringclass.htm">string</a></b><b>.</b><b><a href="stringsave.htm">save</a></b><b>[…]</b></code><span><i>.
+<br>
+
+<br>
+Примечание: до&nbsp;версии </i><b><i>3.4.5 </i></b><i>параметра с&nbsp;кодировкой, из&nbsp;которой нужно преобразовать данные (</i></span><code><b><i>from-</i></b><b><i>charset</i></b></code><span><i>), не&nbsp;было, а&nbsp;параметр с&nbsp;кодировкой, в&nbsp;которую нужно преобразовать данные, назывался не&nbsp;</i></span><code><b><i>to-</i></b><b><i>charset</i></b></code><span><i>, а&nbsp;просто </i></span><code><b><i>charset</i></b></code><span><i>.
+<br>
+</i>
+<br>
+<b>Пример выгрузки данных в&nbsp;XML виде
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>#export.html
+<br>
+^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opconnect.htm">connect</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="app3.htm">строка соединения</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{
+<br>
+$products[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tableclass.htm">table</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablesql.htm">sql</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{</b></code></span><code><b>select&nbsp;product_id,&nbsp;name&nbsp;from&nbsp;products</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+$file[^file::create[text;</b></code></span><code><b>export.xml</b><span style="color:#7F97E1" class="blue"><b>;^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="optaint.htm">untaint</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[xml]{</b></code></span><code><b>&lt;?xml&nbsp;version="1.0"&nbsp;encoding="</b><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="requestclass.htm">request</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="requestcharset.htm">charset</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>"</b></code></span><code><b>?&gt;
+<br>
+&lt;products&gt;
+<br>
+&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^products.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablemenu.htm">menu</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{</b></code></span><code><b>&lt;product&nbsp;id="</b><span style="color:#7F97E1" class="blue"><b>$products.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">product_id</a></b></code></span><code><b>"&nbsp;name="</b><span style="color:#7F97E1" class="blue"><b>$products.name</b></code></span><code><b>"/&gt;</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><code><b>&lt;/products&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+}]]
+<br>
+$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="responseclass.htm">response</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="responsedownload.htm">download</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[$file]
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+При открытии этого документа произойдет создание файла </span><code>export.xml</code><span> и&nbsp;браузер предложит посетителю сохранить этот файл. Получится примерно такой текстовый файл:
+<br>
+
+<br>
+</span><code><b>&lt;?xml&nbsp;version="1.0"&nbsp;encoding="WINDOWS-1251"?&gt;
+<br>
+&lt;products&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;product&nbsp;id="1"&nbsp;name="Бывает&nbsp;&amp;quot;В&nbsp;кавычках&amp;quot;"/&gt;</b><b>
+<br>
+&nbsp;&nbsp;&nbsp;</b><b>&lt;product&nbsp;id="2"&nbsp;name="Johnson&amp;amp;Johnson"/&gt;
+<br>
+&lt;/products&gt;
+<br>
+</b></code></span>

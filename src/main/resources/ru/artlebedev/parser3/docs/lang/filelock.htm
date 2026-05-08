@@ -1,0 +1,64 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">lock. Эксклюзивное выполнение кода</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file:lock[имя&nbsp;файла&nbsp;блокировки]{код}</b><span>
+<br>
+
+<br>
+Метод гарантирует, что </code><code><b>код</b></code><span> не&nbsp;будет выполняться параллельно в&nbsp;разных процессах, для&nbsp;обеспечения эксклюзивности используется </span><code><b>файл&nbsp;блокировки</b></code><span>.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^file:lock[</b></code></span><code><b>/counter.lock</b><span style="color:#7F97E1" class="blue"><b>]{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$file[^file::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="fileload.htm">load</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[text;</b></code></span><code><b>/counter.txt</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$string[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opeval.htm">eval</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>($file.text+1)]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;^string.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="stringsave.htm">save</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>/counter.txt</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+}
+<br>
+</b></code></span><code><b>Количество&nbsp;посещений:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$string</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+</b></code><span>
+<br>
+В отсутствие блокировки два одновременных обращения к&nbsp;странице могли вызвать увеличение счетчика на&nbsp;1, а&nbsp;не&nbsp;на&nbsp;2:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>пришел первый;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>пришел второй;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>считал первый, значение счетчика 0;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>считал второй, значение счетчика 0;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>увеличил первый, значение счетчика 1;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>увеличил второй, значение счетчика 1;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>записал первый, значение счетчика 1;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>записал второй <i>поверх только что записанного первым</i>, значение счетчика&nbsp;1, а&nbsp;не&nbsp;2.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+<i>Внимание: всегда следует помнить об&nbsp;одновременно приходящих запросах. При работе с&nbsp;базами данных обычно есть встроенные в&nbsp;SQL-сервер средства для&nbsp;их корректной обработки.
+<br>
+</i><i>
+<br>
+</i><i>Внимание: при использовании более одной блокировки всегда нужно думать об&nbsp;их взаимном сочетании, чтобы избежать ситуации «А ждет&nbsp;Б, Б ждет&nbsp;А», так называемого deadlock.
+<br>
+</i></span></span>

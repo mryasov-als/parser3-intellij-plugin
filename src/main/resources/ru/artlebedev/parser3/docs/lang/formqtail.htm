@@ -1,0 +1,36 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">qtail. Получение остатка строки запроса</b><b></span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$form:qtail</b>
+<br>
+<span>
+<br>
+Поле возвращает часть </code><code><b><a href="requestquery.htm">$request:query</a></b></code><span> после второго «</span><code><b>?</b></code><span>».
+<br>
+</span><span><b>
+<br>
+</b></span><span><b>Пример</b></span><span><b>
+<br>
+</b></span><span>Предположим, пользователь запросил такую страницу: </span><code>HTTP://www.mysite.ru/news/article.html?year=2000&amp;month=05&amp;day=27?thisText
+<br>
+</code><span>
+<br>
+Тогда:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$form:qtail</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+вернет: </span><code><b>thisText</b></code><span>.
+<br>
+</span></span>

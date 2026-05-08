@@ -1,0 +1,288 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Определяемые пользователем методы и&nbsp;операторы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>@имя[параметры]
+<br>
+</b><b>тело</b><span>
+<br>
+</code><code><b>
+<br>
+@имя[параметры][локальные;переменные]</b></code><span>
+<br>
+</span><code><b>тело</b></code><span>
+<br>
+</span><code><b>
+<br>
+@static:имя[параметры]</b><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.1]</i></b></span><code><b>
+<br>
+</b><b>тело&nbsp;метода&nbsp;класса,&nbsp;который&nbsp;может&nbsp;быть&nbsp;вызван&nbsp;только&nbsp;статически&nbsp;(</b><b><a href="defineclass.htm">подробности</a></b><b>)</b></code><span>
+<br>
+</span><code><b>
+<br>
+</b><b>@имя[*параметры]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.1]
+<br>
+</i></b></span><code><b>тело
+<br>
+
+<br>
+@имя[параметр1;параметр2;*параметры]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.1]</i></b></span><code><b>
+<br>
+тело
+<br>
+</b><b>
+<br>
+</b><b>@имя[параметр1;</b><b>.</b><b>именованный_параметр1;.именованный_параметр2</b><b>[;...]</b><b>]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.</i></b><b><i>5</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]</i></b></span><code><b>
+<br>
+тело
+<br>
+</b><b>
+<br>
+</b></code><span>Метод&nbsp;- это блок кода, имеющий имя, принимающий параметры и&nbsp;возвращающий результат. Имена параметров метода перечисляются через точку с&nbsp;запятой. Метод также может иметь локальные переменные, которые необходимо объявить в&nbsp;заголовке метода, после объявления параметров. Имена переменных разделяются точкой с&nbsp;запятой.
+<br>
+
+<br>
+Локальные переменные видны в&nbsp;пределах оператора или метода, а&nbsp;также&nbsp;изнутри вызываемых ими операторов и&nbsp;методов, см.&nbsp;ниже </span><code><b>$caller</b></code><span>.
+<br>
+
+<br>
+При описании метода можно пользоваться не&nbsp;только параметрами или локальными переменными, а&nbsp;также любыми другими именами, при этом работа будет вестись с&nbsp;полями класса или полями объекта, в&nbsp;зависимости от&nbsp;того, как был вызван определенный разработчиком метод&nbsp;- <a href="stats.htm">статически</a> или&nbsp;<a href="obj.htm">динамически</a>.
+<br>
+
+<br>
+В&nbsp;Parser возможно <a href="opuserdefined.htm">расширить</a> базовый набор операторов, операторами в&nbsp;Parser считаются методы класса <a href="mainclass.htm">MAIN</a>.
+<br>
+<i>
+<br>
+Важно: операторы&nbsp;- это методы класса </i><a href="mainclass.htm">MAIN</a><i>, но,&nbsp;в&nbsp;отличие от&nbsp;методов других классов, их можно вызвать из&nbsp;любого класса просто по&nbsp;имени, т.&nbsp;е. можно писать </i></span><code><b>^include[…]</b></code><span><i> вместо громоздкого </i></span><code><b>^MAIN:include[…]</b></code><span><i>.
+<br>
+
+<br>
+</i>В методах, которые могут принимать произвольное число параметров, все «лишние» параметры доступны в&nbsp;виде хеша с&nbsp;числовыми ключами. Ключ 0 соответствует первому «лишнему» параметру.</span><span>
+<br>
+</span><span><b>
+<br>
+</b>В методах, которые могут принимать именованные параметры, все такие параметры передаются в виде хэша последним параметром. Именованные параметры инициализируются значениями соответствующих ключей этого хэша. Допускается не указывать значения отдельных параметров или не передавать хэш вовсе; в таком случае значения параметров будут считаться <a href="voidclass.htm">void</a>.
+<br>
+<b>
+<br>
+Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@main[]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>call:&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>^call[a;b;c]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>named:&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>^</b></code></span><code><span style="color:#7F97E1" class="blue"><b>named</b></code></span><code><span style="color:#7F97E1" class="blue"><b>[a;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;$.o2[value]&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]
+<br>
+
+<br>
+@call[p;*args][k;v]
+<br>
+p=$p
+<br>
+^args.foreach[k;v]{</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>k=$v}[^#0A]</b></code></span><span><i>
+<br>
+
+<br>
+</i></span><code><span style="color:#7F97E1" class="blue"><b>@named[p;.o1;.o2][k;v]
+<br>
+p=$p
+<br>
+o1=$o1
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>o2</b></code></span><code><span style="color:#7F97E1" class="blue"><b>=$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>o2</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span><i>
+<br>
+</i>Выведет:
+<br>
+</span><code><b>call:&nbsp;</b><b>p=a
+<br>
+0=b
+<br>
+1=c</b></code><span><i>
+<br>
+
+<br>
+</i></span><code><b>named:&nbsp;</b><b>p=a
+<br>
+</b><b>o1</b><b>=
+<br>
+</b><b>o2</b><b>=</b><b>value</b></code><span><i>
+<br>
+
+<br>
+
+<br>
+</i></span><span><b>Системная переменная: self
+<br>
+</b></span><span>Все методы и&nbsp;операторы имеют локальную переменную </span><code><b>self</b></code><span>, она хранит ссылку на&nbsp;текущий объект, в&nbsp;статических методах хранит  то&nbsp;же, что и&nbsp;</span><code><b>$CLASS</b></code><span>.
+<br>
+
+<br>
+<b>Пример</b></span><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@main[]&nbsp;&nbsp;
+<br>
+$a[</b></code></span><code><b>Статическое&nbsp;поле&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^$a</b></code></span><code><b>&nbsp;класса&nbsp;MAIN</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^test[</b></code></span><code><b>Параметр&nbsp;метода</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+
+<br>
+@test[a]&nbsp;&nbsp;
+<br>
+^$a</b></code></span><code><b>&nbsp;-&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$a</b></code></span><code><b>&nbsp;&nbsp;&lt;br&nbsp;/&gt;&nbsp;&nbsp;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^$self.a</b></code></span><code><b>&nbsp;-&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$self.a&nbsp;&nbsp;
+<br>
+</b></code></span><span>&nbsp;&nbsp;&nbsp;
+<br>
+</span><span>Выведет:   
+<br>
+</span><code><b>$a&nbsp;-&nbsp;Параметр&nbsp;метода&nbsp;&nbsp;
+<br>
+$self.a&nbsp;-&nbsp;Статическое&nbsp;поле&nbsp;$a&nbsp;класса&nbsp;MAIN</b></code><span>  
+<br>
+
+<br>
+</span><span><b>Системная переменная: result
+<br>
+</b></span><span>Все методы и&nbsp;операторы имеют локальную переменную </span><code><b>result</b></code><span>. Если ей присвоить какое-то значение, то&nbsp;именно оно будет результатом выполнения метода. Значение переменной </span><code><b>result</b></code><span> можно считывать и&nbsp;использовать в&nbsp;вычислениях. 
+<br>
+
+<br>
+<b>Пример</b>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mainclass.htm">main</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]
+<br>
+$a(2)
+<br>
+$b(3)
+<br>
+$summa[^sum($a;$b)]
+<br>
+$summa
+<br>
+
+<br>
+@sum[a;b]
+<br>
+^eval($a+$b)
+<br>
+$result[</b></code></span><code><b>Ничего&nbsp;не&nbsp;скажу!</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Здесь посетителю будет выдана строка </span><code><b>Ничего&nbsp;не&nbsp;скажу!</b></code><span>, а&nbsp;не результат сложения двух чисел.
+<br>
+<i>
+<br>
+Внимание: каждый метод должен или возвращать результат через $result во всех вариантах своего выполнения, или не&nbsp;использовать $result вовсе.&nbsp;&nbsp;&nbsp;</i><b><i>[3.4.0]
+<br>
+</i></b>
+<br>
+</span><span><b>Системная переменная: result, явное определение&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.4.5]</i></b></span><span><b>
+<br>
+</b></span><span>Если в&nbsp;методе явно объявить локальную переменную </span><code><b>result</b></code><span>, это укажет Parser, что нужно проигнорировать все пробельные символы в&nbsp;коде (фигурных скобках).
+<br>
+
+<br>
+<b>Пример</b>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@lookup[table;findcol;findvalue][result]
+<br>
+^if(^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tableclass.htm">table</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablelocate.htm">locate</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[$findcol;$findvalue]){
+<br>
+&nbsp;&nbsp;&nbsp;$yes[yes&nbsp;found]&nbsp;$yes
+<br>
+}{
+<br>
+&nbsp;&nbsp;&nbsp;not&nbsp;found
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+Здесь посетителю будет выдано либо значение </span><code><b>yes&nbsp;found</b></code><span>, либо значение </span><code><b>not&nbsp;found</b></code><span>.
+<br>
+
+<br>
+<i>Важно: в&nbsp;приведенном примере </i>не&nbsp;будет<i> выдано ни&nbsp;одного символа перевода строки, пробела или табуляции, написанных в&nbsp;коде. 
+<br>
+
+<br>
+Важно: до&nbsp;версии </i><b><i>3.4.5</i></b><i> попытка написать </i></span><code><b>not&nbsp;found</b></code><span><i> текстом прямо в&nbsp;теле метода приведет к&nbsp;ошибке.
+<br>
+</i>
+<br>
+
+<br>
+</span><span><b>Системная переменная: caller
+<br>
+</b></span><span>Все методы и&nbsp;операторы имеют локальную переменную </span><code><b>caller</b></code><span>, которая хранит «контекст вызова» метода или оператора.
+<br>
+
+<br>
+Через нее можно:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>считать переменную - </span><code><b>$caller.считать</b></code><span> или записать переменную - </span><code><b>$caller.записать[значение]</b></code><span>, как&nbsp;будто мы находимся в&nbsp;том месте, откуда вызвали описываемый метод или оператор;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>узнать, кто вызвал описываемый метод или оператор, обратившись к&nbsp;</span><code><b>$caller.self</b></code><span> и&nbsp;к&nbsp;</span><code><b>$caller.method</b></code><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.5]</i></b>;</span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b></code><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>узнать имя вызывающего, обратившись к&nbsp; </span><code><b>$caller.method.name</b></code><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.5]</i></b>.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Например, нам нужен оператор, похожий на&nbsp;системный </span><code><b><a href="opfor.htm">for</a></b></code><span>, но&nbsp;чем-то отличающийся от&nbsp;него. Его&nbsp;можно написать самостоятельно, воспользовавшись возможностью менять локальную переменную с&nbsp;переданным именем <i>в&nbsp;контексте вызова оператора</i>. 
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@steppedfor[name;from;to;step;code]
+<br>
+$caller.$name($from)
+<br>
+^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opwhile.htm">while</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>($caller.$name&lt;=$to){
+<br>
+&nbsp;&nbsp;&nbsp;$code
+<br>
+&nbsp;&nbsp;&nbsp;^caller.$name.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="intdoubleincetc.htm">inc</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>($step)
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+Теперь такой вызов…
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@somewhere[][i]
+<br>
+^steppedfor[i](1;10;2){$i&nbsp;}
+<br>
+</b></code></span><span>
+<br>
+…напечатает «</span><code><b>1&nbsp;3&nbsp;5&nbsp;7&nbsp;9&nbsp;</b></code><span>». Следует обратить внимание на&nbsp;то, что изменяется <i>локальная переменная метода</i> </span><code><b>somewhere</b></code><span>.
+<br>
+</span><code><b>
+<br>
+</b></code><span><i>Примечание: возможность узнать контекст вызова удобна для&nbsp;задания контекста компиляции кода (см.&nbsp;«</i><i><a href="opprocess.htm">process. Компиляция и исполнение строки</a></i><i>».
+<br>
+
+<br>
+
+<br>
+</i></span><span><b>Системная переменная: locals, явное определение&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.3.0]
+<br>
+</i></b>Если в&nbsp;методе явно объявить локальную переменную </span><code><b>locals</b></code><span>, это будет равносильно объявлению всех переменных, используемых в&nbsp;нем, локальными. Для обращения к&nbsp;переменным класса или объекта в&nbsp;этом случае необходимо использовать </span><code><b>self</b></code><span>.
+<br>
+
+<br>
+</span></span>

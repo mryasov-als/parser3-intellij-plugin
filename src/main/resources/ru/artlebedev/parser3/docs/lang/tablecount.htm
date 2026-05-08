@@ -1,0 +1,60 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">count. Количество строк в&nbsp;таблице</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица.count[]
+<br>
+^таблица.count[columns|cells|rows]</b><b>&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.4.2]
+<br>
+</i></b>
+<br>
+При вызове без&nbsp;параметров или с&nbsp;параметром </code><code><b>rows</b></code><span> метод выдает количество строк в&nbsp;таблице (</span><code><b><a href="intdoubleclasses.htm">int</a></b></code><span>).
+<br>
+При вызове с&nbsp;параметром </span><code><b>columns</b></code><span> метод выдает количество столбцов в&nbsp;таблице (</span><code><b><a href="intdoubleclasses.htm">int</a></b></code><span>).
+<br>
+При вызове с&nbsp;параметром </span><code><b>cells</b></code><span> метод выдает количество столбцов в&nbsp;текущей строке таблицы (</span><code><b><a href="intdoubleclasses.htm">int</a></b></code><span>).
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$goods[^table::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablecreate.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{pos&nbsp;&nbsp;&nbsp;good&nbsp;&nbsp;&nbsp;price
+<br>
+</b></code></span><code><b>1&nbsp;&nbsp;&nbsp;Монитор&nbsp;&nbsp;&nbsp;1000
+<br>
+2&nbsp;&nbsp;&nbsp;Системный&nbsp;блок&nbsp;&nbsp;&nbsp;1500
+<br>
+3&nbsp;&nbsp;&nbsp;Клавиатура&nbsp;&nbsp;&nbsp;150
+<br>
+4&nbsp;&nbsp;&nbsp;Колонки&nbsp;&nbsp;&nbsp;100
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+</b></code></span><code><b>Столбцов:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^goods.count[columns]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>Строк:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^goods.count[]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Выведет:
+<br>
+</span><code><b>Столбцов:&nbsp;3</b></code><span>
+<br>
+</span><code><b>Строк:&nbsp;4
+<br>
+</b></code><span>
+<br>
+В выражениях числовое значение таблицы равно количеству строк, поэтому использовать метод&nbsp;</span><code><b>count</b></code><span> не&nbsp;требуется:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^if($goods&nbsp;&gt;&nbsp;2){</b></code></span><code><b>больше</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>
+<br>
+</b></code></span>

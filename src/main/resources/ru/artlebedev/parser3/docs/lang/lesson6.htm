@@ -1,0 +1,242 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Урок 6. Работа с&nbsp;XML</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><span style="color:#7F97E1" class="blue"><b>&lt;?xml&nbsp;version="1.0"&nbsp;encoding="windows-1251"&nbsp;?&gt;
+<br>
+&lt;article&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;author&nbsp;id="</b></code><code><b>1</b><span style="color:#7F97E1" class="blue"><b>"&nbsp;/&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;</b></code></span><code><b>Урок&nbsp;6.&nbsp;Работаем&nbsp;с&nbsp;XML</b><span style="color:#7F97E1" class="blue"><b>&lt;/title&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;body&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;para&gt;</b></code></span><code><b>Представим,&nbsp;что&nbsp;разработчикам&nbsp;позволено&nbsp;придумывать&nbsp;любые&nbsp;теги
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;с&nbsp;любыми&nbsp;атрибутами.&nbsp;То&nbsp;есть&nbsp;они&nbsp;сами&nbsp;могут&nbsp;определять,&nbsp;&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;что&nbsp;означает&nbsp;тот&nbsp;или&nbsp;иной&nbsp;выдуманный&nbsp;тег&nbsp;или&nbsp;атрибут.</b><span style="color:#7F97E1" class="blue"><b>&lt;/para&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;para&gt;</b></code></span><code><b>Такой&nbsp;код&nbsp;будет&nbsp;содержать&nbsp;данные,&nbsp;…</b><span style="color:#7F97E1" class="blue"><b>&lt;/para&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/body&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;links&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;link&nbsp;href="</b></code></span><code><b>HTTP://</b><b>www.</b><b>parser.ru/docs/lang/xdocclass.htm</b><span style="color:#7F97E1" class="blue"><b>"&gt;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="xdocclass.htm">Класс xdoc</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&lt;/link&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;link&nbsp;href="</b></code></span><code><b>HTTP://</b><b>www.</b><b>parser.ru/docs/lang/xnodeclass.htm</b><span style="color:#7F97E1" class="blue"><b>"&gt;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="xnodeclass.htm">Класс xnode</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&lt;/link&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/links&gt;
+<br>
+&lt;/article&gt;
+<br>
+</b></code></span><span>
+<br>
+…но не&nbsp;их форматирование. Подготовкой данных может заняться один человек, а&nbsp;форматированием&nbsp;- другой. Им достаточно договориться об используемых тегах&nbsp;- и&nbsp;можно приступать к&nbsp;работе… одновременно.
+<br>
+
+<br>
+Идея эта не&nbsp;нова, существовали многочисленные библиотеки обработки шаблонов, а&nbsp;многие создавали собственные. Библиотеки были несовместимы между собой, зависели от&nbsp;используемых средств скриптования, порождая разобщенность разработчиков и&nbsp;необходимость тратить силы на&nbsp;изучение очередной библиотеки вместо того, чтобы заняться делом.
+<br>
+
+<br>
+Однако прогресс не&nbsp;стоит на&nbsp;месте, и&nbsp;сейчас мы имеем не&nbsp;зависящие от&nbsp;средства скриптования стандарты <b><a href="http://www.w3.org/XML/" target="_blank">XML</a></b> и&nbsp;<b><a href="http://www.w3.org/TR/xslt" target="_blank">XSLT</a></b>, позволяющие нам реализовать то, что мы только что представляли. А также стандарты <b><a href="http://www.w3.org/DOM/" target="_blank">DOM</a></b> и&nbsp;<b><a href="http://www.w3.org/TR/xpath" target="_blank">XPath</a></b>, открывающие для&nbsp;нас еще больше возможностей.
+<br>
+Parser полностью поддерживает все эти стандарты.
+<br>
+
+<br>
+А&nbsp;сейчас самое время открыть выбранную вчера в&nbsp;книжном магазине книгу, описывающую XML и&nbsp;XSLT, и&nbsp;использовать ее&nbsp;как справочни.
+<br>
+
+<br>
+Посмотрим, как можно преобразовать приведенную статью из&nbsp;XML в&nbsp;HTML.
+<br>
+Запишем текст из&nbsp;начала статьи в&nbsp;файл </span><code>article.xml
+<br>
+</code><span>И создадим файл </span><code>article.xsl</code><span>, в&nbsp;котором определим выдуманные нами теги:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>&lt;?xml&nbsp;version="1.0"&nbsp;encoding="windows-1251"&nbsp;?&gt;&nbsp;
+<br>
+&lt;xsl:stylesheet&nbsp;xmlns:xsl="HTTP://www.w3.org/1999/XSL/Transform"&nbsp;version="1.0"&gt;
+<br>
+
+<br>
+&lt;xsl:template&nbsp;match="article"&gt;
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&lt;html&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;head&gt;&lt;title&gt;</b><span style="color:#7F97E1" class="blue"><b>&lt;xsl:value-of&nbsp;select="title"&nbsp;/&gt;</b></code></span><code><b>&lt;/title&gt;&lt;/head&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;body&gt;</b><span style="color:#7F97E1" class="blue"><b>&lt;xsl:apply-templates&nbsp;select="body&nbsp;|&nbsp;links"&nbsp;/&gt;</b></code></span><code><b>&lt;/body&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/html&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&lt;/xsl:template&gt;
+<br>
+
+<br>
+&lt;xsl:template&nbsp;match="body"&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsl:apply-templates&nbsp;select="para"&nbsp;/&gt;
+<br>
+&lt;/xsl:template&gt;
+<br>
+
+<br>
+&lt;xsl:template&nbsp;match="links"&gt;
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Ссылки&nbsp;по&nbsp;теме:
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;ul&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;xsl:for-each&nbsp;select="link"&gt;
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;li&gt;</b><span style="color:#7F97E1" class="blue"><b>&lt;xsl:apply-templates&nbsp;select="."&nbsp;/&gt;</b></code></span><code><b>&lt;/li&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/xsl:for-each&gt;
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/ul&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&lt;/xsl:template&gt;
+<br>
+
+<br>
+&lt;xsl:template&nbsp;match="para"&gt;
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;</b><span style="color:#7F97E1" class="blue"><b>&lt;xsl:value-of&nbsp;select="."&nbsp;/&gt;</b></code></span><code><b>&lt;/p&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&lt;/xsl:template&gt;
+<br>
+
+<br>
+&lt;xsl:template&nbsp;match="link"&gt;
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&lt;a&nbsp;href="</b><span style="color:#7F97E1" class="blue"><b>{@href}</b></code></span><code><b>"&gt;</b><span style="color:#7F97E1" class="blue"><b>&lt;xsl:value-of&nbsp;select="."&nbsp;/&gt;</b></code></span><code><b>&lt;/a&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&lt;/xsl:template&gt;
+<br>
+
+<br>
+&lt;/xsl:stylesheet&gt;
+<br>
+</b></code></span><span>
+<br>
+Данные и&nbsp;шаблон преобразования готовы. Создаем </span><code>article.html</code><span>, в&nbsp;который заносим следующий код:
+<br>
+
+<br>
+</span><code><b>#&nbsp;входной&nbsp;XDOC-документ
+<br>
+$sourceDoc[^</b><b><a href="xdocload.htm">xdoc::load</a></b><b>[article.xml]]
+<br>
+
+<br>
+#&nbsp;преобразование&nbsp;XDOC-документа&nbsp;шаблоном&nbsp;article.xsl
+<br>
+$transformedDoc[^sourceDoc.</b><b><a href="xdoctransform.htm">transform</a></b><b>[article.xsl]]
+<br>
+
+<br>
+#&nbsp;выдача&nbsp;результата&nbsp;в&nbsp;HTML-виде
+<br>
+^transformedDoc.</b><b><a href="xdocstring.htm">string</a></b><b>[
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b><a href="xdocoptions.htm">$.method[html]</a></b><b>
+<br>
+]
+<br>
+</b></code><span>
+<br>
+Первой строкой мы загружаем XML-файл, получая в&nbsp;</span><code><b>sourceDoc</b></code><span> его DOM-представление. Конструкция похожа на&nbsp;загрузку таблицы: </span><code><b>^table::load[…]</b></code><span>. Только в&nbsp;этот раз мы загружаем не&nbsp;таблицу (получая объект класса </span><code><b><a href="tableclass.htm">table</a></b></code><span>), а&nbsp;XML-документ (получаем объект класса </span><code><span style="color:#7F97E1" class="blue"><b><a href="xdocclass.htm">xdoc</a></b></code></span><span>). Второй строкой мы преобразуем входной документ по&nbsp;шаблону </span><code>article.xsl</code><span>. Из&nbsp;входного документа получаем выходной, применяя XSLT-преобразование, описанное в&nbsp;шаблоне. Последней строкой мы выдаем пользователю текст выходного документа в&nbsp;формате&nbsp;HTML (параметр </span><code><b>method</b></code><span> со&nbsp;значением </span><code><b>html</b></code><span>).
+<br>
+<i>
+<br>
+Здесь можно задать все параметры, допустимые для&nbsp;тег</i><i>а </i></span><code><span style="color:#7F97E1" class="blue"><b><u><a href="http://www.w3.org/TR/xslt#output" target="_blank">&lt;xsl:output … /&gt;</a></u></b></code></span><span><i>.
+<br>
+Рекомендуем также установить режим «без отступов» (задав параметр </i></span><code><b>indent</b></code><span><i> со&nbsp;значением </i></span><code><b>no</b></code><span><i>:</i> <b><i> </i></b></span><code><b>$.indent[no]</b></code><span><i>), чтобы избежать известной проблемы с&nbsp;пустым местом перед</i><i> </i></span><code><b>&lt;/td&gt;</b></code><span><i>.
+<br>
+</i>
+<br>
+Обратившись теперь к&nbsp;этой странице, пользователь получит результат преобразования:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>&lt;html&gt;
+<br>
+&lt;head&gt;&lt;title&gt;</b></code></span><code><b>Урок&nbsp;6.&nbsp;Работаем&nbsp;с&nbsp;XML</b><span style="color:#7F97E1" class="blue"><b>&lt;/title&gt;&lt;/head&gt;
+<br>
+&lt;body&gt;
+<br>
+&lt;p&gt;</b></code></span><code><b>Представим,&nbsp;что&nbsp;разработчикам&nbsp;позволено&nbsp;придумывать&nbsp;любые&nbsp;теги
+<br>
+с&nbsp;любыми&nbsp;атрибутами.&nbsp;То&nbsp;есть&nbsp;они&nbsp;сами&nbsp;могут&nbsp;определять,&nbsp;&nbsp;
+<br>
+что&nbsp;означает&nbsp;тот&nbsp;или&nbsp;иной&nbsp;выдуманный&nbsp;тег&nbsp;или&nbsp;атрибут.</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&lt;/p&gt;
+<br>
+&lt;p&gt;</b></code></span><code><b>Такой&nbsp;код&nbsp;будет&nbsp;содержать&nbsp;данные,&nbsp;…</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&lt;/p&gt;
+<br>
+</b></code></span><code><b>Ссылки&nbsp;по&nbsp;теме:
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&lt;ul&gt;
+<br>
+&lt;li&gt;&lt;a&nbsp;href="</b></code></span><code><b>HTTP://</b><b>www.</b><b>parser.ru/docs/xdocclass.htm</b><span style="color:#7F97E1" class="blue"><b>"&gt;</b></code></span><code><b>Класс&nbsp;xdoc</b><span style="color:#7F97E1" class="blue"><b>&lt;/a&gt;&lt;/li&gt;
+<br>
+&lt;li&gt;&lt;a&nbsp;href="</b></code></span><code><b>HTTP://</b><b>www.</b><b>parser.ru/docs/xnodeclass.htm</b><span style="color:#7F97E1" class="blue"><b>"&gt;</b></code></span><code><b>Класс&nbsp;xnode</b><span style="color:#7F97E1" class="blue"><b>&lt;/a&gt;&lt;/li&gt;
+<br>
+&lt;/ul&gt;
+<br>
+&lt;/body&gt;
+<br>
+&lt;/html&gt;</b></code></span><span>
+<br>
+
+<br>
+Как&nbsp;видим, тег </span><code><span style="color:#7F97E1" class="blue"><b>&lt;author&nbsp;…&nbsp;/&gt;</b></code></span><span> никак не&nbsp;был определен, как следствие, информация об авторе статьи не&nbsp;появилась в&nbsp;выходном HTML. Со временем, когда будет решено, где и&nbsp;как&nbsp;будут показываться данные об авторах, достаточно будет дополнить шаблон - исправлять данные статей не&nbsp;потребуется.
+<br>
+
+<br>
+<i>Внимание: если нужно сделать так, чтобы посетители сайта не имели доступа к&nbsp;XML- и&nbsp;XSL-файлам, эти&nbsp;файлы следует хранить вне&nbsp;веб-пространства</i><i> (</i></span><code><b>^xdoc::create[/../directory_outside_of_web_space/article.xml]</b></code><span><i>) или запретить к&nbsp;ним доступ средствами веб-сервера (пр</i><i>имер запрета доступа к&nbsp;p-файлам описан в&nbsp;разделе: </i><i>«</i><i><a href="install4apachecgi.htm">Установка Parser на веб-сервер Apache. CGI-скрипт</a></i><i>»).</i>
+<br>
+
+<br>
+Подведем итоги шестого урока. 
+<br>
+</span><span><b>
+<br>
+Что мы сделали:</b></span><span> создали заготовку для&nbsp;публикации информации в&nbsp;формате&nbsp;XML с&nbsp;последующим XSLT-преобразованием в&nbsp;HTML.
+<br>
+
+<br>
+</span><span><b>Что узнали: 
+<br>
+</b></span><span>
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>как создать класс </span><code><b><a href="xdocclass.htm">xdoc</a></b></code><span>;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>как загружать XML, делать XSLT-преобразования, выводить объекты класса </span><code><b>xdoc</b></code><span> в&nbsp;виде HTML.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+</span><span><b>Что надо запомнить:</b></span><span> купить и&nbsp;прочесть книжку по&nbsp;XML, XSLT и&nbsp;DOM.
+<br>
+
+<br>
+</span><span><b>Что делать дальше:</b></span><span> читать эту книжку и&nbsp;экспериментировать с&nbsp;примерами из&nbsp;нее, радуясь тому, что на&nbsp;свете есть хорошие стандарты. А также почитать о&nbsp;</span><code><b><a href="mainclass.htm">postprocess</a></b></code><span> и&nbsp;придумать, как его приспособить, чтобы обращение к&nbsp;XML-файлу вызывало его преобразование в&nbsp;HTML.
+<br>
+</span></span>

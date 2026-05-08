@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">delete. Удаление файла с&nbsp;диска</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file:delete[</b><b><a href="app1.htm">путь</a></b><b>]</b><span>&nbsp;&nbsp;&nbsp;
+<br>
+</code><code><b>^file:delete[</b><b><a href="app1.htm">путь</a></b><b>;опции]</b></code><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.3]
+<br>
+</i></b>
+<br>
+Метод удаляет указанный файл.
+<br>
+</span><code><b>Путь</b></code><span>&nbsp;- путь к&nbsp;файлу
+<br>
+
+<br>
+Если после удаления в&nbsp;каталоге больше ничего не&nbsp;осталось - каталог тоже удаляется (если это возможно).
+<br>
+
+<br>
+Можно задать <a href="hash.htm">хеш</a> </span><code><b>опций</b></code><span>:
+<br>
+</span><code><b>$.</b><b>keep-empty-dirs</b><b>(true)</b></code><span> - не&nbsp;удалять пустые каталоги, если таковые остались после удаления файла.
+<br>
+</span><code><b>$.</b><b>exception</b><b>(false)</b></code><span> - не&nbsp;выдавать исключение при невозможности удаления файла.
+<br>
+
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^file:delete[</b></code></span><code><b>story.txt</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><span>
+<br>
+</span></span>

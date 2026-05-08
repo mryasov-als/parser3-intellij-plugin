@@ -1,0 +1,26 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">add. Добавление записи</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^memcached.add[ключ;строка]
+<br>
+</b><span>
+<br>
+Если на&nbsp;сервере уже есть запись с&nbsp;указанным ключом, то&nbsp;метод ничего не&nbsp;делает и&nbsp;возвращает </code><code><b>false</b></code><span>.
+<br>
+Если такой записи нет - метод сохраняет ее на&nbsp;сервере и&nbsp;возвращает </span><code><b>true</b></code><span>.
+<br>
+
+<br>
+Обычно для&nbsp;записи данных нужно применять конструкцию </span><code><b><a href="memcachedwrite.htm">$memcached.[$key][$value]</a></b></code><span>
+<br>
+</span></span>

@@ -1,0 +1,80 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Сборка под&nbsp;Linux и&nbsp;другие Unix-подобные системы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Для сборки Parser&nbsp;3 под&nbsp;Linux и&nbsp;другие Unix-подобные системы необходимо использовать специально созданный скрипт <code>buildall</code><span>.
+<br>
+
+<br>
+Т.&nbsp;е. в&nbsp;общем случае процесс скачивания исходных кодов и&nbsp;сборки Parser&nbsp;3 будет выглядеть примерно так:</span><code>
+<br>
+
+<br>
+cd&nbsp;~
+<br>
+mkdir&nbsp;parser3project
+<br>
+cd&nbsp;parser3project
+<br>
+wget&nbsp;HTTPs://www.parser.ru/off-line/download/src/parser-3.4.6.tar.gz
+<br>
+tar&nbsp;-xzf&nbsp;parser-3.4.6.tar.gz
+<br>
+mv&nbsp;parser-3.4.6&nbsp;parser3
+<br>
+cd&nbsp;parser3
+<br>
+./buildall</code><span>
+<br>
+
+<br>
+
+<br>
+Скрипт сборки поддерживает следующие параметры:
+<br>
+</span><code>--disable-safe-mode</code><span> - не&nbsp;проверять принадлежность открываемых Parser&nbsp;3 файлов текущему пользователю;
+<br>
+</span><code>--without-xml</code><span> - собрать Parser&nbsp;3 без&nbsp;поддержки XML;
+<br>
+</span><code>--with-mailreceive</code><span> - при запуске Parser&nbsp;3 с&nbsp;ключом </span><code>-m</code><span> переданное на&nbsp;</span><code>stdin</code><span> письмо доступно в&nbsp;</span><code>$mail:receive</code><span>;
+<br>
+</span><code>--with-apache</code><span> - собирать модуль Apache (DSO, поддерживаются Apache 1.X и&nbsp;2.X);
+<br>
+</span><code>--strip</code><span> - удалить отладочную информацию.
+<br>
+
+<br>
+
+<br>
+Сборка SQL-драйвера (на&nbsp;примере MySQL) будет выглядеть примерно так:
+<br>
+
+<br>
+</span><code>cd&nbsp;~/parser3project
+<br>
+mkdir&nbsp;sql
+<br>
+cd&nbsp;sql
+<br>
+wget&nbsp;HTTPs://www.parser.ru/off-line/download/src/parser3mysql-10.8.tar.gz
+<br>
+tar&nbsp;-xzf&nbsp;parser3mysql-10.8.tar.gz
+<br>
+cd&nbsp;parser3mysql-10.8
+<br>
+./configure
+<br>
+make
+<br>
+</code><span>
+<br>
+</span></span>

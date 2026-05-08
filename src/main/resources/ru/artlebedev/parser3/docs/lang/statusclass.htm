@@ -1,0 +1,34 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">status (класс)</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Класс предназначен для&nbsp;анализа текущего состояния скрипта на&nbsp;Parser. Его использование позволяет находить в&nbsp;скриптах участки кода, на&nbsp;которые затрачивается значительная доля процессорного времени или&nbsp;памяти. 
+<br>
+
+<br>
+Если Parser используется как модуль Apache, при попытке использовать класс&nbsp;<code><b>status</b></code><span> сообщение&nbsp;</span><code>class&nbsp;not&nbsp;found</code><span> будет выводиться до&nbsp;тех пор, пока в&nbsp;</span><code>httpd.conf</code><span> не&nbsp;будут добавлены строки:
+<br>
+
+<br>
+</span><code>&lt;Location&nbsp;/&gt;
+<br>
+#&nbsp;Разрешает&nbsp;использовать&nbsp;встроенный&nbsp;класс&nbsp;status
+<br>
+ParserStatusAllowed
+<br>
+&lt;/Location&gt;
+<br>
+</code><span>
+<br>
+...а&nbsp;Apache&nbsp;- не&nbsp;перезапущен. 
+<br>
+</span></span>

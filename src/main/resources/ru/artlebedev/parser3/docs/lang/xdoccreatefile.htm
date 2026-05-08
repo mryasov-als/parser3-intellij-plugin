@@ -1,0 +1,36 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Создание  документа на&nbsp;основе файла</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^xdoc::create[файл]</b><span>
+<br>
+
+<br>
+Конструктор создает объект класса </code><code><b>xdoc</b></code><span>, который состоит из&nbsp;XML-кода, содержащегося в&nbsp;</span><code><b>файле</b></code><span>.
+<br>
+</span><code><b>
+<br>
+</b></code><span><b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$file[^file::load[binary;HTTP://server/data.xml;
+<br>
+&nbsp;&nbsp;&nbsp;$.timeout(10)
+<br>
+]]</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$xdoc[^xdoc::create[$file]]</b></code></span><code><b>
+<br>
+$</b><b><a href="responseclass.htm">response</a></b><b>:</b><b><a href="responsebody.htm">body</a></b><span style="color:#7F97E1" class="blue"><b>[^xdoc.</b></code></span><code><b><a href="xdocstring.htm">string</a></b><span style="color:#7F97E1" class="blue"><b>[]]</b></code></span><span>
+<br>
+</span></span>

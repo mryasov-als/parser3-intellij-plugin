@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Параметры соединения</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Параметры соединения с&nbsp;серверами <code>memcached</code><span> могут быть заданы как в&nbsp;виде </span><code><b>строки</b></code><span>, так и&nbsp;в&nbsp;виде </span><code><b>хеша</b></code><span>.
+<br>
+
+<br>
+Если параметры соединения заданы в&nbsp;виде строки, то&nbsp;они передаются функции&nbsp;</span><code><b>memcached_servers_parse</b></code><span> библиотеки </span><code>libmemcached</code><span> «как есть». Данная функция ожидает строку соединения в&nbsp;следующем формате:</span><code><b>
+<br>
+server1:port1,server2,server3,server4:port4
+<br>
+</b></code><span>
+<br>
+Чуть подробнее прочитать о&nbsp;ее параметрах можно в&nbsp;<span style="color:#7F97E1" class="blue"><u><a href="http://docs.libmemcached.org/memcached_servers_parse.html" target="_blank">документации</a></u></span></span><span> библиотеки&nbsp;</span><code>libmemcached</code><span>.
+<br>
+
+<br>
+Если параметры соединения указаны в&nbsp;виде хеша, то&nbsp;они обрабатываются более новой и&nbsp;универсальной функцией&nbsp;</span><code><b>memcached</b></code><span> (которая тем не&nbsp;менее может отсутствовать у&nbsp;библиотеки, установленной в&nbsp;системе). Ключами хеша с&nbsp;параметрами соединения могут быть любые опции, доступные у&nbsp;установленной в&nbsp;конкретной системе библиотеки </span><code><b>libmemcached</b></code><span> (см.&nbsp;<span style="color:#7F97E1" class="blue"><u><a href="http://docs.libmemcached.org/libmemcached_configuration.html#memcached" target="_blank">документацию</a></u></span></span><span>). Имена опций нужно писать без&nbsp;префикса «--».
+<br>
+
+<br>
+Список наиболее востребованных опций:
+<br>
+</span><code><b>$.server[&lt;servername&gt;:&lt;port&gt;]
+<br>
+$.binary-protocol(true)
+<br>
+$.connect-timeout(N)
+<br>
+$.tcp-keepalive(true)
+<br>
+</b></code><span>
+<br>
+</span></span>

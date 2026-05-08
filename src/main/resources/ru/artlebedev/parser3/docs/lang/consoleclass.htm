@@ -1,0 +1,32 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">console (класс)</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Класс предназначен для&nbsp;создания простых интерактивных служб, работающих в&nbsp;текстовом построчном режиме.
+<br>
+
+<br>
+Работать такие службы могут в&nbsp;паре со&nbsp;стандартной UNIX-программой <code>inetd</code><span>.
+<br>
+
+<br>
+Например, можно на&nbsp;Parser реализовать news-сервер (NNTP).
+<br>
+Для этого нужно добавить такую строку в&nbsp;</span><code>/etc/inetd.conf</code><span> и&nbsp;перезапустить </span><code>inetd</code><span>:
+<br>
+</span><code>nntp&nbsp;stream&nbsp;tcp&nbsp;nowait&nbsp;учетная_запись&nbsp;/путь/к/parser3&nbsp;/путь/к/parser3&nbsp;/путь/к/nntp.p
+<br>
+</code><span>
+<br>
+В скрипте </span><code>nntp.p</code><span> надо описать NNTP-сервер. Это даст возможность людям его использовать - </span><code>nntp://ваш_сервер</code><span>.
+<br>
+</span></span>

@@ -1,0 +1,100 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">DOM1. </span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>DOM1-интерфейс Node:
+<br>
+
+<br>
+<code><b>$</b><b><a href="xnodeclass.htm">Node</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-insertBefore" target="_blank">insertBefore</a></b><b>[$newChild;$refChild]]
+<br>
+$</b><b><a href="xnodeclass.htm">Node</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-replaceChild" target="_blank">replaceChild</a></b><b>[$newChild;$oldChild]]
+<br>
+$</b><b><a href="xnodeclass.htm">Node</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-removeChild" target="_blank">removeChild</a></b><b>[$oldChild]]
+<br>
+$</b><b><a href="xnodeclass.htm">Node</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-appendChild" target="_blank">appendChild</a></b><b>[$newChild]]
+<br>
+^if(^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-hasChildNodes" target="_blank">hasChildNodes</a></b><b>[]){…}
+<br>
+$</b><b><a href="xnodeclass.htm">Node</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-cloneNode" target="_blank">cloneNode</a></b><b>(deep)]
+<br>
+</b></code><span>
+<br>
+
+<br>
+DOM1-интерфейс Element:
+<br>
+
+<br>
+</span><code><b>^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-getAttribute" target="_blank">getAttribute</a></b><b>[name]
+<br>
+^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-setAttribute" target="_blank">setAttribute</a></b><b>[name;value]
+<br>
+^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-removeAttribute" target="_blank">removeAttribute</a></b><b>[name]
+<br>
+$</b><b><a href="xnodeclass.htm">Attr</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-getAttributeNode" target="_blank">getAttributeNode</a></b><b>[name]]
+<br>
+$</b><b><a href="xnodeclass.htm">Attr</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-setAttributeNode" target="_blank">setAttributeNode</a></b><b>[$newAttr]]
+<br>
+$</b><b><a href="xnodeclass.htm">Attr</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-removeAttributeNode" target="_blank">removeAttributeNode</a></b><b>[$oldAttr]]
+<br>
+$</b><b><a href="hashclass.htm">NodeList</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#ID-1938918D" target="_blank">getElementsByTagName</a></b><b>[name]]
+<br>
+^узел.</b><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#method-normalize" target="_blank">normalize</a></b><b>[]
+<br>
+
+<br>
+
+<br>
+</b></code><span>DOM2-интерфейс Element:
+<br>
+
+<br>
+</span><code><b>$строка[^узел.</b><b><a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-ElGetAttrNS" target="_blank">getAttributeNS</a></b><b>[namespaceURI;localName]]
+<br>
+^узел.</b><b><a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-ElSetAttrNS" target="_blank">setAttributeNS</a></b><b>[namespaceURI;qualifiedName;value]
+<br>
+^узел.</b><b><a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-ElRemAtNS" target="_blank">removeAttributeNS</a></b><b>[namespaceURI;localName]
+<br>
+$</b><b><a href="xnodeclass.htm">Attr</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-ElGetAtNodeNS" target="_blank">getAttributeNodeNS</a></b><b>[namespaceURI;localName]]
+<br>
+$</b><b><a href="xnodeclass.htm">Attr</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-ElSetAtNodeNS" target="_blank">setAttributeNodeNS</a></b><b>[$newAttr]]
+<br>
+$</b><b><a href="hashclass.htm">NodeList</a></b><b>[^узел.</b><b><a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-A6C90942" target="_blank">getElementsByTagNameNS</a></b><b>[namespaceURI;localName]]
+<br>
+^if(^узел.</b><b><a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-ElHasAttr" target="_blank">hasAttribute</a></b><b>[name]){…}
+<br>
+^if(^узел.</b><b><a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-ElHasAttrNS" target="_blank">hasAttributeNS</a></b><b>[namespaceURI;localName]){…}
+<br>
+^if(^узел.</b><b><a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-ElHasAttr" target="_blank">hasAttribute</a></b><b>s</b><b>[]){…}
+<br>
+</b></code><span>
+<br>
+
+<br>
+В Parser: 
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>DOM-интерфейс&nbsp;- класс </span><code><b><a href="hashclass.htm">hash</a></b></code><span> с&nbsp;ключами 0, 1, …;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>DOM-тип - класс </span><code><b><a href="stringclass.htm">string</a></b></code><span>;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>DOM-тип boolean - логическое значение (0 = «ложь», 1 = «истина»).
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Подробная спецификация DOM1 доступна по&nbsp;ссылке: <a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html" target="_blank">w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html</a>
+<br>
+
+<br>
+Подробная спецификация DOM2 доступна по&nbsp;ссылке: <a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html" target="_blank">w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html</a>
+<br>
+</span></span>

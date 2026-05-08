@@ -1,0 +1,46 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Сборка под Windows</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Для компиляции Parser&nbsp;3 под Windows используется <i>Microsoft Visual Studio.NET (2003 или новее)</i> и&nbsp;заранее подготовленные нами файлы проектов (<code>.sln</code><span>). Все модули нужно распаковывать в&nbsp;один каталог, например </span><code>parser3project</code><span>.
+<br>
+
+<br>
+Для сборки Parser&nbsp;3 также необходимы каталоги:
+<br>
+</span><code>win32/tools
+<br>
+win32/gc
+<br>
+win32/pcre
+<br>
+win32/gnome/libxml2-x.x.x
+<br>
+win32/gnome/libxslt-x.x.x
+<br>
+</code><span>
+<br>
+Для сборки SQL-драйверов  необходим каталог:
+<br>
+</span><code>win32/sql
+<br>
+</code><span>
+<br>
+Для сборки варианта Parser&nbsp;3 без&nbsp;поддержки XML, в&nbsp;файле </span><code>parser3/src/include/pa_config_fixed.h&nbsp;</code><span>необходимо закомментировать директиву:
+<br>
+</span><code><b>#define&nbsp;XML
+<br>
+</b></code><span>
+<br>
+
+<br>
+</span></span>

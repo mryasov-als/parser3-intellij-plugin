@@ -1,0 +1,86 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">flip. Транспонирование таблицы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица.flip[]&nbsp;&nbsp;&nbsp;
+<br>
+</b><span>
+<br>
+Метод создает новую </code><code><b>nameless</b></code><span> таблицу с&nbsp;записями, полученными в&nbsp;результате транспонирования исходной таблицы. Иными словами, метод превращает столбцы исходной таблицы в&nbsp;строки, а&nbsp;строки в&nbsp;столбцы.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$emergency[^table::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablecreate.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{id&nbsp;&nbsp;&nbsp;number
+<br>
+</b></code></span><code><b>fire&nbsp;&nbsp;&nbsp;01
+<br>
+police&nbsp;&nbsp;&nbsp;02
+<br>
+ambulance&nbsp;&nbsp;&nbsp;03
+<br>
+gas&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;04</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+}]
+<br>
+
+<br>
+$fliped[^emergency.flip[]]
+<br>
+^fliped.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablesave.htm">save</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>fliped.txt</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+В результате выполнения кода в&nbsp;файл </span><code>fliped.txt</code><span> будет сохранена такая таблица:
+<br>
+
+<br>
+<table border="1" cellpadding="1"><tr><td align="left" valign="top" width="70">
+<p align="center"><code><b>0</b><span>
+<br>
+</code></span></p></td><td align="left" valign="top" width="74">
+<p align="center"><code><b>1</b><span>
+<br>
+</code></span></p></td><td align="left" valign="top" width="92">
+<p align="center"><code><b>2</b><span>
+<br>
+</code></span></p></td><td align="left" valign="top" width="90">
+<p align="center"><code><b>3</b><span>
+<br>
+</code></span></p></td></tr><tr><td align="left" valign="top" width="70">
+<p align="center"><code><b>fire</b><span>
+<br>
+</code></span></p></td><td align="left" valign="top" width="74">
+<p align="center"><code><b>police</b><span>
+<br>
+</code></span></p></td><td align="left" valign="top" width="92">
+<p align="center"><code><b>ambulance</b><span>
+<br>
+</code></span></p></td><td align="left" valign="top" width="90">
+<p align="center"><code><b>gas</b><span>
+<br>
+</code></span></p></td></tr><tr><td align="left" valign="top" width="70">
+<p align="center"><code><b>01</b><span>
+<br>
+</code></span></p></td><td align="left" valign="top" width="74">
+<p align="center"><code><b>02</b><span>
+<br>
+</code></span></p></td><td align="left" valign="top" width="92">
+<p align="center"><code><b>03</b><span>
+<br>
+</code></span></p></td><td align="left" valign="top" width="90">
+<p align="center"><code><b>04</b><span>
+<br>
+</code></span></p></td></tr></table>
+<br>
+</span></span>

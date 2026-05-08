@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">path</b><b>. Получение пути запроса&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.5.0]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$request:</b><b>path</b><span><b>&nbsp;&nbsp;&nbsp;
+<br>
+</b></code><span>
+<br>
+Возвращает путь из URI, то есть декодированную часть URI, начинающуюся с символа / и заканчивающуюся перед символом ? (если он присутствует).
+<br>
+
+<br>
+<b>Пример
+<br>
+</b>Предположим, пользователь запросил такую страницу: 
+<br>
+</span><code>HTTP://www.mysite.ru/some%20news/articles.html?year=2000&amp;month=05&amp;day=27
+<br>
+</code><span>
+<br>
+Тогда:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$request:path</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+вернет:
+<br>
+</span><code><b>/some&nbsp;news/articles.html
+<br>
+</b></code><span>
+<br>
+</span></span>

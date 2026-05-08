@@ -1,0 +1,56 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">csv-string. Преобразование в&nbsp;строку в&nbsp;формате CSV</b><code><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>3</i></b><b><i>]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица.csv-string[]
+<br>
+^таблица.csv-string[</b><b><a href="tableoptionsfmt.htm">опции</a></b><b>]
+<br>
+^таблица.csv-string[nameless]
+<br>
+^таблица.csv-string[nameless;</b><b><a href="tableoptionsfmt.htm">опции</a></b><b>]</b><span><b><i>
+<br>
+
+<br>
+</i></b>Метод выводит содержимое таблицы в&nbsp;виде строки в&nbsp;<a href="http://en.wikipedia.org/wiki/Comma-separated_values" target="_blank">формате CSV</a>.
+<br>
+Использование опции </code><code><b>nameless</b></code><span> выводит таблицу без&nbsp;имен столбцов.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$table[^table::create{object&nbsp;&nbsp;&nbsp;action&nbsp;&nbsp;&nbsp;subject
+<br>
+</b></code></span><code><b>Маша&nbsp;&nbsp;&nbsp;"мыла"&nbsp;&nbsp;&nbsp;раму
+<br>
+Мама&nbsp;&nbsp;&nbsp;мыла&nbsp;&nbsp;&nbsp;Машу</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+}]
+<br>
+^table.csv-string[$.encloser["]&nbsp;$.separator[,]]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Выведет на&nbsp;экран:
+<br>
+</span><code><b>"object","action","subject"
+<br>
+"Маша","""мыла""","раму"
+<br>
+"Мама","мыла","Машу"
+<br>
+</b></code><span>
+<br>
+</span></span>

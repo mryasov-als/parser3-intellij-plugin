@@ -1,0 +1,46 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">stat. Получение информации о&nbsp;файле</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file::stat[имя&nbsp;файла]</b><span>&nbsp;&nbsp;&nbsp;
+<br>
+</code><span>Объект, созданный этим конструктором, имеет дополнительные поля (объекты класса </span><code><b>date</b></code><span>):
+<br>
+
+<br>
+</span><code><b>$файл.size</b></code><span>&nbsp;- размер файла в&nbsp;байтах;  
+<br>
+</span><code><b>$файл.cdate</b></code><span>&nbsp;- дата создания;  
+<br>
+</span><code><b>$файл.mdate</b></code><span>&nbsp;- дата изменения;  
+<br>
+</span><code><b>$файл.adate</b></code><span>&nbsp;- дата последнего обращения к&nbsp;файлу.
+<br>
+
+<br>
+</span><code><b>имя&nbsp;файла</b></code><span>&nbsp;- имя файла с&nbsp;путем.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$f[^file::stat[some.zip]]
+<br>
+</b></code></span><code><b>Размер&nbsp;в&nbsp;байтах:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$f.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="filefields.htm">size</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&lt;br</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;/</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&gt;
+<br>
+</b></code></span><code><b>Год&nbsp;создания:</b><span style="color:#7F97E1" class="blue"><b>&nbsp;$f.cdate.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datefields.htm">year</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&lt;br</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;/</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&gt;
+<br>
+$new_after[^date::now(-3)]
+<br>
+</b></code></span><code><b>Статус:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^if($f.mdate&nbsp;&gt;=&nbsp;$new_after){</b></code></span><code><b>новый</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>старый</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><span>
+<br>
+</span></span>

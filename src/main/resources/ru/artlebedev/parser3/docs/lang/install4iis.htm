@@ -1,0 +1,34 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Установка Parser на&nbsp;веб-сервер IIS 8.0 или новее</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Нужно поместить файлы с&nbsp;исполняемым кодом Parser в&nbsp;произвольный каталог. Если используется версия Parser с&nbsp;поддержкой XML, то&nbsp;в&nbsp;каталог, указанный в&nbsp;переменной окружения <code>PATH</code><span> (например, </span><code>C:\WinNT</code><span>), следует распаковать&nbsp;XML-библиотеки.
+<br>
+
+<br>
+Затем назначить Parser обработчиком </span><code>.html</code><span>-страниц:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>1)</span></span></td><td><span>Запустить Management Console, кликнув правой кнопкой мыши на&nbsp;названии созданного веб-сервера, и&nbsp;выбрать&nbsp;</span><code>Properties</code><span>.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>2)</span></td><td><span>На&nbsp;вкладке </span><code>Home&nbsp;directory</code><span> и&nbsp;в&nbsp;разделе </span><code>Application&nbsp;settings</code><span> нажать на&nbsp;кнопку </span><code>Configuration…</code><span> 
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>3)</span></td><td><span>В&nbsp;появившемся окне нажать кнопку </span><code>Add</code><span>.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>4)</span></td><td><span>В&nbsp;поле </span><code>Executable</code><span> ввести полный путь к&nbsp;файлу </span><code>parser3.exe</code><span> или </span><code>parser3isapi.dll</code><span>.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>5)</span></td><td><span>В&nbsp;поле </span><code>Extension</code><span> ввести строку </span><code>.html</code><span>.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>6)</span></td><td><span>Включить опцию </span><code>Check&nbsp;that&nbsp;file&nbsp;exists</code><span>.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>7)</span></td><td><span>Нажать на кнопку </span><code>OK</code><span>.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></span></td></tr></table>

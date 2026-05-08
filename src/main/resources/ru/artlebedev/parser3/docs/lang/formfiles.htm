@@ -1,0 +1,70 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">files. Получение множества файлов</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$form:files</b><span>
+<br>
+</code><span>
+<br>
+Поле возвращает редактируемый <a href="hash.htm">хеш</a> со&nbsp;всеми файлами формы. Имена ключей&nbsp;- это названия файловых элементов формы, значениями&nbsp;же являются хеши, см.&nbsp;ниже.
+<br>
+
+<br>
+</span><code><b>$form:</b><b>files</b><b>.поле_формы</b></code><span>&nbsp;&nbsp;&nbsp;
+<br>
+</span><span>
+<br>
+Если поле формы имеет хотя&nbsp;бы одно значение типа файл, такая конструкция возвращает хеш (объект класса </span><code><b><a href="hashclass.htm">hash</a></b></code><span>) с&nbsp;ключами 0, 1, 2... (по&nbsp;количеству переданных файлов), содержащий все файлы с&nbsp;указанным именем. Используется для&nbsp;получения множества файлов с&nbsp;одинаковым именем формы.
+<br>
+<i>
+<br>
+</i><i>Внимание: перед использованием хеша нужно проверить его определенность. 
+<br>
+</i>
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^if($form:files.picture){</b></code></span><code><b>
+<br>
+&nbsp;&nbsp;&nbsp;</b><b>&lt;p&gt;</b><b>Загружены&nbsp;изображения</b><b>&nbsp;(</b><span style="color:#7F97E1" class="blue"><b>^form:files.picture._count[]</b></code></span><code><b>):</b><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;^form:files.picture.foreach[sNum;fValue]{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$fValue.name
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^fValue.save[binary;/upload/pictures/${sNum}.^file:justext[$fValue.name]]
+<br>
+&nbsp;&nbsp;&nbsp;}[,&nbsp;]
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;/p&gt;</b><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>
+<br>
+&lt;form&nbsp;method="</b><b>post</b><b>"</b><b>&nbsp;enctype="multipart/form-data"</b><b>&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;p&gt;Выберите&nbsp;несколько&nbsp;изображений&nbsp;для&nbsp;загрузки</b><b>:&lt;br&nbsp;/&gt;</b><b>
+<br>
+&nbsp;&nbsp;&nbsp;&lt;input&nbsp;type="file"&nbsp;name="picture"</b><b>&nbsp;/</b><b>&gt;&lt;br&nbsp;/&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;input&nbsp;type="file"&nbsp;name="picture"</b><b>&nbsp;/</b><b>&gt;&lt;br&nbsp;/&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;input&nbsp;type="file"&nbsp;name="picture"</b><b>&nbsp;/</b><b>&gt;&lt;br&nbsp;/&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;input&nbsp;type=</b><b>"</b><b>submit</b><b>"</b><b>&nbsp;value="Загрузить"</b><b>&nbsp;/</b><b>&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;/p&gt;
+<br>
+&lt;/form&gt;
+<br>
+</b></code><span>
+<br>
+</span></span>

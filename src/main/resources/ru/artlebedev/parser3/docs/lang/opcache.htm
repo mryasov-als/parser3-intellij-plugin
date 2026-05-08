@@ -1,0 +1,100 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">cache. Сохранение результатов работы кода</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^cache[файл]
+<br>
+^cache[файл](число&nbsp;секунд){код}
+<br>
+^cache[файл](число&nbsp;секунд){код}{обработчик&nbsp;проблем}&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.1.2]</i></b></code><code><b>
+<br>
+^cache[файл][дата&nbsp;устаревания]{код}
+<br>
+^cache[файл][дата&nbsp;устаревания]{код}{обработчик&nbsp;проблем}&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.1.2]
+<br>
+</i></b></span><code><b>^cache[]&nbsp;=&nbsp;дата&nbsp;устаревания&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.1.5]</i></b></span><code><b>
+<br>
+</b></code><span>
+<br>
+Оператор сохраняет строку, которая получится в&nbsp;результате работы кода. При последующих вызовах обычно происходит считывание ранее сохраненного результата вместо повторного вычисления, что сильно экономит время обработки запроса и&nbsp;снижает нагрузку на&nbsp;серверы.
+<br>
+
+<br>
+Крайне рекомендуется подключать модули (</span><code><b><a href="opuse.htm">^use[…]</a></b></code><span>) изнутри </span><code><b>кода</b></code><span> оператора </span><code><b>cache</b></code><span>, а&nbsp;не делать это статически (</span><code><b><a href="defineclass.htm">@USE</a></b></code><span>). По&nbsp;возможности следует работать с&nbsp;базой данных (</span><code><b><a href="opconnect.htm">^connect[…]</a></b></code><span>) также внутри </span><code><b>кода</b></code><span> оператора </span><code><b>cache</b></code><span> - это существенно снизит нагрузку на&nbsp;SQL-сервер и&nbsp;повысит производительность сайтов.
+<br>
+
+<br>
+</span><code><b>Файл</b></code><span>&nbsp;- имя файла-кеша. Если такой файл существует и&nbsp;не устарел, то&nbsp;его содержимое выдается клиенту, если не&nbsp;существует&nbsp;- выполняется код, и&nbsp;результат сохраняется в&nbsp;файл с&nbsp;указанным именем.
+<br>
+
+<br>
+</span><code><b>Число&nbsp;секунд</b></code><span>&nbsp;- время хранения результата работы кода в&nbsp;секундах. Если это число равно нулю, то&nbsp;результат не&nbsp;сохраняется, а&nbsp;файл с&nbsp;ранее сохраненным результатом уничтожается.
+<br>
+
+<br>
+</span><code><b>Дата&nbsp;устаревания</b></code><span>&nbsp;- <a href="dateclass.htm">дата и время</a>, до&nbsp;которого хранится результат работы кода. Если она в&nbsp;прошлом, то&nbsp;результат не&nbsp;сохраняется, а&nbsp;файл с&nbsp;предыдущим сохраненным результатом уничтожается.
+<br>
+
+<br>
+</span><code><b>Код</b></code><span>&nbsp;- код, результат которого будет сохранен.
+<br>
+
+<br>
+</span><code><b>Обработчик&nbsp;проблем</b></code><span> - здесь можно обработать проблему, если она возникнет в&nbsp;</span><code><b>коде</b></code><span>. В этом отношении оператор похож на&nbsp;</span><code><b><a href="optry.htm">try</a></b></code><span>, см.&nbsp;раздел «<a href="exceptions.htm">Обработка ошибок</a>». В отличие от&nbsp;</span><code><b>try</b></code><span> можно задать </span><code><b>$exception.handled[cache]</b></code><span> </span><code><b>-</b></code><span> это дает указание Parser обработать ошибку особенным образом: достать из&nbsp;</span><code><b>файла</b></code><span> ранее сохраненный результат работы </span><code><b>кода</b></code><span>, проигнорировав тот факт, что этот результат устарел.</span><code><b>
+<br>
+</b></code><span>
+<br>
+Для принудительного удаления файла-кеша можно использовать:
+<br>
+</span><code><b>^cache[файл]</b></code><span>
+<br>
+
+<br>
+Внутри </span><code><b>кода</b></code><span> допустимы команды, изменяющие время хранения результата работы кода:
+<br>
+</span><code><b>^cache(число&nbsp;секунд)
+<br>
+^cache[дата&nbsp;устаревания]
+<br>
+</b></code><span>Берется минимальное время хранения кода.
+<br>
+
+<br>
+Текущую дату устаревания можно узнать, вызвав:
+<br>
+</span><code><b>$expire_date[^cache[]]
+<br>
+</b></code><span>
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^cache[/data/cache/test1](5){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;Нажимайте&nbsp;reload,&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;меняется&nbsp;каждые&nbsp;5&nbsp;секунд:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mathrandom.htm">math:random</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>(100)</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+<b>Изменение времени хранения
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^cache[/data/cache/test2](5){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;по&nbsp;ходу&nbsp;работы&nbsp;выяснилось,
+<br>
+&nbsp;&nbsp;&nbsp;что&nbsp;страницу&nbsp;сохранять&nbsp;не&nbsp;нужно:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^cache(0)
+<br>
+}</b></code></span><span>
+<br>
+</span></span>

@@ -1,0 +1,172 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">crypt. Хеширование паролей</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^math:crypt[password;salt]
+<br>
+</b><span>
+<br>
+Метод хеширует </code><code><b>password</b></code><span> с&nbsp;учетом </span><code><b>salt</b></code><span>.
+<br>
+
+<br>
+Параметры:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>password</b></code><span> - исходная строка.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>salt</b></code><span> - строка, определяющая алгоритм хеширования и&nbsp;вносящая элемент случайности в&nbsp;результат хеширования, состоит из&nbsp;начала и&nbsp;тела. Начало определяет алгоритм хеширования, тело вносит элемент случайности. Если тело не&nbsp;будет указано, Parser сформирует его случайным образом.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Неразумно хранить пароли пользователей, просто записывая их на&nbsp;диск или в&nbsp;базу данных,&nbsp;- ведь если предположить, что злоумышленник украдет файл или таблицу с&nbsp;паролями, он легко сможет ими воспользоваться. Поэтому принято хранить не&nbsp;пароли, а&nbsp;их <i>хеши</i>&nbsp;- результат надежного однозначного необратимого преобразования строки пароля. Для проверки введенного пароля к&nbsp;нему применяют то&nbsp;же преобразование, передавая в&nbsp;качестве&nbsp;</span><code><b>salt</b></code><span> сохраненный хеш, а&nbsp;результат сверяют с&nbsp;сохраненным.
+<br>
+
+<br>
+Вносить элемент случайности необходимо, поскольку иначе потенциальный злоумышленник может заранее сформировать таблицу хешей многих часто используемых паролей. Вторая причина: элемент случайности вносится на&nbsp;начальном этапе алгоритма хеширования, что существенно усложняет подбор пароля даже при использовании специальных аппаратных ускорителей.
+<br>
+
+<br>
+Внимание: обязательно нужно задавать случайное тело&nbsp;</span><code><b>salt</b></code><span>, либо это может сделать Parser, если указывать не&nbsp;тело&nbsp;</span><code><b>salt</b></code><span>, а&nbsp;только его&nbsp;начало.
+<br>
+
+<br>
+Таблица доступных алгоритмов
+<br>
+
+<br>
+<table border="0" cellpadding="1"><tr><td align="left" valign="top" width="78">
+<span><b>Алгоритм
+<br>
+</b></span></td><td align="left" valign="top" width="199">
+<span><b>Описание
+<br>
+</b></span></td><td align="left" valign="top" width="161">
+<span><b>Начало salt
+<br>
+</b></span></td><td align="left" valign="top" width="160">
+<span><b>Тело </b><code><b>salt</b></code><span><b>
+<br>
+</b></span></span></td></tr><tr><td align="left" valign="top" width="78">
+<span>MD5
+<br>
+</span></td><td align="left" valign="top" width="199">
+<span>Встроен в&nbsp;Parser, доступен на&nbsp;всех платформах
+<br>
+</span></td><td align="left" valign="top" width="161">
+<code><b>$apr1$</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="160">
+<span>До 8 случайных букв (в&nbsp;любом регистре) или цифр
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="78">
+<span>MD5
+<br>
+</span></td><td align="left" valign="top" width="199">
+<span>Если поддерживается операционной системой (UNIX)
+<br>
+</span></td><td align="left" valign="top" width="161">
+<code><b>$1$</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="160">
+<span>До&nbsp;8 случайных букв (в&nbsp;любом регистре) или цифр
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="78">
+<span>DES
+<br>
+</span></td><td align="left" valign="top" width="199">
+<span>Если поддерживается операционной системой (UNIX)
+<br>
+</span></td><td align="left" valign="top" width="161">
+<span>(нет)
+<br>
+</span></td><td align="left" valign="top" width="160">
+<span>2 случайных буквы (в&nbsp;любом регистре) или цифры
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="78">
+<span>другие
+<br>
+</span></td><td align="left" valign="top" width="199">
+<span>Какие поддерживаются операционной системой (UNIX)
+<br>
+</span></td><td align="left" valign="top" width="161">
+<span>см.&nbsp;документацию к&nbsp;операционной системе, <code>man&nbsp;5&nbsp;crypt</code><span>, функция&nbsp;</span><code>crypt</code><span>
+<br>
+</span></span></td><td align="left" valign="top" width="160">
+<span>см.&nbsp;документацию к&nbsp;операционной системе, <code>man&nbsp;5&nbsp;crypt</code><span>, функция&nbsp;</span><code>crypt</code><span>
+<br>
+</span></span></td></tr></table>
+<br>
+<i>
+<br>
+</i><i>Внимание: в&nbsp;Parser, чтобы использовать в&nbsp;тексте символ&nbsp;</i></span><code><b>$</b></code><span><i>, перед ним необходимо поставить символ&nbsp;</i></span><code><b>^</b></code><span><i>&nbsp;- </i></span><code><b>^$</b></code><span><i>.
+<br>
+</i>
+<br>
+<i>Примечание: веб-сервер Apache позволяет в&nbsp;файлах с&nbsp;паролями (</i></span><code>.htpasswd</code><span><i>) использовать хеши, сформированные по&nbsp;любому из&nbsp;алгоритмов, представленных в&nbsp;таблице, включая алгоритм, встроенный в&nbsp;Parser.
+<br>
+</i>
+<br>
+<b>Пример создания htpasswd-файла
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mainclass.htm">main</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]
+<br>
+$users[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablecreate.htm">table::create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{name&nbsp;&nbsp;&nbsp;password
+<br>
+</b></code></span><code><b>alice&nbsp;&nbsp;&nbsp;xxxxxx
+<br>
+bob&nbsp;&nbsp;&nbsp;yyyyyy</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+}]
+<br>
+
+<br>
+$htpasswd[^table::create[nameless]{}]
+<br>
+^users.menu{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;^htpasswd.append{$users.name:^math:crypt[$users.password;^$apr1^$]}
+<br>
+}
+<br>
+
+<br>
+^htpasswd.save[nameless;.htpasswd-parser-test]
+<br>
+</b></code></span><span>
+<br>
+<b>Пример проверки пароля
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$right[</b></code></span><code><b>123</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$from_user[</b></code></span><code><b>123</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$crypted[^math:crypt[$right;^$apr1^$]]
+<br>
+#обратите&nbsp;внимание&nbsp;на&nbsp;то,&nbsp;что&nbsp;$crypted&nbsp;при&nbsp;каждом&nbsp;обращении&nbsp;разный
+<br>
+$crypted</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+^if(^math:crypt[$from_user;$crypted]&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="exprops.htm">eq</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;$crypted){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Казнить&nbsp;нельзя,&nbsp;помиловать
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Казнить,&nbsp;нельзя&nbsp;помиловать
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>
+<br>
+
+<br>
+</b></code><span><i>Подробная информация  о&nbsp;MD5 доступна по&nbsp;ссылке: </i><i><a href="http://www.ietf.org/rfc/rfc1321.txt" target="_blank">ietf.org/rfc/rfc1321.txt</a></i><i>
+<br>
+</i></span></span>

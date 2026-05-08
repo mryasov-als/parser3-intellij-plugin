@@ -1,0 +1,110 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">try. Перехват и&nbsp;обработка ошибок</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^try{код,&nbsp;ошибки&nbsp;которого&nbsp;попадают…}{…в&nbsp;этот&nbsp;обработчик&nbsp;в&nbsp;виде&nbsp;$exception}
+<br>
+^try{код,&nbsp;ошибки&nbsp;которого&nbsp;попадают…}{…в&nbsp;этот&nbsp;обработчик&nbsp;в&nbsp;виде&nbsp;$exception}{а&nbsp;тут&nbsp;код,&nbsp;который&nbsp;в&nbsp;любом&nbsp;случае&nbsp;выполнится&nbsp;в&nbsp;конце}&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.3.0]</i></b>
+<br>
+
+<br>
+
+<br>
+Если по&nbsp;ходу работы </code><code><b>кода</b></code><span> возникла ошибка, создается переменная </span><code><b>$exception</b></code><span> и&nbsp;управление передается </span><code><b>обработчику</b></code><span>.
+<br>
+
+<br>
+Если указан третий параметр (finally), то&nbsp;он в&nbsp;любом случае будет выполнен после завершения обработки тела или обработчика исключений, даже если исключение не&nbsp;будет перехвачено.
+<br>
+
+<br>
+
+<br>
+</span><code><b>$exception</b></code><span>&nbsp;- это такой </span><code><b><a href="hashclass.htm">hash</a></b></code><span>:
+<br>
+</span><code><b>
+<br>
+</b></code><span><table border="0" cellpadding="1"><tr><td align="left" valign="top" width="153">
+<code><b>$exception.type</b>
+<br>
+</code></td><td align="left" valign="top" width="473">
+<span>строка, тип ошибки; определен ряд системных типов, также тип ошибки может быть задан в&nbsp;операторе <code><b><a href="opthrow.htm">throw</a></b></code><span>.</span><code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="153">
+<code><b>$exception.source</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="473">
+<span>строка, источник ошибки (ошибочное имя файла, метода, …)
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="153">
+<code><b>$exception.file</b><b>
+<br>
+</b><b>$exception.lineno</b><b>
+<br>
+</b><b>$exception.</b><b>colno</b>
+<br>
+</code></td><td align="left" valign="top" width="473">
+<span>файл, содержащий <code><b>source</b><b>,
+<br>
+</b></code><span>номера строки и&nbsp;колонки в&nbsp;нем</span><code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="153">
+<code><b>$exception.comment</b>
+<br>
+</code></td><td align="left" valign="top" width="473">
+<span>комментарий к&nbsp;ошибке, по-английски <code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="153">
+<code><b>$exception.handled</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="473">
+<span>«истина» или «ложь», флаг «обработана&nbsp;ли ошибка»&nbsp;- необходимо зажечь этот флаг в&nbsp;<code><b>обработчике</b></code><span>, если переданная ошибка уже&nbsp;обработана
+<br>
+</span></span></td></tr></table>
+<br>
+
+<br>
+</span><code><b>Обработчик</b></code><span> обязан сообщить Parser, что данную ошибку он обработал, для&nbsp;чего <i>только</i> для&nbsp;нужных типов ошибок он должен зажечь флаг:
+<br>
+</span><code><b>$exception.handled(</b><b><a href="boollit.htm">true</a></b><b>)
+<br>
+</b></code><span>
+<br>
+Если обработчик не&nbsp;зажег этого флага, ошибка считается <i>необработанной</i> и&nbsp;передается следующему обработчику, если он есть.
+<br>
+
+<br>
+Если ошибка так и&nbsp;не будет обработана, если есть, вызывается метод </span><code><b><a href="exceptionunhandled.htm">unhandled_exception</a></b></code><span>, ему передается информация об ошибке, стек вызовов, приведших к&nbsp;ошибке, и&nbsp;выдаются результаты его работы. Помимо этого, производится запись в&nbsp;журнал ошибок веб-сервера.
+<br>
+</span><span><b>
+<br>
+</b></span><span><b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^try{
+<br>
+&nbsp;&nbsp;&nbsp;$srcDoc[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="xdoccreatexml.htm">xdoc::create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{$untrustedXML}]
+<br>
+}{
+<br>
+&nbsp;&nbsp;&nbsp;^if($exception.type&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="exprops.htm">eq</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;xml){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$exception.handled(</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="boollit.htm">true</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>)
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ошибочный&nbsp;XML,
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;pre&gt;</b><span style="color:#7F97E1" class="blue"><b>$exception.comment</b></code></span><code><b>&lt;/pre&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+}</b></code></span><span>
+<br>
+</span></span>

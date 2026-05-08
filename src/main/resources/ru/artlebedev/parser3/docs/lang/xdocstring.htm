@@ -1,0 +1,52 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">string. Преобразование документа в&nbsp;строку</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^документ.string[]
+<br>
+^документ.string[</b><b><a href="xdocoptions.htm">Параметры_преобразования_в_текст</a></b><b>]
+<br>
+</b><span>
+<br>
+Метод преобразует </code><code><b>документ</b></code><span> в&nbsp;текстовую форму. Возможно задание </span><code><b>параметров_преобразования</b></code><span>.
+<br>
+По&nbsp;умолчанию создается XML-представление документа с&nbsp;заголовком </span><code><span style="color:#7F97E1" class="blue"><b>&lt;?xml&nbsp;…&nbsp;?&gt;</b></code></span><span> (можно отключить вывод заголовка, задав <a href="xdocoptions.htm">соответствующий параметр</a>).
+<br>
+
+<br>
+Результат выдается посетителю </span><code><b><a href="optaint.htm">as-is</a></b></code><span>.
+<br>
+
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$document[</b></code></span><code><b>^xdoc::</b><b><a href="xdoccreatexml.htm">create</a></b><b>{&lt;?xml&nbsp;version="1.0"&nbsp;encoding="windows-1251"&nbsp;?&gt;
+<br>
+&lt;document&gt;
+<br>
+строка1&lt;br/&gt;
+<br>
+строка2&lt;br/&gt;
+<br>
+&lt;/document&gt;}</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>^document.string[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="xdocoptions.htm">$.method[html]</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+]</b></code></span><span>
+<br>
+</span></span>

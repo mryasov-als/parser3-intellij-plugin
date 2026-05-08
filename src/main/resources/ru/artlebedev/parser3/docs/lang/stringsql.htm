@@ -1,0 +1,60 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">sql. Получение строки из&nbsp;базы данных</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^string:sql{SQL-запрос}&nbsp;&nbsp;
+<br>
+^string:sql{SQL-запрос}[$.limit(1)&nbsp;$.offset(n)&nbsp;$.default{код}&nbsp;$.</b><b><a href="app7.htm">bind</a></b><b>[variables&nbsp;hash]]</b>&nbsp;&nbsp;&nbsp;<span>
+<br>
+</code><span>
+<br>
+<i>Замечание: именно метод, не&nbsp;конструктор!
+<br>
+</i>
+<br>
+Метод возвращает строку, полученную из&nbsp;базы данных через SQL-запрос. Результатом выборки должен быть только один столбец из&nbsp;одной строки. Для работы оператора необходимо установленное соединение с&nbsp;сервером базы данных (см.&nbsp;оператор&nbsp;</span><code><b><a href="opconnect.htm">connect</a></b></code><span>).
+<br>
+
+<br>
+Необязательные параметры:
+<br>
+</span><code><b>$.limit(1)</b></code><span>&nbsp;- в&nbsp;ответе заведомо будет содержаться только одна строка;
+<br>
+</span><code><b>$.offset(n)</b></code><span>&nbsp;- отбросить первые </span><code><b>n</b></code><span> записей выборки;
+<br>
+</span><code><b>$.bind[hash]</b></code><span>&nbsp;- связанные переменные, см.&nbsp;«<a href="app7.htm">Работа с IN/OUT-переменными</a>».<b><i>
+<br>
+</i></b>
+<br>
+Если ответ SQL-сервера был пуст (0&nbsp;записей), то&nbsp;будет:
+<br>
+</span><code><b>$.default{код}</b></code><span> …выполнен указанный </span><code><b>код</b></code><span>, и&nbsp;строка, которую он возвратит, будет результатом выполнения&nbsp;метода;
+<br>
+</span><code><b>$.default(выражение)</b></code><span> …вычислено указанное </span><code><b>выражение</b></code><span>, и&nbsp;оно будет результатом выполнения&nbsp;метода;
+<br>
+</span><code><b>$.default[строка]</b></code><span> …возвращена указанная </span><code><b>строка</b></code><span>;
+<br>
+</span><code><b>$.default</b></code><span> не&nbsp;задан …выдано сообщение об ошибке.
+<br>
+
+<br>
+
+<br>
+</span><span><b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^string:sql{</b></code></span><code><b>select&nbsp;name&nbsp;from&nbsp;company&nbsp;where&nbsp;company_id=</b><span style="color:#7F97E1" class="blue"><b>$company_id}</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Используя этот метод, полезно конструировать SQL-запрос так, чтобы в&nbsp;ответе заведомо содержалась одна строка из&nbsp;одного столбца.
+<br>
+</span></span>

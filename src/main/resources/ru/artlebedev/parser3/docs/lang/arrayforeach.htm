@@ -1,0 +1,74 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">foreach. Перебор элементов массива</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^массив.foreach[индекс;значение]{тело}
+<br>
+^массив.foreach[индекс;значение]{тело}[разделитель]
+<br>
+^массив.foreach[индекс;значение]{тело}{разделитель}
+<br>
+</b><span>
+<br>
+Метод перебирает все инициализированные элементы массива, передавая в тело цикла индекс и значение каждого элемента. Неинициализированные элементы («дырки») пропускаются.
+<br>
+Параметры метода:
+<br>
+
+<br>
+</code><code><b>индекс</b></code><span> -имя переменной, в которую будет помещен индекс текущего элемента (может быть пустым);
+<br>
+</span><code><b>значение</b></code><span> -имя переменной, в которую будет помещено значение текущего элемента (может быть пустым);
+<br>
+</span><code><b>тело</b></code><span> -код, выполняемый для каждого элемента массива;
+<br>
+</span><code><b>разделитель</b></code><span> -код, который вставляется перед каждым непустым и не первым телом цикла.
+<br>
+
+<br>
+<i>Замечание: если разделитель задан в&nbsp;виде кода, то&nbsp;этот код выполняется после следующего не&nbsp;пустого тела цикла.</i>
+<br>
+
+<br>
+В любой момент можно принудительно выйти из&nbsp;цикла с&nbsp;помощью оператора </span><code><span style="color:#7F97E1" class="blue"><b><a href="opbreak.htm">break</a></b></code></span><span> или принудительно закончить текущую итерацию и&nbsp;перейти к&nbsp;следующей с&nbsp;помощью оператора </span><code><span style="color:#7F97E1" class="blue"><b><a href="opcontinue.htm">continue</a></b></code></span><span>.
+<br>
+Метод аналогичен методу </span><code><b><a href="hashforeach.htm">foreach</a></b></code><span> класса hash, но работает с массивами и их числовыми индексами.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$man[</b></code></span><code><b>Вася</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>22</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>m</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^man.delete(1)
+<br>
+
+<br>
+^man.foreach[key;value]{
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$key</b></code></span><code><b>=</b><span style="color:#7F97E1" class="blue"><b>$value
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>}[</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Выведет на&nbsp;экран:
+<br>
+</span><code><b>0=Вася
+<br>
+2=m
+<br>
+</b></code><span>
+<br>
+
+<br>
+</span></span>

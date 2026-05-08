@@ -1,0 +1,138 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">match. Поиск подстроки по&nbsp;шаблону</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^строка.match[шаблон]  
+<br>
+^строка.match[шаблон][опции поиска]</b>
+<br>
+<span>
+<br>
+Метод осуществляет поиск в&nbsp;строке по&nbsp;шаблону. Шаблон&nbsp;- это строка с&nbsp;<i>регулярным выражением</i>, совместимым с&nbsp;PCRE (Perl compatible regular expressions) или объект класса&nbsp;</code><code><b><a href="regexclass.htm">regex</a></b></code><span> <b><i>[3.4.0]</i></b>. Частичный перевод описания&nbsp;PCRE приведен в&nbsp;<a href="app4.htm">Приложении 4</a>. 
+<br>
+
+<br>
+Предусмотрены следующие опции поиска:
+<br>
+</span><code><b>i</b></code><span>&nbsp;- не&nbsp;учитывать регистр;
+<br>
+</span><code><b>x</b></code><span>&nbsp;- игнорировать символы white space и&nbsp;разрешить </span><code><b>#комментарий&nbsp;до&nbsp;конца&nbsp;строки</b></code><span>;
+<br>
+</span><code><b>s</b></code><span>&nbsp;- символ </span><code><b>$</b></code><span> считать концом всего текста (опция по&nbsp;умолчанию);
+<br>
+</span><code><b>m</b></code><span>&nbsp;- символ </span><code><b>$</b></code><span> считать концом строки, но&nbsp;не&nbsp;всего текста;
+<br>
+</span><code><b>U</b></code><span>&nbsp;- инвертировать «жадность» квантификаторов (они становятся «не&nbsp;жадными», чтобы сделать их «жадными», необходимо поставить после них символ </span><code><span style="color:#7F97E1" class="blue"><b>?</b></code></span><span>);<b><i> [3.3.0]</i></b>
+<br>
+</span><code><b>g</b></code><span>&nbsp;- найти все вхождения строки (а не&nbsp;только первое);
+<br>
+</span><code><b>n</b></code><span>&nbsp;- вернуть число с&nbsp;количеством совпадений вместо таблицы;
+<br>
+</span><code><b>'</b></code><span>&nbsp;- вычислять значения столбцов </span><code><b>prematch</b></code><span>, </span><code><b>match</b></code><span>, </span><code><b>postmatch</b></code><span>.
+<br>
+
+<br>
+Поскольку символы </span><code><b>^</b></code><span> и&nbsp;</span><code><b>$</b></code><span> используются в&nbsp;Parser, в&nbsp;шаблоне вместо символа </span><code><b>^</b></code><span> используется строка </span><code><b>^^</b></code><span>, а&nbsp;вместо символа </span><code><b>$</b></code><span>&nbsp;- строка </span><code><b>^$&nbsp;</b></code><span>(см.&nbsp;<a href="exprlit.htm">Литералы</a>).
+<br>
+
+<br>
+Если указана опция поиска </span><code><b>g</b></code><span>, будет создана </span><code><b>таблица</b></code><span> (объект класса </span><code><b><a href="tableclass.htm">table</a></b></code><span>) найденного по&nbsp;шаблону (по&nbsp;одной строке на&nbsp;каждое вхождение). Если опция </span><code><b>g</b></code><span> не&nbsp;была указана, то&nbsp;таблица будет содержать лишь одну строку с&nbsp;первым вхождением. Если не&nbsp;было найдено ни&nbsp;одного совпадения, то&nbsp;результатом операции будет </span><code><b>пустая&nbsp;таблица</b></code><span>. Если указана опция </span><code><b>n</b></code><span>, то&nbsp;вместо таблицы с&nbsp;результатами будет возвращаться </span><code><b>число</b></code><span>&nbsp;- количество найденных совпадений.
+<br>
+
+<br>
+Таблица совпадений имеет следующие столбцы: </span><code><b>1</b></code><span>, </span><code><b>2</b></code><span>,…, </span><code><b>n</b></code><span>, </span><code><b>&nbsp;prematch</b></code><span>, </span><code><b>match</b></code><span>, </span><code><b>postmatch</b></code><span>, </span><span>где:
+<br>
+</span><code><b>prematch&nbsp;&nbsp;&nbsp;</b></code><span>столбец с&nbsp;подстрокой от&nbsp;начала строки до&nbsp;совпадения;&nbsp;&nbsp;&nbsp;
+<br>
+</span><code><b>match</b></code><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span>столбец с&nbsp;подстрокой, совпавшей с&nbsp;шаблоном;
+<br>
+</span><code><b>postmatch</b></code><span>&nbsp;&nbsp;&nbsp;</span><span>столбец с&nbsp;подстрокой, следующей за&nbsp;совпавшей подстрокой до&nbsp;конца строки;
+<br>
+</span><code><b>1</b></code><span>, </span><code><b>2</b></code><span>,…, </span><code><b>n</b></code><span>&nbsp;&nbsp;&nbsp;</span><span>столбцы с&nbsp;подстроками, соответствующими фрагментам шаблона, которые заключены в&nbsp;круглые скобки, </span><code><b>n</b></code><span> - номер открывающей круглой скобки. 
+<br>
+<i>
+<br>
+Замечание 1: значения столбцов </i></span><code><b>prematch</b></code><span><i>, </i></span><code><b>match</b></code><span><i>, </i></span><code><b>postmatch</b></code><span><i> вычисляются, только если указана опция&nbsp;</i></span><code><b>'</b></code><span><i>.
+<br>
+</i></span><code><i>
+<br>
+</i></code><span><i>Замечание 2: значения столбцов </i></span><code><b>1</b></code><span>, </span><code><b>2</b></code><span>,…, </span><code><b>n&nbsp;</b></code><span><i>вычисляются лишь в&nbsp;случае, если в&nbsp;шаблоне указаны круглые скобки.
+<br>
+
+<br>
+Замечание 3: если в&nbsp;шаблоне нужно использовать круглые скобки, но&nbsp;не&nbsp;требуется запоминания заключенного в&nbsp;них в&nbsp;результирующей таблице, то&nbsp;вместо них лучше использовать конструкцию&nbsp;</i></span><code><b>(?:)</b></code><span><i>.</i>
+<br>
+
+<br>
+
+<br>
+<b>Примеры использования
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>www.parser.ru?user=admin</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^if(^str.match[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\?&nbsp;#есть&nbsp;разделитель
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.+&nbsp;#и&nbsp;есть&nbsp;хоть&nbsp;что-то&nbsp;за&nbsp;ним
+<br>
+][x]){</b></code></span><code><b>Есть&nbsp;совпадение</b><span style="color:#7F97E1" class="blue"><b>}{</b></code></span><code><b>Совпадений&nbsp;нет</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Выведет на&nbsp;экран: </span><code><b>Есть&nbsp;совпадение</b></code><span>.</span><code>
+<br>
+</code><span><i>
+<br>
+Внимание: Бывает, что даже самому разработчику через какое-то время трудно разобраться в&nbsp;своем регулярном выражении. Настоятельно советуем задавать комментарии к&nbsp;частям сложного регулярного выражения. Для этого нужно указать опцию&nbsp;</i></span><code><b>x</b></code><span><i>, которая включает расширенный синтаксис выражений, допускающий комментарии.
+<br>
+</i>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>www.parser.ru?user=admin</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$mtc[^str.match[(\?.+)][']]
+<br>
+^mtc.save[match.txt]
+<br>
+</b></code></span><span>
+<br>
+Создаст файл </span><code>match.txt</code><span>, содержащий такую таблицу:
+<br>
+</span><code>
+<br>
+</code><span><table border="1" cellpadding="1"><tr><td align="left" valign="top" width="123">
+<code><b>prematch</b>
+<br>
+</code></td><td align="left" valign="top" width="130">
+<code><b>match</b>
+<br>
+</code></td><td align="left" valign="top" width="113">
+<code><b>postmatch</b>
+<br>
+</code></td><td align="left" valign="top" width="117">
+<code><b>1</b>
+<br>
+</code></td></tr><tr><td align="left" valign="top" width="123">
+<code><b>www.parser.ru</b>
+<br>
+</code></td><td align="left" valign="top" width="130">
+<code><b>?user=admin</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="113">
+<code>
+<br>
+</code></td><td align="left" valign="top" width="117">
+<code><b>?user=admin</b>
+<br>
+</code></td></tr></table>
+<br>
+</span></span>

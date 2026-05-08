@@ -1,0 +1,118 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">received. Прием сообщения по&nbsp;электронной почте</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$mail:received
+<br>
+</b><span>
+<br>
+В этом поле доступно принятое по&nbsp;электронной почте сообщение (см.&nbsp;п.&nbsp;«<a href="parsermailreceive.htm">Использование Parser в качестве обработчика сообщений по электронной почте</a>»).
+<br>
+</code><code><b>
+<br>
+</b></code><span>Сообщение, это <a href="hash.htm">хеш</a> из&nbsp;следующих элементов (в&nbsp;зависимости от&nbsp;их наличия в&nbsp;пришедшем сообщении):</span><code><b>
+<br>
+</b><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></b></span></td><td><code><b>from</b></code><span> - строка «от&nbsp;кого» принято сообщение;</span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>reply-to</b></code><span> - строка «кому направить ответ» на&nbsp;принятое сообщение;</span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>subject</b></code><span> - строка «заголовок» сообщения;</span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>date</b></code><span> - дата отправки сообщения в&nbsp;локальном времени, объект класса </span><code><b><a href="dateclass.htm">date</a></b></code><span>;</span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>message-id</b></code><span> - строка «идентификатор» сообщения;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>raw</b></code><span> - <a href="hash.htm">хеш</a> всех заголовков сообщения: ключ - название заголовка, значение - строка;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>elements</b></code><span> - <a href="hash.htm">хеш</a>, содержащий массивы строковых значений всех одноименных заголовков сообщения.</span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>text</b></code><span> - простой текст;</span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>html</b></code><span> - HTML;</span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>file</b></code><span> - вложенный файл;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>message</b></code><span> - вложенное сообщение.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Вложенных файлов и&nbsp;сообщений может быть несколько, в&nbsp;этом случае могут присутствовать элементы </span><code><b>file2</b></code><span>, </span><code><b>message2</b></code><span>, и&nbsp;т.&nbsp;д.
+<br>
+
+<br>
+<i>Примечание: </i></span><code><b>file</b></code><span><i> и&nbsp;</i></span><code><b>file1</b></code><span><i> </i><i>и т.&nbsp;п.&nbsp;</i><i>- </i><i>синонимы</i><i>.</i><i>
+<br>
+</i><i>
+<br>
+</i>Все текстовые поля и&nbsp;части принятого сообщения автоматически перекодируются в&nbsp;кодировку&nbsp;</span><code><b><a href="requestcharset.htm">$request:charset</a></b></code><span>.
+<br>
+
+<br>
+Элементы </span><code><b>text</b></code><span>, </span><code><b>html</b></code><span>, </span><code><b>file</b></code><span>, это <a href="hash.htm">хеши</a>, содержащие:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$.content-type[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.value[</b></code></span><code><b>тип/подтип</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.</b></code></span><code><b>ПАРАМЕТР-ЗАГОЛОВКА</b><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>ЕГО-ЗНАЧЕНИЕ</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;…
+<br>
+]
+<br>
+$.raw[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.</b></code></span><code><b>ПОЛЕ-ЗАГОЛОВКА</b><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>ЕГО-ЗНАЧЕНИЕ</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;…
+<br>
+]
+<br>
+$.value[</b></code></span><code><b>строка&nbsp;</b></code><span>или</span><code><b>&nbsp;</b><b><a href="fileclass.htm">file</a></b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Элемент </span><code><b>message</b></code><span>, это <a href="hash.htm">хеш</a>, содержащий вложенное сообщение в&nbsp;том&nbsp;же формате, что все поле </span><code><b>$mail:received</b></code><span>.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mainclass.htm">main</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]
+<br>
+^show[$mail:received]
+<br>
+
+<br>
+@show[m]
+<br>
+</b></code></span><code><b>from:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$m.from
+<br>
+</b></code></span><code><b>subject:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$m.subject
+<br>
+</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>$m.text.value
+<br>
+^if(</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="exprops.htm">def</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;$m.file){
+<br>
+</b></code></span><code><b>+file&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$m.file.value.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="filefields.htm">name</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+}
+<br>
+^if(def&nbsp;$m.message){
+<br>
+</b></code></span><code><b>+message&nbsp;from&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$m.message.from
+<br>
+}
+<br>
+</b></code></span></span>

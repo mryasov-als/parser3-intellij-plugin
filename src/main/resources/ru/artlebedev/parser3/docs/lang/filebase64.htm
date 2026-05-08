@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">base64. Кодирование в&nbsp;Base64</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file:base64[имя&nbsp;файла]
+<br>
+
+<br>
+</b><span>Метод позволяет преобразовать файл с&nbsp;указанным именем в&nbsp;Base64-форму. Чтобы преобразовать файл к&nbsp;исходному виду, нужно воспользоваться конструкцией
+<br>
+</code><code><b>^file::</b><b><a href="filebase64c.htm">base64</a></b><b>[закодированное]
+<br>
+
+<br>
+</b></code><span>Использование описываемого статического метода полностью равносильно следующему коду (за&nbsp;исключением того, что описываемый метод использует меньше памяти):
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$f[^file::load[binary;</b></code></span><code><b>filespec</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+^f.base64[]
+<br>
+
+<br>
+</b></code></span><span>При этом результат не&nbsp;будет совпадать с&nbsp;результатом работы такого&nbsp;кода:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$f[^file::load[binary;</b></code></span><code><b>filespec</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+^f.text.base64[]
+<br>
+</b></code></span><span>
+<br>
+т.&nbsp;к. в&nbsp;последнем случае при обращении к&nbsp;полю </span><code><b>text</b></code><span> содержимое файла будет обрезано по&nbsp;первому нулевому символу и&nbsp;все символы перевода строк будут нормализованы.
+<br>
+
+<br>
+</span></span>

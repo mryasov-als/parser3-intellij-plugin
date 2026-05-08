@@ -1,0 +1,38 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">headers. Получение заголовков HTTP-запроса&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.4.4]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$request:</b><b>headers</b><span><b>
+<br>
+</b></code><span>
+<br>
+Возвращает хеш с&nbsp;заголовками, с&nbsp;которыми был сделан HTTP-запрос (переменные окружения, начинающиеся с&nbsp;</span><code><b>HTTP_</b></code><span>).
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^if(^</b></code></span><code><span style="color:#7F97E1" class="blue"><b>request:headers.</b></code></span><code><span style="color:#7F97E1" class="blue"><b>USER_AGENT.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="stringpos.htm">pos</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[MSIE]&gt;=0){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Пользователь,&nbsp;вероятно,&nbsp;использует&nbsp;Microsoft&nbsp;Internet&nbsp;Explorer&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Поля запроса имеют имена в&nbsp;верхнем регистре.
+<br>
+
+<br>
+</span></span>

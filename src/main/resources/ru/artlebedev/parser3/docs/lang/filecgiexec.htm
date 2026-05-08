@@ -1,0 +1,180 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">cgi и&nbsp;exec. Исполнение программы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file::cgi[имя&nbsp;файла]
+<br>
+^file::cgi[имя&nbsp;файла;env_hash]
+<br>
+^file::cgi[имя&nbsp;файла;env_hash;аргумент1;аргумент2;…]
+<br>
+^file::cgi[формат;имя&nbsp;файла;env_hash;аргумент1;аргумент2;…]
+<br>
+^file::exec[имя&nbsp;файла]
+<br>
+^file::exec[имя&nbsp;файла;env_hash]
+<br>
+</b><b>^file::exec[имя&nbsp;файла;env_hash;аргумент1;аргумент2;…]
+<br>
+^file::exec[формат;имя&nbsp;файла;env_hash;аргумент1;аргумент2;…]</b><b>
+<br>
+</b><span>
+<br>
+Конструктор </code><code><b>cgi</b></code><span> создает объект класса </span><code><b>file</b></code><span>, содержащий результат исполнения программы в&nbsp;соответствии со&nbsp;стандартом CGI. 
+<br>
+
+<br>
+<i>Внимание: все пути в&nbsp;Parser указываются относительно текущего исполняемого файла. По&nbsp;аналогии, при запуске внешнего скрипта текущим каталогом для&nbsp;него является каталог, где&nbsp;находится этот скрипт.
+<br>
+</i>
+<br>
+Заголовки, которые выдаст CGI-скрипт, конструктор поместит в&nbsp;поля класса </span><code><b>file</b></code><span> в&nbsp;ВЕРХНЕМ регистре. Например, если некий скрипт </span><code><b>script.pl</b></code><span> среди прочего выдает в&nbsp;заголовке строку </span><code><b>field:value</b></code><span>, то&nbsp;после работы конструктора
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$f[^file::cgi[script.pl]]</b></code></span><span>,
+<br>
+обратившись к&nbsp;</span><code><b>$f.FIELD</b></code><span>, получим значение </span><code><b>value</b></code><span>. 
+<br>
+
+<br>
+Конструктор </span><code><b>exec</b></code><span> аналогичен </span><code><b>cgi</b></code><span>, но&nbsp;не&nbsp;отделяет HTTP-заголовки от&nbsp;текста, возвращаемого скриптом. 
+<br>
+
+<br>
+</span><code><b>Формат</b></code><span> - формат представления получаемых от&nbsp;скрипта данных. Может быть </span><code><b>text</b></code><span> (по умолчанию) или </span><code><b>binary</b></code><span>. При использовании формата </span><code><b>binary</b></code><span> не&nbsp;будут производиться перекодирования полученных данных в&nbsp;кодировку </span><code><b><a href="requestcharset.htm">$request:charset</a></b></code><span> и&nbsp;их обрезания по&nbsp;первому нулевому символу.
+<br>
+
+<br>
+</span><code><b>Имя&nbsp;файла</b></code><span> - имя файла с&nbsp;путем.
+<br>
+
+<br>
+</span><code><b>Аргумент</b></code><span>&nbsp;- строка или <a href="array.htm">массив</a> строк <b><i>[3.</i></b><b><i>5</i></b><b><i>.</i></b><b><i>0</i></b><b><i>] </i></b>или <a href="tableclass.htm">таблица</a> с&nbsp;одним столбцом, содержащая аргументы.</span><span><b>
+<br>
+</b></span><span>
+<br>
+Объект, созданный конструкторами </span><code><b>cgi</b></code><span> и&nbsp;</span><code><b>exec</b></code><span>, имеет дополнительные поля:
+<br>
+</span><code><b>status</b></code><span> - информация о&nbsp;статусе завершения программы (обычно 0 означает, что программа завершилась успешно, не&nbsp;0 - с&nbsp;ошибкой);
+<br>
+</span><code><b>stderr</b></code><span> - результат считывания стандартного потока ошибок.
+<br>
+
+<br>
+<b>Пример</b>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$cgi_file[^file::cgi[</b></code></span><code><b>new.cgi</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+$cgi_file.text</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Выведет на&nbsp;экран результаты работы скрипта </span><code><b>new.cgi</b></code><span>. 
+<br>
+
+<br>
+Необязательные параметры конструкторов:</span><span>
+<br>
+</span><code><b>env_hash</b></code><span>&nbsp;- <a href="hash.htm">хеш</a>, в&nbsp;котором могут задаваться 
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>дополнительные переменные окружения, которые впоследствии будут доступны внутри исполняемого скрипта;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>ключ </span><code><b>stdin</b></code><span>, который содержит текст, передаваемый исполняемому скрипту в&nbsp;стандартном потоке ввода;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>ключ </span><code><b>charset</b></code><span>, задающий кодировку, в&nbsp;которой работает скрипт (будут перекодированы данные, передаваемые скрипту и&nbsp;получаемые из&nbsp;скрипта).
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span><i>
+<br>
+Внимание: можно задавать только стандартные CGI-переменные окружения и&nbsp;переменные, имена которых начинаются с&nbsp;CGI_ или HTTP_ (допустимы латинские буквы в&nbsp;ВЕРХНЕМ регистре, цифры, подчеркивание, минус).
+<br>
+</i>
+<br>
+<i>Внимание: в&nbsp;версиях с&nbsp;отключенным safe-mode переменным окружения можно задавать любые имена. </i><b><i>[3.4.1]
+<br>
+</i></b>
+<br>
+<i>Внимание: при </i><i>обработке HTTP POST-запроса</i><i>, при помощи конструкции&nbsp;</i></span><code><b>$.stdin[</b><b><a href="requestbody.htm">$request:body</a></b><b>]</b></code><span> <i>можно передать в&nbsp;стандартный поток ввода скрипта полученные POST-данные.
+<br>
+</i>
+<br>
+<i>Внимание: запускаемому скрипту также передаются все переменные окружения, которые были выставлены HTTP-сервером при запуске Parser.
+<br>
+</i>
+<br>
+</span><span><b>
+<br>
+</b></span><span><b>Пример исполнения внешнего CGI-скрипта
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$search[^file::cgi[search.cgi;$.QUERY_STRING[text=</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="formfields.htm">$form:q</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&amp;page=$form:p]]]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+
+<br>
+<b>Пример исполнения внешнего скрипта
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$script[^file::exec[script.pl;$.CGI_INFORMATION[этого&nbsp;мне&nbsp;не&nbsp;хватало]]]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Внутри скрипта </span><code><b>script.pl</b></code><span> можно воспользоваться переданной информацией:
+<br>
+</span><code><b>print&nbsp;"Дополнительная&nbsp;информация:&nbsp;$ENV{CGI_INFORMATION}\n";
+<br>
+</b></code><span>
+<br>
+</span><span><b>
+<br>
+</b></span><span><b>Пример получения бинарных данных от&nbsp;внешнего скрипта
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$response:body[^file::exec[binary;getfile.pl;$.CGI_</b></code></span><code><span style="color:#7F97E1" class="blue"><b>FILENAME</b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="formfields.htm">$form:filename</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]]]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+
+<br>
+<b>Пример передачи нескольких аргументов
+<br>
+</b>Кроме того, вызываемой программе можно передать ряд аргументов, перечислив их через точку с&nbsp;запятой после хеша переменных окружения:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$script[^file::exec[script.pl;;</b></code></span><code><b>длина</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>ширина</b><span style="color:#7F97E1" class="blue"><b>]]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+...или передать методу список аргументов, заданный в&nbsp;виде таблицы с&nbsp;одним столбцом:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$args[^table::create{arg
+<br>
+</b></code></span><code><b>длина</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>ширина</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+$script[^file::exec[script.pl;;$args]]</b></code></span><span>
+<br>
+
+<br>
+
+<br>
+<b>Пример скрипта для&nbsp;исполнения процесса в&nbsp;фоновом режиме
+<br>
+</b>При необходимости исполнения длительного процесса его можно запустить в&nbsp;фоновом режиме с&nbsp;помощью промежуточного скрипта. При этом, чтобы скрипт завершился сразу, необходимо перенаправить </span><code><b>stdout</b></code><span>  и&nbsp;</span><code><b>stderr</b></code><span> процесса:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>#/bin/sh
+<br>
+sleep&nbsp;60&nbsp;&gt;/dev/null&nbsp;2&gt;&amp;1&nbsp;&amp;</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+
+<br>
+<i>Внимание: настоятельно рекомендуется хранить запускаемые скрипты вне веб-пространства, поскольку запуск скрипта с&nbsp;произвольными параметрами может привести к&nbsp;неожиданным результатам.
+<br>
+</i></span></span>

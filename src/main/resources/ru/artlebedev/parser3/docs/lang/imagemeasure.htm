@@ -1,0 +1,133 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">measure. Создание объекта на&nbsp;основе существующего графического файла</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^image::measure[файл]
+<br>
+^image::measure[имя&nbsp;файла]
+<br>
+^image::measure[файл;опции]&nbsp;</b><span><b><i>[3.4.6]</i></b></code><code><b>
+<br>
+^image::measure[имя&nbsp;файла;опции]&nbsp;</b></code><span><b><i>[3.4.6]</i></b></span><code><b>
+<br>
+</b></code><span>
+<br>
+Создает объект класса </span><code><b>image</b></code><span>, измеряя размеры существующего графического файла или объекта класса </span><code><b><a href="fileclass.htm">file</a></b></code><span> в&nbsp;поддерживаемом формате. Поддерживаются GIF, JPEG и&nbsp;PNG, а&nbsp;начиная с&nbsp;версии <b><i>[3.4.6]</i></b> дополнительно поддерживаются TIFF, BMP, WEBP и&nbsp;при указании опции </span><code><b>$.video(true)</b></code><span>&nbsp;- еще и&nbsp;MP4 (MOV).
+<br>
+
+<br>
+Сама картинка не&nbsp;считывается, основное назначение метода&nbsp;- определение размеров и,&nbsp;например, последующий вызов для&nbsp;созданного объекта метода </span><code><b><a href="imagehtml.htm">html</a></b></code><span>.
+<br>
+
+<br>
+Параметры конструктора:
+<br>
+</span><code><b>Файл</b></code><span>&nbsp;- объект класса </span><code><b>file</b></code><span>;
+<br>
+</span><code><b>Имя&nbsp;файла</b></code><span>&nbsp;- имя файла с&nbsp;путем.
+<br>
+
+<br>
+Можно задать <a href="hash.htm">хеш</a> опций:
+<br>
+
+<br>
+</span><span><table border="0" cellpadding="1"><tr><td align="left" valign="top" width="197">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="115">
+<span><b>По умолчанию
+<br>
+</b></span></td><td align="left" valign="top" width="289">
+<span><b>Описание
+<br>
+</b></span></td></tr><tr><td align="left" valign="top" width="197">
+<code><b>$.video(</b><b>false|true</b><b>)</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="115">
+<span>false
+<br>
+</span></td><td align="left" valign="top" width="289">
+<span>Определять размеры у видеофайлов в&nbsp;формате&nbsp;MP4&nbsp;(MOV);
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="197">
+<code><b>$.</b><b>exif</b><b>(</b><b>false|true</b><b>)</b><span> </code><span>
+<br>
+</span></span></td><td align="left" valign="top" width="115">
+<span>false
+<br>
+</span></td><td align="left" valign="top" width="289">
+<span>Считывать <span style="color:#7F97E1" class="blue"><u><a href="https://wikipedia.org/wiki/Exif" target="_blank">EXIF</a></u></span><span>-информацию из&nbsp;JPEG-файлов; до версии <b><i>[3.4.6]</i></b> EXIF-информация считывалась всегда;</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="197">
+<code><b>$.</b><b>xmp</b><b>(</b><b>false|true</b><b>)</b><span> </code><span>
+<br>
+</span></span></td><td align="left" valign="top" width="115">
+<span>false
+<br>
+</span></td><td align="left" valign="top" width="289">
+<span>Считывать <span style="color:#7F97E1" class="blue"><u><a href="https://wikipedia.org/wiki/Extensible_Metadata_Platform" target="_blank">XMP</a></u></span><span>-информацию из&nbsp;JPEG-файлов;</span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="197">
+<code><b>$.</b><b>xmp-charset[</b><b>кодировка</b><b>]</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="115">
+<span>UTF-8<span>
+<br>
+</span></span></td><td align="left" valign="top" width="289">
+<span>Кодировка XMP-информации.<span>
+<br>
+</span></span></td></tr></table>
+<br>
+</span><span>
+<br>
+<i>Примечание: поддерживается EXIF 1.0, считываются теги из&nbsp;IFD0 и&nbsp;SubIFD.
+<br>
+</i>
+<br>
+<b>Пример создания тега IMG с&nbsp;указанием размеров изображения
+<br>
+</b></span><code><b>$photo[^image::measure[photo.png]]
+<br>
+^photo.</b><b><a href="imagehtml.htm">html</a></b><b>[]
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>Будет создан объект&nbsp;</span><code><b>photo</b></code><span> класса&nbsp;</span><code><b>image</b></code><span> на&nbsp;основе готового графического изображения в&nbsp;формате&nbsp;</span><span>PNG</span><span> и&nbsp;выдан тег&nbsp;</span><code>IMG</code><span>, ссылающийся на&nbsp;данный файл, с&nbsp;указанием&nbsp;</span><code>width</code><span> и&nbsp;</span><code>height</code><span>.
+<br>
+
+<br>
+<b>Пример работы с&nbsp;EXIF-информацией
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$image[^image::measure[jpg/DSC00003.JPG;&nbsp;$.exif(true)&nbsp;]]
+<br>
+$exif[$image.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="imagefields.htm">exif</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^if($exif){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Производитель&nbsp;фотоаппарата,&nbsp;модель:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$exif.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="imagefields.htm">Make</a></b></code></span><code><b>&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$exif.Model</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Время&nbsp;съемки:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^exif.DateTimeOriginal.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datesqlstring.htm">sql-string</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Выдержка:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$exif.ExposureTime&nbsp;секунды</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Диафрагма:&nbsp;F</b><span style="color:#7F97E1" class="blue"><b>$exif.FNumber</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Использовалась&nbsp;вспышка:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^if(def&nbsp;$exif.Flash){^if($exif.Flash){</b></code></span><code><b>да</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>нет</b><span style="color:#7F97E1" class="blue"><b>};</b></code></span><code><b>неизвестно</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+}{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;нет&nbsp;EXIF-информации&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><span>
+<br>
+</span></span>

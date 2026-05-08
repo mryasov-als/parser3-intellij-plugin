@@ -1,0 +1,96 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">int, double, bool. Преобразование строки в&nbsp;число или bool</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^строка.int[]&nbsp;&nbsp;
+<br>
+^строка.int(значение&nbsp;по&nbsp;умолчанию)&nbsp;&nbsp;
+<br>
+^строка.double[]&nbsp;&nbsp;
+<br>
+^строка.double(значение&nbsp;по&nbsp;умолчанию)
+<br>
+^строка.bool[]
+<br>
+^строка.bool(значение&nbsp;по&nbsp;умолчанию)</b><span>
+<br>
+</code><span>
+<br>
+Методы преобразуют значение переменной </span><code><b>$строка</b></code><span> в&nbsp;целое вещественное число или&nbsp;</span><code><b>bool</b></code><span>-значение соответственно, а&nbsp;также возвращают это значение. 
+<br>
+
+<br>
+Можно задать </span><code><b>значение&nbsp;по&nbsp;умолчанию</b></code><span>, которое будет получено, если преобразование невозможно, строка пуста или состоит только из&nbsp;white spaces (символов пробела, табуляции, перевода строки). 
+<br>
+
+<br>
+</span><code><b>Значение&nbsp;по&nbsp;умолчанию</b></code><span> можно использовать при обработке данных, получаемых интерактивно от&nbsp;пользователей. Это позволит избежать появления текстовых значений в&nbsp;математических выражениях при вводе некорректных данных, например строки вместо ожидаемого числа.
+<br>
+
+<br>
+Метод </span><code><b>bool</b></code><span> умеет преобразовать в&nbsp;</span><code><b>bool</b></code><span> строки, содержащие числа (значение 0 будет преобразовано в&nbsp;</span><code><b>false</b></code><span>, не&nbsp;0 - в&nbsp;</span><code><b>true</b></code><span>), а&nbsp;также строки, содержащие значения </span><code><b>true</b></code><span> и&nbsp;</span><code><b>false</b></code><span>&nbsp;(без учета регистра).
+<br>
+
+<br>
+<b><i>Внимание!</i></b><i>
+<br>
+Использование пустой строки в&nbsp;математических </i><i><a href="stringclass.htm">выражениях</a></i><i> не&nbsp;является ошибкой, ее значение считается нулем.
+<br>
+Преобразование строки, не&nbsp;являющейся целым числом, в&nbsp;целое число является ошибкой (например строка «1.5» не&nbsp;является целым числом).
+<br>
+</i>
+<br>
+
+<br>
+<b>Примеры использования
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>123</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^str.int[]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Выведет число </span><code><b>123</b></code><span>, поскольку объект </span><code><b>str</b></code><span> можно преобразовать в&nbsp;класс&nbsp;</span><code><b>int</b></code><span>.
+<br>
+
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>много</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^str.double(</b></code></span><code><b>-1</b><span style="color:#7F97E1" class="blue"><b>)</b></code></span><span>
+<br>
+
+<br>
+Выведет число </span><code><b>-1</b></code><span>, поскольку преобразование невозможно.
+<br>
+
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>1</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^if(^str.bool[]){</b></code></span><code><b>истина</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+
+<br>
+$str[</b></code></span><code><b>True</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^if(^str.bool[]){</b></code></span><code><b>истина</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+
+<br>
+</b></code></span><span>Выведут строки «</span><code><b>истина</b></code><span>».
+<br>
+
+<br>
+</span></span>

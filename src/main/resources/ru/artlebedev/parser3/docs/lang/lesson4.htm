@@ -1,0 +1,436 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Урок 4. Второй шаг. Переход к&nbsp;работе с&nbsp;БД</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Самое главное&nbsp;- не&nbsp;пугаться названия урока даже при&nbsp;отсутствии опыта работы с&nbsp;базами данных. Без&nbsp;них просто невозможно построить гибкий и&nbsp;легконаполняемый сайт. Отказ от&nbsp;использования БД не&nbsp;дает никаких преимуществ разработчику, а&nbsp;наоборот, здорово уменьшает возможности по&nbsp;созданию сайта и&nbsp;быстрому динамическому изменению содержимого. Построение серьезного ресурса без&nbsp;БД&nbsp;- это как рыбалка без&nbsp;удилища: вроде&nbsp;бы и&nbsp;можно кого-то поймать, однако делать это крайне неудобно. Иными словами, советуем обязательно научиться работать с&nbsp;БД, активно используя в&nbsp;проектах. На&nbsp;этом закончим агитацию, будем считать, что мы убедили всех в&nbsp;необходимости использования БД.
+<br>
+
+<br>
+Работать с&nbsp;БД на&nbsp;Parser очень удобно. В Parser встроена мощная система взаимодействия с&nbsp;различными СУБД. В&nbsp;настоящее время Parser может работать с&nbsp;MySQL (MariaDB), Postgres, SQLite, Oracle, а&nbsp;также с&nbsp;любой СУБД через драйверы ODBC (в&nbsp;т.&nbsp;ч. MS SQL, MS Access). Поскольку исходные коды Parser&nbsp;3 являются открытыми, возможно добавление поддержки любых других знакомых разработчику СУБД после создания соответствующего драйвера. При этом работа с&nbsp;ними не&nbsp;требует практически никаких дополнительных знаний собственно Parser. Все, что  нужно,&nbsp;- это подключиться к&nbsp;выбранной СУБД и&nbsp;работать, используя SQL в&nbsp;объеме и&nbsp;формате, поддерживаемом СУБД. При передаче SQL-запросов Parser может только экранировать апострофы соответствующей конструкцией  в&nbsp;зависимости от&nbsp;СУБД для&nbsp;защиты от&nbsp;уязвимостей, а&nbsp;все остальное передается как есть. 
+<br>
+
+<br>
+Со всеми возможностями Parser по&nbsp;работе с&nbsp;различными СУБД в&nbsp;рамках данного урока мы знакомиться, конечно же, не&nbsp;будем. Остановимся на&nbsp;MySQL. Почему именно на&nbsp;этой СУБД? Прежде всего потому, что она очень распространена и&nbsp;многие веб-проекты используют именно ее. Кроме того, практически все компании, занимающиеся сетевым хостингом, предоставляют клиентам возможность работы с&nbsp;этой СУБД. Ну и, несомненно, немаловажный фактор&nbsp;- она бесплатна, доступна и&nbsp;легка в&nbsp;освоении.
+<br>
+
+<br>
+Теперь определимся с&nbsp;тем, что именно мы будем хранить в&nbsp;базе данных. Очевидный ответ: будем хранить новости. Причем таблица СУБД с&nbsp;новостями должна содержать такие поля: уникальный номер новости в&nbsp;базе, который будет формироваться автоматически СУБД, дата внесения новости в&nbsp;базу, по&nbsp;которой мы будем проводить выборку новостей за&nbsp;конкретное число, заголовок новости и&nbsp;собственно ее текст. Просто, без&nbsp;тонкостей и&nbsp;премудростей, однако это эффективно работает. 
+<br>
+
+<br>
+Есть еще один вопрос, с&nbsp;которым нужно определиться: «Каким образом новости будут попадать в&nbsp;базу?» Можно их заносить и&nbsp;из&nbsp;командной строки СУБД, но&nbsp;это неудобно. Мы&nbsp;же предлагаем решение, ориентированное на&nbsp;интернет,&nbsp;- создание на&nbsp;сайте раздела администрирования с&nbsp;формой для&nbsp;ввода новостей прямо из&nbsp;браузера.
+<br>
+
+<br>
+Постановка задачи закончена, переходим к&nbsp;ее практическому решению. Далее нам потребуется установленная СУБД MySQL, без&nbsp;которой рассматриваемый здесь пример просто не&nbsp;будет работать. 
+<br>
+
+<br>
+Прежде всего, средствами MySQL создаем новую базу данных с&nbsp;именем <code><b>p3test</b></code><span>, содержащую одну-единственную таблицу news с&nbsp;полями </span><code><b>id,&nbsp;date,&nbsp;header,&nbsp;body</b></code><span>:
+<br>
+
+<br>
+</span><code><b><table border="1" cellpadding="1"><tr><td align="left" valign="top" width="102">
+<span><b>id</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="335">
+<code><b>int not null auto_increment primary key</b>
+<br>
+</code></td></tr><tr><td align="left" valign="top" width="102">
+<code><b>date</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="335">
+<code><b>date</b>
+<br>
+</code></td></tr><tr><td align="left" valign="top" width="102">
+<code><b>header</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="335">
+<code><b>varchar(255)</b>
+<br>
+</code></td></tr><tr><td align="left" valign="top" width="102">
+<code><b>body</b>
+<br>
+</code></td><td align="left" valign="top" width="335">
+<code><b>text</b>
+<br>
+</code></td></tr></table>
+<br>
+</b></span><span>
+<br>
+Теперь создадим раздел администрирования, который даст возможность заполнить созданную базу данных новостями. Для этого в&nbsp; корневом каталоге сайта создаем каталог </span><code>admin</code><span>, а&nbsp;в&nbsp;нем - </span><code>index.html</code><span>, в&nbsp;который пишем следующее:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@greeting[]
+<br>
+</b></code></span><code><b>Администрирование&nbsp;новостей
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+@content[]
+<br>
+</b></code></span><code><b>&lt;h1&gt;Добавление&nbsp;новостей&lt;/h1&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+
+<br>
+$now[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datenow.htm">date::now</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]]
+<br>
+
+<br>
+</b></code></span><code><b>&lt;form&nbsp;method="POST"&gt;
+<br>
+&lt;p&gt;
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;</b><b>Date:&nbsp;&lt;input&nbsp;name="date"&nbsp;value="</b><span style="color:#7F97E1" class="blue"><b>${now.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datefields.htm">year</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>-</b><span style="color:#7F97E1" class="blue"><b>${now.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datefields.htm">month</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>-</b><span style="color:#7F97E1" class="blue"><b>${now.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datefields.htm">day</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>"</b><b>/</b><b>&gt;
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;</b><b>Header:&nbsp;&lt;input&nbsp;name="header"</b><b>/</b><b>&gt;
+<br>
+&lt;/p&gt;
+<br>
+&lt;p&gt;</b><b>
+<br>
+&nbsp;&nbsp;&nbsp;</b><b>Body:&lt;br/&gt;
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;</b><b>&lt;textarea&nbsp;cols="50"&nbsp;name="body"&nbsp;rows="5"&gt;&lt;/textarea&gt;
+<br>
+&lt;/p&gt;
+<br>
+&lt;p&gt;
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;</b><b>&lt;input&nbsp;type="submit"&nbsp;value="Add&nbsp;New"&nbsp;name="posted"</b><b>/</b><b>&gt;
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;</b><b>&lt;input&nbsp;type="reset"&nbsp;value="Cancel"</b><b>/</b><b>&gt;
+<br>
+&lt;/p&gt;
+<br>
+&lt;/form&gt;
+<br>
+
+<br>
+#начало&nbsp;обработки
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^if(</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opdef.htm">def </a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="formfield.htm">form:date</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="exprops.htm">&&</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;def&nbsp;$form:header&nbsp;&amp;&amp;&nbsp;def&nbsp;$form:body){
+<br>
+&nbsp;&nbsp;&nbsp;^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opconnect.htm">connect</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[$connect_string]{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="voidsql.htm">void:sql</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{insert&nbsp;into&nbsp;news
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(date,&nbsp;header,&nbsp;body)
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;values&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('$form:date',&nbsp;'$form:header',&nbsp;'$form:body')
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;…сообщение&nbsp;добавлено
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>
+}{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;…дл</b><b>я</b><b>&nbsp;добавления&nbsp;новости&nbsp;необходимо&nbsp;заполнить&nbsp;все&nbsp;поля&nbsp;формы
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Также требуется в&nbsp;корневом файле </span><code>auto.p</code><span> перед методом </span><code><b>main</b></code><span> добавить метод </span><code><b>auto</b></code><span>. Этот метод используется для&nbsp;инициализации глобальных переменных, т.&nbsp;е. переменных, которые будут доступны на&nbsp;всех страницах сайта. В нем мы зададим строку подключения к&nbsp;базе данных, о&nbsp;которой чуть позже. 
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@auto[]
+<br>
+$connect_string[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="app3mysql.htm">mysql://root@localhost/p3test</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]
+<br>
+
+<br>
+</b></code></span><span>Структура этой страницы полностью соответствует придуманной нами структуре страниц сайта. Все элементы, как то: приветствие, две части </span><code><b>body</b></code><span>, </span><code><b>footer</b></code><span> и&nbsp;</span><code><b>header</b></code><span>, присутствуют. Теперь нужно вспомнить, откуда на&nbsp;этой странице появятся </span><code><b>header</b></code><span> и&nbsp;</span><code><b>footer</b></code><span>. Конечно, из&nbsp;функции </span><code><b>main</b></code><span> корневого </span><code>auto.p</code><span>). 
+<br>
+
+<br>
+Незнакомые конструкции встречаются только в&nbsp;основной части. Разберемся с&nbsp;ней. В&nbsp;начале&nbsp;- обычная HTML-форма, с&nbsp;подстановкой текущей даты в&nbsp;поле </span><code><b>date</b></code><span> как значения по&nbsp;умолчанию. Сделано это исключительно для&nbsp;удобства пользователей. 
+<br>
+
+<br>
+Легкое недоумение может вызвать запись:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>${now.year}</b></code></span><code><b>-</b><span style="color:#7F97E1" class="blue"><b>${now.month}</b></code></span><code><b>-</b><span style="color:#7F97E1" class="blue"><b>${now.day}
+<br>
+</b></code></span><span>
+<br>
+Фигурные скобки здесь используются для&nbsp;того, чтобы получить строку вида «2001-11-06» (в таком формате мы собираемся хранить дату новости в&nbsp;БД). Если скобки не&nbsp;ставить, то&nbsp;Parser выдаст ошибку при обработке этого кода, поскольку не&nbsp;сможет понять, что нужно делать. Для него «-» будет частью имени. При&nbsp;необходимости четко отделить имя переменной от&nbsp;следующего за&nbsp;ним символа, скажем «-», как в&nbsp;нашем случае, нужно записать:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>${имя_переменной}</b></code></span><code><b>-</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+И&nbsp;в&nbsp;результате получится:
+<br>
+</span><code><b>значение_переменной-
+<br>
+</b></code><span>
+<br>
+Настоятельно рекомендуем изучить  <a href="app5.htm">Приложение 5</a>, посвященное правилам составления имен.
+<br>
+
+<br>
+<i>Лучшим решением данной проблемы было&nbsp;бы использовать в&nbsp;этом месте конструкцию </i></span><code><b><i>^date.sql-string[]</i></b></code><span><i>. Предлагаем самостоятельно доработать этот пример, пользуясь справочником. Если не&nbsp;получится, на&nbsp;следующем уроке мы покажем, как это сделать.</i>
+<br>
+
+<br>
+Продолжим. Те, кому уже доводилось работать с&nbsp;формами, знают, что формы передают введенные в&nbsp;них значения на&nbsp;дальнейшую обработку каким-либо скриптам. Здесь обработчиком данных формы будет сама страница, содержащая эту форму. Никаких дополнительных скриптов нам не&nbsp;понадобится.
+<br>
+
+<br>
+После закрывающего тега </span><code><b>&lt;/form&gt;</b></code><span> начинается блок обработки. Вначале с&nbsp;помощью </span><code><b>if</b></code><span> мы проверяем поля формы на&nbsp;пустоту. Этого можно, опять&nbsp;же, не&nbsp;делать, но&nbsp;мы хотим создать нечто большее, чем учебный экспонат без&nbsp;практического применения. Для того чтобы осуществить проверку, необходимо получить значения полей этой формы. В&nbsp;Parser это реализуется через статические переменные (поля). Мы просто обращаемся к&nbsp;полям формы как к&nbsp;статическим полям:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$form:поле_формы
+<br>
+</b></code></span><span>
+<br>
+Полученные таким образом значения полей мы и&nbsp;будем проверять на&nbsp;пустоту с&nbsp;помощью оператора </span><code><b><a href="opdef.htm">def</a></b></code><span> и&nbsp;логического «И» (</span><code><b><a href="exprops.htm">&&</a></b></code><span>). Мы уже проверяли объект на&nbsp;существование в&nbsp;третьем уроке, но&nbsp;там был опущен оператор </span><code><b>def</b></code><span>, поскольку проверяли на&nbsp;пустоту таблицу. Как мы помним, таблица в&nbsp;выражении имеет числовое значение,  равное числу строк в&nbsp;ней, поэтому любая непустая таблица считается определенной.  Здесь&nbsp;же необходимо использовать </span><code><b>def</b></code><span>, как и&nbsp;в&nbsp;случае проверки на&nbsp;</span><code><b>def</b></code><span> других объектов. Если в&nbsp;поле ничего не&nbsp;было введено, то&nbsp;значение </span><code><b>$form:поле_формы</b></code><span> будет считаться неопределенным (undefined). После того как все значения полей заполнены, необходимо поместить их в&nbsp;базу данных. Для этого нужно сначала подключиться к&nbsp;базе данных, а&nbsp;затем выполнить запрос SQL для&nbsp;вставки данных в&nbsp;таблицу. Вот как мы это сделаем:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^connect[$connect_string]{
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;^void:sql{insert&nbsp;into&nbsp;news
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(date,&nbsp;header,&nbsp;body)
+<br>
+&nbsp;&nbsp;&nbsp;values&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('$form:date',&nbsp;'$form:header',&nbsp;'$form:body')
+<br>
+&nbsp;&nbsp;&nbsp;}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;…cообщение&nbsp;добавлено
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Удобство Parser при работе с&nbsp;базами данных состоит в&nbsp;том, что он, за&nbsp;исключением редких случаев, не&nbsp;требует изучать какие-либо дополнительные операторы, кроме тех, которые предусмотрены в&nbsp;самой СУБД. Сессия работы  с&nbsp;базой данных находится внутри оператора connect, общий синтаксис которого:
+<br>
+
+<br>
+</span><code><b>^connect[протокол://строка&nbsp;соединения]{методы,&nbsp;передающие&nbsp;запросы&nbsp;SQL}
+<br>
+</b></code><span>
+<br>
+Для MySQL это запишется так:
+<br>
+
+<br>
+</span><code><b>^connect[mysql://пользователь:пароль@хост/база_данных]{…}
+<br>
+</b></code><span>
+<br>
+В фигурных скобках помещаются методы, выполняющие SQL-запросы. При этом любой запрос может возвратить или не&nbsp;возвратить результат (например, в&nbsp;нашем случае нужно просто добавить запись в&nbsp;таблицу БД, не&nbsp;возвращая результат), поэтому Parser предусматривает различные конструкции для&nbsp;создания этих двух типов SQL-запросов. В&nbsp;нашем случае запрос записывается как:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^void:sql{</b></code></span><code><b>insert&nbsp;into&nbsp;news&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(date,&nbsp;header,&nbsp;body)
+<br>
+&nbsp;&nbsp;&nbsp;values
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('</b><span style="color:#7F97E1" class="blue"><b>$form:date</b></code></span><code><b>',&nbsp;'</b><span style="color:#7F97E1" class="blue"><b>$form:header</b></code></span><code><b>',&nbsp;'</b><span style="color:#7F97E1" class="blue"><b>$form:body</b></code></span><code><b>')
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Кстати, это статический метод класса </span><code><b>void</b></code><span>, поэтому нужно помнить про&nbsp;двоеточие. 
+<br>
+
+<br>
+То, что здесь не&nbsp;выделено цветом, является командами SQL. Ничего сложного здесь нет. Знакомым с&nbsp;SQL больше ничего и&nbsp;не&nbsp;потребуется объяснять, а&nbsp;тем, кто его почему-то пока не&nbsp;знает, еще раз рекомендуем изучить этот язык. В&nbsp;дальнейшем это многократно пригодится, а&nbsp;потраченное время точно не&nbsp;пропадет даром. 
+<br>
+
+<br>
+Продемонстрированный вариант взаимодействия с&nbsp;базой данных весьма изящен&nbsp;- Parser обеспечивает прозрачный доступ к&nbsp;СУБД и, за&nbsp;редким исключением, не&nbsp;требует каких-либо дополнительных знаний. При этом мы можем помещать в&nbsp;запросы SQL еще и&nbsp;данные из&nbsp;нашей формы, пользуясь конструкциями Parser. Возможности этого симбиоза просто безграничны. СУБД  решает все задачи, связанные с&nbsp;обработкой данных (она ведь именно для&nbsp;этого и&nbsp;предназначена и&nbsp;очень неплохо с&nbsp;этим справляется), а&nbsp;нам остается только воспользоваться результатами ее работы. Аналогично происходит работа и&nbsp;с&nbsp;другими СУБД.
+<br>
+
+<br>
+Теперь у&nbsp;нас есть форма, позволяющая помещать записи в&nbsp;нашу БД. Занесем в&nbsp;нее несколько записей. Теперь нам предстоит их оттуда извлечь, но&nbsp;перед этим неплохо&nbsp;бы немного доработать функцию </span><code><b>calendar</b></code><span>, созданную на&nbsp;предыдущем уроке. Нужно, чтобы в&nbsp;календаре ставились ссылки на&nbsp;дни месяца, а&nbsp;выбранный день передавался как поле формы. Тогда по&nbsp;числам-ссылкам в&nbsp;календаре пользователь будет попадать в&nbsp;архив новостей за&nbsp;выбранный день. Модернизация эта неcложная, просто добавим немного HTML в&nbsp;</span><code>auto.p</code><span> </span><span>раздела news: </span><code><b>$days.$i</b></code><span> в&nbsp;коде </span><code><b>if</b></code><span> обнесем ссылками таким образом:
+<br>
+
+<br>
+</span><code><b>&lt;a&nbsp;href="/news/?day=</b><span style="color:#7F97E1" class="blue"><b>$days.$i</b></code></span><code><b>"&gt;</b><span style="color:#7F97E1" class="blue"><b>$days.$i</b></code></span><code><b>&lt;/a&gt;
+<br>
+</b></code><span>
+<br>
+В результате мы получаем возможность использовать наш календарь в&nbsp;качестве меню доступа к&nbsp;новостям за&nbsp;определенный день.
+<br>
+
+<br>
+Теперь займемся </span><code>/news/index.html</code><span>. В него заносим такой код:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@greeting[]
+<br>
+</b></code></span><code><b>Страница&nbsp;новостей,&nbsp;заходите&nbsp;чаще!
+<br>
+</b></code><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@content[]
+<br>
+</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^calendar[]
+<br>
+
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$now[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datenow.htm">date::now</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]]
+<br>
+
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$day(^if(def&nbsp;$form:day){
+<br>
+&nbsp;&nbsp;&nbsp;$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="formclass.htm">form</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="formfields.htm">day</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+}{
+<br>
+&nbsp;&nbsp;&nbsp;$now.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datefields.htm">day</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>)</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&lt;h1&gt;Новости&nbsp;за&nbsp;</b><b>$day&nbsp;</b><b>число&lt;/h1&gt;
+<br>
+
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opconnect.htm">connect</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[$connect_string]{
+<br>
+&nbsp;&nbsp;&nbsp;$news[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablesql.htm">table::sql</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{select
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;date,&nbsp;header,&nbsp;body&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;from
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;news&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;where
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;date='${now.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datefields.htm">year</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>}-${now.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datefields.htm">month</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>}-$day'
+<br>
+&nbsp;&nbsp;&nbsp;}]
+<br>
+&nbsp;&nbsp;&nbsp;^if($news){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^news.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablemenu.htm">menu</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;article&gt;
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;</b><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$news.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">date</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;h2&gt;</b><span style="color:#7F97E1" class="blue"><b>$news.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">header</a></b></code></span><code><b>&lt;/h2&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="optaint.htm">taint</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[as-is][$news.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">body</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/article&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;}{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;За&nbsp;указанный&nbsp;период&nbsp;новостей&nbsp;не&nbsp;найдено.
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;}
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+Структура обычная. Сверху размещаем меню-календарь вызовом </span><code><b>^calendar[]</b></code><span> (напомним, что эта функция определена в&nbsp;</span><code>auto.p</code><span> раздела </span><code>news</code><span>). Основа информационной части страницы&nbsp;- выборка из&nbsp;базы данных новостей за&nbsp;тот день, по&nbsp;которому щелкнул пользователь (условие </span><code><b>where</b></code><span> в&nbsp;SQL-запросе). Это второй вариант выполнения SQL-запроса, при котором возвращается результат. Здесь результатом запроса будет таблица, с&nbsp;которой в&nbsp;дальнейшем мы будем работать. Поэтому необходимо создать объект класса </span><code><b>table</b></code><span>.</span><span> 
+<br>
+
+<br>
+Познакомимся с&nbsp;еще одним конструктором класса </span><code><b>table</b></code><span>, основанным на&nbsp;результате выборки из&nbsp;БД. Его&nbsp;логика абсолютно аналогична работе конструктора </span><code><b>^</b><b><a href="tableload.htm">table::load</a></b><b>[]</b></code><span>, только источником данных для&nbsp;таблицы является не&nbsp;текстовый файл, как в&nbsp;случае с&nbsp;пунктами меню, а&nbsp;результат работы SQL-запроса&nbsp;- выборка из&nbsp;базы данных:
+<br>
+
+<br>
+</span><code><b>$переменная[^table::sql{код&nbsp;SQL-запроса}]
+<br>
+</b></code><span>
+<br>
+Воспользоваться этим конструктором можно только внутри оператора </span><code><b>^connect[]</b></code><span>, то&nbsp;есть когда имеется установленное соединение с&nbsp;базой данных, поскольку обработкой SQL-запросов занимается сама СУБД. Результатом будет именованная таблица, имена столбцов которой совпадают с&nbsp;заголовками, возвращаемыми SQL-сервером в&nbsp;ответ на&nbsp;запрос.
+<br>
+
+<br>
+<i>Небольшое отступление. При создании SQL-запросов следует избегать использования конструкций вида select * from … поскольку постороннему человеку, не&nbsp;знающему структуру таблицы, к&nbsp;которой происходит обращение, невозможно понять, какие поля вернутся из&nbsp;БД. Подобные конструкции можно использовать только для&nbsp;отладочных целей, а&nbsp;в&nbsp;окончательном коде лучше всегда явно указывать названия полей таблиц, из&nbsp;которых делается выборка данных.
+<br>
+</i>
+<br>
+Остальная часть кода уже не&nbsp;должна вызывать вопросов: </span><code><b>if</b></code><span> обрабатывает ситуацию, когда поле </span><code><b>day</b></code><span> (выбранный пользователем день на&nbsp;календаре, который передается из&nbsp;функции </span><code><b>calendar</b></code><span>) не&nbsp;определено, то&nbsp;есть человек пришел из&nbsp;другого раздела сайта через меню навигации. Если поле формы </span><code><b>day</b></code><span> определено (</span><code><b>def</b></code><span>), то&nbsp;используется день, переданный посетителем, в&nbsp;противном случае используется текущее число. Далее соединяемся с&nbsp;БД так&nbsp;же, как мы это делали, когда добавляли новости, создаем таблицу </span><code><b>$news</b></code><span>, в&nbsp;которую заносим новости за&nbsp;запрошенный день (результат SQL-запроса), после чего с&nbsp;помощью метода </span><code><b>menu</b></code><span> последовательно перебираем строки таблицы </span><code><b>news</b></code><span> и&nbsp;выводим новости, обращаясь к&nbsp;ее полям. Все понятно и&nbsp;знакомо, кроме одного вспомогательного оператора, который служит для&nbsp;специфического вывода текста новости: 
+<br>
+
+<br>
+</span><code><b>^taint[as-is][$news.body]
+<br>
+</b></code><span><i>
+<br>
+В&nbsp;этом месте советуем отвлечься и&nbsp;внимательно прочесть </i><i><a href="tainting.htm">раздел</a></i><i> справочника «Внешние и&nbsp;внутренние данные», где подробно описана логика работы операторов </i></span><code><b>taint</b></code><span><i> и </i></span><code><b>untaint</b></code><span><i>. Это важные операторы, и&nbsp;каждый рано или поздно столкнется с&nbsp;необходимостью их использования. К тому&nbsp;же большую часть обработки данных Parser делает самостоятельно, она не&nbsp;видна на&nbsp;первый взгляд, но&nbsp;понимать логику действий необходимо.</i></span><span><i>
+<br>
+</i></span><span>
+<br>
+Зачем здесь нужен оператор </span><code><b>taint</b></code><span>? У нас есть страница для&nbsp;администрирования новостей, и&nbsp;мы хотим разрешить использование тегов HTML в&nbsp;записях. По&nbsp;умолчанию это запрещено, чтобы посторонний человек не&nbsp;мог внести JavaScript, например, перенаправляющий пользователя на&nbsp;другой сайт. Разрешить использование тегов HTML очень просто: достаточно пометить текст доверенным с&nbsp;помощью оператора </span><code><b><a href="optaint.htm">taint</a></b></code><span>:
+<br>
+
+<br>
+</span><code><b>^taint[as-is][текст&nbsp;новости]
+<br>
+</b></code><span>
+<br>
+В нашем случае используется значение </span><code><b>as-is</b></code><span>, которое означает, что данные будут выведены так, как они хранятся в&nbsp;базе. Мы можем позволить себе поступить так, поскольку изначально не&nbsp;предполагается доступ обычных пользователей к&nbsp;разделу администрирования, через который добавляются новости.
+<br>
+
+<br>
+Теперь можно немного расслабиться: работа над новостным блоком завершена. Мы можем добавлять новости и&nbsp;получать их выборку за&nbsp;указанный пользователем день. На&nbsp;этом четвертый урок будем считать оконченным, хотя есть некоторые детали, которые можно доработать, а&nbsp;именно: научить календарь не&nbsp;ставить ссылки на&nbsp;дни после текущего, выводить в&nbsp;заголовке информационной части дату, за&nbsp;которую показываются новости, да и&nbsp;просто реализовать возможность доступа к&nbsp;новостям не&nbsp;только за&nbsp;текущий месяц, но&nbsp;и&nbsp;за предыдущие. Однако это уже останется в&nbsp;качестве «домашнего задания». Знаний, полученных на&nbsp;предыдущих уроках, вполне достаточно, чтобы доработать этот пример под свои требования и&nbsp;желания.
+<br>
+
+<br>
+Подведем итоги четвертого урока. 
+<br>
+
+<br>
+</span><span><b>Что мы сделали:</b></span><span> создали раздел администрирования для&nbsp;добавления новостей. Модернизировали функцию, формирующую календарь на&nbsp;текущий месяц. Наполнили раздел новостей данными из&nbsp;БД на&nbsp;основе запроса пользователей либо по&nbsp;умолчанию за&nbsp;текущую дату. 
+<br>
+
+<br>
+</span><span><b>Что узнали:</b></span><span>
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>Как на&nbsp;Parser работать с&nbsp;СУБД MySQL.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>Как делать различные SQL-запросы к&nbsp;БД (статический метод&nbsp;</span><code><b><a href="voidsql.htm">sql</a></b></code><span> класса&nbsp;</span><code><b><a href="voidclass.htm">void</a></b></code><span> и&nbsp;конструктор&nbsp;</span><code><b><a href="tablesql.htm">sql</a></b></code><span> класса&nbsp;</span><code><b><a href="tableclass.htm">table</a></b></code><span>).
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>Для чего используется оператор </span><code><span style="color:#7F97E1" class="blue"><b><a href="optaint.htm">taint</a></b></code></span><span>.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+</span><span><b>Что надо запомнить:</b></span><span> работа с&nbsp;базами данных в&nbsp;Parser осуществляется легко и&nbsp;понятно, нужно только изучить работу самой СУБД.
+<br>
+
+<br>
+</span><span><b>Что будем делать дальше:</b></span><span> с&nbsp;разделом новостей закончено, переходим к&nbsp;созданию гостевой книги для&nbsp;нашего сайта, чтобы можно было определять, какова популярность у&nbsp;пользователей созданного совместными усилиями творения.
+<br>
+</span></span>

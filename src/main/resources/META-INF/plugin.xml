@@ -1,0 +1,233 @@
+<idea-plugin>
+	<id>ru.artlebedev.parser3</id>
+	<name>Parser 3 Support</name>
+	<vendor email="mryasov@artlebedev.ru">Alex Mryasov</vendor>
+
+	<idea-version since-build="261"/>
+
+	<description>
+		<![CDATA[
+		Parser3 language support for IntelliJ IDEA: syntax highlighting, code completion, navigation, quick documentation, formatting, folding, HTML/CSS/JavaScript/SQL injections, and safe refactoring for @USE and ^use[] paths.
+		<br/><br/>
+		<em>Requires IntelliJ IDEA 2026.1 or newer.</em>
+		]]>
+	</description>
+
+	<depends>com.intellij.modules.platform</depends>
+	<depends>com.intellij.modules.lang</depends>
+
+
+	<extensions defaultExtensionNs="com.intellij">
+		<projectConfigurable
+				id="ru.artlebedev.parser3.settings"
+				parentId="editor"
+				instance="ru.artlebedev.parser3.settings.Parser3SettingsConfigurable"
+				displayName="Parser 3"/>
+		<projectConfigurable
+				id="ru.artlebedev.parser3.templates"
+				parentId="ru.artlebedev.parser3.settings"
+				instance="ru.artlebedev.parser3.templates.Parser3TemplatesConfigurable"
+				displayName="Templates"/>
+		<projectConfigurable
+				id="ru.artlebedev.parser3.pseudoHashCompletion"
+				parentId="ru.artlebedev.parser3.settings"
+				instance="ru.artlebedev.parser3.settings.Parser3PseudoHashCompletionConfigurable"
+				displayName="Contextual argument completion"/>
+		<projectConfigurable
+				id="ru.artlebedev.parser3.sqlInjections"
+				parentId="ru.artlebedev.parser3.settings"
+				instance="ru.artlebedev.parser3.settings.Parser3SqlInjectionsConfigurable"
+				displayName="SQL injections"/>
+
+		<fileType
+				name="Parser3"
+				language="Parser3"
+				extensions="p;p3"
+				implementationClass="ru.artlebedev.parser3.Parser3FileType"/>
+
+		<!-- подсветка синтаксиса -->
+		<lang.syntaxHighlighterFactory
+				language="Parser3"
+				implementationClass="ru.artlebedev.parser3.highlight.Parser3SyntaxHighlighterFactory"/>
+
+		<lang.parserDefinition
+				language="Parser3"
+				implementationClass="ru.artlebedev.parser3.lang.Parser3ParserDefinition"/>
+
+		<lang.fileViewProviderFactory
+				language="Parser3"
+				implementationClass="ru.artlebedev.parser3.psi.Parser3FileViewProviderFactory"/>
+
+		<langCodeStyleSettingsProvider
+				implementation="ru.artlebedev.parser3.formatting.Parser3CodeStyleSettingsProvider"/>
+		<codeStyleSettingsProvider
+				implementation="ru.artlebedev.parser3.formatting.Parser3CodeStylePageProvider"/>
+
+		<lang.braceMatcher language="Parser3" implementationClass="ru.artlebedev.parser3.highlight.Parser3BraceMatcher"/>
+
+		<colorSettingsPage implementation="ru.artlebedev.parser3.highlight.Parser3ColorSettingsPage"/>
+
+		<!-- Enter между скобками {}[]() -->
+		<enterHandlerDelegate
+				implementation="ru.artlebedev.parser3.formatting.Parser3EnterHandler"/>
+
+		<!-- комментарии -->
+		<lang.commenter language="Parser3"
+						implementationClass="ru.artlebedev.parser3.Parser3Commenter"/>
+
+		<!-- sql -->
+		<multiHostInjector implementation="ru.artlebedev.parser3.injector.Parser3SqlInjector"/>
+
+		<!-- html -->
+		<multiHostInjector implementation="ru.artlebedev.parser3.injector.Parser3HtmlInjector"/>
+
+		<!-- css внутри <style> -->
+		<multiHostInjector implementation="ru.artlebedev.parser3.injector.Parser3CssInjector"/>
+
+		<!-- js внутри <script> -->
+		<multiHostInjector implementation="ru.artlebedev.parser3.injector.Parser3JsInjector"/>
+
+		<!-- Расширяем scope поиска CSS классов чтобы включить Parser3 файлы -->
+
+		<!-- PolySymbols: связываем CSS классы в Parser3 для подсветки unused -->
+
+		<!-- Reference contributor для CSS классов в injected HTML -->
+		<psi.referenceContributor
+				language=""
+				implementation="ru.artlebedev.parser3.resolve.Parser3CssClassReferenceContributor"/>
+
+		<!--tab -->
+		<editorActionHandler
+				action="EditorIndentSelection"
+				implementationClass="ru.artlebedev.parser3.editor.Parser3IndentHandler"
+				order="first"/>
+
+		<!--shift + tab-->
+		<editorActionHandler
+				action="EditorUnindentSelection"
+				implementationClass="ru.artlebedev.parser3.editor.Parser3UnindentHandler"
+				order="first"/>
+
+		<!-- автодополнение -->
+		<completion.contributor
+				language="any"
+				implementationClass="ru.artlebedev.parser3.lang.Parser3CompletionContributor"/>
+		<completion.confidence
+				language="any"
+				implementationClass="ru.artlebedev.parser3.lang.Parser3CompletionConfidence"
+				order="first"/>
+
+		<!-- CharFilter — не закрываем popup при вводе : -->
+		<lookup.charFilter
+				implementationClass="ru.artlebedev.parser3.completion.Parser3CharFilter"
+				order="first"/>
+
+		<!-- Find Usages for .p files -->
+		<referencesSearch
+				implementation="ru.artlebedev.parser3.references.P3FileReferencesSearcher"/>
+
+		<!-- Find Usages for CSS classes in Parser3 files -->
+
+		<!-- PsiReference для класс::метод вызовов -->
+		<psi.referenceContributor
+				language="Parser3"
+				implementation="ru.artlebedev.parser3.references.P3ClassReferenceContributor"/>
+
+		<!-- Usage type "Use" for ^use[] and @USE -->
+		<usageTypeProvider
+				implementation="ru.artlebedev.parser3.references.P3UsageTypeProvider"/>
+
+		<!-- Refactoring listener for Move warnings -->
+		<refactoring.elementListenerProvider
+				implementation="ru.artlebedev.parser3.references.P3RefactoringListenerProvider"/>
+
+		<!-- method completion from visible files -->
+		<completion.contributor
+				language="any"
+				implementationClass="ru.artlebedev.parser3.completion.P3MethodCompletionContributor"
+				order="first"/>
+
+		<!-- class completion (User:, User::) -->
+		<completion.contributor
+				language="any"
+				implementationClass="ru.artlebedev.parser3.completion.P3ClassCompletionContributor"
+				order="first"/>
+
+		<!-- file completion for ^use[...] and @USE -->
+		<completion.contributor
+				language="Parser3"
+				implementationClass="ru.artlebedev.parser3.completion.P3UseCompletionContributor"/>
+
+		<!-- class name completion for @BASE -->
+		<completion.contributor
+				language="Parser3"
+				implementationClass="ru.artlebedev.parser3.completion.P3BaseCompletionContributor"/>
+
+		<!-- автокомплит опций после @OPTIONS -->
+		<completion.contributor
+				language="Parser3"
+				implementationClass="ru.artlebedev.parser3.completion.P3OptionsCompletionContributor"/>
+
+		<!-- автокомплит переменных ($var) -->
+		<completion.contributor
+				language="Parser3"
+				implementationClass="ru.artlebedev.parser3.completion.P3VariableCompletionContributor"/>
+
+		<!-- доки -->
+		<lang.documentationProvider
+				language="Parser3"
+				implementationClass="ru.artlebedev.parser3.lang.Parser3DocumentationProvider"/>
+
+		<!-- индексы для методов, классов, USE и вызовов методов -->
+		<indexedRootsProvider implementation="ru.artlebedev.parser3.index.P3IndexableSetContributor"/>
+		<fileBasedIndex implementation="ru.artlebedev.parser3.index.P3MethodFileIndex"/>
+		<fileBasedIndex implementation="ru.artlebedev.parser3.index.P3ClassFileIndex"/>
+		<fileBasedIndex implementation="ru.artlebedev.parser3.index.P3UseFileIndex"/>
+		<fileBasedIndex implementation="ru.artlebedev.parser3.index.P3MethodCallFileIndex"/>
+		<fileBasedIndex implementation="ru.artlebedev.parser3.index.P3VariableFileIndex"/>
+		<fileBasedIndex implementation="ru.artlebedev.parser3.index.P3CssClassFileIndex"/>
+
+		<!-- форматирование -->
+		<lang.formatter language="Parser3" implementationClass="ru.artlebedev.parser3.formatting.Parser3FormattingModelBuilder"/>
+		<preFormatProcessor implementation="ru.artlebedev.parser3.formatting.Parser3HashCommentPreFormatProcessor"/>
+		<postFormatProcessor implementation="ru.artlebedev.parser3.formatting.Parser3HashCommentPostFormatProcessor"/>
+		<!-- сворачивание (folding) -->
+		<lang.foldingBuilder language="Parser3" implementationClass="ru.artlebedev.parser3.folding.Parser3FoldingBuilder"/>
+
+
+		<!-- нажатие клавиш, ловим }]) + автоформат -->
+		<typedHandler implementation="ru.artlebedev.parser3.editor.Parser3TypedHandler"/>
+
+		<!-- автокомплит после / в ^use[...] -->
+		<typedHandler implementation="ru.artlebedev.parser3.completion.P3UseTypedHandler"/>
+
+		<!-- backspace -->
+		<editorActionHandler
+				action="EditorBackSpace"
+				implementationClass="ru.artlebedev.parser3.editor.Parser3BackspaceHandler"
+				order="first"/>
+
+		<!-- попап определения методов (клик на метод) -->
+		<gotoDeclarationHandler
+				implementation="ru.artlebedev.parser3.navigation.P3GotoDeclarationHandler"/>
+
+		<!-- попап определения классов (клик на класс) -->
+
+
+		<!-- определение document_root при запуске и проверка индексов -->
+		<postStartupActivity implementation="ru.artlebedev.parser3.settings.P3SettingsAutoDetectionActivity"/>
+		<notificationGroup id="Parser3.Settings" displayType="BALLOON"/>
+		<notificationGroup id="Parser3 Refactoring" displayType="BALLOON"/>
+
+		<editorActionHandler action="EditorPaste"
+							 implementationClass="ru.artlebedev.parser3.editor.Parser3PasteHandler"
+							 order="first"/>
+	</extensions>
+
+	<projectListeners>
+		<!-- Восстановление отступа закрывающего HTML тега после autocomplete -->
+		<listener class="ru.artlebedev.parser3.editor.Parser3HtmlTagCompletionListener"
+				  topic="com.intellij.codeInsight.lookup.LookupManagerListener"/>
+	</projectListeners>
+
+</idea-plugin>

@@ -1,0 +1,60 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">search-namespaces. Хеш пространств имен для&nbsp;поиска</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$документ.search-namespaces</b><span>
+<br>
+
+<br>
+Для использования префиксов <a href="http://www.w3.org/TR/2004/REC-xml-names11-20040204/#concepts" target="_blank">пространств имен</a> в&nbsp;методах&nbsp;</code><code><b><a href="xnodeselect.htm">xnode.select*</a></b></code><span> необходимо заранее определить эти префиксы в&nbsp;данном хеше.
+<br>
+
+<br>
+Здесь:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>ключи - префиксы пространств имен; 
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>значения - их URI.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+
+<br>
+<b>Пример добавления нескольких префиксов
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$xdoc[^xdoc::create{</b></code></span><code><b>&lt;?xml&nbsp;version="1.0"?&gt;
+<br>
+&lt;document&nbsp;xmlns:s="urn:special"&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;s:code&nbsp;xmlns:o="urn:other"&nbsp;o:attr="123"&gt;давай&nbsp;поиграем&nbsp;в&nbsp;прятки&lt;/s:code&gt;
+<br>
+&lt;/document&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+^xdoc.search-namespaces.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="hashadd.htm">add</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[
+<br>
+&nbsp;&nbsp;&nbsp;$.s[urn:special]
+<br>
+&nbsp;&nbsp;&nbsp;$.o[urn:other]
+<br>
+]
+<br>
+^xdoc.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="xnodeselectstring.htm">selectString</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[string(//s:code[@o:attr=123])]
+<br>
+</b></code></span><span><b>
+<br>
+</b></span><span><b>Пример добавления одного префикса
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$xdoc.search-namespaces.s[urn:special]
+<br>
+</b></code></span></span>

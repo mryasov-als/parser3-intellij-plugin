@@ -1,0 +1,74 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Хеш (ассоциативный массив)</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Хеш, или ассоциативный массив, позволяет устанавливать связь между строковыми ключами и&nbsp;произвольными значениями. Создание хеша происходит автоматически при таком присваивании переменной значения или вызове метода:
+<br>
+
+<br>
+<code><b>$имя[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.ключ1[значение]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.ключ2[значение]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.ключN[значение]
+<br>
+]</b><b>
+<br>
+</b></code><span>
+<br>
+или
+<br>
+
+<br>
+</span><code><b>^метод[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.ключ1[значение]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.ключ2[значение]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.ключN[значение]
+<br>
+]
+<br>
+</b></code><span>
+<br>
+Также можно создать пустой хеш и&nbsp;сделать копию другого хеша, см.&nbsp;«<a href="hashcreate.htm">Создание пустого хеша и копирование хеша</a>». Хеш запоминает порядок, в&nbsp;котором были добавлены элементы.
+<br>
+
+<br>
+Получение значений ключей хеша:
+<br>
+</span><code><b>$имя.ключ
+<br>
+</b></code><span>
+<br>
+Хеш позволяет создавать многомерные структуры, например </span><code><b>hash&nbsp;of&nbsp;hash</b></code><span>, где значениями ключей хеша выступают другие хеши.
+<br>
+</span><code><b>
+<br>
+$имя[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.ключ1_уровня1[$.ключ1_уровня2[значение]]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.&nbsp;.&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.ключN_уровня1[$.ключN_уровня2[значение]]
+<br>
+]</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span></span>

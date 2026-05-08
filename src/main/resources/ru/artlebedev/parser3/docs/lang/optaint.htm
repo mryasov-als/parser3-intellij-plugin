@@ -1,0 +1,488 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">taint. Задание преобразований данных</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^taint[текст]
+<br>
+^taint[вид&nbsp;преобразования][текст]</b><span>
+<br>
+</code><span>
+<br>
+C помощью механизма автоматических преобразований Parser защищает сайты от&nbsp;вторжения извне и&nbsp;«по умолчанию» делает это хорошо. Этот механизм работает, даже если в&nbsp;коде нет ни&nbsp;одного оператора&nbsp;</span><code><b>taint</b></code><span>. </span><span>Вмешиваясь в&nbsp;работоспособность этого механизма с&nbsp;помощью данных операторов (особенно используя вид преобразования </span><code><b>as-is</b></code><span>), легко создать уязвимость в&nbsp;разрабатываемом сайте, поэтому делать это нужно внимательно, обязательно разобравшись, как&nbsp;же именно он&nbsp;работает.
+<br>
+
+<br>
+Оператор </span><code><b>taint</b></code><span> помечает весь переданный ему </span><code><b>текст</b></code><span> как нуждающийся в&nbsp;преобразовании заданного </span><code><b>вида</b></code><span>. Если вид преобразования не&nbsp;указан, оператор </span><code><b>taint</b></code><span> помечает </span><code><b>текст</b></code><span> как </span><code><b>tainted</b></code><span>  (неопределенно «грязный», без&nbsp;указания вида преобразования). Для помеченного таким образом текста будут применяться такие&nbsp;же правила преобразований как для&nbsp;текста, пришедшего извне (из&nbsp;<a href="formfield.htm">полей формы</a>, базы данных, <a href="fileload.htm">файла</a>, <a href="cookiestats.htm">cookies</a> и&nbsp;т.&nbsp;п.).
+<br>
+
+<br>
+Данный оператор лишь делает пометки в&nbsp;тексте о&nbsp;виде преобразования, который Parser должен будет произвести </span><code><b>позже</b></code><span>, но&nbsp;не&nbsp;производят его сиюминутно. Сами преобразования Parser выполняет или при выполнении оператора </span><code><b>apply-taint</b></code><span> или при выдаче текста в&nbsp;браузер, перед выдачей SQL-серверу, при сохранении в&nbsp;файл, при отправке письма и&nbsp;т.&nbsp;п.
+<br>
+
+<br>
+Для простоты можно представить себе, что вокруг всех букв, пришедших извне, написано </span><code><span style="color:#7F97E1" class="blue"><b>^taint[</b></code></span><code><b>пришедшее&nbsp;извне</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><span>, а&nbsp;вокруг всех букв, набранных в&nbsp;теле страницы,&nbsp;- </span><code><span style="color:#7F97E1" class="blue"><b>^taint[optimized-as-is][</b></code></span><code><b>написанное&nbsp;разработчиком</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><span>.</span><span>
+<br>
+
+<br>
+Автоматические преобразования защищают от&nbsp;небезопасных внешних данных. Например, если при&nbsp;составлении SQL-запроса написать (опять&nbsp;же без&nbsp;использования </span><code><b>taint</b></code><span>):
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^string:sql{</b></code></span><code><b>SELECT&nbsp;name&nbsp;FROM&nbsp;table&nbsp;WHERE&nbsp;uid&nbsp;=&nbsp;'</b><span style="color:#7F97E1" class="blue"><b>$form:uid</b></code></span><code><b>'</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><span>,</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>то злоумышленник не&nbsp;сможет выполнить SQL injection, передав в&nbsp;качестве параметра, например, «</span><code><b>?uid='&nbsp;OR&nbsp;1=1&nbsp;OR&nbsp;'</b></code><span>», т.&nbsp;к. Parser перед выдачей SQL-серверу текста запроса экранирует в&nbsp;пришедшем от&nbsp;пользователя </span><code><span style="color:#7F97E1" class="blue"><b>$form:uid</b></code></span><span> одинарные кавычки.
+<br>
+
+<br>
+Текст, написанный разработчиком в&nbsp;теле страниц, также подвергается автоматическому преобразованию. В нем Parser выполняет оптимизацию пробельных символов (включая пробел, табуляцию, символ перевода строки). Идущие подряд перечисленные символы заменяются только одним, который встречается в&nbsp;коде первым. То&nbsp;есть при&nbsp;вставке в&nbsp;текст страницы нескольких идущих подряд пробельных символов перед выдачей их в&nbsp;браузер посетителю от&nbsp;них останется только первый символ. Если в&nbsp;каких-то случаях нужно отключить эту оптимизацию (например, для&nbsp;выдачи в&nbsp;</span><code><b>&lt;pre/&gt;</b></code><span>), то&nbsp;необходимо сделать это явно, например, написав вокруг текста:
+<br>
+
+<br>
+</span><code><b>&lt;pre&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^taint[as-is][
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;Я
+<br>
+&nbsp;&nbsp;&nbsp;достаю
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;из&nbsp;широких&nbsp;штанин
+<br>
+&nbsp;&nbsp;дубликатом
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;бесценного&nbsp;груза.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+&nbsp;&nbsp;Читайте,
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;завидуйте,
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;я&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;гражданин
+<br>
+&nbsp;&nbsp;Советского&nbsp;Союза.
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><span>
+<br>
+</span><code><b>&lt;/pre&gt;
+<br>
+</b></code><span>
+<br>
+В&nbsp;данном случае нужно писать именно&nbsp;</span><code><b>taint</b></code><span>, а&nbsp;не&nbsp;</span><code><b>untaint</b></code><span>, т.&nbsp;к.&nbsp;буквы, написанные в&nbsp;тексте страницы разработчиком, являются «чистыми», и&nbsp;поэтому&nbsp;</span><code><b>untaint</b></code><span> не&nbsp;окажет на&nbsp;них никакого влияния.
+<br>
+
+<br>
+
+<br>
+<b>Пример</b>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$clean[</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+#&nbsp;</b></code></span><code><b>предыдущая&nbsp;запись&nbsp;эквивалентна&nbsp;следующей:</b><span style="color:#7F97E1" class="blue"><b>&nbsp;$clean[^taint[optimized-as-is][</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+$tainted[^taint[</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+
+<br>
+</b></code></span><code><b>Строки</b><span style="color:#7F97E1" class="blue"><b>:&nbsp;^if($clean&nbsp;eq&nbsp;$tainted){</b></code></span><code><b>совпадают</b><span style="color:#7F97E1" class="blue"><b>}{</b></code></span><code><b>не&nbsp;совпадают</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+
+<br>
+</b></code></span><code><b>«Грязные»&nbsp;данные</b><span style="color:#7F97E1" class="blue"><b>&nbsp;-&nbsp;'$tainted'</b></code></span><code><b>&lt;br&nbsp;/&gt;</b></code><span>
+<br>
+</span><code><b>«Чистые»&nbsp;данные</b><span style="color:#7F97E1" class="blue"><b>&nbsp;-&nbsp;'$clean'</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+Из&nbsp;данного примера видно, что, несмотря на&nbsp;сообщение об эквивалентности строк, при выводе их в&nbsp;браузер результат различен: «чистая» строка выводится без&nbsp;преобразований, а&nbsp;в&nbsp;«грязной» строке символы &lt; и&nbsp;&gt; заменены </span><code><b>&amp;lt;</b></code><span> и&nbsp;</span><code><b>&amp;gt;</b></code><span> соответственно.
+<br>
+
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$town[</b></code></span><code><b>Москва</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><b>&lt;a&nbsp;href="town.html?town=</b><span style="color:#7F97E1" class="blue"><b>^taint[uri][$town]</b></code></span><code><b>"&gt;</b><span style="color:#7F97E1" class="blue"><b>$town</b></code></span><code><b>&lt;/a&gt;
+<br>
+</b></code><span>
+<br>
+В результате данные, хранящиеся в&nbsp;переменной </span><code><b>town</b></code><span>, будут помечены как нуждающиеся в&nbsp;преобразовании к&nbsp;типу&nbsp;URI и&nbsp;позже, при выводе в&nbsp;браузер, кириллические буквы будут заменены шестнадцатеричными кодами символов и&nbsp;представлены в&nbsp;виде </span><code><b>%ХХ</b></code><span>.
+<br>
+
+<br>
+</span><span><b>
+<br>
+</b></span><span><b>Пример</b></span><span><b>
+<br>
+</b></span><code><b>Вывод&nbsp;данных,&nbsp;полученных&nbsp;от&nbsp;пользователя&nbsp;на&nbsp;странице,&nbsp;сохранение&nbsp;их
+<br>
+в&nbsp;БД&nbsp;и&nbsp;создание&nbsp;на&nbsp;их&nbsp;основе&nbsp;XML&lt;br&nbsp;/&gt;</b></code><span>
+<br>
+</span><code><b>Указано:&nbsp;'</b><span style="color:#7F97E1" class="blue"><b>$form:field</b></code></span><code><b>'
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^connect[$SQL.connect-string]{</b></code></span><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;^void:sql{</b></code></span><code><b>INSERT&nbsp;INTO&nbsp;news&nbsp;SET&nbsp;(body)&nbsp;VALUES&nbsp;('</b><span style="color:#7F97E1" class="blue"><b>$form:field</b></code></span><code><b>')</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+}</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>$doc[^xdoc::create{</b></code></span><code><b>&lt;?xml&nbsp;version="1.0"&nbsp;encoding="WINDOWS-1251"?&gt;
+<br>
+&lt;root&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;data&gt;</b><span style="color:#7F97E1" class="blue"><b>$form:field</b></code></span><code><b>&lt;/data&gt;
+<br>
+&lt;/root&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}]</b></code></span><span>
+<br>
+
+<br>
+В данном случае </span><code><b>taint</b></code><span> использовать не&nbsp;нужно вовсе, т.&nbsp;к. необходимые преобразования будут сделаны автоматически, причем при выводе в&nbsp;браузер будет сделано преобразование </span><code><b>optimized-html</b></code><span>, при выдаче SQL-серверу - </span><code><b>sql</b></code><span>, а&nbsp;при формировании XML - </span><code><b>xml</b></code><span>.
+<br>
+
+<br>
+Обратим внимание на&nbsp;то, что при сохранении данных в&nbsp;БД в&nbsp;административном интерфейсе также не&nbsp;требуется писать </span><code><b>taint</b></code><span> в&nbsp;SQL-запросах.
+<br>
+
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><b>Выдача&nbsp;даннных&nbsp;(могут&nbsp;содержать&nbsp;теги),&nbsp;пришедших&nbsp;от&nbsp;пользователя&nbsp;или&nbsp;из&nbsp;БД,
+<br>
+в&nbsp;форму&nbsp;для&nbsp;редактирования&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^if(def&nbsp;$form:body){
+<br>
+&nbsp;&nbsp;&nbsp;$body[$form:body]
+<br>
+}{
+<br>
+&nbsp;&nbsp;&nbsp;^connect[$SQL.connect-string]{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$body[^string:sql{</b></code></span><code><b>SELECT&nbsp;body&nbsp;FROM&nbsp;news&nbsp;WHERE&nbsp;news_id&nbsp;=&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$id}]
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+}
+<br>
+</b></code></span><code><b>&lt;textarea&gt;</b><span style="color:#7F97E1" class="blue"><b>$body</b></code></span><code><b>&lt;/textarea&gt;
+<br>
+</b></code><span>
+<br>
+В данном случае сработает автоматическое преобразование </span><code><b>optimized-html</b></code><span>, т.&nbsp;к. данные, пришедшие из&nbsp;БД или от&nbsp;пользователя, являются «грязными». Поэтому встретившиеся в&nbsp;данных теги не&nbsp;«поломают» страницу. Нужно иметь в&nbsp;виду, что если в&nbsp;данных есть идущие подряд пробельные символы, то&nbsp;они будут оптимизированы при выдаче в&nbsp;браузер.
+<br>
+</span><span><b>
+<br>
+
+<br>
+</b></span><span><b>Пример</b>
+<br>
+</span><code><b>Выдача&nbsp;данных&nbsp;с&nbsp;тегами&nbsp;из&nbsp;БД,&nbsp;помещенных&nbsp;туда&nbsp;администратором:&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^connect[$SQL.connect-string]{
+<br>
+&nbsp;&nbsp;&nbsp;$body[^string:sql{</b></code></span><code><b>SELECT&nbsp;body&nbsp;FROM&nbsp;news&nbsp;WHERE&nbsp;news_id&nbsp;=&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$id}]
+<br>
+}</b></code></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^taint[as-is][$body]</b></code></span><span>
+<br>
+</span><span><b>
+<br>
+</b></span><span>В данном случае необходимо использовать </span><code><b>taint</b></code><span> с&nbsp;видом преобразования </span><code><b>as-is</b></code><span>, т.&nbsp;к. требуется, чтобы теги в&nbsp;тексте новости, помещенные туда администратором, были выданы именно как теги и&nbsp;в&nbsp;них не&nbsp;было произведено никаких преобразований. Ни в&nbsp;коем случае нельзя выводить подобным образом данные из&nbsp;БД, полученные от&nbsp;посетителей сайта (например, данные гостевых книг, форумов и&nbsp;т.&nbsp;д.).
+<br>
+</span><span><b>
+<br>
+
+<br>
+</b></span><span><b>Пример</b></span><span><b>
+<br>
+</b></span><code><b>Выдача&nbsp;даннных&nbsp;(могут&nbsp;содержать&nbsp;теги),&nbsp;пришедших&nbsp;от&nbsp;пользователя&nbsp;или&nbsp;из&nbsp;БД
+<br>
+в&nbsp;форму&nbsp;для&nbsp;редактирования&nbsp;с&nbsp;сохранением&nbsp;пробельных&nbsp;символов&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^if(def&nbsp;$form:body){
+<br>
+&nbsp;&nbsp;&nbsp;$body[$form:body]
+<br>
+}{
+<br>
+&nbsp;&nbsp;&nbsp;^connect[$SQL.connect-string]{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$body[^string:sql{</b></code></span><code><b>SELECT&nbsp;body&nbsp;FROM&nbsp;news&nbsp;WHERE&nbsp;news_id&nbsp;=&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$id}]
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+}
+<br>
+</b></code></span><code><b>&lt;textarea&gt;</b><span style="color:#7F97E1" class="blue"><b>^taint[html][$body]</b></code></span><code><b>&lt;/textarea&gt;</b></code><span>
+<br>
+
+<br>
+В данном случае нужно использовать </span><code><b>taint</b></code><span> с&nbsp;видом преобразования </span><code><b>html</b></code><span>, чтобы встретившиеся в&nbsp;данных теги не&nbsp;«поломали» страницу и&nbsp;чтобы отключить оптимизацию пробельных символов.
+<br>
+
+<br>
+
+<br>
+В&nbsp;примерах выше можно заметить, что нам пришлось использовать оператор </span><code><b>taint</b></code><span> лишь трижды: один раз для&nbsp;того, чтобы разрешить отображать теги в&nbsp;тексте из&nbsp;БД, помещенном туда администратором, второй раз&nbsp;- чтобы отключить оптимизацию пробельных символов и&nbsp;третий раз&nbsp;- чтобы выдать ссылку с&nbsp;query string, содержащей русские буквы таким образом, чтобы эти буквы были закодированы. Во всех остальных случаях мы вообще не&nbsp;использовали </span><code><b>taint</b></code><span>, и&nbsp;Parser сам все сделал правильно.
+<br>
+
+<br>
+В&nbsp;подавляющем большинстве случаев использовать оператор </span><code><b>taint</b></code><span> не&nbsp;нужно!
+<br>
+
+<br>
+
+<br>
+Преобразование заключается в&nbsp;замене одних символов другими в&nbsp;соответствии с&nbsp;внутренними таблицами преобразований. Предусмотрены следующие виды преобразований:
+<br>
+</span><code><b>as-is
+<br>
+file-spec
+<br>
+HTTP-header
+<br>
+mail-header
+<br>
+uri
+<br>
+sql
+<br>
+js
+<br>
+json&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.1]</i></b></span><span><b><i>
+<br>
+</i></b></span><code><b>parser-code&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.0]</i></b></span><code><b>
+<br>
+regex&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.1.5]</i></b></span><code><b>
+<br>
+xml
+<br>
+html
+<br>
+
+<br>
+optimized-as-is</b></code><span>
+<br>
+</span><code><b>optimized-xml
+<br>
+optimized-html
+<br>
+</b></code><span>
+<br>
+
+<br>
+</span><span><b>Таблицы преобразований
+<br>
+</b></span><span><table border="1" cellpadding="1"><tr><td align="left" valign="top" width="126">
+<code><b>as-is</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="492">
+<span>Изменений в&nbsp;тексте не&nbsp;делается
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>file</b><b>-spec</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="492">
+<span>Символы <code><b>*&nbsp;?&nbsp;"&nbsp;&lt;&nbsp;&gt;&nbsp;|</b></code><span> преобразуются в&nbsp;</span><code><b>_XX</b></code><span>, 
+<br>
+где XX - код символа в&nbsp;шестнадцатеричной форме
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>uri</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="492">
+<span>Символы за исключением цифр, строчных и&nbsp;прописных латинских букв, а&nbsp;также следующих символов: <code>_&nbsp;-&nbsp;.&nbsp;"&nbsp;</code><span>преобразуются в&nbsp;%XX где XX - код символа в&nbsp;шестнадцатеричной форме
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>HTTP-</b><b>header</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="492">
+<span>То же, что и&nbsp;URI 
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>mail-header</b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="492">
+<span>Если известен charset (если неизвестен, не&nbsp;будут работать up/low case), то&nbsp;фрагмент, начиная с&nbsp;первой буквы с&nbsp;восьмым битом и&nbsp;до конца строки, будет представлен в&nbsp;подобном виде:  
+<br>
+<code><b>Subject:&nbsp;Re:&nbsp;parser3:&nbsp;=?koi8-r?Q?=D3=C5=CD=C9=CE=C1=D2?=
+<br>
+</b></code></span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>sql</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="492">
+<span>В зависимости от&nbsp;SQL-сервера  
+<br>
+- для Oracle, ODBC и&nbsp;SQLite символ <code><b>'</b></code><span> меняется  на&nbsp;</span><code><b>''</b></code><span>
+<br>
+- для Postgres символы </span><code><b>'</b></code><span> и&nbsp;</span><code><b>\</b></code><span> предваряются символом </span><code><b>\</b></code><span>
+<br>
+- для MySQL символы </span><code><b>'</b></code><span> </span><code><b>"</b></code><span> и&nbsp;</span><code><b>\</b></code><span> предваряются символом </span><code><b>\</b></code><span>, символы с&nbsp;кодами&nbsp;</span><code><b>0x00</b></code><span> </span><code><b>0x0A</b></code><span> </span><code><b>0x0D</b></code><span> преобразуются, соответственно, в&nbsp;</span><code><b>\0</b></code><span> </span><code><b>\n</b></code><span> </span><code><b>\r</b></code><span>
+<br>
+
+<br>
+Для выполнения данного преобразования необходимо, чтобы код, в&nbsp;результате работы которого преобразование должно выполниться, находился внутри оператора&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b>^connect[]{}</b></code></span><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>js</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="492">
+<code>Символ&nbsp;<b>"</b><span> преобразуется в&nbsp;</code><code><b>\"</b>
+<br>
+Символ&nbsp;<b>'</b></code><span> преобразуется в&nbsp;</span><code><b>\'</b>&nbsp;</code><span> 
+<br>
+</span><code>Символ&nbsp;<b>\</b></code><span> преобразуется в&nbsp; </span><code><b>\\</b></code><span>
+<br>
+</span><code>Символ&nbsp;конца&nbsp;строки</code><span> преобразуется в&nbsp;</span><code><b>\n</b></code><span>
+<br>
+</span><code>Символ&nbsp;с&nbsp;кодом&nbsp;0xFF</code><span> предваряется символом </span><code><b>\</b></code><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>json</b>
+<br>
+</code></td><td align="left" valign="top" width="492">
+<span>Символы <code><b>"&nbsp;\&nbsp;/</b></code><span> предваряются символом </span><code><b>\</b>
+<br>
+Символ</code><span> конца строки преобразуется в&nbsp;</span><code><b>\n</b></code><span>
+<br>
+</span><code>Символ</code><span> табуляции преобразуется в&nbsp;</span><code><b>\t</b></code><span>
+<br>
+Служебные символы с&nbsp;кодами </span><code><b>0x08&nbsp;0x0С&nbsp;0x0D</b></code><span> преобразуются в&nbsp;</span><code><b>\b&nbsp;\f&nbsp;\r</b>
+<br>
+</code><span>в случае вывода не&nbsp;в&nbsp;UTF-8 все unicode-символы преобразуются в&nbsp;</span><code><b>\uXXXX</b>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>parser-code</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="492">
+<span><a href="stringlit.htm">Служебные символы</a> предваряются символом <code><b>^</b></code><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>regex</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="492">
+<span>Символы <code><b>\&nbsp;^&nbsp;$&nbsp;.&nbsp;[&nbsp;]&nbsp;|&nbsp;(&nbsp;)&nbsp;?&nbsp;*&nbsp;+&nbsp;{&nbsp;}&nbsp;-&nbsp;</b></code><span>предваряются символом </span><code><b>\</b></code><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>xml</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="492">
+<code>Символ&nbsp;<b>&amp;</b><span> преобразуется в&nbsp;</code><code><b>&amp;amp;</b></code><span>
+<br>
+</span><code>Символ&nbsp;<b>&gt;</b></code><span> преобразуется в&nbsp;</span><code><b>&amp;gt;</b></code><span>
+<br>
+</span><code>Символ&nbsp;<b>&lt;</b></code><span> преобразуется в&nbsp;</span><code><b>&amp;lt;</b></code><span>
+<br>
+</span><code>Символ&nbsp;<b>"</b></code><span> преобразуется в&nbsp;</span><code><b>&amp;quot;</b></code><span>
+<br>
+</span><code>Символ&nbsp;<b>'</b></code><span> преобразуется в&nbsp;</span><code><b>&amp;apos;</b></code><span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>html</b>
+<br>
+</code></td><td align="left" valign="top" width="492">
+<code>Символ <b>&amp;</b><span> преобразуется в&nbsp;</code><code><b>&amp;amp;</b></code><span>
+<br>
+</span><code>Символ&nbsp;<b>&gt;</b></code><span> преобразуется в&nbsp;</span><code><b>&amp;gt;</b></code><span>
+<br>
+</span><code>Символ&nbsp;<b>&lt;</b></code><span> преобразуется в&nbsp;</span><code><b>&amp;lt;</b></code><span>
+<br>
+</span><code>Символ&nbsp;<b>"</b></code><span> преобразуется в&nbsp;</span><code><b>&amp;quot;
+<br>
+</b>Символ&nbsp;'</code><span> преобразуется в&nbsp;</span><code><b>&amp;apos;</b><b>&nbsp;</b></code><span><b><i>[3.5.0]</i></b></span><code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="126">
+<code><b>optimized-as-is</b><span>
+<br>
+</code><code><b>optimized-xml
+<br>
+</b><b>optimized-html</b></code><span>
+<br>
+</span></span></td><td align="left" valign="top" width="492">
+<span>Дополнительно к&nbsp;заменам выполняется оптимизация по&nbsp;white spaces (символы пробела, табуляция, перевода строки). 
+<br>
+
+<br>
+Идущие подряд перечисленные символы заменяются только одним, который встречается в&nbsp;коде первым
+<br>
+</span></td></tr></table>
+<br>
+
+<br>
+Ряд </span><code><b>taint</b></code><span>-преобразований Parser делает автоматически, так, имена и&nbsp;пути файлов всегда автоматически </span><code><b>file-spec</b></code><span>-преобразуются, и&nbsp;когда разработчик пишет:
+<br>
+</span><code><b>
+<br>
+</b><b>^</b><b><a href="fileload.htm">file::load</a></b><b>[filename]
+<br>
+</b></code><span>
+<br>
+Parser выполняет…
+<br>
+</span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^file::load[^taint[file-spec][filename]]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Аналогично при задании HTTP-заголовков и&nbsp;заголовков писем происходят преобразования </span><code><b>HTTP-header</b></code><span> и&nbsp;</span><code><b>mail-header</b></code><span> соответственно. А&nbsp;при DOM-операциях применяется таблица преобразований </span><code><b>file-spec</b></code><span> (см.&nbsp;выше) и&nbsp;таблица преобразований </span><code><b>xml</b></code><span>.
+<br>
+
+<br>
+
+<br>
+Также Parser выполняет ряд автоматических </span><code><b>untaint</b></code><span>-преобразований:
+<br>
+</span><code><b><table border="0" cellpadding="1"><tr><td align="left" valign="top" width="142">
+<span><i>вид</i>
+<br>
+</code></td><td align="left" valign="top" width="534">
+<span><i>что преобразуется
+<br>
+</i></span></td></tr><tr><td align="left" valign="top" width="142">
+<code><b>sql</b>
+<br>
+</code></td><td align="left" valign="top" width="534">
+<span>тело SQL-запроса
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="142">
+<code><b>xml</b>
+<br>
+</code></td><td align="left" valign="top" width="534">
+<span>XML-код при создании объекта класса <code><b><a href="xdocclass.htm">xdoc</a></b>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="142">
+<code><b>optimized-html</b>
+<br>
+</code></td><td align="left" valign="top" width="534">
+<span>результат страницы, отдаваемый в&nbsp;браузер
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="142">
+<code><b>regex</b>
+<br>
+</code></td><td align="left" valign="top" width="534">
+<span>шаблоны&nbsp;- регулярные выражения
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="142">
+<code><b>parser-code</b>
+<br>
+</code></td><td align="left" valign="top" width="534">
+<span>тело оператора <code><b><a href="opprocess.htm">process</a></b></code><span>
+<br>
+</span></span></td></tr></table>
+<br>
+</b></span></span>

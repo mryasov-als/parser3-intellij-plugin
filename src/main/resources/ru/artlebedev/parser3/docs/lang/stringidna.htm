@@ -1,0 +1,52 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">idna. Декодирование из&nbsp;IDNA</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.4]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^string:idna[закодированное]
+<br>
+</b><span>
+<br>
+<i>Замечание: именно метод, не&nbsp;конструктор!
+<br>
+</i><i>
+<br>
+</i>Метод декодирует строку из&nbsp;IDNA-представления (может потребоваться при работе с&nbsp;кириллическими доменами). Для кодирования строки следует использовать
+<br>
+</code><code><b>^строка.</b><b><a href="stringidnam.htm">idna</a></b><b>[]
+<br>
+</b></code><span>
+<br>
+<i>Подробная информация  о&nbsp;IDNA доступна по&nbsp;ссылкам: </i><span style="color:#7F97E1" class="blue"><i><u><a href="https://tools.ietf.org/html/rfc3490" target="_blank">tools.ietf.org/html/rfc3490</a></u></i></span></span><span><i> и&nbsp;</i><span style="color:#7F97E1" class="blue"><i><u><a href="https://ru.wikipedia.org/wiki/IDN" target="_blank">wikipedia.org/wiki/IDN</a></u></i></span></span><span><i>
+<br>
+</i>
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$encoded[</b></code></span><code><b>xn--e1afmkfd.xn--80akhbyknj4f</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$original[^string:idna[$encoded]]
+<br>
+$original
+<br>
+</b></code></span><span>
+<br>
+Выведет…
+<br>
+</span><code><b>пример.испытание
+<br>
+</b></code><span>
+<br>
+</span></span>

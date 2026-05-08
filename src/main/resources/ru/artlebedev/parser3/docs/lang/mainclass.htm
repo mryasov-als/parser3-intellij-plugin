@@ -1,0 +1,58 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Класс MAIN, обработка запроса</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Parser обрабатывает запрошенный документ описанным ниже образом.
+<br>
+
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>1)</span></td><td><span>Считываются, компилируются и&nbsp;инициализируются  <a href="parserconfig.htm">Конфигурационный файл</a>; затем все файлы с&nbsp;именем </span><code>auto.p</code><span>, поиск которых производится начиная от&nbsp;корня веб-пространства, и&nbsp;ниже по&nbsp;структуре каталогов, вплоть до&nbsp;каталога с&nbsp;запрошенным документом; наконец, сам запрошенный документ. Все вместе они составляют определение класса&nbsp;</span><code><b>MAIN</b></code><span>. Инициализация заключается в&nbsp;вызове метода </span><code><b>auto</b></code><span> каждого загруженного файла. Если определение этого метода содержит параметр, при вызове в&nbsp;нем будет передано имя загруженного файла.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span><i>
+<br>
+</i><i>Примечание: результат работы метода посетителю не&nbsp;выводится.
+<br>
+</i>
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>2)</span></span></td><td><span>Затем вызывается без&nbsp;параметров метод </span><code><b>main</b></code><span> класса </span><code><b>MAIN</b></code><span>. Т.&nbsp;е.&nbsp;в&nbsp;любом из&nbsp;перечисленных файлов может быть определен метод </span><code><b>main</b></code><span>, и&nbsp;будет вызван тот, который был определен последним - скажем, определение этого метода в&nbsp;запрошенном документе перекрывает все остальные возможные определения, и&nbsp;будет вызван именно он. Результат работы этого метода будет передан пользователю, если не&nbsp;был определен метод </span><code><b>postprocess</b></code><span>. Если в&nbsp;файле не&nbsp;определен ни&nbsp;один метод, то&nbsp;все его тело считается определением метода </span><code><b>main</b></code><span>. 
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span><i>
+<br>
+</i><i>Примечание: задание </i></span><code><b>$</b><b><a href="responseclass.htm">response</a></b><b>:</b><b><a href="responsebody.htm">body</a></b><b>[нестандартного&nbsp;ответа]</b></code><span><i> переопределяет текст, получаемый пользователем.
+<br>
+</i>
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>3)</span></span></td><td><span>Если в&nbsp;классе </span><code><b>MAIN</b></code><span> определен метод </span><code><b>postprocess</b></code><span>, то&nbsp;результат работы метода </span><code><b>main</b></code><span> передается единственным параметром этому методу, и&nbsp;пользователь получит уже его результат работы. Таким образом разработчик получает возможность «дополнительной полировки» результата работы написанного кода.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+<b>Простой пример
+<br>
+</b>Добавление такого определения, скажем, в&nbsp;файл </span><code>auto.p</code><span> в&nbsp;корне веб-пространства сайта:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@postprocess[body]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+^if($body&nbsp;is&nbsp;string){</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>^body.match[</b></code></span><code><b>шило</b><span style="color:#7F97E1" class="blue"><b>][g]{</b></code></span><code><b>мыло</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+}{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$body
+<br>
+}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+приведет к&nbsp;замене одних слов другими в&nbsp;результатах обработки всех страниц.Важно не&nbsp;забыть проверить тип </span><code><b>body</b></code><span>, ведь там может быть <a href="responsebody.htm">файл</a>.</span><code><b>
+<br>
+</b></code></span>

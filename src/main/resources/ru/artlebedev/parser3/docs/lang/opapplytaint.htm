@@ -1,0 +1,52 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">apply-taint. Применение преобразований данных</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^apply-taint[текст]&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.4.1]
+<br>
+</i></b></code><code><b>^apply-taint[вид&nbsp;преобразования][текст]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.1]</i></b></span><span>
+<br>
+</span><span>
+<br>
+Оператор </span><code><b>apply-taint</b></code><span> выполняет сиюминутное преобразование всех фрагментов в&nbsp;строке. Неопределенно «грязные» фрагменты преобразуются в&nbsp;указанный вид преобразования (по&nbsp;умолчанию </span><code><b>as-is</b></code><span>).
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><b>Пример</b><b>,</b><b>&nbsp;иллюстрирующий&nbsp;разницу&nbsp;между&nbsp;^taint&nbsp;и&nbsp;</b><b>^untaint</b><b>.&lt;br&nbsp;/&gt;</b><b>
+<br>
+$s[?&nbsp;&nbsp;&nbsp;^taint[?]&nbsp;&nbsp;&nbsp;^taint[uri][?]&nbsp;&nbsp;&nbsp;^taint[file-spec][?]]
+<br>
+&lt;pre&gt;^apply-taint[uri][$s]
+<br>
+^apply-taint[uri][^taint[as-is][$s]]
+<br>
+^apply-taint[uri][^untaint{$s}]
+<br>
+^apply-taint[uri][^untaint[uri]{$s}]&lt;/pre&gt;
+<br>
+
+<br>
+</b><b>Выведет</b><b>:
+<br>
+?&nbsp;&nbsp;&nbsp;&nbsp;%3F&nbsp;&nbsp;&nbsp;&nbsp;%3F&nbsp;&nbsp;&nbsp;&nbsp;_3F
+<br>
+?&nbsp;&nbsp;&nbsp;&nbsp;?&nbsp;&nbsp;&nbsp;&nbsp;?&nbsp;&nbsp;&nbsp;&nbsp;?
+<br>
+?&nbsp;&nbsp;&nbsp;&nbsp;?&nbsp;&nbsp;&nbsp;&nbsp;%3F&nbsp;&nbsp;&nbsp;&nbsp;_3F
+<br>
+?&nbsp;&nbsp;&nbsp;&nbsp;%3F&nbsp;&nbsp;&nbsp;&nbsp;%3F&nbsp;&nbsp;&nbsp;&nbsp;_3F&nbsp;</b><b>
+<br>
+</b></code><span>
+<br>
+</span></span>

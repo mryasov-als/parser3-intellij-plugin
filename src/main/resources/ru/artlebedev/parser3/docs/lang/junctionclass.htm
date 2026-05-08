@@ -1,0 +1,116 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">junction (класс)</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Класс предназначен для&nbsp;хранения <code><b><a href="vars.htm">кода</a></b></code><span> и&nbsp;</span><code><b>контекста</b></code><span> его выполнения. При обращении к&nbsp;переменным, хранящим в&nbsp;себе&nbsp;</span><code><b>junction</b></code><span>, Parser выполняет&nbsp;</span><code><b>код</b></code><span> в&nbsp;сохраненном&nbsp;</span><code><b>контексте</b></code><span>.
+<br>
+
+<br>
+Значение типа </span><code><b>junction</b></code><span> появляется в&nbsp;переменной
+<br>
+
+<br>
+- при присваивании ей кода:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$junction{</b></code></span><code><b>Код,&nbsp;присваиваемый&nbsp;переменной:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^do_something[]}
+<br>
+</b></code></span><span>
+<br>
+- при передаче кода параметром:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@somewhere[]
+<br>
+^method{</b></code></span><code><b>Код,&nbsp;передаваемый&nbsp;параметром:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^do_something_else[]}
+<br>
+…
+<br>
+@method[parameter]
+<br>
+#здесь&nbsp;в&nbsp;$parameter&nbsp;придет&nbsp;junction
+<br>
+</b></code></span><span>
+<br>
+- при обращении к&nbsp;имени метода класса:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$action[$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="defineclass.htm">user</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>:edit]
+<br>
+#$action[$user:delete]
+<br>
+^action[параметр]
+<br>
+</b></code></span><span>
+<br>
+здесь </span><code><b>$action</b></code><span> хранит ссылку на&nbsp;метод и&nbsp;его класс, вызов </span><code><b>action</b></code><span> теперь аналогичен вызову </span><code><b>^edit[параметр]</b></code><span>;
+<br>
+
+<br>
+- при обращении к&nbsp;имени метода объекта:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$action[$person.show_info]
+<br>
+^action[full]
+<br>
+</b></code></span><span>
+<br>
+здесь </span><code><b>$action</b></code><span> хранит ссылку на&nbsp;метод и&nbsp;его объект, вызов </span><code><b>action</b></code><span> теперь аналогичен вызову </span><code><b>^person.show_info[параметры]</b></code><span>.
+<br>
+
+<br>
+<b>Пример junction-выражений и&nbsp;кода
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@possible_reminder[age;have_passport]
+<br>
+^myif($age&gt;=16&nbsp;&amp;&amp;&nbsp;!$have_passport){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;Тебе&nbsp;уже&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$age</b></code></span><code><b>&nbsp;лет,&nbsp;пора&nbsp;сходить&nbsp;в&nbsp;милицию.
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+
+<br>
+@myif[condition;action][age]
+<br>
+$age(11)
+<br>
+^if($condition){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$action
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+<i>Напоминание: </i><i><a href="params.htm">параметр</a></i><i> с&nbsp;выражением&nbsp;- это код, вычисляющий выражение, он выполняется - вычисляется выражение - при каждом обращении к&nbsp;параметру внутри вызова.
+<br>
+</i>
+<br>
+Здесь оператору </span><code><b>myif</b></code><span> передан код, печатающий, среди прочего, </span><code><b>$age</b></code><span>. Выполнение проверки и&nbsp;кода оператор производит в&nbsp;сохраненном (внутри </span><code><b>$condition</b></code><span> и&nbsp;</span><code><b>$action</b></code><span>) </span><code><b>контексте</b></code><span>, поэтому наличие в&nbsp;</span><code><b>myif</b></code><span> локальной переменной&nbsp;</span><code><b>age</b></code><span> и&nbsp;ее значение никак не&nbsp;влияют на&nbsp;то, что будет проверено и&nbsp;что напечатано.
+<br>
+
+<br>
+<b>Пример проверки наличия метода
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^if($some_method&nbsp;is&nbsp;junction){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;^some_method[параметр]
+<br>
+}{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;нет&nbsp;метода
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Метод </span><code><b>some_method</b></code><span> будет вызван, только если определен.
+<br>
+</span></span>

@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">selectNumber. Вычисление числового XPath-запроса</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^узел.selectNumber[XPath-запрос]</b><span>
+<br>
+
+<br>
+Метод выдает результат выполнения </code><code><b>XPath-запроса</b></code><span> в&nbsp;контексте </span><code><b>узла</b></code><span>, если это <a href="intdoubleclasses.htm">число</a>. Если&nbsp;же это не&nbsp;число, выдается <a href="exceptions.htm">ошибка</a> типа&nbsp;</span><code><b>parser.runtime</b></code><span>.
+<br>
+
+<br>
+Для использования в&nbsp;</span><code><b>запросе</b></code><span> префиксов пространств имен необходимо их заранее определить, см.&nbsp;</span><code><b><a href="xdocsearchns.htm">$xdoc.search-namespaces</a></b></code><span>.
+<br>
+
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$d[^xdoc::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="xdoccreatexml.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{</b></code></span><code><b>&lt;?xml&nbsp;version="1.0"&nbsp;encoding="windows-1251"&nbsp;?&gt;
+<br>
+&lt;t&nbsp;attr="привет"&nbsp;n="123"/&gt;</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>#результат=124
+<br>
+^d.selectNumber[number(/t/@n)+1]</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+#результат=4
+<br>
+^d.selectNumber[2*2]</b></code></span><code><b>&lt;br&nbsp;/&gt;</b></code><span>
+<br>
+</span></span>

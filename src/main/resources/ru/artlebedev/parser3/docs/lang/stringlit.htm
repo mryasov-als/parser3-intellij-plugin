@@ -1,0 +1,32 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Строковые литералы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>В коде Parser могут использоваться любые буквы, включая русские. Следующие символы являются служебными:
+<br>
+
+<br>
+<code><b>^&nbsp;&nbsp;&nbsp;$&nbsp;&nbsp;&nbsp;;&nbsp;&nbsp;&nbsp;@&nbsp;&nbsp;&nbsp;(&nbsp;&nbsp;&nbsp;)&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;"&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;
+<br>
+</b></code><span>
+<br>
+Чтобы отменить специальное действие этих символов, их необходимо предварять символом </span><code><b>^</b></code><span>. Например, для&nbsp;получения в&nbsp;тексте символа </span><code><b>$</b></code><span> нужно записать </span><code><b>^$</b></code><span>.
+<br>
+
+<br>
+Кроме того, допустимо использовать код символа:
+<br>
+</span><code><b>^#20</b></code><span>&nbsp;- пробел;
+<br>
+</span><code><b>^#XX</b></code><span>&nbsp;- XX hex-код символа.
+<br>
+</span></span>

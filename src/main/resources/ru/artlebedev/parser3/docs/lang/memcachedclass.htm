@@ -1,0 +1,120 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">memcached (класс)</b><b>&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.4.2]<br></i></span>&nbsp;<link-to-docs /></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Класс предназначается для&nbsp;работы с&nbsp;серверами&nbsp;<code><a href="http://memcached.org/" target="_blank">memcached</a></code><span> и&nbsp;использует библиотеку&nbsp;</span><code><a href="http://libmemcached.org/" target="_blank">libmemcached</a></code><span>.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b>Небольшой класс, реализующий функциональность, аналогичную функциональности оператора </span><code><b><a href="opcache.htm">cache</a></b></code><span>, но&nbsp;хранящий скешированные результаты на&nbsp;сервере&nbsp;</span><code>memcached</code><span>:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@main[]
+<br>
+$m[^mcache::open[localhost]]
+<br>
+^m.cache[key2;10]{dt:&nbsp;$d[^date::now[]]&nbsp;^d.sql-string[]&nbsp;^sleep(3)}
+<br>
+
+<br>
+
+<br>
+@CLASS
+<br>
+mcache
+<br>
+
+<br>
+
+<br>
+@auto[]
+<br>
+$timeout(4)&nbsp;^rem{</b></code></span><code><b>&nbsp;timeout,&nbsp;seconds&nbsp;</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+$retry_on_timeout(false)&nbsp;^rem{</b></code></span><code><b>&nbsp;retry&nbsp;cache&nbsp;lock&nbsp;attempts&nbsp;</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+
+<br>
+
+<br>
+@open[connect-options]
+<br>
+$m[^memcached::open[$connect-options]]
+<br>
+
+<br>
+
+<br>
+@cache[key;expires;code][lock;i]
+<br>
+$result[$m.$key]
+<br>
+^if(!def&nbsp;$result){
+<br>
+&nbsp;&nbsp;&nbsp;^rem{</b></code></span><code><b>&nbsp;not&nbsp;cached&nbsp;yet&nbsp;</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+&nbsp;&nbsp;&nbsp;$lock[${key}-lock]
+<br>
+&nbsp;&nbsp;&nbsp;^while(!^m.add[$lock;&nbsp;$.value[$timeout]&nbsp;$.expires($timeout)]){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^rem{</b></code></span><code><b>&nbsp;another&nbsp;process&nbsp;got&nbsp;the&nbsp;lock,&nbsp;waiting&nbsp;...&nbsp;</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^for[i](1;$timeout*5){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^sleep(0.2)
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$result[$m.$key]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^if(def&nbsp;$result){^break[]}
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^if(def&nbsp;$result){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^break[]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^if(!$retry_on_timeout){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^throw[$self.CLASS_NAME;Timeout&nbsp;while&nbsp;getting&nbsp;lock&nbsp;for&nbsp;key&nbsp;'$key']
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;^if(!def&nbsp;$result){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^rem{</b></code></span><code><b>&nbsp;we&nbsp;got&nbsp;the&nbsp;lock,&nbsp;processing&nbsp;the&nbsp;code&nbsp;</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^try{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$result[$code]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$m.[$key][&nbsp;$.value[$result]&nbsp;$.expires($expires)&nbsp;]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}{}{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^m.delete[$lock]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+}
+<br>
+</b></code></span></span>

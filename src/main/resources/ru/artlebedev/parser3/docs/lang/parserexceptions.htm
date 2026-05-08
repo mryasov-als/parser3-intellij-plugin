@@ -1,0 +1,307 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Системные ошибки</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span><table border="1" cellpadding="1"><tr><td align="left" valign="top" width="139">
+<span><b>Тип
+<br>
+</b></span></td><td align="left" valign="top" width="288">
+<span><b>Пример возникновения</b>
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span><b>Описание</b>
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>parser.compile<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^test[}
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Ошибка компиляции кода: непарная скобка и т.&nbsp;п.<span>
+&nbsp;<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>parser.runtime<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="opif.htm">if</a>(0).
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Методу передано неправильное количество параметров, параметры неверных типов и&nbsp;т.&nbsp;п. <span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>parser.interrupted<code>
+<br>
+</code></span></td><td align="left" valign="top" width="288">
+<code>
+<br>
+</code></td><td align="left" valign="top" width="194">
+<span>Загрузка страницы прервалась (пользователь остановил загрузку страницы, или истекло время ожидания).<code>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>number.zerodivision<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="opeval.htm">eval</a>(1/0),&nbsp;^eval(1\0)&nbsp;<span>или</span><span>&nbsp;^eval(1%0)
+<br>
+</span></span></td><td align="left" valign="top" width="194">
+<span>Деление или остаток от деления на&nbsp;ноль.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>number.format<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^eval(abc*5)
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Преобразование нечисловых данных в&nbsp;числа.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>file.missing<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="filedelete.htm">file:delete</a>[skdfjs.delme]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Файл отсутствует.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>file.access<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="tableload.htm">table::load</a>[.]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Нет доступа к файлу.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>file.read<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Ошибка чтения файла.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>file.execute<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Ошибка выполнения внешней программы, например отсутствующий CGI-заголовок при выполнении <span>^file::cgi[...]</span><code><b>
+<br>
+</b></code></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>date.range<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="datecreateabs.htm">date::create</a>(100000;1;1)
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Дата выходит за&nbsp;границы <a href="dateclass.htm">диапазона</a><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>pcre.execute<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^строка.<a href="stringmatch.htm">match</a>[((\w)]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Ошибка компиляции или выполнения PCRE-шаблона.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>image.format<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="imagemeasure.htm">image::measure</a>[index.html]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Файл изображения имеет неправильный формат (возможно, расширение имени не&nbsp;соответствует содержимому или файл пуст).<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>sql.connect<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="opconnect.htm">connect</a>[mysql://baduser:pass@host/db]{}
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Сервер баз данных не найден или временно недоступен.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>sql.execute<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="voidsql.htm">void:sql</a>{bad&nbsp;select}
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Ошибка исполнения SQL-запроса.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>xml<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="xdoccreatexml.htm">xdoc::create</a>{&lt;forgot?&gt;}
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Ошибочный XML-код или операция.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>smtp.connect<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>SMTP-сервер не найден или временно недоступен.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>smtp.execute<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Ошибка отправки письма по&nbsp;SMTP-протоколу.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>email.format<code>&nbsp;</code><span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Ошибка в&nbsp;адресе эл.&nbsp;почты: адрес пустой или содержит неправильные символы.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>email.send<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Ошибка запуска почтовой программы.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>http.host<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="fileload.htm">file::load</a>[http://notfound/there]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Сервер не&nbsp;найден.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>http.connect<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^file::load[http://not_accepting/there]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Сервер найден, но не&nbsp;принимает соединение.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>http.response<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^file::load[http://ok/there]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Сервер найден, соединение принял, но выдал некорректный ответ (нет статуса, заголовка)<span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>http.status<code>
+<br>
+</code></span></td><td align="left" valign="top" width="288">
+<span>^file::load[http://ok/there]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Сервер выдал ответ со&nbsp;статусом, не&nbsp;равным&nbsp;200 (неуспешное выполнение запроса).
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>http.timeout<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Загрузка документа с&nbsp;HTTP-сервера не&nbsp;завершилась в&nbsp;отведенное для нее время.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>curl.host<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="curlload.htm">curl:load</a>[$.url[http://notfound/there]]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Сервер не найден.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>curl.connect<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="curlload.htm">curl:load</a>[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.url[http://not_accepting/there]
+<br>
+]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Сервер найден, но не&nbsp;принимает соединение.<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>curl.status<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="curlload.htm">curl:load</a>[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.url[http://ok/there]
+<br>
+]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Сервер выдал ответ со&nbsp;статусом, не&nbsp;равным&nbsp;200 (неуспешное выполнение запроса).<span>
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="139">
+<span>curl.ssl<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>^<a href="curlload.htm">curl:load</a>[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.url[https://not_accepting/there]
+<br>
+]
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Сервер найден, но не&nbsp;принимает соединение по&nbsp;причине ошибок с&nbsp;сертификатом.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>curl.timeout<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Загрузка документа с&nbsp;сервера не&nbsp;завершилась в&nbsp;отведенное для нее время.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="139">
+<span>curl.fail<span>
+<br>
+</span></span></td><td align="left" valign="top" width="288">
+<span>
+<br>
+</span></td><td align="left" valign="top" width="194">
+<span>Другая ошибка при&nbsp;общении с&nbsp;сервером через библиотеку <span><b>libcurl</b></span><span>.
+<br>
+</span></span></td></tr></table>
+<br>
+</span>

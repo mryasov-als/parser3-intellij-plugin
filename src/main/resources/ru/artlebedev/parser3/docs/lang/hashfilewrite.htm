@@ -1,0 +1,40 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Запись</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$hashfile.ключ[строка]
+<br>
+$hashfile.ключ[
+<br>
+&nbsp;&nbsp;&nbsp;$.value[строка]
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;...необязательные&nbsp;модификаторы...</b><b>
+<br>
+]
+<br>
+</b><span>
+<br>
+Сохраняет на&nbsp;диск ассоциацию между </code><code><b>ключом</b></code><span> и&nbsp;</span><code><b>строкой</b></code><span>.
+<br>
+
+<br>
+Необязательные модификаторы:
+<br>
+</span><code><b>$.expires(число&nbsp;дней)</b></code><span>&nbsp;- задает число дней (может быть дробным, 1.5&nbsp;= полтора&nbsp;дня), на&nbsp;которое сохраняется пара «</span><code><b>ключ</b></code><span>/</span><code><b>строка</b></code><span>», 0 дней&nbsp;= навсегда;</span><span>
+<br>
+</span><code><b>$.expires[</b><b><a href="dateclass.htm">$date</a></b><b>]</b></code><span>&nbsp;- задает дату и&nbsp;время, до&nbsp;которых будет храниться ассоциация, здесь </span><code><b>$date</b></code><span>&nbsp;- переменная типа&nbsp;</span><code><b><a href="dateclass.htm">date</a></b></code><span>.
+<br>
+
+<br>
+<i>Замечание: существует ограничение на&nbsp;длину строк ключа и&nbsp;значения, в&nbsp;сумме они не&nbsp;должны превышать&nbsp;8000&nbsp;байт.
+<br>
+</i></span></span>

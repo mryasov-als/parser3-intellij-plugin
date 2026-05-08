@@ -1,0 +1,108 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">uuid. Универсальный уникальный идентификатор версии 4</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^math:uuid[]
+<br>
+^math:uuid[опции]&nbsp;</b><span><b><i>[3.4.6]</i></b></code><code><b>
+<br>
+</b></code><span>
+<br>
+Метод выдает случайную строку вида:
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;22C0983C-E26E-4169-BD07-77ECE9405BA5
+<br>
+</b></code><span><i>
+<br>
+</i><i>UUID (также известен как GUID) </i>удобно использовать, когда трудно обеспечить или вообще нецелесообразно использовать сквозную нумерацию объектов. Например, при распределенных вычислениях. При работе с базами данных эффективнее использовать <a href="mathuuid7.htm">UUID версии 7</a>.
+<br>
+<i>
+<br>
+</i>Можно задать <a href="hash.htm">хеш</a> опций:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.lower(false|true)</b></code><span> - выдавать результат в&nbsp;нижнем регистре, по&nbsp;умолчанию&nbsp;- в&nbsp;верхнем;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.solid(false|true)</b></code><span> - исключать из&nbsp;результата символы '</span><code><b>-</b></code><span>', по&nbsp;умолчанию&nbsp;- не&nbsp;исключать.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span><i>
+<br>
+</i>
+<br>
+<b>Пример
+<br>
+</b>В разных филиалах компании собираются заказы, которые периодически отправляются в&nbsp;центральный офис. Для обеспечения уникальности идентификатора заказа используется </span><code><b>UUID</b></code><span>.
+<br>
+</span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>#&nbsp;в&nbsp;разных&nbsp;филиалах&nbsp;происходит&nbsp;наполнение&nbsp;таблицы&nbsp;orders&nbsp;и&nbsp;order_details
+<br>
+
+<br>
+#&nbsp;создаем&nbsp;уникальный&nbsp;идентификатор
+<br>
+$order_uuid[^math:uuid[]]</b></code></span><code><b>
+<br>
+
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>#&nbsp;добавляем&nbsp;запись&nbsp;о&nbsp;заказе
+<br>
+^void:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="voidsql.htm">sql</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;insert&nbsp;into&nbsp;orders
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(order_uuid,&nbsp;date_ordered,&nbsp;total)
+<br>
+&nbsp;&nbsp;&nbsp;values
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('</b><span style="color:#7F97E1" class="blue"><b>$order_uuid</b></code></span><code><b>',&nbsp;'</b><span style="color:#7F97E1" class="blue"><b>$date_ordered</b></code></span><code><b>',&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$total</b></code></span><code><b>)
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>#цикл&nbsp;по&nbsp;заказанным&nbsp;продуктам&nbsp;вокруг&nbsp;добавления&nbsp;записи&nbsp;о&nbsp;продукте
+<br>
+^void:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="voidsql.htm">sql</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{</b></code></span><code><b>
+<br>
+&nbsp;&nbsp;&nbsp;insert&nbsp;into&nbsp;order_details
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(order_uuid,&nbsp;item_id,&nbsp;price)
+<br>
+&nbsp;&nbsp;&nbsp;values
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;('</b><span style="color:#7F97E1" class="blue"><b>$order_uuid</b></code></span><code><b>',&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$item_id</b></code></span><code><b>,&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$price</b></code></span><code><b>)
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>
+<br>
+
+<br>
+
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>#&nbsp;с&nbsp;какой-то&nbsp;периодичностью&nbsp;выбирается&nbsp;часть&nbsp;таблицы&nbsp;orders&nbsp;(и&nbsp;order_details)
+<br>
+#&nbsp;отправляется&nbsp;(^mail:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mailsend.htm">send</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[…])&nbsp;в&nbsp;центральный&nbsp;офис,&nbsp;
+<br>
+#&nbsp;где&nbsp;части&nbsp;таблиц&nbsp;попадают&nbsp;в&nbsp;общие&nbsp;таблицы&nbsp;orders&nbsp;и&nbsp;order_details
+<br>
+#&nbsp;БЕЗ&nbsp;проблем&nbsp;с&nbsp;повторяющимся&nbsp;order_id</b></code></span><code><b>
+<br>
+
+<br>
+</b><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></code></span><span><i></i><font face="Symbol" size="2" color="#000000">&#183;</font><i></i></span></td><td><span><i>Примечание: метод создает UUID версии 4, основыванный на&nbsp;случайных числах, а&nbsp;не на&nbsp;времени. 
+&nbsp;<br>
+</i></span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span><i></i></span></td><td></td></tr></table><span><i>В UUID не&nbsp;все биты случайны, и&nbsp;это так и&nbsp;должно быть.
+<br>
+xxxxxxxx-xxxx-4xxx-{8,9,A,B}xxx-xxxxxxxxxxxx
+<br>
+
+<br>
+Подробная информация  о&nbsp;UUID версии 4 доступна по&nbsp;ссылке: </i><i><a href="https://www.rfc-editor.org/rfc/rfc9562.html#name-uuid-version-4" target="_blank">https://www.rfc-editor.org/rfc/rfc9562.html</a></i><i>
+<br>
+</i></span></span>

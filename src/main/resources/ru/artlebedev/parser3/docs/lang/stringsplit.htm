@@ -1,0 +1,88 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">split. Разбиение строки</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^строка.split[разделитель]
+<br>
+^строка.split[разделитель;опции&nbsp;разбиения]
+<br>
+^строка.split[разделитель;опции&nbsp;разбиения</b><b>;</b><b>имя&nbsp;столбца]
+<br>
+
+<br>
+</b><span>Метод разбивает </code><code><b>строку</b></code><span> на&nbsp;подстроки относительно подстроки-</span><code><b>разделителя</b></code><span> и&nbsp;формирует объект класса&nbsp;</span><code><b><u><a href="tableclass.htm">table</a></u></b></code><span>,  содержащий: 
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>либо таблицу со&nbsp;столбцом, в&nbsp;который помещаются части исходной строки;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>либо безымянную таблицу с&nbsp;частями исходной строки в&nbsp;колонках единственной записи.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Предусмотрены следующие</span><span><b> </b></span><code><b>опции&nbsp;разбиения:</b></code><span>
+<br>
+</span><code><b>l</b></code><span>&nbsp;- разбить слева направо (по&nbsp;умолчанию);
+<br>
+</span><code><b>r</b></code><span>&nbsp;- разбить справа налево</span><code><b>;</b></code><span>
+<br>
+</span><code><b>h</b></code><span>&nbsp;- сформировать безымянную таблицу, где части исходной строки помещаются горизонтально;
+<br>
+</span><code><b>v</b></code><span>&nbsp;- сформировать таблицу со&nbsp;столбцом, где части исходной строки помещаются вертикально (по&nbsp;умолчанию);
+<br>
+</span><code><b>a</b></code><span>&nbsp;- сформировать массив из частей исходной строки.</span><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><span><b><i>[3.5.0]</i></b>
+<br>
+
+<br>
+
+<br>
+Имя столбца при создании вертикальной таблицы -  </span><code><b>piece</b></code><span> или переданное </span><code><b>имя&nbsp;столбца</b></code><span>.
+<br>
+
+<br>
+
+<br>
+<b>Пример вертикального разбиения
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>О,&nbsp;сколько&nbsp;нам&nbsp;открытий&nbsp;чудных!…</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$parts[^str.split[</b></code></span><code><b>нам</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+^parts.save[parts.txt]
+<br>
+</b></code></span><span>
+<br>
+Создает на&nbsp;диске файл </span><code>parts.txt</code><span>, содержащий следующее:
+<br>
+</span><code><i>p</i><i>iece</i></code><span><b>
+<br>
+</b></span><code><b>О,&nbsp;сколько&nbsp;
+<br>
+открытий&nbsp;чудных!…
+<br>
+
+<br>
+
+<br>
+</b></code><span><b>Пример горизонтального разбиения
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>/a/b/c/d</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$parts[^str.split[</b></code></span><code><b>/</b><span style="color:#7F97E1" class="blue"><b>;lh</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+$parts.0</b></code></span><code><b>,&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$parts.1,&nbsp;$parts.2
+<br>
+</b></code></span><span>
+<br>
+Выведет:
+<br>
+</span><code><b>,&nbsp;a,&nbsp;b</b></code><span>
+<br>
+</span></span>

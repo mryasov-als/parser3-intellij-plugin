@@ -1,0 +1,200 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Конфигурационный метод</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Если в&nbsp;файле определен метод <code><b>conf,</b></code><span>он выполняется первым, до&nbsp;</span><code><b><a href="mainclass.htm">auto</a></b></code><span>, и&nbsp;задает важные системные параметры: 
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>файлы, описывающие кодировки символов; 
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>ограничение на&nbsp;размер HTTP-POST-запроса;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>ограничение на&nbsp;размер загружаемых файлов&nbsp;&nbsp;&nbsp;<b><i>[3.4.</i></b><b><i>5</i></b><b><i>]</i></b>;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>ограничения на&nbsp;число итераций в&nbsp;циклах и&nbsp;глубину рекурсии&nbsp;&nbsp;&nbsp;<b><i>[3.4.</i></b><b><i>5</i></b><b><i>]</i></b>;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>сервер или программу отправки почты; 
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>SQL-драйверы и&nbsp;их параметры;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>таблицу соответствия расширения имени файла и&nbsp;его MIME-типа.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Рекомендуется поместить этот метод в&nbsp;<a href="parserconfig.htm">конфигурационный файл</a>.
+<br>
+
+<br>
+Определение метода:
+<br>
+</span><code><b>@conf[filespec]
+<br>
+filespec</b></code><span> - полное имя файла, содержащего метод.</span><code><b>
+<br>
+</b></code><span>
+<br>
+Всегда доступна и&nbsp;не нуждается в&nbsp;загрузке файла кодировка&nbsp;</span><code>UTF-8</code><span>, являющаяся для&nbsp;Parser кодировкой по&nbsp;умолчанию. Чтобы сделать доступными для&nbsp;использования Parser другие кодировки, необходимо указать файлы, их&nbsp;описывающие. Делается это так:
+<br>
+</span><code><b>$CHARSETS[
+<br>
+&nbsp;&nbsp;&nbsp;$.windows-1251[/полный/путь/к/windows-1251.cfg]
+<br>
+&nbsp;&nbsp;&nbsp;…
+<br>
+]
+<br>
+</b></code><span>См. «<a href="installcharset.htm">Описание формата файла, описывающего кодировку</a>».
+<br>
+
+<br>
+</span><code><b>$LIMITS[
+<br>
+#Максимальный&nbsp;размер&nbsp;POST-данных,&nbsp;по&nbsp;умолчанию&nbsp;-&nbsp;10&nbsp;МБ:
+<br>
+&nbsp;&nbsp;&nbsp;$.post_max_size(10*0x400*0x400)
+<br>
+#Максимальный&nbsp;размер&nbsp;загружаемых&nbsp;в&nbsp;память&nbsp;файлов,&nbsp;по&nbsp;умолчанию&nbsp;-&nbsp;512&nbsp;МБ:
+<br>
+&nbsp;&nbsp;&nbsp;$.</b><b>max_file_size</b><b>(512*0x400*0x400)
+<br>
+#Максимальное&nbsp;число&nbsp;элементов&nbsp;в&nbsp;массивах,&nbsp;по&nbsp;умолчанию</b><b>&nbsp;-&nbsp;</b><b>1&nbsp;00</b><b>0</b><b>&nbsp;</b><b>000</b><b>:
+<br>
+&nbsp;&nbsp;&nbsp;$.max_array_size(1000000)
+<br>
+#Максимальное&nbsp;число&nbsp;итераций&nbsp;в&nbsp;циклах,&nbsp;по&nbsp;умолчанию</b><b>&nbsp;-&nbsp;</b><b>10</b><b>0</b><b>&nbsp;</b><b>000</b><b>:
+<br>
+&nbsp;&nbsp;&nbsp;$.max_loop(100000)
+<br>
+#Максимальная&nbsp;глубина&nbsp;рекурсии,&nbsp;по&nbsp;умолчанию</b><b>&nbsp;-&nbsp;1000</b><b>:
+<br>
+&nbsp;&nbsp;&nbsp;$.max_recursion(1000)
+<br>
+#Время&nbsp;ожидания&nbsp;доступности&nbsp;файла&nbsp;для&nbsp;блокировки&nbsp;чтения&nbsp;или&nbsp;записи,&nbsp;по&nbsp;умолчанию</b><b>&nbsp;-&nbsp;</b><b>9,5&nbsp;сек.:
+<br>
+&nbsp;&nbsp;&nbsp;</b><b>$.</b><b>lock_wait_timeout</b><b>(9.5)</b><b>
+<br>
+]
+<br>
+</b></code><span>
+<br>
+Установка </span><code><b>max_file_size</b></code><span>, </span><code><b>max_array_size</b></code><span>, </span><code><b>max_loop</b></code><span>,</span><code><b>max_recursion</b></code><span> в&nbsp;нулевое значение означает «без ограничений».
+<br>
+
+<br>
+<b>
+<br>
+Параметр отправки писем (см.&nbsp;</b></span><code><b><a href="mailsend.htm">^mail:send[…]</a></b></code><span><b>)
+<br>
+</b>
+<br>
+Под Windows и&nbsp;UNIX адрес SMTP-сервера
+<br>
+</span><code><b>$MAIL[
+<br>
+&nbsp;&nbsp;&nbsp;$.SMTP[mail.office.design.ru]
+<br>
+]
+<br>
+</b></code><span>
+<br>
+Под UNIX в&nbsp;safe-mode-версиях настроить программу отправки можно только при <a href="compilesrc.htm">сборке Parser из исходных кодов</a>, в&nbsp;бинарных версиях, распространяемых с&nbsp;сайта </span><code><a href="http://parser.ru/" target="_blank">parser.ru</a></code><span>, задана команда
+<br>
+</span><code>&nbsp;&nbsp;&nbsp;/usr/sbin/sendmail&nbsp;-i&nbsp;-t&nbsp;-f&nbsp;postmaster
+<br>
+
+<br>
+</code><span>Только в&nbsp;unsafe-mode-версиях можно задать программу отправки почты самостоятельно:
+<br>
+</span><code><b>$MAIL[
+<br>
+&nbsp;&nbsp;&nbsp;$.sendmail[/custom/mail/sending/program&nbsp;params]
+<br>
+]
+<br>
+</b></code><span>
+<br>
+В&nbsp;зависимости от&nbsp;системы по&nbsp;умолчанию используется команда
+<br>
+</span><code>&nbsp;&nbsp;&nbsp;/usr/sbin/sendmail&nbsp;-t&nbsp;-i&nbsp;-f&nbsp;postmaster
+<br>
+</code><span>или</span><code>
+<br>
+&nbsp;&nbsp;&nbsp;/usr/lib/sendmail&nbsp;-t&nbsp;-i&nbsp;-f&nbsp;postmaster</code><span>
+<br>
+
+<br>
+При отправке письма вместо </span><code>postmaster</code><span> будет подставлен адрес отправителя из&nbsp;письма из&nbsp;обязательного поля заголовка </span><code>from</code><span>.
+<br>
+
+<br>
+Также можно задать таблицу SQL-драйверов:
+<br>
+</span><code><b>$SQL[
+<br>
+$.drivers[^</b><b><a href="tablecreate.htm">table::create</a></b><b>{protocol&nbsp;&nbsp;&nbsp;driver&nbsp;&nbsp;&nbsp;client
+<br>
+mysql&nbsp;&nbsp;&nbsp;/full/disk/path/parser3mysql.dll&nbsp;&nbsp;&nbsp;libmariadb.so,libmysqlclient.so
+<br>
+odbc&nbsp;&nbsp;&nbsp;/full/disk/path/parser3odbc.dll
+<br>
+pgsql&nbsp;&nbsp;&nbsp;/full/disk/path/parser3pgsql.dll&nbsp;&nbsp;&nbsp;libpq.so
+<br>
+sqlite&nbsp;&nbsp;&nbsp;/full/disk/path/parser3sqlite.dll&nbsp;&nbsp;&nbsp;libsqlite3.so
+<br>
+oracle&nbsp;&nbsp;&nbsp;/path/to/parser3oracle.dll&nbsp;&nbsp;&nbsp;C:\Oracle\Ora81\BIN\oci.dll?PATH+=^;C:\Oracle\Ora81\bin
+<br>
+}]
+<br>
+]
+<br>
+
+<br>
+</b></code><span>В колонке </span><code><b>client</b></code><span> таблицы </span><code><b>drivers</b></code><span> можно указывать сразу несколько клиентских библиотек, перечисляя их через запятую (будет использоваться первая доступная из перечисленных) <b><i>[3.5.0]</i></b>. Кроме того, в драйвере Oracle допустимы параметры клиентской библиотеки, отделяемые знаком </span><code><b>?</b></code><span> от&nbsp;имени файла библиотеки, в&nbsp;таком виде:
+<br>
+</span><code><b>имя1=значение1&amp;имя2=значение2&amp;...</b></code><span>,
+<br>
+а также </span><code><b>имя+=значение</b></code><span>.
+<br>
+
+<br>
+Эти переменные будут занесены&nbsp;(</span><code><b>=</b></code><span>) или добавлены к&nbsp;имеющемуся значению&nbsp;(</span><code><b>+=</b></code><span>) в&nbsp;программное окружение&nbsp;(environment) перед инициализацией библиотеки. В частности, удобно добавить путь к&nbsp;</span><code>O</code><span>racle-библиотекам здесь, если этого не&nbsp;было сделано в&nbsp;системном программном окружении&nbsp;(system environment).
+<br>
+
+<br>
+Таблица типов файлов:
+<br>
+</span><code><b>#файл,&nbsp;создаваемый&nbsp;</b><b><a href="fileload.htm">^file::load[…]</a></b><b>,
+<br>
+#при&nbsp;выдаче&nbsp;в&nbsp;</b><b><a href="responsebody.htm">$response:body</a></b><b>&nbsp;задаст&nbsp;этот&nbsp;</b><b><a href="responsefields.htm">$response:content-type</a></b><b>
+<br>
+$MIME-TYPES[^</b><b><a href="tablecreate.htm">table::create</a></b><b>{ext&nbsp;mime-type
+<br>
+7z&nbsp;&nbsp;&nbsp;application/x-7z-compressed
+<br>
+...
+<br>
+zip&nbsp;&nbsp;&nbsp;application/zip}]
+<br>
+
+<br>
+</b></code><span>Расширения имен файлов в&nbsp;таблице должны быть написаны в&nbsp;нижнем регистре. Поиск по&nbsp;таблице нечувствителен к&nbsp;регистру, т.&nbsp;е. файл </span><code>FACE.GIF</code><span> получит MIME-тип </span><code>image/gif</code><span>.
+<br>
+
+<br>
+При задании </span><code><b>$STRICT-VARS(true)</b></code><span> будет выдаваться исключение в&nbsp;случае попытки обращения к&nbsp;неинициализированным пременным.<b><i>&nbsp;&nbsp;&nbsp;[3.4.2]</i></b><b><i>
+<br>
+</i></b>
+<br>
+При задании </span><code><b>$LOCALS(true)</b></code><span> все переменные всех методов всех классов будут считаться <a href="definemethod.htm">локальными</a>.<b><i>&nbsp;&nbsp;&nbsp;[3.4.</i></b><b><i>6</i></b><b><i>]</i></b><b><i>
+<br>
+</i></b>
+<br>
+</span></span>

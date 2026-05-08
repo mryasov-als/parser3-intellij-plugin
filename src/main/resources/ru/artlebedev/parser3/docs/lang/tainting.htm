@@ -1,0 +1,40 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Внешние и&nbsp;внутренние данные</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Создавая код на&nbsp;Parser, мы имеем дело с&nbsp;двумя видами данных. Один из&nbsp;них  - это все то, что написано самим разработчиком. Второй&nbsp;- данные, получаемые кодом извне, а&nbsp;именно: из&nbsp;форм, переменных окружения, файлов, от&nbsp;SQL-серверов, из&nbsp;cookies и&nbsp;т.&nbsp;п. Все то, что создано разработчиком, не&nbsp;нуждается в&nbsp;проверке на&nbsp;корректность. Вместе с&nbsp;тем, когда данные поступают, например, от&nbsp;пользователей через поля форм, выводить их <code><b>as-is</b></code><span> (как есть) может быть потенциально опасно. Возникает необходимость преобразования таких данных по&nbsp;определенным правилам. Большую часть работы по&nbsp;подобным преобразованиям Parser выполняет автоматически, не&nbsp;требуя вмешательства со&nbsp;стороны. Например, если присутствует вывод данных, введенных через поле формы, то&nbsp;в&nbsp;них символы </span><code><b>&lt;&nbsp;&gt;</b></code><span> автоматически будут заменены&nbsp;</span><code><b>&amp;lt;</b></code><span> и&nbsp;</span><code><b>&amp;gt;</b></code><span>. Иногда, наоборот, бывает необходимо позволить вывод таких данных именно в&nbsp;том виде, в&nbsp;котором они поступили. 
+<br>
+
+<br>
+Для Parser «свой» код, т.&nbsp;е. тот, который набрал разработчиком, считается </span><code><b>clean</b></code><span> («чистым»). Все&nbsp;данные, которые поступают извне, считаются </span><code><b>tainted</b></code><span> («грязными» или «окрашенными»).
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>код&nbsp;Parser</b></code></span><span> - этот код создан разработчиком, поэтому никаких вопросов не&nbsp;вызывает;
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="formclass.htm">form</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="formfield.htm">field</a></b></code></span><span> - здесь должны находиться данные, введенные пользователем через форму;
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$my_table[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tableclass.htm">table</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablesql.htm">sql</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{запрос}]</b></code></span><span> - здесь данные поступают из&nbsp;БД.
+<br>
+
+<br>
+В случае с&nbsp;</span><code><b>$form:field</b></code><span> поступившие </span><code><b>tainted</b></code><span>-данные будут автоматически преобразованы, и&nbsp;некоторые символы заменятся в&nbsp;соответствии с&nbsp;внутренней таблицей замен Parser. Автоматическое преобразование данных произойдет в&nbsp;тот момент, когда эти данные будут выводиться. Так, в&nbsp;случае с&nbsp;помещением данных, поступивших из&nbsp;БД, в&nbsp;переменную </span><code><b>$my_table</b></code><span>, преобразование выполнится тогда, когда данные будут в&nbsp;каком-либо виде выданы во внешнюю среду (переданы браузеру, сохранены в&nbsp;файл или базу данных). 
+<br>
+
+<br>
+Вместе с&nbsp;тем бывают ситуации, когда необходимости в&nbsp;таком преобразовании нет либо данные нужно преобразовать по&nbsp;другим правилам, отличным от&nbsp;того, как это делает Parser по&nbsp;умолчанию. Например, нам нужно разрешить пользователю вводить HTML-теги через поле формы для&nbsp;дополнительного форматирования текста. Но, так как это чревато неприятностями (ввод Java-скрипта в&nbsp;гостевой книге может перенаправлять пользователей с&nbsp;нашего сайта на&nbsp;вражеский), Parser сам заменит «нежелательные» символы в&nbsp;соответствии со&nbsp;своими правилами. Решение&nbsp;- использование оператора </span><code><b><a href="optaint.htm">taint</a></b></code><span>.
+<br>
+</span></span>

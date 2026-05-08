@@ -1,0 +1,58 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">keys. Список ключей хеша</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^хеш._keys[]</b>&nbsp;&nbsp;&nbsp;<span>
+<br>
+</code><code><b>^хеш._keys[имя&nbsp;столбца]
+<br>
+</b><b>^хеш.keys[]</b><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.</i></b><b><i>4</i></b><b><i>.4]</i></b></span><span>
+<br>
+</span><code><b>^хеш.keys[имя&nbsp;столбца]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.</i></b><b><i>4</i></b><b><i>.4]</i></b></span><code><b>
+<br>
+</b></code><span>
+<br>
+Метод возвращает таблицу (объект класса </span><code><b><a href="tableclass.htm">table</a></b></code><span>), содержащую единственный столбец, где перечислены все ключи хеша (начиная с&nbsp;версии <b><i>3.4.0</i></b> порядок ключей в&nbsp;полученной таблице соответствует порядку добавления элементов в&nbsp;хеш, до&nbsp;этой версии - порядок не&nbsp;определен). Имя&nbsp;столбца - </span><code><b>key</b></code><span> или переданное </span><code><b>имя</b><b>&nbsp;</b><b>столбца</b></code><span>.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$man[
+<br>
+&nbsp;&nbsp;&nbsp;$.name[</b></code></span><code><b>Вася</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.age[</b></code></span><code><b>22</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.gender[</b></code></span><code><b>m</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+$tab_keys[^man.keys[]]
+<br>
+^tab_keys.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablesave.htm">save</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[keys.txt]
+<br>
+</b></code></span><span>
+<br>
+Будет создан файл </span><code>keys.txt</code><span> с&nbsp;такой таблицей:
+<br>
+</span><code><b><i>key</i></b><b>
+<br>
+name
+<br>
+age
+<br>
+gender
+<br>
+</b></code><span>
+<br>
+</span></span>

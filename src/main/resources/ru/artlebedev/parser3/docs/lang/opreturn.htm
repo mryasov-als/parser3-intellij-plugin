@@ -1,0 +1,64 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">return. Возврат из&nbsp;метода</b><b>&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.4.</i></b><b><i>5</i></b><b><i>]</i></span>&nbsp;<link-to-docs /><span>
+<br>
+</span><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^</b><b>return</b><b>[]
+<br>
+^</b><b>return</b><b>[результат]
+<br>
+</b><span>
+<br>
+При вызове осуществляет принудительное прерывание выполнения метода на&nbsp;Parser, в&nbsp;котором написан код вызова </code><code><b>^return[]</b></code><span>. Результатом работы метода будет то, что успело вывестись до&nbsp;вызова&nbsp;</span><code><b>^return[]</b></code><span>, или текущее значение переменной </span><code><b>$result</b></code><span>. Вызов&nbsp;</span><code><b>^</b><b>return</b><b>[результат</b><b>]</b></code><span> эквивалентен </span><code><b>$result[</b><b>результат</b><b>]</b></code><span> </span><code><b>^return</b><b>[]</b></code><span>. Чтобы вернуть пустую строку, нужно использовать&nbsp;</span><code><b>^return</b><b>{}</b></code><span>.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@main[]
+<br>
+$exit{&nbsp;</b></code></span><code><b>-return-</b><span style="color:#7F97E1" class="blue"><b>&nbsp;^return[]&nbsp;}
+<br>
+^check[</b></code></span><code><b>good</b><span style="color:#7F97E1" class="blue"><b>]{&nbsp;$exit&nbsp;}
+<br>
+^check[</b></code></span><code><b>normal</b><span style="color:#7F97E1" class="blue"><b>]{&nbsp;$exit&nbsp;}
+<br>
+^check[</b></code></span><code><b>bad</b><span style="color:#7F97E1" class="blue"><b>]{&nbsp;$exit&nbsp;}
+<br>
+</b></code></span><code><b>-end-</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+
+<br>
+@check[value;exit]
+<br>
+</b></code></span><code><b>Value:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$value&nbsp;^if($value&nbsp;eq&nbsp;'bad'){&nbsp;$exit&nbsp;}&nbsp;</b></code></span><code><b>-passed-</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>Выведет:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>Value:&nbsp;good&nbsp;&nbsp;</b><b>&nbsp;</b><b>-passed-
+<br>
+Value:&nbsp;normal&nbsp;-passed-
+<br>
+Value:&nbsp;bad&nbsp;&nbsp;&nbsp;&nbsp;-return-&nbsp;
+<br>
+</b></code><span>
+<br>
+<i>Замечание: код вызова </i></span><code><b><i>^return[]</i></b></code><span><i> написан в&nbsp;методе </i></span><code><b><i>@main[]</i></b></code><span><i>, поэтому возврат осуществляется из&nbsp;него</i><i>. </i><i>Для этого выполнение метода </i></span><code><b><i>@check[]</i></b></code><span><i> </i><i>тоже прерывается, поэтому в&nbsp;выводе отсутствует&nbsp;</i></span><code><b><i>passed</i></b></code><span><i> для&nbsp; </i><i>значения </i></span><code><b><i>bad</i></b></code><span><i>.
+<br>
+</i></span></span>

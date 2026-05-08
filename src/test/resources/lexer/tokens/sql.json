@@ -1,0 +1,777 @@
+{"start":0,"end":5,"type":"METHOD","line":1,"text":"^void"}
+{"start":5,"end":6,"type":"COLON","line":1,"text":":"}
+{"start":6,"end":9,"type":"METHOD","line":1,"text":"sql"}
+{"start":9,"end":10,"type":"LBRACE","line":1,"text":"{"}
+{"start":10,"end":11,"type":"WHITE_SPACE","line":1,"text":"\n"}
+{"start":11,"end":23,"type":"SQL_BLOCK","line":2,"text":"\tINSERT INTO"}
+{"start":23,"end":24,"type":"WHITE_SPACE","line":2,"text":"\n"}
+{"start":24,"end":30,"type":"SQL_BLOCK","line":3,"text":"\t\ttest"}
+{"start":30,"end":31,"type":"WHITE_SPACE","line":3,"text":"\n"}
+{"start":31,"end":35,"type":"SQL_BLOCK","line":4,"text":"\tSET"}
+{"start":35,"end":36,"type":"WHITE_SPACE","line":4,"text":"\n"}
+{"start":36,"end":37,"type":"SQL_BLOCK","line":5,"text":"\t"}
+{"start":37,"end":40,"type":"KW_IF","line":5,"text":"^if"}
+{"start":40,"end":41,"type":"LPAREN","line":5,"text":"("}
+{"start":41,"end":42,"type":"DOLLAR_VARIABLE","line":5,"text":"$"}
+{"start":42,"end":43,"type":"VARIABLE","line":5,"text":"a"}
+{"start":43,"end":44,"type":"TEMPLATE_DATA","line":5,"text":" "}
+{"start":44,"end":46,"type":"WORD_OPERATOR","line":5,"text":"eq"}
+{"start":46,"end":47,"type":"TEMPLATE_DATA","line":5,"text":" "}
+{"start":47,"end":48,"type":"LSINGLE_QUOTE","line":5,"text":"'"}
+{"start":48,"end":49,"type":"STRING","line":5,"text":"b"}
+{"start":49,"end":50,"type":"RSINGLE_QUOTE","line":5,"text":"'"}
+{"start":50,"end":51,"type":"RPAREN","line":5,"text":")"}
+{"start":51,"end":52,"type":"LBRACE","line":5,"text":"{"}
+{"start":52,"end":53,"type":"WHITE_SPACE","line":5,"text":"\n"}
+{"start":53,"end":54,"type":"WHITE_SPACE","line":6,"text":"\t"}
+{"start":54,"end":67,"type":"SQL_BLOCK","line":6,"text":"\tfield = 'ok'"}
+{"start":67,"end":68,"type":"WHITE_SPACE","line":6,"text":"\n"}
+{"start":68,"end":69,"type":"WHITE_SPACE","line":7,"text":"\t"}
+{"start":69,"end":70,"type":"RBRACE","line":7,"text":"}"}
+{"start":70,"end":71,"type":"LPAREN","line":7,"text":"("}
+{"start":71,"end":72,"type":"DOLLAR_VARIABLE","line":7,"text":"$"}
+{"start":72,"end":73,"type":"VARIABLE","line":7,"text":"d"}
+{"start":73,"end":74,"type":"TEMPLATE_DATA","line":7,"text":" "}
+{"start":74,"end":76,"type":"WORD_OPERATOR","line":7,"text":"eq"}
+{"start":76,"end":77,"type":"TEMPLATE_DATA","line":7,"text":" "}
+{"start":77,"end":78,"type":"LSINGLE_QUOTE","line":7,"text":"'"}
+{"start":78,"end":80,"type":"STRING","line":7,"text":"x)"}
+{"start":80,"end":81,"type":"RSINGLE_QUOTE","line":7,"text":"'"}
+{"start":81,"end":82,"type":"RPAREN","line":7,"text":")"}
+{"start":82,"end":83,"type":"LBRACE","line":7,"text":"{"}
+{"start":83,"end":84,"type":"WHITE_SPACE","line":7,"text":"\n"}
+{"start":84,"end":85,"type":"WHITE_SPACE","line":8,"text":"\t"}
+{"start":85,"end":99,"type":"SQL_BLOCK","line":8,"text":"\tfield = 'aaa'"}
+{"start":99,"end":100,"type":"WHITE_SPACE","line":8,"text":"\n"}
+{"start":100,"end":101,"type":"WHITE_SPACE","line":9,"text":"\t"}
+{"start":101,"end":102,"type":"RBRACE","line":9,"text":"}"}
+{"start":102,"end":103,"type":"LPAREN","line":9,"text":"("}
+{"start":103,"end":104,"type":"DOLLAR_VARIABLE","line":9,"text":"$"}
+{"start":104,"end":105,"type":"VARIABLE","line":9,"text":"e"}
+{"start":105,"end":106,"type":"TEMPLATE_DATA","line":9,"text":" "}
+{"start":106,"end":108,"type":"WORD_OPERATOR","line":9,"text":"eq"}
+{"start":108,"end":109,"type":"TEMPLATE_DATA","line":9,"text":" "}
+{"start":109,"end":110,"type":"LDOUBLE_QUOTE","line":9,"text":"\""}
+{"start":110,"end":112,"type":"STRING","line":9,"text":"f)"}
+{"start":112,"end":113,"type":"RDOUBLE_QUOTE","line":9,"text":"\""}
+{"start":113,"end":114,"type":"RPAREN","line":9,"text":")"}
+{"start":114,"end":115,"type":"LBRACE","line":9,"text":"{"}
+{"start":115,"end":116,"type":"WHITE_SPACE","line":9,"text":"\n"}
+{"start":116,"end":117,"type":"WHITE_SPACE","line":10,"text":"\t"}
+{"start":117,"end":131,"type":"SQL_BLOCK","line":10,"text":"\tfield = 'bbb'"}
+{"start":131,"end":132,"type":"WHITE_SPACE","line":10,"text":"\n"}
+{"start":132,"end":133,"type":"WHITE_SPACE","line":11,"text":"\t"}
+{"start":133,"end":134,"type":"RBRACE","line":11,"text":"}"}
+{"start":134,"end":135,"type":"LPAREN","line":11,"text":"("}
+{"start":135,"end":136,"type":"DOLLAR_VARIABLE","line":11,"text":"$"}
+{"start":136,"end":137,"type":"VARIABLE","line":11,"text":"e"}
+{"start":137,"end":138,"type":"TEMPLATE_DATA","line":11,"text":" "}
+{"start":138,"end":140,"type":"WORD_OPERATOR","line":11,"text":"eq"}
+{"start":140,"end":146,"type":"TEMPLATE_DATA","line":11,"text":" ^\"f^\""}
+{"start":146,"end":147,"type":"RPAREN","line":11,"text":")"}
+{"start":147,"end":148,"type":"LBRACE","line":11,"text":"{"}
+{"start":148,"end":149,"type":"WHITE_SPACE","line":11,"text":"\n"}
+{"start":149,"end":150,"type":"WHITE_SPACE","line":12,"text":"\t"}
+{"start":150,"end":165,"type":"SQL_BLOCK","line":12,"text":"\t\tfield = 'bbb'"}
+{"start":165,"end":166,"type":"WHITE_SPACE","line":12,"text":"\n"}
+{"start":166,"end":167,"type":"WHITE_SPACE","line":13,"text":"\t"}
+{"start":167,"end":168,"type":"RBRACE","line":13,"text":"}"}
+{"start":168,"end":169,"type":"LPAREN","line":13,"text":"("}
+{"start":169,"end":170,"type":"DOLLAR_VARIABLE","line":13,"text":"$"}
+{"start":170,"end":171,"type":"VARIABLE","line":13,"text":"e"}
+{"start":171,"end":172,"type":"TEMPLATE_DATA","line":13,"text":" "}
+{"start":172,"end":174,"type":"WORD_OPERATOR","line":13,"text":"eq"}
+{"start":174,"end":180,"type":"TEMPLATE_DATA","line":13,"text":" ^'f^'"}
+{"start":180,"end":181,"type":"RPAREN","line":13,"text":")"}
+{"start":181,"end":182,"type":"LBRACE","line":13,"text":"{"}
+{"start":182,"end":183,"type":"WHITE_SPACE","line":13,"text":"\n"}
+{"start":183,"end":184,"type":"WHITE_SPACE","line":14,"text":"\t"}
+{"start":184,"end":198,"type":"SQL_BLOCK","line":14,"text":"\tfield = 'bbb'"}
+{"start":198,"end":199,"type":"WHITE_SPACE","line":14,"text":"\n"}
+{"start":199,"end":200,"type":"WHITE_SPACE","line":15,"text":"\t"}
+{"start":200,"end":201,"type":"RBRACE","line":15,"text":"}"}
+{"start":201,"end":202,"type":"LPAREN","line":15,"text":"("}
+{"start":202,"end":203,"type":"DOLLAR_VARIABLE","line":15,"text":"$"}
+{"start":203,"end":204,"type":"VARIABLE","line":15,"text":"e"}
+{"start":204,"end":205,"type":"TEMPLATE_DATA","line":15,"text":" "}
+{"start":205,"end":207,"type":"WORD_OPERATOR","line":15,"text":"eq"}
+{"start":207,"end":210,"type":"TEMPLATE_DATA","line":15,"text":" ^)"}
+{"start":210,"end":211,"type":"RPAREN","line":15,"text":")"}
+{"start":211,"end":212,"type":"LBRACE","line":15,"text":"{"}
+{"start":212,"end":213,"type":"WHITE_SPACE","line":15,"text":"\n"}
+{"start":213,"end":214,"type":"WHITE_SPACE","line":16,"text":"\t"}
+{"start":214,"end":228,"type":"SQL_BLOCK","line":16,"text":"\tfield = 'bbb'"}
+{"start":228,"end":229,"type":"WHITE_SPACE","line":16,"text":"\n"}
+{"start":229,"end":230,"type":"WHITE_SPACE","line":17,"text":"\t"}
+{"start":230,"end":231,"type":"RBRACE","line":17,"text":"}"}
+{"start":231,"end":232,"type":"LPAREN","line":17,"text":"("}
+{"start":232,"end":233,"type":"DOLLAR_VARIABLE","line":17,"text":"$"}
+{"start":233,"end":234,"type":"VARIABLE","line":17,"text":"f"}
+{"start":234,"end":235,"type":"TEMPLATE_DATA","line":17,"text":" "}
+{"start":235,"end":237,"type":"WORD_OPERATOR","line":17,"text":"eq"}
+{"start":237,"end":238,"type":"TEMPLATE_DATA","line":17,"text":" "}
+{"start":238,"end":239,"type":"LSINGLE_QUOTE","line":17,"text":"'"}
+{"start":239,"end":241,"type":"STRING","line":17,"text":"^)"}
+{"start":241,"end":242,"type":"RSINGLE_QUOTE","line":17,"text":"'"}
+{"start":242,"end":243,"type":"RPAREN","line":17,"text":")"}
+{"start":243,"end":244,"type":"LBRACE","line":17,"text":"{"}
+{"start":244,"end":245,"type":"WHITE_SPACE","line":17,"text":"\n"}
+{"start":245,"end":246,"type":"WHITE_SPACE","line":18,"text":"\t"}
+{"start":246,"end":259,"type":"SQL_BLOCK","line":18,"text":"\tfield = 'x',"}
+{"start":259,"end":260,"type":"WHITE_SPACE","line":18,"text":"\n"}
+{"start":260,"end":261,"type":"WHITE_SPACE","line":19,"text":"\t"}
+{"start":261,"end":262,"type":"RBRACE","line":19,"text":"}"}
+{"start":262,"end":263,"type":"LPAREN","line":19,"text":"("}
+{"start":263,"end":264,"type":"DOLLAR_VARIABLE","line":19,"text":"$"}
+{"start":264,"end":265,"type":"VARIABLE","line":19,"text":"f"}
+{"start":265,"end":266,"type":"TEMPLATE_DATA","line":19,"text":" "}
+{"start":266,"end":268,"type":"WORD_OPERATOR","line":19,"text":"eq"}
+{"start":268,"end":269,"type":"TEMPLATE_DATA","line":19,"text":" "}
+{"start":269,"end":270,"type":"LDOUBLE_QUOTE","line":19,"text":"\""}
+{"start":270,"end":272,"type":"STRING","line":19,"text":"^)"}
+{"start":272,"end":273,"type":"RDOUBLE_QUOTE","line":19,"text":"\""}
+{"start":273,"end":274,"type":"RPAREN","line":19,"text":")"}
+{"start":274,"end":275,"type":"LBRACE","line":19,"text":"{"}
+{"start":275,"end":276,"type":"WHITE_SPACE","line":19,"text":"\n"}
+{"start":276,"end":277,"type":"WHITE_SPACE","line":20,"text":"\t"}
+{"start":277,"end":292,"type":"SQL_BLOCK","line":20,"text":"\tfield = '^}y',"}
+{"start":292,"end":293,"type":"WHITE_SPACE","line":20,"text":"\n"}
+{"start":293,"end":294,"type":"WHITE_SPACE","line":21,"text":"\t"}
+{"start":294,"end":307,"type":"SQL_BLOCK","line":21,"text":"\tfield = '}',"}
+{"start":307,"end":308,"type":"WHITE_SPACE","line":21,"text":"\n"}
+{"start":308,"end":309,"type":"WHITE_SPACE","line":22,"text":"\t"}
+{"start":309,"end":310,"type":"RBRACE","line":22,"text":"}"}
+{"start":310,"end":311,"type":"WHITE_SPACE","line":22,"text":"\n"}
+{"start":311,"end":320,"type":"SQL_BLOCK","line":23,"text":"\tfield = "}
+{"start":320,"end":323,"type":"KW_IF","line":23,"text":"^if"}
+{"start":323,"end":324,"type":"LPAREN","line":23,"text":"("}
+{"start":324,"end":327,"type":"WORD_OPERATOR","line":23,"text":"def"}
+{"start":327,"end":328,"type":"TEMPLATE_DATA","line":23,"text":" "}
+{"start":328,"end":329,"type":"DOLLAR_VARIABLE","line":23,"text":"$"}
+{"start":329,"end":330,"type":"VARIABLE","line":23,"text":"s"}
+{"start":330,"end":331,"type":"RPAREN","line":23,"text":")"}
+{"start":331,"end":332,"type":"LBRACE","line":23,"text":"{"}
+{"start":332,"end":333,"type":"SQL_BLOCK","line":23,"text":"'"}
+{"start":333,"end":334,"type":"DOLLAR_VARIABLE","line":23,"text":"$"}
+{"start":334,"end":335,"type":"VARIABLE","line":23,"text":"s"}
+{"start":335,"end":336,"type":"SQL_BLOCK","line":23,"text":"'"}
+{"start":336,"end":337,"type":"SEMICOLON","line":23,"text":";"}
+{"start":337,"end":341,"type":"SQL_BLOCK","line":23,"text":"NULL"}
+{"start":341,"end":342,"type":"RBRACE","line":23,"text":"}"}
+{"start":342,"end":343,"type":"SQL_BLOCK","line":23,"text":","}
+{"start":343,"end":344,"type":"WHITE_SPACE","line":23,"text":"\n"}
+{"start":344,"end":354,"type":"SQL_BLOCK","line":24,"text":"\tfield = '"}
+{"start":354,"end":357,"type":"KW_IF","line":24,"text":"^if"}
+{"start":357,"end":358,"type":"LPAREN","line":24,"text":"("}
+{"start":358,"end":361,"type":"WORD_OPERATOR","line":24,"text":"def"}
+{"start":361,"end":362,"type":"TEMPLATE_DATA","line":24,"text":" "}
+{"start":362,"end":363,"type":"DOLLAR_VARIABLE","line":24,"text":"$"}
+{"start":363,"end":364,"type":"VARIABLE","line":24,"text":"s"}
+{"start":364,"end":365,"type":"RPAREN","line":24,"text":")"}
+{"start":365,"end":366,"type":"LBRACE","line":24,"text":"{"}
+{"start":366,"end":367,"type":"DOLLAR_VARIABLE","line":24,"text":"$"}
+{"start":367,"end":368,"type":"VARIABLE","line":24,"text":"s"}
+{"start":368,"end":369,"type":"RBRACE","line":24,"text":"}"}
+{"start":369,"end":371,"type":"SQL_BLOCK","line":24,"text":"',"}
+{"start":371,"end":372,"type":"WHITE_SPACE","line":24,"text":"\n"}
+{"start":372,"end":382,"type":"SQL_BLOCK","line":25,"text":"\tfield = '"}
+{"start":382,"end":385,"type":"KW_IF","line":25,"text":"^if"}
+{"start":385,"end":386,"type":"LPAREN","line":25,"text":"("}
+{"start":386,"end":389,"type":"WORD_OPERATOR","line":25,"text":"def"}
+{"start":389,"end":390,"type":"TEMPLATE_DATA","line":25,"text":" "}
+{"start":390,"end":391,"type":"DOLLAR_VARIABLE","line":25,"text":"$"}
+{"start":391,"end":392,"type":"VARIABLE","line":25,"text":"s"}
+{"start":392,"end":393,"type":"RPAREN","line":25,"text":")"}
+{"start":393,"end":394,"type":"LBRACE","line":25,"text":"{"}
+{"start":394,"end":395,"type":"DOLLAR_VARIABLE","line":25,"text":"$"}
+{"start":395,"end":396,"type":"VARIABLE","line":25,"text":"s"}
+{"start":396,"end":397,"type":"SEMICOLON","line":25,"text":";"}
+{"start":397,"end":402,"type":"SQL_BLOCK","line":25,"text":"empty"}
+{"start":402,"end":403,"type":"RBRACE","line":25,"text":"}"}
+{"start":403,"end":405,"type":"SQL_BLOCK","line":25,"text":"',"}
+{"start":405,"end":406,"type":"WHITE_SPACE","line":25,"text":"\n"}
+{"start":406,"end":416,"type":"SQL_BLOCK","line":26,"text":"\tfield = '"}
+{"start":416,"end":419,"type":"KW_IF","line":26,"text":"^if"}
+{"start":419,"end":420,"type":"LPAREN","line":26,"text":"("}
+{"start":420,"end":423,"type":"WORD_OPERATOR","line":26,"text":"def"}
+{"start":423,"end":424,"type":"TEMPLATE_DATA","line":26,"text":" "}
+{"start":424,"end":425,"type":"DOLLAR_VARIABLE","line":26,"text":"$"}
+{"start":425,"end":426,"type":"VARIABLE","line":26,"text":"s"}
+{"start":426,"end":427,"type":"TEMPLATE_DATA","line":26,"text":" "}
+{"start":427,"end":429,"type":"OP","line":26,"text":"||"}
+{"start":429,"end":430,"type":"TEMPLATE_DATA","line":26,"text":" "}
+{"start":430,"end":431,"type":"DOLLAR_VARIABLE","line":26,"text":"$"}
+{"start":431,"end":432,"type":"VARIABLE","line":26,"text":"s"}
+{"start":432,"end":433,"type":"TEMPLATE_DATA","line":26,"text":" "}
+{"start":433,"end":435,"type":"WORD_OPERATOR","line":26,"text":"eq"}
+{"start":435,"end":436,"type":"TEMPLATE_DATA","line":26,"text":" "}
+{"start":436,"end":437,"type":"LSINGLE_QUOTE","line":26,"text":"'"}
+{"start":437,"end":438,"type":"STRING","line":26,"text":"s"}
+{"start":438,"end":439,"type":"RSINGLE_QUOTE","line":26,"text":"'"}
+{"start":439,"end":440,"type":"TEMPLATE_DATA","line":26,"text":" "}
+{"start":440,"end":442,"type":"OP","line":26,"text":"||"}
+{"start":442,"end":443,"type":"TEMPLATE_DATA","line":26,"text":" "}
+{"start":443,"end":444,"type":"DOLLAR_VARIABLE","line":26,"text":"$"}
+{"start":444,"end":445,"type":"VARIABLE","line":26,"text":"s"}
+{"start":445,"end":446,"type":"TEMPLATE_DATA","line":26,"text":" "}
+{"start":446,"end":448,"type":"WORD_OPERATOR","line":26,"text":"eq"}
+{"start":448,"end":449,"type":"TEMPLATE_DATA","line":26,"text":" "}
+{"start":449,"end":450,"type":"LDOUBLE_QUOTE","line":26,"text":"\""}
+{"start":450,"end":451,"type":"STRING","line":26,"text":"s"}
+{"start":451,"end":452,"type":"RDOUBLE_QUOTE","line":26,"text":"\""}
+{"start":452,"end":453,"type":"RPAREN","line":26,"text":")"}
+{"start":453,"end":454,"type":"LBRACE","line":26,"text":"{"}
+{"start":454,"end":455,"type":"DOLLAR_VARIABLE","line":26,"text":"$"}
+{"start":455,"end":456,"type":"VARIABLE","line":26,"text":"s"}
+{"start":456,"end":457,"type":"SEMICOLON","line":26,"text":";"}
+{"start":457,"end":462,"type":"SQL_BLOCK","line":26,"text":"empty"}
+{"start":462,"end":463,"type":"RBRACE","line":26,"text":"}"}
+{"start":463,"end":465,"type":"SQL_BLOCK","line":26,"text":"',"}
+{"start":465,"end":466,"type":"WHITE_SPACE","line":26,"text":"\n"}
+{"start":466,"end":476,"type":"SQL_BLOCK","line":27,"text":"\tfield = \""}
+{"start":476,"end":479,"type":"KW_IF","line":27,"text":"^if"}
+{"start":479,"end":480,"type":"LPAREN","line":27,"text":"("}
+{"start":480,"end":483,"type":"WORD_OPERATOR","line":27,"text":"def"}
+{"start":483,"end":484,"type":"TEMPLATE_DATA","line":27,"text":" "}
+{"start":484,"end":485,"type":"DOLLAR_VARIABLE","line":27,"text":"$"}
+{"start":485,"end":486,"type":"VARIABLE","line":27,"text":"s"}
+{"start":486,"end":487,"type":"TEMPLATE_DATA","line":27,"text":" "}
+{"start":487,"end":489,"type":"OP","line":27,"text":"||"}
+{"start":489,"end":490,"type":"TEMPLATE_DATA","line":27,"text":" "}
+{"start":490,"end":491,"type":"DOLLAR_VARIABLE","line":27,"text":"$"}
+{"start":491,"end":492,"type":"VARIABLE","line":27,"text":"s"}
+{"start":492,"end":493,"type":"TEMPLATE_DATA","line":27,"text":" "}
+{"start":493,"end":495,"type":"WORD_OPERATOR","line":27,"text":"eq"}
+{"start":495,"end":496,"type":"TEMPLATE_DATA","line":27,"text":" "}
+{"start":496,"end":497,"type":"LSINGLE_QUOTE","line":27,"text":"'"}
+{"start":497,"end":498,"type":"STRING","line":27,"text":"s"}
+{"start":498,"end":499,"type":"RSINGLE_QUOTE","line":27,"text":"'"}
+{"start":499,"end":500,"type":"TEMPLATE_DATA","line":27,"text":" "}
+{"start":500,"end":502,"type":"OP","line":27,"text":"||"}
+{"start":502,"end":503,"type":"TEMPLATE_DATA","line":27,"text":" "}
+{"start":503,"end":504,"type":"DOLLAR_VARIABLE","line":27,"text":"$"}
+{"start":504,"end":505,"type":"VARIABLE","line":27,"text":"s"}
+{"start":505,"end":506,"type":"TEMPLATE_DATA","line":27,"text":" "}
+{"start":506,"end":508,"type":"WORD_OPERATOR","line":27,"text":"eq"}
+{"start":508,"end":509,"type":"TEMPLATE_DATA","line":27,"text":" "}
+{"start":509,"end":510,"type":"LDOUBLE_QUOTE","line":27,"text":"\""}
+{"start":510,"end":511,"type":"STRING","line":27,"text":"s"}
+{"start":511,"end":512,"type":"RDOUBLE_QUOTE","line":27,"text":"\""}
+{"start":512,"end":513,"type":"RPAREN","line":27,"text":")"}
+{"start":513,"end":514,"type":"LBRACE","line":27,"text":"{"}
+{"start":514,"end":515,"type":"DOLLAR_VARIABLE","line":27,"text":"$"}
+{"start":515,"end":516,"type":"VARIABLE","line":27,"text":"s"}
+{"start":516,"end":517,"type":"SEMICOLON","line":27,"text":";"}
+{"start":517,"end":522,"type":"SQL_BLOCK","line":27,"text":"empty"}
+{"start":522,"end":523,"type":"RBRACE","line":27,"text":"}"}
+{"start":523,"end":525,"type":"SQL_BLOCK","line":27,"text":"\","}
+{"start":525,"end":526,"type":"WHITE_SPACE","line":27,"text":"\n"}
+{"start":526,"end":536,"type":"SQL_BLOCK","line":28,"text":"\tfield = \""}
+{"start":536,"end":539,"type":"KW_IF","line":28,"text":"^if"}
+{"start":539,"end":540,"type":"LPAREN","line":28,"text":"("}
+{"start":540,"end":543,"type":"WORD_OPERATOR","line":28,"text":"def"}
+{"start":543,"end":544,"type":"TEMPLATE_DATA","line":28,"text":" "}
+{"start":544,"end":545,"type":"DOLLAR_VARIABLE","line":28,"text":"$"}
+{"start":545,"end":546,"type":"VARIABLE","line":28,"text":"s"}
+{"start":546,"end":547,"type":"TEMPLATE_DATA","line":28,"text":" "}
+{"start":547,"end":549,"type":"OP","line":28,"text":"||"}
+{"start":549,"end":550,"type":"TEMPLATE_DATA","line":28,"text":" "}
+{"start":550,"end":551,"type":"DOLLAR_VARIABLE","line":28,"text":"$"}
+{"start":551,"end":552,"type":"VARIABLE","line":28,"text":"s"}
+{"start":552,"end":553,"type":"TEMPLATE_DATA","line":28,"text":" "}
+{"start":553,"end":555,"type":"WORD_OPERATOR","line":28,"text":"eq"}
+{"start":555,"end":556,"type":"TEMPLATE_DATA","line":28,"text":" "}
+{"start":556,"end":557,"type":"LSINGLE_QUOTE","line":28,"text":"'"}
+{"start":557,"end":558,"type":"STRING","line":28,"text":"s"}
+{"start":558,"end":559,"type":"RSINGLE_QUOTE","line":28,"text":"'"}
+{"start":559,"end":560,"type":"TEMPLATE_DATA","line":28,"text":" "}
+{"start":560,"end":562,"type":"OP","line":28,"text":"||"}
+{"start":562,"end":563,"type":"TEMPLATE_DATA","line":28,"text":" "}
+{"start":563,"end":564,"type":"DOLLAR_VARIABLE","line":28,"text":"$"}
+{"start":564,"end":565,"type":"VARIABLE","line":28,"text":"s"}
+{"start":565,"end":566,"type":"TEMPLATE_DATA","line":28,"text":" "}
+{"start":566,"end":568,"type":"WORD_OPERATOR","line":28,"text":"eq"}
+{"start":568,"end":569,"type":"TEMPLATE_DATA","line":28,"text":" "}
+{"start":569,"end":570,"type":"LDOUBLE_QUOTE","line":28,"text":"\""}
+{"start":570,"end":571,"type":"STRING","line":28,"text":"s"}
+{"start":571,"end":572,"type":"RDOUBLE_QUOTE","line":28,"text":"\""}
+{"start":572,"end":573,"type":"RPAREN","line":28,"text":")"}
+{"start":573,"end":574,"type":"LBRACE","line":28,"text":"{"}
+{"start":574,"end":575,"type":"DOLLAR_VARIABLE","line":28,"text":"$"}
+{"start":575,"end":576,"type":"VARIABLE","line":28,"text":"s"}
+{"start":576,"end":577,"type":"SEMICOLON","line":28,"text":";"}
+{"start":577,"end":584,"type":"SQL_BLOCK","line":28,"text":"'empty'"}
+{"start":584,"end":585,"type":"RBRACE","line":28,"text":"}"}
+{"start":585,"end":587,"type":"SQL_BLOCK","line":28,"text":"\","}
+{"start":587,"end":588,"type":"WHITE_SPACE","line":28,"text":"\n"}
+{"start":588,"end":598,"type":"SQL_BLOCK","line":29,"text":"\tfield = '"}
+{"start":598,"end":601,"type":"KW_IF","line":29,"text":"^if"}
+{"start":601,"end":602,"type":"LPAREN","line":29,"text":"("}
+{"start":602,"end":605,"type":"WORD_OPERATOR","line":29,"text":"def"}
+{"start":605,"end":606,"type":"TEMPLATE_DATA","line":29,"text":" "}
+{"start":606,"end":607,"type":"DOLLAR_VARIABLE","line":29,"text":"$"}
+{"start":607,"end":608,"type":"VARIABLE","line":29,"text":"s"}
+{"start":608,"end":609,"type":"TEMPLATE_DATA","line":29,"text":" "}
+{"start":609,"end":611,"type":"OP","line":29,"text":"||"}
+{"start":611,"end":612,"type":"TEMPLATE_DATA","line":29,"text":" "}
+{"start":612,"end":613,"type":"DOLLAR_VARIABLE","line":29,"text":"$"}
+{"start":613,"end":614,"type":"VARIABLE","line":29,"text":"s"}
+{"start":614,"end":615,"type":"TEMPLATE_DATA","line":29,"text":" "}
+{"start":615,"end":617,"type":"WORD_OPERATOR","line":29,"text":"eq"}
+{"start":617,"end":618,"type":"TEMPLATE_DATA","line":29,"text":" "}
+{"start":618,"end":619,"type":"LSINGLE_QUOTE","line":29,"text":"'"}
+{"start":619,"end":620,"type":"STRING","line":29,"text":"s"}
+{"start":620,"end":621,"type":"RSINGLE_QUOTE","line":29,"text":"'"}
+{"start":621,"end":622,"type":"TEMPLATE_DATA","line":29,"text":" "}
+{"start":622,"end":624,"type":"OP","line":29,"text":"||"}
+{"start":624,"end":625,"type":"TEMPLATE_DATA","line":29,"text":" "}
+{"start":625,"end":626,"type":"DOLLAR_VARIABLE","line":29,"text":"$"}
+{"start":626,"end":627,"type":"VARIABLE","line":29,"text":"s"}
+{"start":627,"end":628,"type":"TEMPLATE_DATA","line":29,"text":" "}
+{"start":628,"end":630,"type":"WORD_OPERATOR","line":29,"text":"eq"}
+{"start":630,"end":631,"type":"TEMPLATE_DATA","line":29,"text":" "}
+{"start":631,"end":632,"type":"LDOUBLE_QUOTE","line":29,"text":"\""}
+{"start":632,"end":633,"type":"STRING","line":29,"text":"s"}
+{"start":633,"end":634,"type":"RDOUBLE_QUOTE","line":29,"text":"\""}
+{"start":634,"end":635,"type":"RPAREN","line":29,"text":")"}
+{"start":635,"end":636,"type":"LBRACE","line":29,"text":"{"}
+{"start":636,"end":637,"type":"DOLLAR_VARIABLE","line":29,"text":"$"}
+{"start":637,"end":638,"type":"VARIABLE","line":29,"text":"s"}
+{"start":638,"end":639,"type":"SEMICOLON","line":29,"text":";"}
+{"start":639,"end":646,"type":"SQL_BLOCK","line":29,"text":"\"empty\""}
+{"start":646,"end":647,"type":"RBRACE","line":29,"text":"}"}
+{"start":647,"end":649,"type":"SQL_BLOCK","line":29,"text":"',"}
+{"start":649,"end":650,"type":"WHITE_SPACE","line":29,"text":"\n"}
+{"start":650,"end":659,"type":"SQL_BLOCK","line":30,"text":"\tfield = "}
+{"start":659,"end":662,"type":"KW_IF","line":30,"text":"^if"}
+{"start":662,"end":663,"type":"LPAREN","line":30,"text":"("}
+{"start":663,"end":664,"type":"DOLLAR_VARIABLE","line":30,"text":"$"}
+{"start":664,"end":665,"type":"VARIABLE","line":30,"text":"a"}
+{"start":665,"end":666,"type":"RPAREN","line":30,"text":")"}
+{"start":666,"end":667,"type":"LBRACE","line":30,"text":"{"}
+{"start":667,"end":668,"type":"SQL_BLOCK","line":30,"text":"b"}
+{"start":668,"end":669,"type":"SEMICOLON","line":30,"text":";"}
+{"start":669,"end":670,"type":"SQL_BLOCK","line":30,"text":"c"}
+{"start":670,"end":671,"type":"RBRACE","line":30,"text":"}"}
+{"start":671,"end":672,"type":"SQL_BLOCK","line":30,"text":","}
+{"start":672,"end":673,"type":"WHITE_SPACE","line":30,"text":"\n"}
+{"start":673,"end":682,"type":"SQL_BLOCK","line":31,"text":"\tfield = "}
+{"start":682,"end":685,"type":"KW_IF","line":31,"text":"^if"}
+{"start":685,"end":686,"type":"LPAREN","line":31,"text":"("}
+{"start":686,"end":687,"type":"DOLLAR_VARIABLE","line":31,"text":"$"}
+{"start":687,"end":688,"type":"VARIABLE","line":31,"text":"a"}
+{"start":688,"end":689,"type":"RPAREN","line":31,"text":")"}
+{"start":689,"end":690,"type":"LBRACE","line":31,"text":"{"}
+{"start":690,"end":691,"type":"SQL_BLOCK","line":31,"text":"b"}
+{"start":691,"end":692,"type":"RBRACE","line":31,"text":"}"}
+{"start":692,"end":693,"type":"LBRACE","line":31,"text":"{"}
+{"start":693,"end":694,"type":"SQL_BLOCK","line":31,"text":"c"}
+{"start":694,"end":695,"type":"RBRACE","line":31,"text":"}"}
+{"start":695,"end":696,"type":"SQL_BLOCK","line":31,"text":","}
+{"start":696,"end":697,"type":"WHITE_SPACE","line":31,"text":"\n"}
+{"start":697,"end":704,"type":"SQL_BLOCK","line":32,"text":"\tid = '"}
+{"start":704,"end":708,"type":"METHOD","line":32,"text":"^int"}
+{"start":708,"end":709,"type":"COLON","line":32,"text":":"}
+{"start":709,"end":712,"type":"METHOD","line":32,"text":"sql"}
+{"start":712,"end":713,"type":"LBRACE","line":32,"text":"{"}
+{"start":713,"end":739,"type":"SQL_BLOCK","line":32,"text":"select count(*) FROM users"}
+{"start":739,"end":740,"type":"RBRACE","line":32,"text":"}"}
+{"start":740,"end":742,"type":"SQL_BLOCK","line":32,"text":"',"}
+{"start":742,"end":743,"type":"WHITE_SPACE","line":32,"text":"\n"}
+{"start":743,"end":750,"type":"SQL_BLOCK","line":33,"text":"\tid = \""}
+{"start":750,"end":754,"type":"METHOD","line":33,"text":"^int"}
+{"start":754,"end":755,"type":"COLON","line":33,"text":":"}
+{"start":755,"end":758,"type":"METHOD","line":33,"text":"sql"}
+{"start":758,"end":759,"type":"LBRACE","line":33,"text":"{"}
+{"start":759,"end":785,"type":"SQL_BLOCK","line":33,"text":"select count(*) FROM users"}
+{"start":785,"end":786,"type":"RBRACE","line":33,"text":"}"}
+{"start":786,"end":788,"type":"SQL_BLOCK","line":33,"text":"\","}
+{"start":788,"end":789,"type":"WHITE_SPACE","line":33,"text":"\n"}
+{"start":789,"end":790,"type":"SQL_BLOCK","line":34,"text":"\t"}
+{"start":790,"end":793,"type":"KW_IF","line":34,"text":"^if"}
+{"start":793,"end":794,"type":"LPAREN","line":34,"text":"("}
+{"start":794,"end":795,"type":"WHITE_SPACE","line":34,"text":"\n"}
+{"start":795,"end":796,"type":"WHITE_SPACE","line":35,"text":"\t"}
+{"start":796,"end":797,"type":"WHITE_SPACE","line":35,"text":"\t"}
+{"start":797,"end":798,"type":"DOLLAR_VARIABLE","line":35,"text":"$"}
+{"start":798,"end":799,"type":"VARIABLE","line":35,"text":"b"}
+{"start":799,"end":800,"type":"TEMPLATE_DATA","line":35,"text":" "}
+{"start":800,"end":802,"type":"WORD_OPERATOR","line":35,"text":"eq"}
+{"start":802,"end":803,"type":"TEMPLATE_DATA","line":35,"text":" "}
+{"start":803,"end":804,"type":"LSINGLE_QUOTE","line":35,"text":"'"}
+{"start":804,"end":805,"type":"STRING","line":35,"text":"c"}
+{"start":805,"end":806,"type":"RSINGLE_QUOTE","line":35,"text":"'"}
+{"start":806,"end":807,"type":"WHITE_SPACE","line":35,"text":"\n"}
+{"start":807,"end":808,"type":"WHITE_SPACE","line":36,"text":"\t"}
+{"start":808,"end":809,"type":"RPAREN","line":36,"text":")"}
+{"start":809,"end":810,"type":"LBRACE","line":36,"text":"{"}
+{"start":810,"end":811,"type":"WHITE_SPACE","line":36,"text":"\n"}
+{"start":811,"end":812,"type":"WHITE_SPACE","line":37,"text":"\t"}
+{"start":812,"end":829,"type":"SQL_BLOCK","line":37,"text":"\tfield = 'not ok'"}
+{"start":829,"end":830,"type":"WHITE_SPACE","line":37,"text":"\n"}
+{"start":830,"end":831,"type":"WHITE_SPACE","line":38,"text":"\t"}
+{"start":831,"end":832,"type":"RBRACE","line":38,"text":"}"}
+{"start":832,"end":833,"type":"WHITE_SPACE","line":38,"text":"\n"}
+{"start":833,"end":834,"type":"DOLLAR_VARIABLE","line":39,"text":"$"}
+{"start":834,"end":838,"type":"VARIABLE","line":39,"text":"list"}
+{"start":838,"end":839,"type":"LBRACKET","line":39,"text":"["}
+{"start":839,"end":845,"type":"CONSTRUCTOR","line":39,"text":"^table"}
+{"start":845,"end":846,"type":"COLON","line":39,"text":":"}
+{"start":846,"end":847,"type":"COLON","line":39,"text":":"}
+{"start":847,"end":850,"type":"CONSTRUCTOR","line":39,"text":"sql"}
+{"start":850,"end":851,"type":"LBRACE","line":39,"text":"{"}
+{"start":851,"end":852,"type":"WHITE_SPACE","line":39,"text":"\n"}
+{"start":852,"end":853,"type":"WHITE_SPACE","line":40,"text":"\t"}
+{"start":853,"end":859,"type":"SQL_BLOCK","line":40,"text":"SELECT"}
+{"start":859,"end":860,"type":"WHITE_SPACE","line":40,"text":"\n"}
+{"start":860,"end":861,"type":"WHITE_SPACE","line":41,"text":"\t"}
+{"start":861,"end":869,"type":"SQL_BLOCK","line":41,"text":"id, name"}
+{"start":869,"end":870,"type":"WHITE_SPACE","line":41,"text":"\n"}
+{"start":870,"end":871,"type":"WHITE_SPACE","line":42,"text":"\t"}
+{"start":871,"end":875,"type":"SQL_BLOCK","line":42,"text":"FROM"}
+{"start":875,"end":876,"type":"WHITE_SPACE","line":42,"text":"\n"}
+{"start":876,"end":877,"type":"WHITE_SPACE","line":43,"text":"\t"}
+{"start":877,"end":882,"type":"SQL_BLOCK","line":43,"text":"users"}
+{"start":882,"end":883,"type":"WHITE_SPACE","line":43,"text":"\n"}
+{"start":883,"end":884,"type":"WHITE_SPACE","line":44,"text":"\t"}
+{"start":884,"end":889,"type":"SQL_BLOCK","line":44,"text":"WHERE"}
+{"start":889,"end":890,"type":"WHITE_SPACE","line":44,"text":"\n"}
+{"start":890,"end":891,"type":"WHITE_SPACE","line":45,"text":"\t"}
+{"start":891,"end":897,"type":"SQL_BLOCK","line":45,"text":"id = '"}
+{"start":897,"end":901,"type":"METHOD","line":45,"text":"^int"}
+{"start":901,"end":902,"type":"COLON","line":45,"text":":"}
+{"start":902,"end":905,"type":"METHOD","line":45,"text":"sql"}
+{"start":905,"end":906,"type":"LBRACE","line":45,"text":"{"}
+{"start":906,"end":932,"type":"SQL_BLOCK","line":45,"text":"select count(*) FROM users"}
+{"start":932,"end":933,"type":"RBRACE","line":45,"text":"}"}
+{"start":933,"end":934,"type":"WHITE_SPACE","line":45,"text":"\n"}
+{"start":934,"end":935,"type":"WHITE_SPACE","line":46,"text":"\t"}
+{"start":935,"end":936,"type":"DOLLAR_VARIABLE","line":46,"text":"$"}
+{"start":936,"end":937,"type":"VARIABLE","line":46,"text":"u"}
+{"start":937,"end":938,"type":"LBRACKET","line":46,"text":"["}
+{"start":938,"end":945,"type":"METHOD","line":46,"text":"^string"}
+{"start":945,"end":946,"type":"COLON","line":46,"text":":"}
+{"start":946,"end":949,"type":"METHOD","line":46,"text":"sql"}
+{"start":949,"end":950,"type":"LBRACE","line":46,"text":"{"}
+{"start":950,"end":951,"type":"WHITE_SPACE","line":46,"text":"\n"}
+{"start":951,"end":953,"type":"WHITE_SPACE","line":47,"text":"\t\t"}
+{"start":953,"end":967,"type":"SQL_BLOCK","line":47,"text":"select s FROM "}
+{"start":967,"end":968,"type":"DOLLAR_VARIABLE","line":47,"text":"$"}
+{"start":968,"end":973,"type":"VARIABLE","line":47,"text":"table"}
+{"start":973,"end":988,"type":"SQL_BLOCK","line":47,"text":" WHERE a = '15'"}
+{"start":988,"end":989,"type":"WHITE_SPACE","line":47,"text":"\n"}
+{"start":989,"end":990,"type":"WHITE_SPACE","line":48,"text":"\t"}
+{"start":990,"end":991,"type":"RBRACE","line":48,"text":"}"}
+{"start":991,"end":992,"type":"LBRACKET","line":48,"text":"["}
+{"start":992,"end":993,"type":"VARIABLE","line":48,"text":"$"}
+{"start":993,"end":994,"type":"DOT","line":48,"text":"."}
+{"start":994,"end":1001,"type":"VARIABLE","line":48,"text":"default"}
+{"start":1001,"end":1002,"type":"LBRACKET","line":48,"text":"["}
+{"start":1002,"end":1003,"type":"STRING","line":48,"text":"x"}
+{"start":1003,"end":1004,"type":"RBRACKET","line":48,"text":"]"}
+{"start":1004,"end":1005,"type":"RBRACKET","line":48,"text":"]"}
+{"start":1005,"end":1006,"type":"RBRACKET","line":48,"text":"]"}
+{"start":1006,"end":1007,"type":"WHITE_SPACE","line":48,"text":"\n"}
+{"start":1007,"end":1008,"type":"WHITE_SPACE","line":49,"text":"\t"}
+{"start":1008,"end":1017,"type":"SQL_BLOCK","line":49,"text":"\tOR s = '"}
+{"start":1017,"end":1018,"type":"DOLLAR_VARIABLE","line":49,"text":"$"}
+{"start":1018,"end":1019,"type":"VARIABLE","line":49,"text":"u"}
+{"start":1019,"end":1020,"type":"SQL_BLOCK","line":49,"text":"'"}
+{"start":1020,"end":1021,"type":"WHITE_SPACE","line":49,"text":"\n"}
+{"start":1021,"end":1022,"type":"RBRACE","line":50,"text":"}"}
+{"start":1022,"end":1023,"type":"RBRACKET","line":50,"text":"]"}
+{"start":1023,"end":1024,"type":"WHITE_SPACE","line":50,"text":"\n"}
+{"start":1024,"end":1031,"type":"KW_SWITCH","line":51,"text":"^switch"}
+{"start":1031,"end":1032,"type":"LBRACKET","line":51,"text":"["}
+{"start":1032,"end":1033,"type":"STRING","line":51,"text":"a"}
+{"start":1033,"end":1034,"type":"RBRACKET","line":51,"text":"]"}
+{"start":1034,"end":1035,"type":"LBRACE","line":51,"text":"{"}
+{"start":1035,"end":1036,"type":"WHITE_SPACE","line":51,"text":"\n"}
+{"start":1036,"end":1037,"type":"WHITE_SPACE","line":52,"text":"\t"}
+{"start":1037,"end":1042,"type":"KW_CASE","line":52,"text":"^case"}
+{"start":1042,"end":1043,"type":"LBRACKET","line":52,"text":"["}
+{"start":1043,"end":1044,"type":"STRING","line":52,"text":"b"}
+{"start":1044,"end":1045,"type":"RBRACKET","line":52,"text":"]"}
+{"start":1045,"end":1046,"type":"LBRACE","line":52,"text":"{"}
+{"start":1046,"end":1047,"type":"WHITE_SPACE","line":52,"text":"\n"}
+{"start":1047,"end":1049,"type":"WHITE_SPACE","line":53,"text":"\t\t"}
+{"start":1049,"end":1057,"type":"SQL_BLOCK","line":53,"text":"xx = 15,"}
+{"start":1057,"end":1058,"type":"WHITE_SPACE","line":53,"text":"\n"}
+{"start":1058,"end":1060,"type":"WHITE_SPACE","line":54,"text":"\t\t"}
+{"start":1060,"end":1063,"type":"KW_IF","line":54,"text":"^if"}
+{"start":1063,"end":1064,"type":"LPAREN","line":54,"text":"("}
+{"start":1064,"end":1067,"type":"WORD_OPERATOR","line":54,"text":"def"}
+{"start":1067,"end":1068,"type":"TEMPLATE_DATA","line":54,"text":" "}
+{"start":1068,"end":1073,"type":"METHOD","line":54,"text":"^form"}
+{"start":1073,"end":1074,"type":"COLON","line":54,"text":":"}
+{"start":1074,"end":1080,"type":"METHOD","line":54,"text":"url_vk"}
+{"start":1080,"end":1081,"type":"DOT","line":54,"text":"."}
+{"start":1081,"end":1085,"type":"METHOD","line":54,"text":"trim"}
+{"start":1085,"end":1086,"type":"LBRACKET","line":54,"text":"["}
+{"start":1086,"end":1087,"type":"RBRACKET","line":54,"text":"]"}
+{"start":1087,"end":1088,"type":"RPAREN","line":54,"text":")"}
+{"start":1088,"end":1089,"type":"LBRACE","line":54,"text":"{"}
+{"start":1089,"end":1099,"type":"SQL_BLOCK","line":54,"text":"url_vk = '"}
+{"start":1099,"end":1104,"type":"METHOD","line":54,"text":"^form"}
+{"start":1104,"end":1105,"type":"COLON","line":54,"text":":"}
+{"start":1105,"end":1111,"type":"METHOD","line":54,"text":"url_vk"}
+{"start":1111,"end":1112,"type":"DOT","line":54,"text":"."}
+{"start":1112,"end":1116,"type":"METHOD","line":54,"text":"trim"}
+{"start":1116,"end":1117,"type":"LBRACKET","line":54,"text":"["}
+{"start":1117,"end":1118,"type":"RBRACKET","line":54,"text":"]"}
+{"start":1118,"end":1120,"type":"SQL_BLOCK","line":54,"text":"',"}
+{"start":1120,"end":1121,"type":"RBRACE","line":54,"text":"}"}
+{"start":1121,"end":1122,"type":"WHITE_SPACE","line":54,"text":"\n"}
+{"start":1122,"end":1123,"type":"WHITE_SPACE","line":55,"text":"\t"}
+{"start":1123,"end":1124,"type":"RBRACE","line":55,"text":"}"}
+{"start":1124,"end":1125,"type":"WHITE_SPACE","line":55,"text":"\n"}
+{"start":1125,"end":1126,"type":"RBRACE","line":56,"text":"}"}
+{"start":1126,"end":1127,"type":"WHITE_SPACE","line":56,"text":"\n"}
+{"start":1127,"end":1130,"type":"KW_IF","line":57,"text":"^if"}
+{"start":1130,"end":1131,"type":"LPAREN","line":57,"text":"("}
+{"start":1131,"end":1132,"type":"DOLLAR_VARIABLE","line":57,"text":"$"}
+{"start":1132,"end":1133,"type":"VARIABLE","line":57,"text":"a"}
+{"start":1133,"end":1134,"type":"RPAREN","line":57,"text":")"}
+{"start":1134,"end":1135,"type":"LBRACE","line":57,"text":"{"}
+{"start":1135,"end":1138,"type":"SQL_BLOCK","line":57,"text":"x=1"}
+{"start":1138,"end":1139,"type":"RBRACE","line":57,"text":"}"}
+{"start":1139,"end":1140,"type":"LPAREN","line":57,"text":"("}
+{"start":1140,"end":1141,"type":"DOLLAR_VARIABLE","line":57,"text":"$"}
+{"start":1141,"end":1142,"type":"VARIABLE","line":57,"text":"b"}
+{"start":1142,"end":1143,"type":"RPAREN","line":57,"text":")"}
+{"start":1143,"end":1144,"type":"LBRACE","line":57,"text":"{"}
+{"start":1144,"end":1147,"type":"SQL_BLOCK","line":57,"text":"x=2"}
+{"start":1147,"end":1148,"type":"RBRACE","line":57,"text":"}"}
+{"start":1148,"end":1149,"type":"LPAREN","line":57,"text":"("}
+{"start":1149,"end":1150,"type":"DOLLAR_VARIABLE","line":57,"text":"$"}
+{"start":1150,"end":1151,"type":"VARIABLE","line":57,"text":"c"}
+{"start":1151,"end":1152,"type":"RPAREN","line":57,"text":")"}
+{"start":1152,"end":1153,"type":"LBRACE","line":57,"text":"{"}
+{"start":1153,"end":1156,"type":"SQL_BLOCK","line":57,"text":"x=3"}
+{"start":1156,"end":1157,"type":"RBRACE","line":57,"text":"}"}
+{"start":1157,"end":1158,"type":"LPAREN","line":57,"text":"("}
+{"start":1158,"end":1159,"type":"DOLLAR_VARIABLE","line":57,"text":"$"}
+{"start":1159,"end":1160,"type":"VARIABLE","line":57,"text":"d"}
+{"start":1160,"end":1161,"type":"RPAREN","line":57,"text":")"}
+{"start":1161,"end":1162,"type":"LBRACE","line":57,"text":"{"}
+{"start":1162,"end":1165,"type":"SQL_BLOCK","line":57,"text":"x=4"}
+{"start":1165,"end":1166,"type":"RBRACE","line":57,"text":"}"}
+{"start":1166,"end":1167,"type":"WHITE_SPACE","line":57,"text":"\n"}
+{"start":1167,"end":1168,"type":"DOLLAR_VARIABLE","line":58,"text":"$"}
+{"start":1168,"end":1171,"type":"VARIABLE","line":58,"text":"var"}
+{"start":1171,"end":1172,"type":"LBRACKET","line":58,"text":"["}
+{"start":1172,"end":1173,"type":"STRING","line":58,"text":"x"}
+{"start":1173,"end":1174,"type":"RBRACKET","line":58,"text":"]"}
+{"start":1174,"end":1175,"type":"WHITE_SPACE","line":58,"text":"\n"}
+{"start":1175,"end":1186,"type":"SQL_BLOCK","line":59,"text":"AND id = 15"}
+{"start":1186,"end":1187,"type":"WHITE_SPACE","line":59,"text":"\n"}
+{"start":1187,"end":1189,"type":"METHOD","line":60,"text":"^x"}
+{"start":1189,"end":1190,"type":"COLON","line":60,"text":":"}
+{"start":1190,"end":1191,"type":"METHOD","line":60,"text":"y"}
+{"start":1191,"end":1192,"type":"LBRACKET","line":60,"text":"["}
+{"start":1192,"end":1193,"type":"RBRACKET","line":60,"text":"]"}
+{"start":1193,"end":1194,"type":"WHITE_SPACE","line":60,"text":"\n"}
+{"start":1194,"end":1197,"type":"SQL_BLOCK","line":61,"text":"AND"}
+{"start":1197,"end":1198,"type":"WHITE_SPACE","line":61,"text":"\n"}
+{"start":1198,"end":1219,"type":"SQL_BLOCK","line":62,"text":"x <> '{' AND y <> \"}\""}
+{"start":1219,"end":1220,"type":"WHITE_SPACE","line":62,"text":"\n"}
+{"start":1220,"end":1226,"type":"CONSTRUCTOR","line":63,"text":"^array"}
+{"start":1226,"end":1227,"type":"COLON","line":63,"text":":"}
+{"start":1227,"end":1228,"type":"COLON","line":63,"text":":"}
+{"start":1228,"end":1232,"type":"CONSTRUCTOR","line":63,"text":"copy"}
+{"start":1232,"end":1233,"type":"LBRACKET","line":63,"text":"["}
+{"start":1233,"end":1237,"type":"STRING","line":63,"text":"asdf"}
+{"start":1237,"end":1238,"type":"RBRACKET","line":63,"text":"]"}
+{"start":1238,"end":1239,"type":"WHITE_SPACE","line":63,"text":"\n"}
+{"start":1239,"end":1242,"type":"SQL_BLOCK","line":64,"text":"AND"}
+{"start":1242,"end":1243,"type":"WHITE_SPACE","line":64,"text":"\n"}
+{"start":1243,"end":1245,"type":"METHOD","line":65,"text":"^x"}
+{"start":1245,"end":1246,"type":"DOT","line":65,"text":"."}
+{"start":1246,"end":1247,"type":"METHOD","line":65,"text":"y"}
+{"start":1247,"end":1248,"type":"LBRACKET","line":65,"text":"["}
+{"start":1248,"end":1249,"type":"RBRACKET","line":65,"text":"]"}
+{"start":1249,"end":1250,"type":"WHITE_SPACE","line":65,"text":"\n"}
+{"start":1250,"end":1253,"type":"SQL_BLOCK","line":66,"text":"AND"}
+{"start":1253,"end":1254,"type":"WHITE_SPACE","line":66,"text":"\n"}
+{"start":1254,"end":1259,"type":"METHOD","line":67,"text":"^mail"}
+{"start":1259,"end":1260,"type":"COLON","line":67,"text":":"}
+{"start":1260,"end":1264,"type":"METHOD","line":67,"text":"send"}
+{"start":1264,"end":1265,"type":"LBRACKET","line":67,"text":"["}
+{"start":1265,"end":1267,"type":"WHITE_SPACE","line":67,"text":"\n\t"}
+{"start":1267,"end":1268,"type":"VARIABLE","line":68,"text":"$"}
+{"start":1268,"end":1269,"type":"DOT","line":68,"text":"."}
+{"start":1269,"end":1273,"type":"VARIABLE","line":68,"text":"from"}
+{"start":1273,"end":1274,"type":"LBRACKET","line":68,"text":"["}
+{"start":1274,"end":1279,"type":"STRING","line":68,"text":"robot"}
+{"start":1279,"end":1280,"type":"RBRACKET","line":68,"text":"]"}
+{"start":1280,"end":1282,"type":"WHITE_SPACE","line":68,"text":"\n\t"}
+{"start":1282,"end":1283,"type":"VARIABLE","line":69,"text":"$"}
+{"start":1283,"end":1284,"type":"DOT","line":69,"text":"."}
+{"start":1284,"end":1286,"type":"VARIABLE","line":69,"text":"to"}
+{"start":1286,"end":1287,"type":"LBRACKET","line":69,"text":"["}
+{"start":1287,"end":1288,"type":"RBRACKET","line":69,"text":"]"}
+{"start":1288,"end":1290,"type":"WHITE_SPACE","line":69,"text":"\n\t"}
+{"start":1290,"end":1291,"type":"VARIABLE","line":70,"text":"$"}
+{"start":1291,"end":1292,"type":"DOT","line":70,"text":"."}
+{"start":1292,"end":1299,"type":"VARIABLE","line":70,"text":"subject"}
+{"start":1299,"end":1300,"type":"LBRACKET","line":70,"text":"["}
+{"start":1300,"end":1301,"type":"RBRACKET","line":70,"text":"]"}
+{"start":1301,"end":1303,"type":"WHITE_SPACE","line":70,"text":"\n\t"}
+{"start":1303,"end":1304,"type":"VARIABLE","line":71,"text":"$"}
+{"start":1304,"end":1305,"type":"DOT","line":71,"text":"."}
+{"start":1305,"end":1309,"type":"VARIABLE","line":71,"text":"html"}
+{"start":1309,"end":1310,"type":"LBRACKET","line":71,"text":"["}
+{"start":1310,"end":1313,"type":"WHITE_SPACE","line":71,"text":"\n\t\t"}
+{"start":1313,"end":1314,"type":"VARIABLE","line":72,"text":"$"}
+{"start":1314,"end":1315,"type":"DOT","line":72,"text":"."}
+{"start":1315,"end":1320,"type":"VARIABLE","line":72,"text":"value"}
+{"start":1320,"end":1321,"type":"LBRACE","line":72,"text":"{"}
+{"start":1321,"end":1326,"type":"METHOD","line":72,"text":"^html"}
+{"start":1326,"end":1327,"type":"DOT","line":72,"text":"."}
+{"start":1327,"end":1333,"type":"METHOD","line":72,"text":"base64"}
+{"start":1333,"end":1334,"type":"LBRACKET","line":72,"text":"["}
+{"start":1334,"end":1335,"type":"RBRACKET","line":72,"text":"]"}
+{"start":1335,"end":1336,"type":"RBRACE","line":72,"text":"}"}
+{"start":1336,"end":1339,"type":"WHITE_SPACE","line":72,"text":"\n\t\t"}
+{"start":1339,"end":1340,"type":"VARIABLE","line":73,"text":"$"}
+{"start":1340,"end":1341,"type":"DOT","line":73,"text":"."}
+{"start":1341,"end":1366,"type":"VARIABLE","line":73,"text":"content-transfer-encoding"}
+{"start":1366,"end":1367,"type":"LBRACKET","line":73,"text":"["}
+{"start":1367,"end":1373,"type":"STRING","line":73,"text":"base64"}
+{"start":1373,"end":1374,"type":"RBRACKET","line":73,"text":"]"}
+{"start":1374,"end":1376,"type":"WHITE_SPACE","line":73,"text":"\n\t"}
+{"start":1376,"end":1377,"type":"RBRACKET","line":74,"text":"]"}
+{"start":1377,"end":1378,"type":"WHITE_SPACE","line":74,"text":"\n"}
+{"start":1378,"end":1379,"type":"RBRACKET","line":75,"text":"]"}
+{"start":1379,"end":1380,"type":"WHITE_SPACE","line":75,"text":"\n"}
+{"start":1380,"end":1399,"type":"SQL_BLOCK","line":76,"text":"AND z /* comment */"}
+{"start":1399,"end":1400,"type":"WHITE_SPACE","line":76,"text":"\n"}
+{"start":1400,"end":1412,"type":"SQL_BLOCK","line":77,"text":"WHERE id  = "}
+{"start":1412,"end":1416,"type":"METHOD","line":77,"text":"^int"}
+{"start":1416,"end":1417,"type":"COLON","line":77,"text":":"}
+{"start":1417,"end":1420,"type":"METHOD","line":77,"text":"sql"}
+{"start":1420,"end":1421,"type":"LBRACE","line":77,"text":"{"}
+{"start":1421,"end":1454,"type":"SQL_BLOCK","line":77,"text":"select count(*) FROM users where "}
+{"start":1454,"end":1455,"type":"DOLLAR_VARIABLE","line":77,"text":"$"}
+{"start":1455,"end":1460,"type":"VARIABLE","line":77,"text":"where"}
+{"start":1460,"end":1465,"type":"SQL_BLOCK","line":77,"text":" AND "}
+{"start":1465,"end":1466,"type":"DOLLAR_VARIABLE","line":77,"text":"$"}
+{"start":1466,"end":1469,"type":"VARIABLE","line":77,"text":"sql"}
+{"start":1469,"end":1470,"type":"RBRACE","line":77,"text":"}"}
+{"start":1470,"end":1471,"type":"WHITE_SPACE","line":77,"text":"\n"}
+{"start":1471,"end":1485,"type":"SQL_BLOCK","line":78,"text":"WHERE name = '"}
+{"start":1485,"end":1486,"type":"DOLLAR_VARIABLE","line":78,"text":"$"}
+{"start":1486,"end":1490,"type":"VARIABLE","line":78,"text":"user"}
+{"start":1490,"end":1491,"type":"DOT","line":78,"text":"."}
+{"start":1491,"end":1495,"type":"VARIABLE","line":78,"text":"name"}
+{"start":1495,"end":1496,"type":"LBRACKET","line":78,"text":"["}
+{"start":1496,"end":1502,"type":"STRING","line":78,"text":"encode"}
+{"start":1502,"end":1503,"type":"RBRACKET","line":78,"text":"]"}
+{"start":1503,"end":1505,"type":"SQL_BLOCK","line":78,"text":"',"}
+{"start":1505,"end":1506,"type":"WHITE_SPACE","line":78,"text":"\n"}
+{"start":1506,"end":1519,"type":"SQL_BLOCK","line":79,"text":"WHERE id in ("}
+{"start":1519,"end":1524,"type":"METHOD","line":79,"text":"^data"}
+{"start":1524,"end":1525,"type":"DOT","line":79,"text":"."}
+{"start":1525,"end":1532,"type":"METHOD","line":79,"text":"foreach"}
+{"start":1532,"end":1533,"type":"LBRACKET","line":79,"text":"["}
+{"start":1533,"end":1534,"type":"VARIABLE","line":79,"text":"k"}
+{"start":1534,"end":1535,"type":"SEMICOLON","line":79,"text":";"}
+{"start":1535,"end":1536,"type":"VARIABLE","line":79,"text":"v"}
+{"start":1536,"end":1537,"type":"RBRACKET","line":79,"text":"]"}
+{"start":1537,"end":1538,"type":"LBRACE","line":79,"text":"{"}
+{"start":1538,"end":1544,"type":"SQL_BLOCK","line":79,"text":"field_"}
+{"start":1544,"end":1545,"type":"DOLLAR_VARIABLE","line":79,"text":"$"}
+{"start":1545,"end":1546,"type":"VARIABLE","line":79,"text":"v"}
+{"start":1546,"end":1547,"type":"DOT","line":79,"text":"."}
+{"start":1547,"end":1549,"type":"VARIABLE","line":79,"text":"id"}
+{"start":1549,"end":1550,"type":"RBRACE","line":79,"text":"}"}
+{"start":1550,"end":1551,"type":"LBRACKET","line":79,"text":"["}
+{"start":1551,"end":1552,"type":"STRING","line":79,"text":","}
+{"start":1552,"end":1553,"type":"RBRACKET","line":79,"text":"]"}
+{"start":1553,"end":1554,"type":"SQL_BLOCK","line":79,"text":")"}
+{"start":1554,"end":1555,"type":"WHITE_SPACE","line":79,"text":"\n"}
+{"start":1555,"end":1568,"type":"SQL_BLOCK","line":80,"text":"WHERE id in ("}
+{"start":1568,"end":1573,"type":"METHOD","line":80,"text":"^data"}
+{"start":1573,"end":1574,"type":"DOT","line":80,"text":"."}
+{"start":1574,"end":1581,"type":"METHOD","line":80,"text":"foreach"}
+{"start":1581,"end":1582,"type":"LBRACKET","line":80,"text":"["}
+{"start":1582,"end":1583,"type":"VARIABLE","line":80,"text":"k"}
+{"start":1583,"end":1584,"type":"SEMICOLON","line":80,"text":";"}
+{"start":1584,"end":1585,"type":"RBRACKET","line":80,"text":"]"}
+{"start":1585,"end":1586,"type":"LBRACE","line":80,"text":"{"}
+{"start":1586,"end":1587,"type":"DOLLAR_VARIABLE","line":80,"text":"$"}
+{"start":1587,"end":1588,"type":"VARIABLE","line":80,"text":"k"}
+{"start":1588,"end":1589,"type":"DOT","line":80,"text":"."}
+{"start":1589,"end":1591,"type":"VARIABLE","line":80,"text":"id"}
+{"start":1591,"end":1592,"type":"RBRACE","line":80,"text":"}"}
+{"start":1592,"end":1593,"type":"LBRACKET","line":80,"text":"["}
+{"start":1593,"end":1594,"type":"STRING","line":80,"text":","}
+{"start":1594,"end":1595,"type":"RBRACKET","line":80,"text":"]"}
+{"start":1595,"end":1596,"type":"SQL_BLOCK","line":80,"text":")"}
+{"start":1596,"end":1597,"type":"WHITE_SPACE","line":80,"text":"\n"}
+{"start":1597,"end":1610,"type":"SQL_BLOCK","line":81,"text":"WHERE id in ("}
+{"start":1610,"end":1615,"type":"METHOD","line":81,"text":"^data"}
+{"start":1615,"end":1616,"type":"DOT","line":81,"text":"."}
+{"start":1616,"end":1623,"type":"METHOD","line":81,"text":"foreach"}
+{"start":1623,"end":1624,"type":"LBRACKET","line":81,"text":"["}
+{"start":1624,"end":1625,"type":"SEMICOLON","line":81,"text":";"}
+{"start":1625,"end":1626,"type":"VARIABLE","line":81,"text":"v"}
+{"start":1626,"end":1627,"type":"RBRACKET","line":81,"text":"]"}
+{"start":1627,"end":1628,"type":"LBRACE","line":81,"text":"{"}
+{"start":1628,"end":1629,"type":"DOLLAR_VARIABLE","line":81,"text":"$"}
+{"start":1629,"end":1630,"type":"VARIABLE","line":81,"text":"v"}
+{"start":1630,"end":1631,"type":"DOT","line":81,"text":"."}
+{"start":1631,"end":1633,"type":"VARIABLE","line":81,"text":"id"}
+{"start":1633,"end":1634,"type":"RBRACE","line":81,"text":"}"}
+{"start":1634,"end":1635,"type":"LBRACKET","line":81,"text":"["}
+{"start":1635,"end":1636,"type":"STRING","line":81,"text":","}
+{"start":1636,"end":1637,"type":"RBRACKET","line":81,"text":"]"}
+{"start":1637,"end":1638,"type":"SQL_BLOCK","line":81,"text":")"}
+{"start":1638,"end":1639,"type":"WHITE_SPACE","line":81,"text":"\n"}
+{"start":1639,"end":1640,"type":"RBRACE","line":82,"text":"}"}
+{"start":1640,"end":1641,"type":"WHITE_SPACE","line":82,"text":"\n"}
+{"start":1641,"end":1642,"type":"WHITE_SPACE","line":83,"text":"\n"}
+{"start":1642,"end":1643,"type":"DOLLAR_VARIABLE","line":84,"text":"$"}
+{"start":1643,"end":1647,"type":"VARIABLE","line":84,"text":"list"}
+{"start":1647,"end":1648,"type":"LBRACKET","line":84,"text":"["}
+{"start":1648,"end":1654,"type":"CONSTRUCTOR","line":84,"text":"^table"}
+{"start":1654,"end":1655,"type":"COLON","line":84,"text":":"}
+{"start":1655,"end":1656,"type":"COLON","line":84,"text":":"}
+{"start":1656,"end":1659,"type":"CONSTRUCTOR","line":84,"text":"sql"}
+{"start":1659,"end":1660,"type":"LBRACE","line":84,"text":"{"}
+{"start":1660,"end":1661,"type":"WHITE_SPACE","line":84,"text":"\n"}
+{"start":1661,"end":1662,"type":"WHITE_SPACE","line":85,"text":"\t"}
+{"start":1662,"end":1668,"type":"SQL_BLOCK","line":85,"text":"SELECT"}
+{"start":1668,"end":1669,"type":"WHITE_SPACE","line":85,"text":"\n"}
+{"start":1669,"end":1670,"type":"WHITE_SPACE","line":86,"text":"\t"}
+{"start":1670,"end":1686,"type":"SQL_BLOCK","line":86,"text":"\tp.name, p.value"}
+{"start":1686,"end":1687,"type":"WHITE_SPACE","line":86,"text":"\n"}
+{"start":1687,"end":1688,"type":"WHITE_SPACE","line":87,"text":"\t"}
+{"start":1688,"end":1692,"type":"SQL_BLOCK","line":87,"text":"FROM"}
+{"start":1692,"end":1693,"type":"WHITE_SPACE","line":87,"text":"\n"}
+{"start":1693,"end":1694,"type":"WHITE_SPACE","line":88,"text":"\t"}
+{"start":1694,"end":1706,"type":"SQL_BLOCK","line":88,"text":"\tperson AS p"}
+{"start":1706,"end":1707,"type":"WHITE_SPACE","line":88,"text":"\n"}
+{"start":1707,"end":1708,"type":"WHITE_SPACE","line":89,"text":"\t"}
+{"start":1708,"end":1713,"type":"SQL_BLOCK","line":89,"text":"WHERE"}
+{"start":1713,"end":1714,"type":"WHITE_SPACE","line":89,"text":"\n"}
+{"start":1714,"end":1715,"type":"WHITE_SPACE","line":90,"text":"\t"}
+{"start":1715,"end":1727,"type":"SQL_BLOCK","line":90,"text":"\tp.login = ("}
+{"start":1727,"end":1733,"type":"METHOD","line":90,"text":"^users"}
+{"start":1733,"end":1734,"type":"DOT","line":90,"text":"."}
+{"start":1734,"end":1738,"type":"METHOD","line":90,"text":"menu"}
+{"start":1738,"end":1739,"type":"LBRACE","line":90,"text":"{"}
+{"start":1739,"end":1740,"type":"SQL_BLOCK","line":90,"text":"'"}
+{"start":1740,"end":1741,"type":"DOLLAR_VARIABLE","line":90,"text":"$"}
+{"start":1741,"end":1746,"type":"VARIABLE","line":90,"text":"users"}
+{"start":1746,"end":1747,"type":"DOT","line":90,"text":"."}
+{"start":1747,"end":1752,"type":"VARIABLE","line":90,"text":"login"}
+{"start":1752,"end":1753,"type":"SQL_BLOCK","line":90,"text":"'"}
+{"start":1753,"end":1754,"type":"RBRACE","line":90,"text":"}"}
+{"start":1754,"end":1755,"type":"LBRACKET","line":90,"text":"["}
+{"start":1755,"end":1756,"type":"STRING","line":90,"text":","}
+{"start":1756,"end":1757,"type":"RBRACKET","line":90,"text":"]"}
+{"start":1757,"end":1758,"type":"SQL_BLOCK","line":90,"text":")"}
+{"start":1758,"end":1759,"type":"WHITE_SPACE","line":90,"text":"\n"}
+{"start":1759,"end":1760,"type":"RBRACE","line":91,"text":"}"}
+{"start":1760,"end":1761,"type":"RBRACKET","line":91,"text":"]"}

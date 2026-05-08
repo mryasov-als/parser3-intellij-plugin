@@ -1,0 +1,62 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">for. Цикл с&nbsp;заданным числом повторов</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^for[счетчик](от;до){тело}
+<br>
+^for[счетчик](от;до){тело}[разделитель]&nbsp;&nbsp;
+<br>
+^for[счетчик](от;до){тело}{разделитель}
+<br>
+</b><span>
+<br>
+Оператор </code><code><b>for</b></code><span> повторяет тело цикла, перебирая значения счетчика от&nbsp;начального значения до&nbsp;конечного. С&nbsp;каждым выполнением тела значение счетчика автоматически увеличивается на&nbsp;1. 
+<br>
+
+<br>
+</span><code><b>Счетчик</b></code><span>&nbsp;- имя переменной, которая является счетчиком цикла.
+<br>
+
+<br>
+</span><code><b>От</b></code><span> и&nbsp;</span><code><b>до</b></code><span>&nbsp;- начальное и&nbsp;конечное значения счетчика, математические выражения, задающие соответственно начало и&nbsp;конец диапазона значений, принимаемых счетчиком. Если конечное значение счетчика меньше начального, тело цикла не&nbsp;выполнится ни&nbsp;разу.
+<br>
+
+<br>
+</span><code><b>Разделитель</b></code><span>&nbsp;- строка или код, который вставляется перед каждым не&nbsp;пустым не&nbsp;первым телом.
+<br>
+
+<br>
+<i>Замечание: поскольку имена счетчиков могут повторяться, полезно объявлять их локальными переменными метода, где используется цикл</i><i> </i></span><code><b>for</b></code><span><i>.
+<br>
+
+<br>
+Замечание</i><i>: </i><i>если разделитель задан в&nbsp;виде кода, то&nbsp;этот код выполняется после следующего не&nbsp;пустого тела цикла.
+<br>
+</i>
+<br>
+В любой момент можно принудительно выйти из&nbsp;цикла с&nbsp;помощью оператора </span><code><span style="color:#7F97E1" class="blue"><b><a href="opbreak.htm">break</a></b></code></span><span> или&nbsp;принудительно закончить текущую итерацию и&nbsp;перейти к&nbsp;следующей с&nbsp;помощью оператора&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b><a href="opcontinue.htm">continue</a></b></code></span><span>&nbsp;&nbsp;&nbsp;<b><i>[</i></b><b><i>3.2.2</i></b><b><i>]</i></b>.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^for[week](1;4){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;a&nbsp;href="/news/archive.html?week=</b><span style="color:#7F97E1" class="blue"><b>$week</b></code></span><code><b>"&gt;Новости&nbsp;за&nbsp;неделю&nbsp;№</b><span style="color:#7F97E1" class="blue"><b>$week</b></code></span><code><b>&lt;/a&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}[</b></code></span><code><b>&lt;br</b><b>&nbsp;/</b><b>&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Пример выводит ссылки на&nbsp;недели с&nbsp;первой по&nbsp;четвертую, после очередной строки ставится тег перевода строки.
+<br>
+</span></span>

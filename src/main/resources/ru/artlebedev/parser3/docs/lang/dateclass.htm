@@ -1,0 +1,66 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">date  (класс)</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Класс <code><b>date</b></code><span> предназначен для&nbsp;работы с&nbsp;датами и&nbsp;временем. Возможные варианты использования&nbsp;- календари, всевозможные проверки, основывающиеся на&nbsp;датах, и&nbsp;т.&nbsp;п. 
+<br>
+
+<br>
+Диапазон возможных значений: 
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>от&nbsp;01.01.1970 до&nbsp;01.01.2038 года;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>от&nbsp;00.00.0000 до&nbsp;31.12.9999 года.<b><i>&nbsp;&nbsp;&nbsp;[3.4.4]</i></b>
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Не нужно забывать, что в&nbsp;нашем календарном времени есть разрывы и&nbsp;нахлесты: во многих странах принято так&nbsp;называемое летнее время, когда весной часы переводят вперед, а&nbsp;осенью назад. Скажем, в&nbsp;Москве не&nbsp;было времени «02:00, 31 марта 2002», а&nbsp;время «02:00, 27 октября 2002» было дважды.
+<br>
+
+<br>
+Числовое значение объекта класса </span><code><b>date</b></code><span> равно числу суток с&nbsp;EPOCH (01.01.1970 00:00:00, UTC) до&nbsp;даты, заданной в&nbsp;объекте. Этим значением полезно пользоваться для&nbsp;вычисления относительной даты, например:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>#&nbsp;проверка&nbsp;"обновлен&nbsp;ли&nbsp;файл&nbsp;позже&nbsp;чем&nbsp;неделю&nbsp;назад?"
+<br>
+^if($last_update&nbsp;&gt;&nbsp;$now-7){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;новый
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;старый
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+Число суток может быть дробным, скажем полтора дня = </span><code><b>1.5</b></code><span>. 
+<br>
+
+<br>
+Обычно класс оперирует локальными датой и&nbsp;временем, однако можно узнать значение хранимой им даты/времени в&nbsp;произвольном часовом поясе, см.&nbsp;</span><code><b>^date.</b><b><a href="dateroll.htm">roll</a></b><b>[TZ;…]</b></code><span>.
+<br>
+
+<br>
+Для общения между компьютерами, работающими в&nbsp;разных часовых поясах, удобно обмениваться значениями даты/времени, не&nbsp;зависящими от&nbsp;пояса, - здесь очень удобен формат&nbsp;UNIX, представляющий собой число секунд, прошедших с&nbsp;EPOCH.
+<br>
+
+<br>
+Форматы Unix и&nbsp;ISO 8601 можно использовать в&nbsp;JavaScript и&nbsp;ряде других языков сценариев, работающих в&nbsp;браузере.
+<br>
+
+<br>
+Parser полностью поддерживает работу с&nbsp;UNIX-форматом дат.
+<br>
+</span></span>

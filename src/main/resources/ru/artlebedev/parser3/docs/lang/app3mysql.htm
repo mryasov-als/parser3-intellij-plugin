@@ -1,0 +1,156 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Для MySQL</b><b> (MariaDB)</b><b></span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code>mysql://user:password@host[:port][,host[:port]]|[/unix/socket]/database?
+<br>
+&nbsp;&nbsp;&nbsp;charset=значение&amp;<i>&nbsp;</i><span><i>[значением&nbsp;может&nbsp;быть&nbsp;название&nbsp;кодировки&nbsp;для&nbsp;MySQL&nbsp;4.1+]</i></code><code>
+<br>
+&nbsp;&nbsp;&nbsp;<a href="app3clientcharset.htm">ClientCharset</a>=кодировка&amp;<b>
+<br>
+</b>&nbsp;&nbsp;&nbsp;timeout=3&amp;
+<br>
+&nbsp;&nbsp;&nbsp;compress=0&amp;
+<br>
+&nbsp;&nbsp;&nbsp;named_pipe=1&amp;
+<br>
+&nbsp;&nbsp;&nbsp;autocommit=1&amp;
+<br>
+&nbsp;&nbsp;&nbsp;local_infile=0&amp;</code><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><span><b><i>[3.4.2]
+<br>
+</i></b></span><code>&nbsp;&nbsp;&nbsp;multi_statements=0&amp;</code><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><span><b><i>[3.3.0]
+<br>
+</i></b></span><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><code>config_file=~/.my.cnf&amp;</code><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><span><b><i>[3.4.6]
+<br>
+</i></b></span><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><code>config_group=parser</code><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><span><b><i>[3.4.6]
+<br>
+</i></b>
+<br>
+Как правило, для&nbsp;подключения не&nbsp;нужно указывать дополнительные параметры:
+<br>
+</span><code>mysql://user:password@localhost/database
+<br>
+</code><span>
+<br>
+Можно вместо </span><code>имени_хоста</code><span> и&nbsp;</span><code>номера_порта</code><span> передать путь к&nbsp;UNIX-сокету в&nbsp;квадратных скобках (UNIX-сокет&nbsp;- это некий магический набор символов (путь), который известен администратору MySQL. Через этот сокет может идти общение с&nbsp;сервером):
+<br>
+</span><code>mysql://user:password@[/unix/socket]/database
+<br>
+</code><span>
+<br>
+</span><code>charset</code><span> - сразу после соединения выполняет команду </span><code>«SET&nbsp;NAMES&nbsp;значение»</code><span>;
+<br>
+</span><span>
+<br>
+</span><code><a href="app3clientcharset.htm">ClientCharset</a></code><span> - задает кодировку, в&nbsp;которой необходимо общаться с&nbsp;SQL-сервером, перекодированием занимается драйвер;
+<br>
+
+<br>
+</span><code>timeout</code><span> - задает значение параметра </span><code>Connect&nbsp;timeout&nbsp;в&nbsp;</code><span>секундах;
+<br>
+
+<br>
+</span><code>compress</code><span> - режим сжатия трафика между сервером и&nbsp;клиентом;
+<br>
+
+<br>
+</span><code>named_pipe</code><span> - использование именованных каналов для&nbsp;соединения с&nbsp;сервером MySQL, работающим под управлением Windows NT;
+<br>
+
+<br>
+</span><code>autocommit</code><span> - если установлен в&nbsp;0, то&nbsp;после соединения выполняет команду </span><code>SET&nbsp;AUTOCOMMIT=0</code><span> </span><span>(в&nbsp;документации по&nbsp;MySQL следует прочитать, как работает autocommit, в&nbsp;том числе какие команды <a href="http://dev.mysql.com/doc/refman/5.0/en/implicit-commit.html" target="_blank">вызывают COMMIT</a>);
+<br>
+</span><span>
+<br>
+</span><code>local_infile</code><span> - если установлен в&nbsp;1, то&nbsp;разрешается выполнение команды LOAD DATA [LOCAL] INFILE (<a href="http://dev.mysql.com/doc/refman/5.1/en/load-data-local.html" target="_blank">подробности</a>);
+<br>
+
+<br>
+</span><code>multi_statements</code><span> - если установлен в&nbsp;1, то&nbsp;текст SQL-запроса может содержать несколько инструкций, разделенных символом ';' (<i>символ ";" необходимо </i><i><a href="stringlit.htm">предварять</a></i><i> символом "^"</i>);
+<br>
+<b><i>
+<br>
+</i></b></span><code>config_file</code><span> - использовать указанный файл с&nbsp;настройками (например, там может быть указан сертификат для&nbsp;безопасного соединения);
+<br>
+
+<br>
+</span><code>config_group</code><span> - читать указанную группу настроек из&nbsp;файла с&nbsp;настройками.
+<br>
+</span><span><b>
+<br>
+
+<br>
+</b></span><span><b>Пример: перекодирование средствами SQL-сервера (рекомендуется, требуется MySQL 4.1 или выше)
+<br>
+</b>MySQL-сервер версии 4.1 и&nbsp;выше имеет богатые возможности по&nbsp;перекодированию данных, поэтому в&nbsp;случае его использования рекомендуется задействовать именно их, используя опцию </span><code>charset</code><span>, а&nbsp;не&nbsp;заниматься перекодированием средствами драйвера с&nbsp;помощью опции </span><code>ClientCharset</code><span>. В&nbsp;случае использования версии MySQL&nbsp;4.1 и&nbsp;выше, можно даже хранить в&nbsp;разных таблицах данные в&nbsp;разных кодировках, хотя мы считаем, что в&nbsp;этом случае лучше всего хранить данные в&nbsp;кодировке </span><code>UTF-8</code><span>. В&nbsp;MySQL есть разные варианты этой кодировки, следует использовать </span><code>utf8mb4</code><span>.
+<br>
+
+<br>
+Допустим, данные в&nbsp;базе хранятся в&nbsp;кодировке </span><code>UTF-8</code><span>, а&nbsp;сайт работает в&nbsp;кодировке </span><code>windows-1251</code><span>, в&nbsp;этом случае</span><span> нужно использовать следующую строку подключения:
+<br>
+</span><code>mysql://user:password@host/database?charset=cp1251
+<br>
+</code><span>
+<br>
+Тогда сразу после соединения SQL-серверу будет выдана команда </span><code><b>SET&nbsp;NAMES&nbsp;cp1251</b></code><span>, и&nbsp;сервер сам будет перекодировать принимаемые данные из&nbsp;кодировки </span><code>cp1251</code><span> в&nbsp;кодировку, в&nbsp;которой данные хранятся у&nbsp;него в&nbsp;таблице, и&nbsp;обратно.
+<br>
+
+<br>
+<i>Внимание: в&nbsp;данном случае необходимо указать кодировку, в&nbsp;которой работает сайт. Данная опция выполняет команду MySQL, поэтому необходимо использовать названия кодировок MySQL-сервера, которые отличаются от&nbsp;названий кодировок Parser&nbsp;3, определяемых в&nbsp;</i><i><a href="parserconfmethod.htm">конфигурационном файле</a></i><i>.
+<br>
+
+<br>
+</i></span><span><b>
+<br>
+</b></span><span><b>Пример: база в&nbsp;windows-1251, страницы в&nbsp;koi8-r, перекодирование драйвером (работает со&nbsp;всеми версиями MySQL-сервера)
+<br>
+</b>В редких случаях бывает, что невозможно использовать функции перекодирования, предоставляемые MySQL-сервером. Тогда можно задействовать механизмы перекодирования драйвера, используя опцию </span><code>ClientCharset</code><span>.
+<br>
+Допустим, данные в&nbsp;базе хранятся в&nbsp;кодировке </span><code>windows-1251</code><span>, а&nbsp;сайт работает в&nbsp;кодировке </span><code>koi8-r</code><span>, в&nbsp;этом случае можно использовать такую строку подключения:
+<br>
+</span><code>mysql://user:password@host/database?<a href="app3clientcharset.htm">ClientCharset</a>=windows-1251
+<br>
+</code><span>
+<br>
+Тогда отправляемые SQL-серверу данные будут перекодироваться драйвером из&nbsp;</span><code><b><a href="requestcharset.htm">$request:charset</a></b></code><span> (в&nbsp;данном примере </span><code>koi8-r</code><span>) в&nbsp;кодировку </span><code>windows-1251</code><span>, а&nbsp;принимаемые от&nbsp;SQL-сервера данные&nbsp;- обратно.
+<br>
+</span><span><b>
+<br>
+</b></span><span><i>Внимание: в&nbsp;данном случае нужно указать кодировку, в&nbsp;которой данные хранятся в&nbsp;БД. В&nbsp;этой опции нужно указывать названия кодировок Parser&nbsp;3, которые определяются в&nbsp;</i><i><a href="parserconfmethod.htm">конфигурационном файле</a></i><i>.
+<br>
+
+<br>
+</i></span><span><i> 
+<br>
+</i></span><span><b>Пример: подключение к&nbsp;кластеру MySQL
+<br>
+</b></span><span><i>
+<br>
+</i></span><code>mysql://user:password@node1,node2,node3/?timeout=1</code><span>
+<br>
+
+<br>
+Сперва произойдет попытка подключения  к&nbsp;серверу </span><code>node1</code><span>. Если соединение не&nbsp;будет установлено в&nbsp;течение секунды (а обычно это занимает тысячные доли секунды), то&nbsp;произойдет переключение на&nbsp;сервер </span><code>node2</code><span>, если и&nbsp;с&nbsp;ним не&nbsp;получится установить соединение в&nbsp;течение секунды, произойдет переключение на&nbsp;сервер </span><code>node3</code><span>.
+<br>
+
+<br>
+
+<br>
+<b>Пример: подключение к&nbsp;SphinxQL
+<br>
+</b></span><span><i>
+<br>
+</i></span><code>mysql://@localhost:9306/?ClientCharset=utf-8
+<br>
+</code><span>
+<br>
+</span></span>

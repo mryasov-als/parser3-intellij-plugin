@@ -1,0 +1,76 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">is. Проверка типа</b><span><b><i>&nbsp;&nbsp;&nbsp;</i></span>&nbsp;<link-to-docs /><span><b><i>[3.4.4]
+<br>
+</i></b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^reflection:</b><b>is[</b><b>имя&nbsp;элемента</b><b>;</b><b>тип</b><b>]</b><b>
+<br>
+^reflection:</b><b>is[</b><b>имя&nbsp;элемента</b><b>;</b><b>тип</b><b>;</b><b>контекст</b><b>]</b><b>
+<br>
+</b><span>
+<br>
+Метод возвращает результат «истина&nbsp;/&nbsp;ложь» в&nbsp;зависимости от&nbsp;того, относится&nbsp;ли элемент с&nbsp;указанным именем к&nbsp;заданному типу. 
+<br>
+
+<br>
+Метод расширяет функциональность оператора </code><code><b><a href="opis.htm">is</a></b></code><span>, позволяя проверить, является&nbsp;ли параметр <a href="junctionclass.htm">кодом</a>. Для&nbsp;проверки того, является&nbsp;ли параметр кодом (передается в&nbsp;фигурных или круглых скобках), нужно указать в&nbsp;качестве </span><code><b>типа</b></code><span> специальное значение&nbsp;</span><code><b>code</b></code><span>. Для&nbsp;проверки того, является &nbsp;ли параметр ссылкой на&nbsp;метод, нужно указать в&nbsp;качестве </span><code><b>типа</b></code><span> специальное значение&nbsp;</span><code><b>method</b></code><span>. 
+<br>
+
+<br>
+По&nbsp;умолчанию контекстом является контекст вызова метода&nbsp;</span><code><b>is</b></code><span>. Если метод принимает неопределенное число параметров, в качестве контекста необходимо указать переменную, в&nbsp;которой они переданы.
+<br>
+
+<br>
+
+<br>
+<b>Проверка типа параметра
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>@</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mainclass.htm">main</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+^method[string]
+<br>
+^method{code}
+<br>
+^method[$method]
+<br>
+^another-method[$method]
+<br>
+
+<br>
+@method[param]
+<br>
+^if(^reflection:is[param;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="junctionclass.htm">junction</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Param&nbsp;is&nbsp;^if(^reflection:is[param;code]){code}{method&nbsp;reference}
+<br>
+}{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Param&nbsp;is&nbsp;not&nbsp;code&nbsp;or&nbsp;method&nbsp;reference
+<br>
+}
+<br>
+
+<br>
+@another-method[*params]
+<br>
+^if(^reflection:is[0;method;$params]){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;First&nbsp;param&nbsp;is&nbsp;method&nbsp;reference
+<br>
+}
+<br>
+</b></code></span><span>
+<br>
+</span></span>

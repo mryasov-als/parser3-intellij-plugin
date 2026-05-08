@@ -1,0 +1,60 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Для SQLite</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code>sqlite://path-to-DB-file?
+<br>
+&nbsp;&nbsp;&nbsp;<a href="app3clientcharset.htm">ClientCharset</a>=UTF-8&amp;&nbsp;<span><b><i>[3.3.0]</i></b></code><code>
+<br>
+&nbsp;&nbsp;&nbsp;autocommit=1&amp;&nbsp;</code><span><b><i>[3.3.0]
+<br>
+</i></b></span><code>&nbsp;&nbsp;&nbsp;multi_statements=0&nbsp;</code><span><b><i>[3.3.0]
+<br>
+</i></b>
+<br>
+Путь к&nbsp;файлу с&nbsp;базой данных задается относительно <a href="requestdocroot.htm">document_root</a>, кроме того, в&nbsp;качестве пути к&nbsp;файлу драйвер понимает специальные значения </span><code><b>:memory:</b></code><span> и&nbsp;</span><code><b>:temporary:</b></code><span>.</span><span> В первом случае на&nbsp;сессию будет создаваться временная база данных в&nbsp;памяти, а&nbsp;во втором случае&nbsp;- на&nbsp;диске.</span><span><b>
+<br>
+
+<br>
+</b></span><code>autocommit</code><span> - по&nbsp;умолчанию SQLite автоматически выполняет </span><code>COMMIT</code><span> после каждого успешно выполненного запроса; если указать опцию </span><code>autocommit=0</code><span>, то&nbsp;такое поведение будет изменено и&nbsp;Parser&nbsp;3 в&nbsp;начале оператора </span><code><b><a href="opconnect.htm">connect</a></b></code><span> будет выдавать комманду </span><code>BEGIN</code><span>, а&nbsp;в&nbsp;конце&nbsp;- </span><code>COMMIT</code><span> или </span><code>ROLLBACK</code><span>; таким образом, все запросы, написанные внутри одного оператора </span><code>connect</code><span>, будут выполняться в&nbsp;рамках одной транзакции;
+<br>
+
+<br>
+</span><code>multi_statements</code><span> - если установлен в&nbsp;1, то&nbsp;текст SQL-запроса может содержать несколько инструкций, разделенных символом ';' (<i>символ ";" необходимо </i><i><a href="stringlit.htm">предварять</a></i><i> символом "^"</i>);
+<br>
+<b><i>
+<br>
+</i></b></span><code><a href="app3clientcharset.htm">ClientCharset</a></code><span> - по&nbsp;умолчанию драйвер перекодирует все отправляемые текстовые данные в&nbsp;UTF-8 и&nbsp;обратно (числа и&nbsp;BLOB не&nbsp;перекодируются), однако в&nbsp;некоторых случаях, если есть БД, содержащая данные в&nbsp;иной кодировке (что в&nbsp;применении к&nbsp;SQLite некорректно), используя данную опцию, можно задать кодировку, в&nbsp;которую драйвер будет перекодировать данные при общении с&nbsp;SQL-сервером.
+<br>
+
+<br>
+В драйвер SQLite добавлена функция regexp(expr, string), реализованная на базе упрощённой библиотеки регулярных выражений. Параметр expr задаёт <span style="color:#7F97E1" class="blue"><u><a href="https://www.sqlite.org/src/file?name=ext/misc/regexp.c" target="_blank">шаблон регулярного выражения</a></u></span></span><span>, а string - строку, которую нужно проверить на соответствие этому шаблону. <b><i>[3.5.0]</i></b>
+<br>
+
+<br>
+</span><span><b>
+<br>
+</b></span><span><b>Примеры
+<br>
+</b>Для работы с&nbsp;базой данных </span><code>my.db</code><span>, которая располагается в&nbsp;директории </span><code>data</code><span>,</span><span> находящейся рядом с&nbsp;директорией, на&nbsp;которую указывает document_root, строку подключения стоит написать так:
+<br>
+</span><code>sqlite://../data/my.db
+<br>
+
+<br>
+</code><span>Для работы с&nbsp;временной базой данных, расположенной в&nbsp;памяти и&nbsp;без autocommit, строку подключения стоит написать так:
+<br>
+</span><code>sqlite://:memory:?autocommit=0
+<br>
+</code><span>
+<br>
+</span></span>

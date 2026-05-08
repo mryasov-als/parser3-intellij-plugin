@@ -1,0 +1,30 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Создание объекта</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^reflection:</b><b>create</b><b>[имя&nbsp;класса</b><b>;</b><b>имя&nbsp;конструктора</b><b>]</b><span>
+<br>
+</code><code><b>^reflection:</b><b>create</b><b>[имя&nbsp;класса</b><b>;</b><b>имя&nbsp;конструктора;параметры;конструктора</b><b>]
+<br>
+</b><b>^reflection:</b><b>create</b><b>[</b><b>&nbsp;$.class[</b><b>имя&nbsp;класса</b><b>]&nbsp;$.constructor[</b><b>имя&nbsp;конструктора</b><b>]&nbsp;</b><b>;параметры;конструктора</b><b>]</b></code><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.</i></b><b><i>5</i></b><b><i>]</i></b></span><span>
+<br>
+</span><code><b>^reflection:</b><b>create</b><b>[</b><b>&nbsp;$.class[</b><b>имя&nbsp;класса</b><b>]&nbsp;$.constructor[</b><b>имя&nbsp;конструктора</b><b>]&nbsp;</b><b>$.arguments[&nbsp;$.1[параметры]&nbsp;$.2[конструктора]</b><b>&nbsp;]&nbsp;]</b></code><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.</i></b><b><i>5</i></b><b><i>]</i></b></span><span>
+<br>
+
+<br>
+</span><span>Метод создает объект указанного </span><code><b>класса</b></code><span>, вызывая конструктор с&nbsp;указанным </span><code><b>именем</b></code><span>. Использовать этот метод удобно, если необходимо создать объект класса, имя которого находится в&nbsp;переменной. При передаче параметров через хеш  значения ключей игнорируются, параметры передаются в&nbsp;порядке следования в&nbsp;хеше.
+<br>
+
+<br>
+<i>Замечание: передать конструктору можно не&nbsp;более 100 параметров.
+<br>
+</i></span></span>

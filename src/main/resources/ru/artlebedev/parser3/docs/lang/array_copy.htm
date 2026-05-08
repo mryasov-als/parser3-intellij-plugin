@@ -1,0 +1,40 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">copy. Копирование массива или хеша</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^array::copy[существующий&nbsp;массив&nbsp;или&nbsp;хеш]
+<br>
+</b><span>
+<br>
+Конструктор создает копию указанного массива или хеша. При копировании хеша создается массив, в котором элементы размещены по числовым ключам хеша.
+<br>
+
+<br>
+<b>Пример копирования хеша
+<br>
+</b>
+<br>
+</code><code><span style="color:#7F97E1" class="blue"><b>$hash[
+<br>
+&nbsp;&nbsp;&nbsp;$.0[яблоко]&nbsp;$.2[банан]
+<br>
+]
+<br>
+$array[^array::copy[$hash]]
+<br>
+</b></code></span><span>
+<br>
+В результате массив </span><code><b>$array</b></code><span> будет содержать элементы с индексами 0 (яблоко) и 2 (банан).
+<br>
+<i>
+<br>
+</i></span></span>

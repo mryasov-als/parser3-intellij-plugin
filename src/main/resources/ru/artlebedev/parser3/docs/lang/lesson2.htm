@@ -1,0 +1,375 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Урок 2. Меню навигации и&nbsp;структура страниц</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Предыдущий урок мы закончили тем, что определили недостатки в&nbsp;реализации меню. Теперь займемся их устранением. Наше меню выводит лишнюю ссылку на&nbsp;текущую страницу, что нисколько не&nbsp;украшает будущий сайт. Чтобы этого избежать, необходимо проверить, не&nbsp;является&nbsp;ли раздел, на&nbsp;который мы выводим ссылку, текущим. Иными словами, нам нужно сравнить URI раздела, на&nbsp;который собираемся ставить ссылку, с&nbsp;текущим URI. В случае если они совпадают, ссылку на&nbsp;раздел ставить не&nbsp;надо. Дополнительно для&nbsp;удобства пользователей мы изменим в&nbsp;меню навигации цвет столбца текущего раздела.
+<br>
+
+<br>
+Открываем файл <code>auto.p</code><span> и&nbsp;меняем его содержимое на:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@navigation[]
+<br>
+$sections[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tableload.htm">table::load</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[/sections.cfg]]
+<br>
+</b></code></span><code><b>&lt;nav&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;^sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablemenu.htm">menu</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^navigation_item[]
+<br>
+&nbsp;&nbsp;&nbsp;}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>|</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b><b>&lt;nav&gt;
+<br>
+</b><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>@navigation_item[]
+<br>
+^if($sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">uri</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;eq&nbsp;$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="requesturi.htm">request:uri</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;b&gt;</b><span style="color:#7F97E1" class="blue"><b>$sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">name</a></b></code></span><code><b>&lt;/b&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;a&nbsp;href="</b><span style="color:#7F97E1" class="blue"><b>$sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">uri</a></b></code></span><code><b>"&gt;</b><span style="color:#7F97E1" class="blue"><b>$sections.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablefields.htm">name</a></b></code></span><code><b>&lt;/a&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+Что изменилось? На&nbsp;первый взгляд, не&nbsp;так уж и&nbsp;много, но&nbsp;функциональность нашего модуля существенно возросла. Мы описали еще один метод&nbsp;- </span><code><b>navigation_item</b></code><span>, который вызывается из&nbsp;метода </span><code><b>navigation</b></code><span>. В нем появилась новая структура: 
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opif.htm">if</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>(условие){код,&nbsp;если&nbsp;условие&nbsp;«истина»}{код,&nbsp;если&nbsp;условие&nbsp;«ложь»}</b></code></span><span>
+<br>
+
+<br>
+Что она делает, понять несложно. В круглых скобках задается условие, и&nbsp;в&nbsp;зависимости от&nbsp;того, какое значение возвращает условие, «ложь» или «истина», можно получить разный результат. Также, если в&nbsp;условии записано выражение, значение которого равно нулю, то&nbsp;результат&nbsp;- «ложь», иначе&nbsp;- «истина». Мы используем оператор </span><code><b>if</b></code><span> для&nbsp;того, чтобы в&nbsp;одном случае поставить ссылку на&nbsp;раздел, а&nbsp;другом&nbsp;- нет. Осталось только разобраться с&nbsp;условием. Будем проверять на&nbsp;равенство две текстовые строки, в&nbsp;одной из&nbsp;которых - значение URI-раздела из&nbsp;таблицы </span><code><b>sections</b></code><span>, в&nbsp;другой -  текущий URI (</span><code><b>$request:uri</b></code><span> возвращает строку, содержащую URI текущей страницы). Тут возникает вопрос, какие&nbsp;же строки равны между собой. Несомненно, только те, которые полностью совпадают и&nbsp;по&nbsp;длине, и&nbsp;по&nbsp;символьному содержанию. 
+<br>
+
+<br>
+Для сравнения двух строк в&nbsp;Parser  предусмотрены следующие <a href="exprops.htm">операторы</a>:
+<br>
+
+<br>
+</span><code><b>eq</b></code><span>&nbsp;- строки равны (<b><i>equal</i></b>): </span><code><b>parser&nbsp;eq&nbsp;parser</b>
+<br>
+<b>ne</b></code><span>&nbsp;- строки не&nbsp;равны (<b><i>not equal</i></b>): </span><code><b>parser&nbsp;ne&nbsp;parser3
+<br>
+lt</b></code><span>&nbsp;- первая строка меньше второй (<b><i>less than</i></b>): </span><code><b>parser&nbsp;lt&nbsp;parser3</b></code><span>
+<br>
+</span><code><b>gt</b></code><span>&nbsp;- первая строка больше второй (<b><i>greater than</i></b>): </span><code><b>parser3&nbsp;gt&nbsp;parser&nbsp;
+<br>
+le</b></code><span>&nbsp;- первая строка меньше или равна второй (<b><i>less or equal</i></b>)
+<br>
+</span><code><b>ge</b></code><span>&nbsp;- первая строка больше или равна второй (<b><i>greater or equal</i></b>)
+<br>
+
+<br>
+С условием разобрались: если </span><code><b>$sections.uri</b></code><span> и&nbsp;</span><code><b>$request:uri</b></code><span> совпадают, ссылку не&nbsp;ставим, если нет - ставим.
+<br>
+Вот, собственно, и&nbsp;все, что касается меню. Теперь оно функционально и&nbsp;готово к&nbsp;использованию. 
+<br>
+
+<br>
+Наш первый кирпичик для&nbsp;будущего сайта готов. Теперь займемся структурой страниц. Разобьем их на&nbsp;следующие блоки: </span><code><b>header</b></code><span> - верхняя часть страницы,  </span><code><b>navigation</b></code><span> -  наше меню, </span><code><b>content</b></code><span> - основной информационный блок и&nbsp;</span><code><b>footer</b></code><span> - нижняя часть страницы. Страницы многих сайтов имеют похожую структуру. 
+<br>
+
+<br>
+</span><code><b>Footer</b></code><span> будет для&nbsp;всех страниц одинаковым, </span><code><b>header</b></code><span>&nbsp;- для&nbsp;всех страниц одинаковым по&nbsp;стилю, но&nbsp;с&nbsp;разными текстовыми строками&nbsp;- заголовками страницы, а&nbsp;</span><code><b>content</b></code><span> будет разным у&nbsp;всех страниц и&nbsp;сохранит только общую структуру (вертикальный информационный блок). 
+<br>
+
+<br>
+Каждая из&nbsp;страниц будет иметь следующую структуру:
+<br>
+
+<br>
+<table border="1" cellpadding="1"><tr><td align="left" valign="top" width="502" colspan="2">
+<span> header
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="502" colspan="2">
+<span>
+<br>
+ navigation
+<br>
+
+<br>
+ content
+<br>
+
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="502" colspan="2">
+<span> footer
+<br>
+</span></td></tr></table>
+<br>
+
+<br>
+Так&nbsp;же как и&nbsp;в&nbsp;случае с&nbsp;меню, опишем каждый из&nbsp;этих блоков методом (функцией) на&nbsp;Parser. Разберемся подробнее с&nbsp;каждым блоком. 
+<br>
+
+<br>
+С </span><code>footer</code><span> </span><span>все очень просто - в&nbsp;</span><code>auto.p</code><span> добавляем код: 
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@footer[]
+<br>
+</b></code></span><code><b>&lt;footer&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;$now[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datenow.htm">date::now</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]]
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;Powered&nbsp;by&nbsp;Parser3&nbsp;1997-$now.year
+<br>
+&lt;/footer&gt;
+<br>
+</b></code><span>
+<br>
+Никаких новых идей здесь нет, разве что мы впервые использовали класс </span><code><b><a href="dateclass.htm">date</a></b></code><span> с&nbsp;конструктором </span><code><b><a href="datenow.htm">now</a></b></code><span> для&nbsp;получения текущей даты, а&nbsp;затем из&nbsp;объекта класса </span><code><b>date</b></code><span> взяли поле </span><code><b><a href="datefields.htm">year</a></b></code><span> (год). Если это кажется непонятным, нужно вернуться к&nbsp;первому уроку, где рассказано о&nbsp;работе с&nbsp;объектами на&nbsp;примере класса </span><code><b>table</b></code><span>. Все идентично, только теперь мы имеем дело с&nbsp;объектом другого класса.
+<br>
+
+<br>
+Немного сложнее с&nbsp;модулем </span><code><b>header</b></code><span>. С&nbsp;одной  стороны, нам нужно формировать уникальный заголовок-приветствие для&nbsp;каждой страницы. В то&nbsp;же время он будет одинаковым с&nbsp;точки зрения внешнего вида, различие только в&nbsp;тексте, который будет выводиться. Как&nbsp;же быть? Мы предлагаем сделать следующее: определить в&nbsp;нашем </span><code>auto.p</code><span> новую функцию </span><code><b>header</b></code><span>, внутри которой будет вызываться другая функция - </span><code><b>greeting</b></code><span>. А функция </span><code><b>greeting</b></code><span>, в&nbsp;свою очередь, будет определяться на&nbsp;самих страницах сайта и&nbsp;содержать только отличающиеся части заголовков страниц (в&nbsp;нашем случае&nbsp;- строку-приветствие). 
+<br>
+
+<br>
+Дополняем </span><code>auto.p</code><span> следующим кодом:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@header[]
+<br>
+</b></code></span><code><b>&lt;title&gt;Parser3</b><b>:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^greeting[]</b></code></span><code><b>&lt;/title&gt;
+<br>
+</b><b>&lt;style&gt;
+<br>
+&nbsp;&nbsp;&nbsp;html&nbsp;{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height:&nbsp;100%;
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;body&nbsp;{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display:&nbsp;flex;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flex-direction:&nbsp;column;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height:&nbsp;100%;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin:&nbsp;0;
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;nav,&nbsp;#content,&nbsp;footer&nbsp;{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding:&nbsp;10px;
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;#content&nbsp;{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flex:&nbsp;1&nbsp;100%;
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+&lt;/style&gt;
+<br>
+</b></code><span>
+<br>
+Теперь внимание, кульминация. Parser позволяет сделать очень интересный финт: определить один раз общую структуру страниц в&nbsp;файле </span><code>auto.p</code><span>, создать каркас, а&nbsp;затем, используя функции, подобные </span><code><b>greeting</b></code><span>, в&nbsp;тексте самих страниц, получать разные по&nbsp;содержанию страницы с одинаковой структурой. Как это работает? 
+<br>
+
+<br>
+В самом начале файла </span><code>auto.p</code><span> определим функцию </span><code><b>@main[]</b></code><span>. Функция с&nbsp;таким названием всегда исполняется первой. Включим в&nbsp;нее вызовы функций, формирующих части страниц. 
+<br>
+
+<br>
+В начале </span><code>auto.p</code><span> пишем:</span><span>
+<br>
+</span><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@main[]
+<br>
+</b></code></span><code><b>&lt;html&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;head&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^header[]
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;/head&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;body&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;^navigation[]
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;div&nbsp;id="content"&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^content[]
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;/div&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;^footer[]
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;/body&gt;
+<br>
+&lt;/html&gt;
+<br>
+</b></code><span>
+<br>
+А для&nbsp;получения уникальных заголовков страниц в&nbsp;каждой из&nbsp;них определим функцию </span><code><b>greeting</b></code><span>, которая вызывается из&nbsp;</span><code><b>header</b></code><span>.
+<br>
+
+<br>
+Для главной страницы:</span><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@greeting[]
+<br>
+</b></code></span><code><b>Добро&nbsp;пожаловать!
+<br>
+</b></code><span>
+<br>
+Для гостевой книги:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@greeting[]
+<br>
+</b></code></span><code><b>Оставьте&nbsp;свой&nbsp;след…
+<br>
+</b></code><span>
+<br>
+и т.&nbsp;д.
+<br>
+
+<br>
+Теперь при загрузке, например, главной страницы произойдет следующее:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>1)</span></span></td><td><span>из файла </span><code>auto.p</code><span> автоматически начнет выполняться  </span><code><b>main</b></code><span>;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>2)</span></td><td><span>первой вызовется функция </span><code><b>header</b></code><span>, из&nbsp;которой вызовется функция </span><code><b>greeting</b></code><span>;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>3)</span></td><td><span>поскольку функция </span><code><b>greeting</b></code><span> определена в&nbsp;коде самой страницы, будет выполнена именно она, вне зависимости от&nbsp;того, определяется она в&nbsp;</span><code>auto.p</code><span> или нет (происходит переопределение функции); 
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="30"><span>4)</span></td><td><span>затем будут выполнены функции </span><code><b>navigation</b></code><span>, </span><code><b>content</b></code><span> и&nbsp;</span><code><b>footer</b></code><span> из&nbsp;</span><code><b>main</b></code><span>.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+В результате мы получим страницу, у&nbsp;которой будут все необходимые элементы, а&nbsp;в&nbsp;верхней части дополнительно появится наше уникальное приветствие. Переопределяемые функции носят название  виртуальных. Из&nbsp;файла </span><code>auto.p</code><span> мы вызываем функцию, которая может быть переопределена на&nbsp;любой из&nbsp;страниц и&nbsp;для каждой из&nbsp;них выполнит свой код. При этом общая структура страниц будет абсолютно одинаковой и&nbsp;сохранится стилистическое и&nbsp;логическое единство.
+<br>
+
+<br>
+Определение функции </span><code><b>content</b></code><span>, так&nbsp;же как и&nbsp;в&nbsp;случае с&nbsp;</span><code><b>greeting</b></code><span>, вставим в&nbsp;страницы:</span><span>
+<br>
+</span><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@content[]
+<br>
+</b></code></span><code><b>Главная&nbsp;страница&nbsp;сайта
+<br>
+</b></code><span>
+<br>
+Этот текст приводится как образец для&nbsp;</span><code>index.html</code><span>. Отлично! Структура окончательно сформирована. Мы описали все необходимые модули в&nbsp;файле </span><code>auto.p</code><span>, сформировали общую структуру и&nbsp;теперь можем запросто генерировать страницы. Больше не&nbsp;нужно многократно писать одни и&nbsp;те&nbsp;же фрагменты HTML-кода. Привычные HTML-страницы трансформируются приблизительно в&nbsp;следующее (примерное содержание </span><code>index.html</code><span> файла для&nbsp;главной страницы):
+<br>
+</span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>@greeting[]
+<br>
+</b></code></span><code><b>Добро&nbsp;пожаловать!
+<br>
+</b></code><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@content[]
+<br>
+</b></code></span><code><b>Главная&nbsp;страница&nbsp;сайта
+<br>
+</b></code><span>
+<br>
+Просто и&nbsp;понятно, содержание разложено по&nbsp;методам и&nbsp;легкодоступно для&nbsp;изменения. После обработки подобного кода Parser создаст HTML-код страницы, у&nbsp;которой будет уникальный заголовок, меню, основной информационный блок заданной структуры и&nbsp;</span><code><b>footer</b></code><span>, одинаковый для&nbsp;каждой страницы. Фактически мы уже создали готовый сайт, который осталось только наполнить информацией. Это готовое решение для&nbsp;изящного сайта-визитки, который можно создать прямо на&nbsp;глазах. Естественно, это не&nbsp;единственное решение, но&nbsp;такой подход дает отличную структуризацию нашего сайта. Некоторые  усилия при разработке структуры с&nbsp;лихвой окупятся легкостью последующей поддержки и&nbsp;модернизации. Каркас хранится в&nbsp;</span><code>auto.p</code><span>, а&nbsp;все, что относится непосредственно к&nbsp;странице,&nbsp;- в&nbsp;ней самой.
+<br>
+
+<br>
+Дальше открываются безграничные просторы для&nbsp;фантазии. Допустим, нам понадобилось поменять внешний вид заголовка страниц на&nbsp;сайте. Мы открываем </span><code>auto.p</code><span>, редактируем один-единственный раз функцию </span><code><b>@header[]</b></code><span> и&nbsp;на&nbsp;каждой из&nbsp;страниц получаем новый заголовок, по&nbsp;стилю идентичный всем остальным. Для обычного HTML нам пришлось&nbsp;бы вручную переписывать код для&nbsp;каждой страницы. Та&nbsp;же самая ситуация и&nbsp;с остальными модулями. Если возникло желание или необходимость изменить общую структуру страниц, например добавить какой-то блок, достаточно определить его новой функцией и&nbsp;дополнить функцию </span><code><b>main</b></code><span> в&nbsp;</span><code>auto.p</code><span> ее вызовом.
+<br>
+
+<br>
+Подобная организация страниц сайта дополняет проект еще одним мощным средством. Предположим, на&nbsp;одной из&nbsp;страниц нам понадобилось получить </span><code><b>footer</b></code><span>, отличный от&nbsp;других страниц (напомним, изначально мы предполагали, что </span><code><b>footer</b></code><span> везде одинаковый). Единственное, что нужно сделать,&nbsp;- это переопределить функцию </span><code><b>footer</b></code><span> на&nbsp;нужной странице. Например, такое наполнение </span><code>/contacts/index.html</code><span>:</span><code><b>
+<br>
+</b></code><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@greeting[]
+<br>
+</b></code></span><code><b>Наша&nbsp;контактная&nbsp;информация
+<br>
+</b></code><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@content[]
+<br>
+</b></code></span><code><b>Страница&nbsp;контактов</b><b>&nbsp;</b><b>тестового&nbsp;сайта
+<br>
+</b></code><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@footer[]
+<br>
+</b></code></span><code><b>&lt;footer&gt;
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;</b><b>Обращайтесь</b><b>&nbsp;</b><b>к&nbsp;нам!
+<br>
+&lt;footer&gt;
+<br>
+</b></code><span>
+<br>
+изменит привычный </span><code><b>footer</b></code><span> на&nbsp;обозначенный выше, т.&nbsp;е., если Parser найдет в&nbsp;тексте страницы код для&nbsp;функции, вызываемой из&nbsp;</span><code>auto.p</code><span>, он выполнит именно его, даже если функция определена в&nbsp;самом </span><code>auto.p</code><span>. Если&nbsp;же функция не&nbsp;переопределена на&nbsp;странице, то&nbsp;будет использован код из&nbsp;</span><code>auto.p</code><span>.
+<br>
+
+<br>
+<i>В заключение немного теории для&nbsp;любознательных. Мы будем давать подобную информацию для&nbsp;тех, кто хочет глубже понимать логику работы Parser. 
+<br>
+
+<br>
+Ранее мы использовали в&nbsp;нашем коде конструкцию </i></span><code><b>$request:uri</b></code><span><i>. Она  отличается по&nbsp;синтаксису от&nbsp;всего того, с&nbsp;чем мы имели дело до&nbsp;этого. Что&nbsp;же это такое? Внешне похоже на&nbsp;</i></span><code><b>$объект.свойство</b></code><span><i> (</i><i><a href="lesson1.htm">урок 1</a></i><i>)&nbsp;- значение полей объекта, только вместо точки использовано двоеточие. На&nbsp;самом деле это тоже значение поля, только не&nbsp;объекта, а&nbsp;самого класса </i></span><code><b><a href="requestclass.htm">request</a></b></code><span><i>. В Parser не&nbsp;предусматриваются конструкторы для&nbsp;создания объектов этого класса.  Поля подобных классов формируются самим Parser, а&nbsp;мы можем сразу напрямую обращаться к&nbsp;ним. На&nbsp;техническом языке это называется статическая переменная (поле) </i></span><code><b><a href="requesturi.htm">uri</a></b></code><span><i> класса </i></span><code><b>request</b></code><span><i>. Она хранит в&nbsp;себе URI текущей страницы. Также, наряду со&nbsp;статическими переменными, существуют статические методы, с&nbsp;которыми мы столкнемся уже на&nbsp;следующем уроке. При этом можно сразу&nbsp;же вызывать их также без&nbsp;создания каких-либо объектов с&nbsp;помощью конструкторов. Обращение к&nbsp;статическим полям и&nbsp;вызов статических методов оформляется с&nbsp;помощью двоеточия. Если встречается конструкция вида </i></span><code><b>$класс:поле</b></code><span><i>, мы получаем значение поля самого класса, а&nbsp;запись </i></span><code><b>^класс:метод</b></code><span><i> является вызовом статического метода класса. Например, для&nbsp;работы с&nbsp;математическими функциями в&nbsp;Parser существует класс </i></span><code><b><a href="mathclass.htm">math</a></b></code><span><i>. В нем используются только статические методы и&nbsp;переменные.
+<br>
+</i></span><span><i>
+<br>
+</i></span><code><b>$</b><b><a href="mathstats.htm">math:PI</a></b><b>&nbsp;-&nbsp;</b></code><span><i> возвращает число </i></span><span>p</span><span><i>. Это статическая переменная класса </i></span><code><b>math</b></code><span><i>. 
+<br>
+</i>
+<br>
+</span><code><b>^</b><b><a href="mathrandom.htm">math:random</a></b><b>(100)&nbsp;-&nbsp;</b></code><span><i>возвращает псевдослучайное число из&nbsp;диапазона от&nbsp;0 до&nbsp;99; это статический метод класса </i></span><code><b>math</b></code><span><i>.
+<br>
+
+<br>
+Отличие от&nbsp;записи методов и&nbsp;полей объектов состоит только в&nbsp;двоеточии.
+<br>
+</i>
+<br>
+Подведем итоги второго урока.
+<br>
+
+<br>
+</span><span><b>Что мы сделали:</b></span><span> исправили недостатки в&nbsp;меню навигации, созданном на&nbsp;предыдущем уроке, а&nbsp;также описали новые блоки </span><code><b>header</b></code><span>, </span><code><b>footer</b></code><span> и&nbsp;</span><code><b>content</b></code><span>, формирующие внешний вид страниц нашего сайта. Теперь мы имеем готовое решение для&nbsp;быстрого создания сайта начального уровня.
+<br>
+
+<br>
+</span><span><b>Что узнали:</b></span><span> познакомились с&nbsp;ветвлением кода, научились сравнивать строки и&nbsp;получать URI текущей страницы. Также мы узнали новые методы объектов класса table и&nbsp;класса date и&nbsp;познакомились с&nbsp;мощным механизмом виртуальных функций Parser.
+<br>
+
+<br>
+</span><span><b>Что надо запомнить: </b></span><span>первым методом в&nbsp;файле </span><code>auto.p</code><span> допустимо определить функцию </span><code><b>main</b></code><span>, которая выполняется автоматически. Любая из&nbsp;функций способна вызывать другие функции. Все вызываемые из&nbsp;</span><code><b>main</b></code><span> функции обязательно должны быть определены или в&nbsp;</span><code>auto.p</code><span> или в&nbsp;тексте страниц. В случае если функция будет определена и&nbsp;там и&nbsp;там, больший приоритет имеет функция, определенная в&nbsp;тексте страницы. Она переопределяет одноименную функцию из&nbsp;</span><code><b>main</b></code><span> (т.&nbsp;н. виртуальная функция) и&nbsp;выполняется вместо нее.
+<br>
+
+<br>
+</span><span><b>Что будем делать дальше:</b></span><span> нет предела совершенству! От создания сайта начального уровня мы переходим к&nbsp;более сложным вещам, таким как работа с&nbsp;формами и&nbsp;базами данных для&nbsp;создания по-настоящему интерактивного сайта. Параллельно с&nbsp;этим познакомимся с&nbsp;новыми возможностями, предоставляемыми Parser для&nbsp;облегчения жизни создателям сайтов.
+<br>
+</span></span>

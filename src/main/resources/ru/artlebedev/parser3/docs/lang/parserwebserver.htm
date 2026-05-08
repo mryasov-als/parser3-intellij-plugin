@@ -1,0 +1,82 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Использование Parser в&nbsp;качестве веб-сервера&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.</i></b><b><i>4.6</i></b><b><i>]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>/путь/к/parser3&nbsp;-p&nbsp;[хост:]&lt;порт&gt;</b><span>
+<br>
+
+<br>
+Данная команда запускает встроенный в&nbsp;Parser веб-сервер на&nbsp;указанном порту, <a href="requestdocroot.htm">корнем веб-пространства</a> будет текущая директория (в&nbsp;которой пользователь находится в&nbsp;момент запуска). В&nbsp;режиме веб-сервера все запросы обрабатываются методом </code><code><b>main</b></code><span> класса </span><code><b>httpd</b></code><span>, который добавлен в&nbsp;<a href="parserconfig.htm">конфигурационный auto.p</a> и&nbsp;в&nbsp;котором реализована логика работы веб-сервера&nbsp;- исходя из&nbsp;того, к&nbsp;какому адресу обратился пользователь (изображение, Parser-код, директория), веб-сервер либо самостоятельно обработает запрос (например вернет файл с&nbsp;изображением), либо передаст управление файлу с&nbsp;кодом на&nbsp;Parser, к&nbsp;которому сделан запрос. При запуске можно указать конкретный IP-адрес или имя, тогда Parser будет принимать соединения только на&nbsp;нем. Например, при запуске </span><code><b>parser3&nbsp;-p&nbsp;localhost:8000</b></code><span> соединения будут приниматься только на&nbsp;локальном интерфейсе, закрытом от&nbsp;доступа извне. Встроенный веб-сервер не&nbsp;поддерживает шифрование keep-alive, на&nbsp;хостинге правильнее использовать его в&nbsp;комбинации с&nbsp;nginx. Настройки веб-сервера задаются в&nbsp;хеше </span><code><b>$cfg</b></code><span>:
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.parser[(\.html^$)]</b></code><span>&nbsp;- регулярное выражение, содержащее расширения файлов с&nbsp;кодом на&nbsp;Parser;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.index[index.html]</b></code><span>&nbsp;- название индексного файла; при обращении к&nbsp;директории выдастся он; для  упрощения кода предусмотрен один индексный файл, 
+<br>
+ но&nbsp;несложно добавить еще;
+<br>
+</span><code><b>#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.autoindex(true)</b></code><span>&nbsp;- отображение листинга файлов в&nbsp;директории при отсутствии индексного файла;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.404[$404]</b></code><span>&nbsp;- обработка ошибки 404; можно вызвать метод </span><code><b>$.404[/404.html]</b></code><span>, а&nbsp;можно передать управление определенному файлу;
+<br>
+</span><code><b>#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.fix-trailing-slash(true)</b></code><span> - выдача редиректа с&nbsp;добавлением символа «/» при запросе директории без этого символа на&nbsp;конце;</span><code><b>
+<br>
+#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.auth[&nbsp;$.url[^^/\.?admin/]&nbsp;$.login[admin]&nbsp;$.password[change&nbsp;me]&nbsp;$.realm[site&nbsp;administration]&nbsp;]</b></code><span>&nbsp;- запрос авторизации при доступе к&nbsp;разделам, подходящим под регулярное выражение
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.deny[(/\.ht[^^/]+|\.p|\.cfg)^$]</b></code><span>&nbsp;- регулярное выражение, показывающее, к&nbsp;каким файлам доступ запрещен, например к&nbsp;файлам .</span><code>htaccess</code><span> и&nbsp;</span><code>auto.p</code><span>;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.403[Permission&nbsp;denied]</b></code><span>&nbsp;- обработка отказа в&nbsp;доступе; тоже может быть и&nbsp;методом, и&nbsp;файлом;
+<br>
+</span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.memory(64000)</b></code><span>&nbsp;- вызов сборщика мусора, если при обработке ранее поступивших запросов было аллоцировано более 64&nbsp;МБ памяти;
+<br>
+</span><code><b>#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.log[/access.log]</b></code><span>&nbsp;- включение логирования приходящих запросов.</span><code><b>
+<br>
+</b></code><span><i>
+<br>
+</i>Класс веб-сервера достаточно прост, всего около сотни строк, поэтому можно либо напрямую редактировать логику его работы, либо воспользоваться заложенными возможностями по&nbsp;расширению&nbsp;- в&nbsp;корень веб-пространства можно поместить файл </span><code>httpd.p</code><span>, в&nbsp;котором переопределить методы класса </span><code><b>httpd</b></code><span>. В&nbsp;частности, можно переопределить методы&nbsp;</span><code><b>^config[]</b></code><span> (принимает аргументом конфигурацию по&nbsp;умолчанию и&nbsp;может изменить ее перед возвратом) и&nbsp;</span><code><b>^preprocess[]</b></code><span> (для обработки редиректов или замены адресов).
+<br>
+
+<br>
+В <a href="parserconfmethod.htm">конфигурационном методе</a>, в&nbsp;хеше&nbsp;</span><code><b>$HTTPD</b></code><span>, можно задать режим работы веб-сервера и&nbsp;тайм-аут при обработке соединений:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.mode[sequental]</b></code><span>&nbsp;- последовательная обработка запросов, по&nbsp;умолчанию; Parser работает в&nbsp;один поток, используя одно ядро процессора;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.mode[parallel]</b></code><span>&nbsp;- параллельный  режим, недоступный под Windows; на&nbsp;каждый запрос создается отдельный процесс; в&nbsp;случае необходимости используются все ядра, что дает максимальную производительность при обработке кода;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.mode[threaded]</b></code><span>&nbsp;- многопоточный режим; на&nbsp;каждый запрос создается отдельный поток; за&nbsp;счет того, что все потоки используют один сборщик мусора, производительность немного ниже параллельного режима;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.timeout(время)</b></code><span>&nbsp;- задает максимальное время ожидания в&nbsp;секундах; если в&nbsp;течение заданного времени от&nbsp;клиента не&nbsp;поступят данные, соединение будет разорвано; в&nbsp;многопоточном режиме заданный тайм-аут не&nbsp;работает, фактический тайм-аут определяется операционной системой.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+
+<br>
+<b>Пример</b><b>
+<br>
+</b>
+<br>
+</span><code><b>$HTTPD[
+<br>
+&nbsp;&nbsp;&nbsp;$.mode[parallel]
+<br>
+&nbsp;&nbsp;&nbsp;$.timeout(8)
+<br>
+]
+<br>
+</b></code><span><i>
+<br>
+</i>Задает параллельный режим и&nbsp;тайм-аут 8 секунд.
+<br>
+<i>
+<br>
+</i></span></span>

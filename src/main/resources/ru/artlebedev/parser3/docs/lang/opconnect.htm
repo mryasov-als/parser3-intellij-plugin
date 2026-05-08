@@ -1,0 +1,76 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">connect. Подключение к&nbsp;базе данных</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^connect[строка&nbsp;подключения]{код}
+<br>
+</b><span>
+<br>
+Оператор </code><code><b>connect</b></code><span> осуществляет подключение к&nbsp;серверу баз данных. После подключения Parser обрабатывает переданный оператору код, который может работать с&nbsp;базой данных в&nbsp;рамках установленного соединения. 
+<br>
+
+<br>
+<i>Parser (в виде </i><i><a href="install4apachecgi.htm">модуля к Apache</a></i><i> или </i><i><a href="install4iis.htm">IIS</a></i><i>) кеширует соединения с&nbsp;SQL-серверами, и&nbsp;повторный </i><i>SQL-запр</i><i>ос на&nbsp;соединение с&nbsp;той&nbsp;же строкой подключения не&nbsp;производится, а&nbsp;соединение берется из&nbsp;кеша, если оно еще действительно.
+<br>
+
+<br>
+Вариант CGI также кеширует соединение, но&nbsp;только на&nbsp;один </i><i>HTTP-запр</i><i>ос</i><i> (</i><i>обработка одного документа</i><i>)</i><i>, поэтому явно допустимы конструкции вида:
+<br>
+</i>
+<br>
+</span><code><b><i>^connect[строка&nbsp;подключения]{…первый&nbsp;SQL-запрос…}
+<br>
+^connect[строка&nbsp;подключения]{…второй&nbsp;</i></b><b><i>SQL-</i></b><b><i>запрос…}
+<br>
+</i></b></code><span><i>
+<br>
+При этом не&nbsp;будет двух соединений. Это полезно, когда, например, заранее неизвестно, потребуется соединение или нет&nbsp;-  можно делать его визуально многократно, зная, что оно фактически не&nbsp;разрывается.</i>
+<br>
+
+<br>
+Передать SQL-запрос БД может один из&nbsp;следующих методов или конструкторов языка Parser:
+<br>
+
+<br>
+</span><code><b><a href="tablesql.htm">table::sql</a></b><b>
+<br>
+</b><b><a href="stringsql.htm">string:sql</a></b><b>
+<br>
+</b><b><a href="voidsql.htm">void:sql</a></b><b>
+<br>
+</b><b><a href="hashsql.htm">hash::sql</a></b><b>
+<br>
+</b><b><a href="intdoublesql.htm">int:sql</a></b><b>
+<br>
+</b><b><a href="intdoublesql.htm">double:sql</a></b><b>
+<br>
+</b><b><a href="filesql.htm">file::sql</a></b><b>
+<br>
+</b></code><span>
+<br>
+Замечание: для&nbsp;работы оператора connect необходимо наличие настроенного драйвера баз данных (см.&nbsp;раздел <a href="install.htm">Настройка</a>).&nbsp;&nbsp;&nbsp;
+<br>
+
+<br>
+Форматы строки соединения для&nbsp;поддерживаемых серверов баз данных описаны в&nbsp;<a href="app3.htm">приложении</a>.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^connect[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="app3mysql.htm">mysql://admin:pwd@localhost/p3test</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{
+<br>
+&nbsp;&nbsp;&nbsp;$news[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablesql.htm">table::sql</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{</b></code></span><code><b>select&nbsp;*&nbsp;from&nbsp;news</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+}</b></code></span><span>
+<br>
+</span></span>

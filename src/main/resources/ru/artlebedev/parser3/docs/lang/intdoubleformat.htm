@@ -1,0 +1,52 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">format. Вывод числа в&nbsp;заданном формате</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^имя.format[форматная&nbsp;строка]
+<br>
+</b><span>
+<br>
+Метод выводит значение переменной в&nbsp;заданном формате (см.&nbsp;<a href="app2.htm">Приложение 2. «Форматные строки»</a>).
+<br>
+
+<br>
+Если не&nbsp;пользоваться </code><code><b>format</b></code><span> и&nbsp;выводить число просто так:
+<br>
+</span><code><b>$имя
+<br>
+</b></code><span>то это эквивалентно </span><code><b>^имя.format[%.15g]</b></code><span>. Такое форматирование автоматически выбирает наиболее подходящий вид: числа будут выведены в&nbsp;обычном формате, если это возможно, а&nbsp;очень малые (меньше&nbsp;1e-05) или&nbsp;очень большие (больше&nbsp;1e+15) числа&nbsp;- в&nbsp;экспоненциальном формате. </span><code><b>
+<br>
+</b></code><span>
+<br>
+<b>Примеры</b></span><span><b>
+<br>
+</b></span><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$var(15.67678678)
+<br>
+^var.format[%.2f]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Возвратит: </span><code><b>15.68</b></code><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+$var(0x123)
+<br>
+^var.format[0x%04X]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Возвратит: </span><code><b>0x0123</b></code><span>
+<br>
+</span></span>

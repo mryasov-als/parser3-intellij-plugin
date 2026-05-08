@@ -1,0 +1,60 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">base64. Кодирование в&nbsp;Base64</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file.base64[]
+<br>
+^file.base64[</b><b>опции]</b><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></code><span><b><i>[3.4.6]
+<br>
+</i></b>
+<br>
+Метод позволяет преобразовать файл в&nbsp;Base64-форму. 
+<br>
+
+<br>
+Чтобы преобразовать файл из&nbsp;Base64 к&nbsp;исходному виду, нужно воспользоваться конструкцией:
+<br>
+</span><code><b>^file::</b><b><a href="filebase64c.htm">base64</a></b><b>[закодированное]
+<br>
+
+<br>
+</b></code><span>Можно задать <a href="hash.htm">хеш</a> опций:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.</b><b>wrap</b><b>(true|false)</b></code><span> - формировать результат с&nbsp;переносами строк (по умолчанию) или в&nbsp;одну строку;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.url-safe(false|true)</b></code><span> - использовать модифицированный алфавит, все символы которого не&nbsp;будут преобразовываться в&nbsp;в&nbsp;%XX в&nbsp;URL (вместо «+» и&nbsp;«/» используются «-» и&nbsp;«_»); по&nbsp;умолчанию не&nbsp;использовать;
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.pad(true|false)</b></code><span> - добавлять символы <span style="color:#7F97E1" class="blue"><u><a href="https://en.wikipedia.org/wiki/Base64#Output_padding" target="_blank">паддинга</a></u></span></span><span> (=), если кодируемая длина не&nbsp;кратна трем; по&nbsp;умолчанию добавлять.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span></span><code><b>
+<br>
+</b></code><span>
+<br>
+<i>Подробная информация  о&nbsp;Base64 доступна по&nbsp;ссылкам: </i><span style="color:#7F97E1" class="blue"><i><u><a href="http://www.ietf.org/rfc/rfc2045.txt" target="_blank">ietf.org/rfc/rfc2045.txt</a></u></i></span></span><span><i> и&nbsp;</i><span style="color:#7F97E1" class="blue"><i><u><a href="http://en.wikipedia.org/wiki/Base64" target="_blank">wikipedia.org/wiki/Base64</a></u></i></span></span><span><i>
+<br>
+</i>
+<br>
+<b>Пример</b>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$original[^file::load[binary;</b></code></span><code><b>HTTP://www.parser.ru/i/p2.gif</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+</b></code></span><code><b>&lt;pre&gt;</b><span style="color:#7F97E1" class="blue"><b>^original.base64[]</b></code></span><code><b>&lt;/pre&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+выведет:
+<br>
+</span><code><b>R0lGODlhCQAJAID/AMDAwAAAACH5BAEAAAAALAAAAAAJAAkAAAINhI8YqXwLQVyMJtscKgA7
+<br>
+</b></code><span>
+<br>
+</span></span>

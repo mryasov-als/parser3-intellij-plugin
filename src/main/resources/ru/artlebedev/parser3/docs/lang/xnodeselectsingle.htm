@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">selectSingle. XPath-поиск одного узла</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^узел.selectSingle[XPath-запрос]</b><span>
+<br>
+
+<br>
+Метод выдает узел, найденный в&nbsp;контексте </code><code><b>узла</b></code><span> по&nbsp;заданному </span><code><b>XPath-запросу</b></code><span>. Если запрос не&nbsp;нашел подходящего узла, выдается </span><code><b><a href="voidclass.htm">void</a></b></code><span>. Если запрос выдал больше чем один узел, выдается <a href="exceptions.htm">ошибка</a>.
+<br>
+
+<br>
+Для использования в&nbsp;</span><code><b>запросе</b></code><span> префиксов пространств имен необходимо их заранее определить, см.&nbsp;</span><code><b><a href="xdocsearchns.htm">$xdoc.search-namespaces</a></b></code><span>.
+<br>
+
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$d[^xdoc::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="xdoccreatexml.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{</b></code></span><code><b>&lt;?xml&nbsp;version="1.0"&nbsp;encoding="windows-1251"&nbsp;?&gt;
+<br>
+&lt;t&nbsp;attr="привет"&nbsp;n="123"/&gt;</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>#&nbsp;результат=один&nbsp;элемент&nbsp;"t"
+<br>
+$element[^d.selectSingle[t]]
+<br>
+#&nbsp;результат=2&nbsp;(количество&nbsp;атрибутов&nbsp;&lt;t&gt;)
+<br>
+</b></code></span><code><b>Количество&nbsp;атрибутов:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^element.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="xnodedomfields.htm">attributes</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="hash_count.htm">_count</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]</b></code></span><code><b>&lt;br&nbsp;/&gt;</b></code><span>
+<br>
+</span></span>

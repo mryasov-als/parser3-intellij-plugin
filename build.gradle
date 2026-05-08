@@ -1,0 +1,59 @@
+plugins {
+	id 'org.jetbrains.intellij.platform'
+	id 'java'
+}
+
+def pluginVersion = providers.gradleProperty("pluginVersion").get()
+
+dependencies {
+	intellijPlatform {
+		intellijIdea("2026.1")
+		pluginVerifier()
+		testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform.INSTANCE)
+	}
+
+	testImplementation 'junit:junit:4.13.2'
+	testImplementation 'org.opentest4j:opentest4j:1.3.0'
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+intellijPlatform {
+	buildSearchableOptions = false
+
+	runIde {
+		jvmArgs '-Xmx4096m'
+	}
+
+	pluginConfiguration {
+		id = 'ru.artlebedev.parser3'
+		name = 'Parser 3 Support'
+		version = pluginVersion
+		description = 'Parser3 language support for IntelliJ IDEA: syntax highlighting, code completion, navigation, quick documentation, formatting, folding, HTML/CSS/JavaScript/SQL injections, and safe refactoring for @USE and ^use[] paths.<br /><br /><em>Requires IntelliJ IDEA 2026.1 or newer.</em>'
+		vendor {
+			name = 'Art. Lebedev Studio'
+			url = 'https://www.artlebedev.ru/'
+		}
+		ideaVersion {
+			sinceBuild = "261"
+		}
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.release = 21
+	options.encoding = 'UTF-8'
+}
+
+test {
+	useJUnit()
+	testLogging {
+		events "passed", "skipped", "failed"
+		showStandardStreams = true
+		exceptionFormat = 'full'
+	}
+}

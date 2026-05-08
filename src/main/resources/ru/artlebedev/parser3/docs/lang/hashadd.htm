@@ -1,0 +1,70 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">add. Сложение хешей</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^хеш.add[хеш-слагаемое]</b>&nbsp;&nbsp;&nbsp;<span>
+<br>
+</code><span>
+<br>
+Метод добавляет к&nbsp;</span><code><b>хешу</b></code><span> другой </span><code><b>хеш-слагаемое</b></code><span>, при этом одноименные ключи хеша перезаписываются.
+<br>
+
+<br>
+<i>Замечание: поле</i><i> </i></span><code><b>_default</b></code><span><i> </i><i>добавляется</i><i>. </i><i>Если оно было, то перезаписывается новым значением</i><i>.</i><i> </i>
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$man[
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$.name[</b></code></span><code><b>Вася</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$.age(</b></code></span><code><b>22</b><span style="color:#7F97E1" class="blue"><b>)
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$.gender[</b></code></span><code><b>m</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+$woman[
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$.name[</b></code></span><code><b>Маша</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$.age(</b></code></span><code><b>20</b><span style="color:#7F97E1" class="blue"><b>)
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$.s</b></code></span><code><span style="color:#7F97E1" class="blue"><b>mile</b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>да</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+^man.add[$woman]
+<br>
+</b></code></span><span>
+<br>
+Новое содержание хеша </span><code><b>$man</b></code><span>:</span><span>
+<br>
+</span><code><b>$man[
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;$</b><b>.name[Маша]
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;</b><b>$.age(20)
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;$</b><b>.gender[m]
+<br>
+</b><b>&nbsp;&nbsp;&nbsp;&nbsp;$.smile[</b><b>да</b><b>]
+<br>
+</b><b>]
+<br>
+
+<br>
+</b></code><span><i>
+<br>
+</i></span></span>

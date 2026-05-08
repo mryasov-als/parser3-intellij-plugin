@@ -1,0 +1,118 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">throw. Сообщение об ошибке</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^throw[type]&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.3.0]</i></b></code><code><b>
+<br>
+^throw[type;source]
+<br>
+^throw[type;source;comment]
+<br>
+^throw[хеш]
+<br>
+
+<br>
+</b></code><span>Оператор </span><code><b>throw</b></code><span> сообщает об ошибке типа </span><code><b>type</b></code><span>, произошедшей по&nbsp;вине </span><code><b>source</b></code><span>, с&nbsp;комментарием </span><code><b>comment</b></code><span>.
+<br>
+
+<br>
+Эта ошибка может быть перехвачена и&nbsp;обработана при помощи оператора </span><code><b><a href="optry.htm">try</a></b></code><span>.
+<br>
+
+<br>
+Не нужно перехватывать ошибки <i>только</i> для&nbsp;их красивого вывода, пусть этим централизованно займется метод </span><code><b><a href="exceptionunhandled.htm">unhandled_exception</a></b></code><span>, вызываемый Parser, если ни&nbsp;одного обработчика ошибки так и&nbsp;не будет найдено. Кроме прочего, произойдет запись в&nbsp;журнал ошибок веб-сервера, который можно регулярно просматривать на&nbsp;предмет имевших место проблем.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@method[command]
+<br>
+^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opswitch.htm">switch</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[$command]{
+<br>
+&nbsp;&nbsp;&nbsp;^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opswitch.htm">case</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[add]{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;добавляем…
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;^case[delete]{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;удаляем…
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;^case[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opswitch.htm">DEFAULT</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^throw[bad.command;$command;</b></code></span><code><b>Wrong&nbsp;command&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$command</b></code></span><code><b>,&nbsp;good&nbsp;are&nbsp;add&amp;delete</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^rem{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;допустим&nbsp;также&nbsp;следующий&nbsp;формат&nbsp;вызова&nbsp;оператора&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>throw</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;^throw[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.type[bad.command]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.source[$command]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.comment[</b></code></span><code><b>Wrong&nbsp;command&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$command</b></code></span><code><b>,&nbsp;good&nbsp;are&nbsp;add&amp;delete</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+}
+<br>
+
+<br>
+@</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mainclass.htm">main</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]
+<br>
+$action[format&nbsp;c:]
+<br>
+^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="optry.htm">try</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{
+<br>
+&nbsp;&nbsp;&nbsp;^method[$action]
+<br>
+}{
+<br>
+&nbsp;&nbsp;&nbsp;^if($</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="optry.htm">exception</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>.type&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="exprops.htm">eq</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;bad.command){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$exception.handled(</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="boollit.htm">true</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>)
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>Неправильная&nbsp;команда&nbsp;'</b><span style="color:#7F97E1" class="blue"><b>$exception.source</b></code></span><code><b>',&nbsp;задана
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;в&nbsp;файле&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$exception.file</b></code></span><code><b>,&nbsp;в&nbsp;строке&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$exception.lineno</b></code></span><code><b>.</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;}
+<br>
+}</b></code></span><span>
+<br>
+
+<br>
+Результатом работы примера будет
+<br>
+</span><code><b>Неправильная&nbsp;команда&nbsp;'format&nbsp;c:',&nbsp;задана&nbsp;
+<br>
+в&nbsp;файле&nbsp;c:/parser3tests/www/htdocs/throw.html,&nbsp;в&nbsp;строке&nbsp;15.
+<br>
+
+<br>
+</b></code><span><i>Обращаем внимание на&nbsp;то, что посетители сайтов не&nbsp;должны видеть технические подробности в&nbsp;сообщениях об ошибках, тем более содержащие пути к&nbsp;файлам, это некрасиво и&nbsp;ненадежно.
+<br>
+
+<br>
+Вывод </i></span><code><b>$exception.file</b></code><span><i> дан в&nbsp;качестве примера и&nbsp;настоятельно не&nbsp;рекомендуется к&nbsp;использованию на&nbsp;промышленных серверах - только для&nbsp;отладки.
+<br>
+</i></span></span>

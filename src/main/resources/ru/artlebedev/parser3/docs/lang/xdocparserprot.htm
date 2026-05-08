@@ -1,0 +1,48 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">parser://метод/параметр. Чтение XML из&nbsp;произвольного источника</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Parser может считать XML из&nbsp;произвольного источника. Везде, где можно считать XML, можно задать адрес документа в&nbsp;виде
+<br>
+<code>parser://метод/параметр
+<br>
+</code><span>
+<br>
+Считывание документа по&nbsp;такому адресу приводит к&nbsp;чтению результата работы метода Parser:&nbsp;</span><code><b>^метод[/параметр]</b></code><span>.
+<br>
+
+<br>
+
+<br>
+<b>Пример хранения XSL-шаблонов в&nbsp;базе данных
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@main[]
+<br>
+…
+<br>
+#&nbsp;к&nbsp;этому&nbsp;моменту&nbsp;в&nbsp;$xdoc&nbsp;находится&nbsp;документ,&nbsp;который&nbsp;хотим&nbsp;преобразовать
+<br>
+^xdoc.transform[parser://xsl_database/main.xsl]</b></code></span><code><b>
+<br>
+
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>@xsl_database[name]
+<br>
+^string:sql{</b></code></span><code><b>select&nbsp;text&nbsp;from&nbsp;xsl&nbsp;where&nbsp;name='</b><span style="color:#7F97E1" class="blue"><b>$name</b></code></span><code><b>'</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>
+<br>
+
+<br>
+</b></code><span>Причем относительные ссылки будут обработаны точно так&nbsp;же, как если&nbsp;бы файлы читались с&nbsp;диска. Скажем, если </span><code>parser://xsl_database/main.xsl</code><span> ссылается на&nbsp;</span><code>utils/common.xsl</code><span>, то будет загружен документ
+<br>
+</span><code>parser://xsl_database/utils/common.xsl</code><span>, для&nbsp;чего будет вызван метод&nbsp;</span><code><b>^xsl_database[/utils/common.xsl]</b></code><span>.
+<br>
+</span></span>

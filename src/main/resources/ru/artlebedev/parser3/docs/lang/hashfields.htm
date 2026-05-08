@@ -1,0 +1,36 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Поля</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>В качестве поля хеша выступает ключ, по&nbsp;имени которого можно получить значение:
+<br>
+<code><b>$my_hash.key
+<br>
+</b></code><span>
+<br>
+Такая запись возвратит значение, поставленное в&nbsp;соответствие ключу. Если происходит обращение к&nbsp;несуществующему ключу, будет возвращено значение ключа </span><code><b>_default</b></code><span>, если он задан в&nbsp;хеше.
+<br>
+
+<br>
+До версии <b><i>3.4.4</i></b> эта&nbsp;же запись могла быть использована для&nbsp;получения методов хеша. Начиная с&nbsp;версии <b><i>3.4.4</i></b> обращение к&nbsp;методам хеша возможно только при их вызове, </span><code><b>^m</b><b>y_hash.</b><b>method[]</b></code><span>, причем методы имеют приоритет перед полями. Начиная с&nbsp;версии <b><i>3.4.5</i></b> </span><code><b>_default</b></code><span> воспринимается как ключ по&nbsp;умолчанию, только если его написать в&nbsp;коде на&nbsp;Parser.
+<br>
+
+<br>
+Присваивание ключу значения добавит или обновит пару «</span><code><b>ключ&nbsp;/&nbsp;значение</b></code><span>» в&nbsp;хеше:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$my_hash.key[значение]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Для большей взаимозаменяемости таблиц и&nbsp;хешей поле </span><code><b>fields</b></code><span> хранит ссылку на&nbsp;сам хеш.
+<br>
+</span></span>

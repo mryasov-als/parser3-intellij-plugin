@@ -1,0 +1,112 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Установка Parser на&nbsp;веб-сервер как CGI</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Для установки Parser необходимо внести изменения в&nbsp;основной конфигурационный файл веб-сервера, или, если доступ к&nbsp;нему отсутствует, необходима возможность использовать <code>.htaccess</code><span>-файлы.
+<br>
+
+<br>
+По&nbsp;умолчанию, в&nbsp;установке Apache возможность использования файлов </span><code>.htaccess</code><span> отключена. Если она необходима, нужно разрешить ее использовать (по&nbsp;крайней мере, задавать </span><code><span style="color:#7F97E1" class="blue"><u><a href="http://httpd.apache.org/docs/mod/core.html#allowoverride" target="_blank">FileInfo</a></u></code></span><span>). Для этого в&nbsp;основном конфигурационном файле веб-сервера (обычно </span><code>httpd.conf</code><span>) в&nbsp;секцию  </span><code>&lt;virtualhost&nbsp;…&gt;</code><span> созданного сайта или вне ее&nbsp;- для&nbsp;всех сайтов нужно добавить директивы:
+<br>
+</span><code><b>&lt;Directory&nbsp;/путь/к/вашему/веб/пространству&gt;
+<br>
+AllowOverride&nbsp;FileInfo
+<br>
+&lt;/Directory&gt;
+<br>
+</b></code><span>
+<br>
+Файл с&nbsp;исполняемым кодом Parser (в&nbsp;текущей версии&nbsp;- </span><code>parser3.cgi</code><span>) надо переместить в&nbsp;каталог для&nbsp;CGI-скриптов (закачивать файл по&nbsp;ftp нужно в&nbsp;режиме binary, а&nbsp;не text). Ему нужно дать права на&nbsp;выполнение, которые можно уточнить у&nbsp;хостинг-провайдера (обычно необходимые права&nbsp;- 755).
+<br>
+
+<br>
+<b>Под UNIX
+<br>
+</b>Нужно добавить в&nbsp;</span><code>.htaccess</code><span>-файл созданного сайта (или в&nbsp;</span><code>httpd.conf</code><span> в&nbsp;секцию </span><code>&lt;virtualhost&nbsp;…&gt;</code><span>, или вне&nbsp;ее&nbsp;- для&nbsp;всех сайтов) блоки:
+<br>
+</span><code><b>
+<br>
+</b><b>Action&nbsp;parser3-handler&nbsp;/cgi-bin/parser3.cgi
+<br>
+AddHandler&nbsp;parser3-handler&nbsp;html
+<br>
+
+<br>
+#&nbsp;запрет&nbsp;на&nbsp;доступ&nbsp;к&nbsp;.p-файлам,&nbsp;в&nbsp;основном&nbsp;к&nbsp;auto.p
+<br>
+&lt;Files&nbsp;~&nbsp;"\.p$"&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Order&nbsp;allow,deny
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Deny&nbsp;from&nbsp;all
+<br>
+&lt;/Files&gt;
+<br>
+</b><b>
+<br>
+
+<br>
+</b></code><span><b>Под Windows
+<br>
+</b>Нужно добавить в&nbsp;</span><code>.htaccess</code><span>-файл созданного сайта (или в&nbsp;</span><code>httpd.conf</code><span> в&nbsp;секцию </span><code>&lt;virtualhost&nbsp;…&gt;</code><span>, или вне&nbsp;ее&nbsp;- для&nbsp;всех сайтов) блоки:
+<br>
+
+<br>
+</span><code><b>Action&nbsp;parser3-handler&nbsp;/cgi-bin/parser3.exe
+<br>
+AddHandler&nbsp;parser3-handler&nbsp;html
+<br>
+
+<br>
+#&nbsp;запрет&nbsp;на&nbsp;доступ&nbsp;к&nbsp;.p-файлам,&nbsp;в&nbsp;основном&nbsp;к&nbsp;auto.p
+<br>
+&lt;Files&nbsp;~&nbsp;"\.p$"&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Order&nbsp;allow,deny
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Deny&nbsp;from&nbsp;all
+<br>
+&lt;/Files&gt;
+<br>
+</b><b>
+<br>
+
+<br>
+</b></code><span>Если расположение конфигурационного файла по&nbsp;умолчанию неприемлемо&nbsp;(см.&nbsp;«<a href="install.htm">Установка и настройка Parser</a>»), его допустимо задать явно:</span><code><b>
+<br>
+
+<br>
+#</b><b>&nbsp;задание&nbsp;переменной&nbsp;окружения&nbsp;с&nbsp;путем&nbsp;к&nbsp;auto.p
+<br>
+SetEnv&nbsp;CGI_PARSER_CONFIG&nbsp;/путь/к/файлу/auto.p
+<br>
+</b><b>
+<br>
+</b></code><span><i>Замечание: для&nbsp;этого необходим модуль </i></span><code><a href="http://httpd.apache.org/docs/mod/mod_env.html" target="_blank">mod_env</a></code><span><i>, который по&nbsp;умолчанию установлен.
+<br>
+</i>
+<br>
+
+<br>
+Об ошибках Parser делает записи в&nbsp;<a href="statuslogfilename.htm">журнал ошибок</a> </span><code>parser3.log</code><span>, который по&nbsp;умолчанию расположен в&nbsp;том&nbsp;же каталоге, что и&nbsp;CGI-скрипт Parser. Если у&nbsp;Parser нет возможности сделать запись в&nbsp;данный файл, об&nbsp;ошибке будет сообщено в&nbsp;стандартный поток ошибок, и&nbsp;запись об&nbsp;ошибке попадет в&nbsp;журнал ошибок веб-сервера. Если расположение журнала ошибок </span><code>parser3.log</code><span> по&nbsp;умолчанию неприемлемо, его допустимо задать явно:
+<br>
+</span><code><b>
+<br>
+#&nbsp;задание&nbsp;переменной&nbsp;окружения&nbsp;с&nbsp;путем&nbsp;к&nbsp;parser3.log
+<br>
+</b><span style="color:#7F97E1" class="blue"><b><u><a href="http://httpd.apache.org/docs/mod/mod_env.html#setenv" target="_blank">SetEnv</a></u></b></code></span><span> </span><code><b>CGI_PARSER_LOG</b></code><span> </span><code><b>/путь/к/файлу/parser3.log
+<br>
+
+<br>
+</b></code><span><i>Замечание: для&nbsp;этого необходим модуль </i></span><code><a href="http://httpd.apache.org/docs/mod/mod_env.html" target="_blank">mod_env</a></code><span><i>, который по&nbsp;умолчанию установлен.
+<br>
+</i></span></span>

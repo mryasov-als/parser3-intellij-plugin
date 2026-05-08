@@ -1,0 +1,42 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">gif. Кодирование объектов класса image в&nbsp;формат GIF</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^картинка.gif[]</b>&nbsp;<b>&nbsp;&nbsp;&nbsp;
+<br>
+^картинка.gif[имя&nbsp;файла]
+<br>
+</b><span>
+<br>
+Метод используется для&nbsp;кодирования созданных Parser объектов класса </code><code><b>image</b></code><span> в&nbsp;формат GIF.  </span><code><b>Имя&nbsp;файла</b></code><span> будет передано посетителю при&nbsp;указании этого файла в&nbsp;качестве значения&nbsp;</span><code><b><a href="responsedownload.htm">$response:download</a></b></code><span>.
+<br>
+
+<br>
+<i>Внимание: в&nbsp;результате использования этого метода создается новый объект класса&nbsp;</i></span><code><b><a href="fileclass.htm">file</a></b></code><span><i>, а&nbsp;не&nbsp;</i></span><code><b>image</b></code><span><i>! 
+<br>
+</i>
+<br>
+Кроме того, необходимо учитывать тот факт, что цвета выделяются из&nbsp;палитры, и, когда палитра заканчивается, начинается подбор ближайших цветов. В&nbsp;случае создания сложных изображений, особенно с&nbsp;предварительно загруженным фоном, следует иметь в&nbsp;виду последовательность захвата цветов. 
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$square[^image::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="imagecreate.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>(100;100;0x000000)]
+<br>
+$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="responsebody.htm">response:body</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[^square.gif[]]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+В браузере будет выведен черный квадрат размером 100 x 100&nbsp;пикселей.
+<br>
+</span></span>

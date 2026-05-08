@@ -1,0 +1,7 @@
+﻿/.gradle/
+/.idea/
+/.intellijPlatform/
+/.sandbox/
+/build/
+/out/
+*.iml

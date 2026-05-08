@@ -1,0 +1,44 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">at, _at. Доступ к&nbsp;элементу хеша по&nbsp;индексу</b><code><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>1</i></b><b><i>]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^хеш._at(число|-число)
+<br>
+</b><b>^хеш._at[first|last]
+<br>
+</b><b>^хеш.at(число|-число)&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.4.4]</i></b></code><code><b>
+<br>
+</b><b>^хеш.at[first|last]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.4]</i></b></span><code><b>
+<br>
+</b><b>^хеш.at(число|-число)[key|value|hash]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.4]</i></b></span><code><b>
+<br>
+</b><b>^хеш.at[first|last;key|value|hash]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.4]</i></b></span><code><b>
+<br>
+
+<br>
+</b></code><span>При добавлении элементов в&nbsp;хеш каждый из&nbsp;них получает свой индекс, начиная с&nbsp;0. Метод позволяет получить доступ к&nbsp;элементу хеша по&nbsp;заданному индексу, т.&nbsp;е.&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b>^хеш.at(0)</b></code></span><span> эквивалентен&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b>^хеш.at[first]</b></code></span><span>. В&nbsp;случае отрицательного значения поиск элемента производится с&nbsp;конца, и&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b>^хеш.at(-1)</b></code></span><span> эквивалентен&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b>^хеш.at[last]</b></code></span><span>.
+<br>
+
+<br>
+Второй параметр определяет возвращаемый результат:&nbsp;&nbsp;&nbsp;<b><i>[3.4.4]</i></b>
+<br>
+</span><code><b>value</b></code><span>&nbsp;- вернется значение элемента (по&nbsp;умолчанию);
+<br>
+</span><code><b>key</b></code><span>&nbsp;- вернется ключ элемента;
+<br>
+</span><code><b>hash</b></code><span>&nbsp;- вернется хеш из&nbsp;одного элемента.
+<br>
+
+<br>
+</span></span>

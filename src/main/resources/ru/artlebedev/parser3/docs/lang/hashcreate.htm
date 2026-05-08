@@ -1,0 +1,58 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Создание пустого хеша и&nbsp;копирование хеша</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^hash::create[]&nbsp;&nbsp;
+<br>
+^hash::create[существующий&nbsp;хеш,&nbsp;или&nbsp;</b><b><a href="hashfileclass.htm">хеш-файл</a></b><b>,&nbsp;или&nbsp;</b><b><a href="obj.htm">пользовательский объект</a></b><b>,&nbsp;или&nbsp;</b><b><a href="fileclass.htm">файл</a></b><b>]
+<br>
+</b><span>
+<br>
+Если параметр не&nbsp;задан, будет создан пустой хеш.
+<br>
+Если указан </code><code><b>существующий&nbsp;хеш</b></code><span> или другой совместимый с&nbsp;хешем </span><code><b>объект</b></code><span>, конструктор создает его копию.
+<br>
+
+<br>
+Пустой хеш, создаваемый конструктором без&nbsp;параметров, нужен в&nbsp;ситуации, когда необходимо динамически наполнить хеш данными, например:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$dyn[^hash::create[]]
+<br>
+^for[i](1;10){
+<br>
+&nbsp;&nbsp;&nbsp;$dyn.$i[$value]
+<br>
+}
+<br>
+</b></code></span><span>Перед выполнением </span><code><b>for</b></code><span> мы определили, чт<i>о</i> именно наполняем</span><span>.</span><span>
+<br>
+
+<br>
+Если предполагается интенсивная работа по&nbsp;изменению содержимого хеша, но&nbsp;необходимо сохранить, скажем, исходные значения, то это можно сделать, например, так:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$pets[
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;$.pet[</b></code></span><code><b>Собака</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.food[</b></code></span><code><b>Косточка</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.good[</b></code></span><code><b>Ошейник</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+$pets_copy[^hash::create[$pets]]
+<br>
+</b></code></span><span>
+<br>
+<i>Замечание: поле </i></span><code><b>_default</b></code><span><i> копируется. 
+<br>
+</i></span></span>

@@ -1,0 +1,56 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">DOM. nodeType</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>DOM-элементы бывают разных типов, тип элемента хранится в&nbsp;<a href="intdoubleclasses.htm">integer</a> поле <code><b><a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core.html#attribute-nodeType" target="_blank">nodeType</a></b></code><span>.</span><code><b>
+<br>
+</b></code><span>В классе </span><code><b>xdoc</b></code><span> имеются следующие константы, удобные для&nbsp;проверки значения этого поля:</span><code><b>
+<br>
+</b></code><span>
+<br>
+</span><code><b>$xdoc:ELEMENT_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1
+<br>
+$xdoc:ATTRIBUTE_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2
+<br>
+$xdoc:TEXT_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3
+<br>
+$xdoc:CDATA_SECTION_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4
+<br>
+$xdoc:ENTITY_REFERENCE_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5
+<br>
+$xdoc:ENTITY_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;6
+<br>
+$xdoc:PROCESSING_INSTRUCTION_NODE&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;7
+<br>
+$xdoc:COMMENT_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;8
+<br>
+$xdoc:DOCUMENT_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;9
+<br>
+$xdoc:DOCUMENT_TYPE_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;10
+<br>
+$xdoc:DOCUMENT_FRAGMENT_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;11
+<br>
+$xdoc:NOTATION_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;12
+<br>
+</b></code><span>
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^if($node.nodeType&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="exprops.htm">==</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;$xnode:ELEMENT_NODE){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;$node.tagName</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;/</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&gt;
+<br>
+}</b></code></span><code><b>
+<br>
+</b></code></span>

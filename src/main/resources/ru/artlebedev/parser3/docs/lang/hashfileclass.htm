@@ -1,0 +1,80 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">hashfile (класс)</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Класс предназначен для&nbsp;работы с&nbsp;хешами, хранящимися на&nbsp;диске. В&nbsp;отличие от&nbsp;класса <code><b><a href="hashclass.htm">hash</a></b></code><span>, объекты данного класса считаются всегда определенными (</span><code><b>def</b></code><span>) и&nbsp;не имеют числового значения.
+<br>
+
+<br>
+Если класс </span><code><b>hash</b></code><span> хранит свои данные в&nbsp;оперативной памяти, </span><code><b>hashfile</b></code><span> хранит их на&nbsp;диске, причем можно отдельно задавать время хранения каждой пары «</span><code><b>ключ&nbsp;/&nbsp;значение</b></code><span>».
+<br>
+
+<br>
+Для хранения данных </span><code><b>hashfile</b></code><span> используются два файла&nbsp;- с&nbsp;расширением </span><code>.dir</code><span> и&nbsp;</span><code>.pag</code><span><i>
+<br>
+
+<br>
+</i><i>Замечание: существует ограничение на&nbsp;длину строк ключа и&nbsp;значения, в&nbsp;сумме они не&nbsp;должны превышать&nbsp;8000&nbsp;байт.
+<br>
+</i>
+<br>
+<a href="hashfileread.htm">Чтение</a> и&nbsp;<a href="hashfilewrite.htm">запись</a> данных происходят очень быстро: идет работа только с&nbsp;необходимыми фрагментами файлов данных. На&nbsp;простых задачах </span><code><b>hashfile</b></code><span> работает значительно быстрее баз данных.
+<br>
+
+<br>
+<i>Замечание: в&nbsp;один момент времени файл может изменяться только одним скриптом, остальные ждут окончания его работы.
+<br>
+</i>
+<br>
+<b>Пример</b>
+<br>
+Допустим, желательно некоторую информацию получить от&nbsp;посетителя на&nbsp;одной странице сайта и&nbsp;иметь возможность отобразить ее&nbsp;на&nbsp;другой странице сайта. Причем необходимо, чтобы посетитель не&nbsp;мог ее ни&nbsp;увидеть, ни&nbsp;подделать.
+<br>
+
+<br>
+Можно поместить информацию в&nbsp;</span><code><b>hashfile</b></code><span>, ассоциировав ее со&nbsp;случайной строкой&nbsp;- идентификатором «сеанса общения с&nbsp;посетителем». Идентификатор сеанса общения можно поместить в&nbsp;</span><code><b><a href="cookieclass.htm">cookie</a></b></code><span>, данные теперь хранятся на&nbsp;сервере, не&nbsp;видны посетителю и&nbsp;не могут быть им&nbsp;подделаны.
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>#&nbsp;создаем/открываем&nbsp;файл&nbsp;с&nbsp;информацией
+<br>
+$sessions[^hashfile::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="hashfileopen.htm">open</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>/sessions</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+^if(!def&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="cookiestats.htm">$cookie:sid</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="cookierec.htm">$cookie:sid</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mathclass.htm">math</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mathuuid.htm">uuid</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]]
+<br>
+}
+<br>
+#&nbsp;после&nbsp;этого…
+<br>
+
+<br>
+$information_string[</b></code></span><code><b>произвольное&nbsp;значение</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+#&nbsp;…так&nbsp;запоминаем&nbsp;произвольную&nbsp;$information_string&nbsp;под&nbsp;ключом&nbsp;sid&nbsp;на&nbsp;2&nbsp;дня
+<br>
+$sid[$cookie:sid]
+<br>
+$sessions.$sid[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="hashfilewrite.htm">$.value[$information_string] $.expires(2)</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]
+<br>
+
+<br>
+#&nbsp;…а&nbsp;так&nbsp;можем&nbsp;считать&nbsp;сохраненное&nbsp;ранее&nbsp;значение
+<br>
+#&nbsp;если&nbsp;с&nbsp;момента&nbsp;сохранения&nbsp;прошло&nbsp;меньше&nbsp;2&nbsp;дней
+<br>
+$sid[$cookie:sid]
+<br>
+$information_string[</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="hashfileread.htm">$sessions.</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>$sid]
+<br>
+</b></code></span></span>

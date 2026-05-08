@@ -1,0 +1,91 @@
+^void:sql{
+	INSERT INTO
+		test
+	SET
+	^if($a eq 'b'){
+		field = 'ok'
+	}($d eq 'x)'){
+		field = 'aaa'
+	}($e eq "f)"){
+		field = 'bbb'
+	}($e eq ^"f^"){
+			field = 'bbb'
+	}($e eq ^'f^'){
+		field = 'bbb'
+	}($e eq ^)){
+		field = 'bbb'
+	}($f eq '^)'){
+		field = 'x',
+	}($f eq "^)"){
+		field = '^}y',
+		field = '}',
+	}
+	field = ^if(def $s){'$s';NULL},
+	field = '^if(def $s){$s}',
+	field = '^if(def $s){$s;empty}',
+	field = '^if(def $s || $s eq 's' || $s eq "s"){$s;empty}',
+	field = "^if(def $s || $s eq 's' || $s eq "s"){$s;empty}",
+	field = "^if(def $s || $s eq 's' || $s eq "s"){$s;'empty'}",
+	field = '^if(def $s || $s eq 's' || $s eq "s"){$s;"empty"}',
+	field = ^if($a){b;c},
+	field = ^if($a){b}{c},
+	id = '^int:sql{select count(*) FROM users}',
+	id = "^int:sql{select count(*) FROM users}",
+	^if(
+		$b eq 'c'
+	){
+		field = 'not ok'
+	}
+$list[^table::sql{
+	SELECT
+	id, name
+	FROM
+	users
+	WHERE
+	id = '^int:sql{select count(*) FROM users}
+	$u[^string:sql{
+		select s FROM $table WHERE a = '15'
+	}[$.default[x]]]
+		OR s = '$u'
+}]
+^switch[a]{
+	^case[b]{
+		xx = 15,
+		^if(def ^form:url_vk.trim[]){url_vk = '^form:url_vk.trim[]',}
+	}
+}
+^if($a){x=1}($b){x=2}($c){x=3}($d){x=4}
+$var[x]
+AND id = 15
+^x:y[]
+AND
+x <> '{' AND y <> "}"
+^array::copy[asdf]
+AND
+^x.y[]
+AND
+^mail:send[
+	$.from[robot]
+	$.to[]
+	$.subject[]
+	$.html[
+		$.value{^html.base64[]}
+		$.content-transfer-encoding[base64]
+	]
+]
+AND z /* comment */
+WHERE id  = ^int:sql{select count(*) FROM users where $where AND $sql}
+WHERE name = '$user.name[encode]',
+WHERE id in (^data.foreach[k;v]{field_$v.id}[,])
+WHERE id in (^data.foreach[k;]{$k.id}[,])
+WHERE id in (^data.foreach[;v]{$v.id}[,])
+}
+
+$list[^table::sql{
+	SELECT
+		p.name, p.value
+	FROM
+		person AS p
+	WHERE
+		p.login = (^users.menu{'$users.login'}[,])
+}]

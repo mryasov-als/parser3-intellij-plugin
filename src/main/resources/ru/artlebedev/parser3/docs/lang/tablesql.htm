@@ -1,0 +1,52 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">sql. Выборка таблицы из&nbsp;базы данных</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^table::sql{SQL-запрос}&nbsp;
+<br>
+^table::sql{SQL-запрос&nbsp;}[$.limit(n)&nbsp;$.offset(n)&nbsp;$.</b><b><a href="app7.htm">bind</a></b><b>[variables&nbsp;hash]]
+<br>
+</b><span>
+<br>
+Конструктор создает объект класса </code><code><b>table</b></code><span>, который содержит таблицу, полученную в&nbsp;результате выборки из&nbsp;базы данных. Для использования конструктора необходимо установленное соединение с&nbsp;сервером базы данных (см.&nbsp;оператор </span><code><b><a href="opconnect.htm">connect</a></b></code><span>).</span><span>
+<br>
+</span><span>
+<br>
+</span><code><b>SQL-запрос</b></code><span>&nbsp;- запрос на&nbsp;выборку из&nbsp;базы данных.
+<br>
+
+<br>
+Возможно использование дополнительных параметров конструктора:
+<br>
+</span><code><b>$.limit(n)</b></code><span>&nbsp;- получить не&nbsp;более </span><code><b>n</b></code><span> записей;
+<br>
+</span><code><b>$.offset(n)</b></code><span>&nbsp;- отбросить первые </span><code><b>n</b></code><span> записей выборки;
+<br>
+</span><code><b>$.bind[hash]</b></code><span>&nbsp;- связанные переменные, см.&nbsp;«<a href="app7.htm">Работа с IN/OUT-переменными</a>».
+<br>
+
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$sql_table[^table::sql{</b></code></span><code><b>select&nbsp;*&nbsp;from&nbsp;news</b><span style="color:#7F97E1" class="blue"><b>}]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+В результате будет создан объект, содержащий все записи из&nbsp;таблицы </span><code><b>news</b></code><span>.
+<br>
+
+<br>
+<i>Примечание: всегда нужно указывать конкретный список необходимых полей. Использование «*» крайне не&nbsp;рекомендуется, поскольку постороннему читателю (да&nbsp;и&nbsp;самому разработчику через некоторое время) непонятно, что&nbsp;же за&nbsp;поля будут извлечены. Кроме того, так можно извлечь лишние поля (скажем, добавившиеся в&nbsp;ходе развития проекта), что повлечет ненужные расходы на&nbsp;их извлечение и&nbsp;хранение.
+<br>
+</i></span></span>

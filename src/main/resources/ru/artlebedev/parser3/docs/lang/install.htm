@@ -1,0 +1,138 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Установка и&nbsp;настройка Parser&nbsp;3</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Проще всего установить Parser 3 в операционных системах, использующих пакеты Debian (например, Ubuntu). Достаточно выполнить следующую команду:
+<br>
+<code><b>sudo&nbsp;apt-get&nbsp;install&nbsp;parser3-cgi
+<br>
+</b></code><span>Если нужен драйвер MySQL (MariaDB), нужно дополнительно выполнить:
+<br>
+</span><code><b>sudo&nbsp;apt-get&nbsp;install&nbsp;parser3-mysql
+<br>
+</b></code><span>
+<br>
+Если установлен Docker, можно скачать <span style="color:#7F97E1" class="blue"><u><a href="https://hub.docker.com/r/parser/parser3-httpd" target="_blank">контейнер</a></u></span></span><span> для запуска Parser&nbsp;3 в&nbsp;режиме <a href="parserwebserver.htm">веб-сервера</a>. Кроме того, есть программа для установки под Windows и&nbsp;архивы с&nbsp;комплектом установки, доступные в разделе <span style="color:#7F97E1" class="blue"><u><a href="https://www.parser.ru/download/" target="_blank">www.parser.ru/download</a></u></span></span><span> .
+<br>
+
+<br>
+Parser&nbsp;3 доступен в&nbsp;нескольких вариантах:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span>CGI-скрипт (и интепретатор и веб-сервер);
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>модуль веб-сервера apache (в пакетах Debian);
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></td><td><span>ISAPI-расширение веб-сервера Microsoft Internet Information Server&nbsp;8.0 или&nbsp;новее.
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><span></span></td><td></td></tr></table><span>
+<br>
+Дополнительно поставляются драйверы для&nbsp;различных SQL-серверов (сейчас доступны для&nbsp;MySQL, Postgres, Oracle, ODBC и&nbsp;SQLite).
+<br>
+
+<br>
+Для локальной разработки рекомендуется использовать Parser&nbsp;3 в&nbsp;режиме <a href="parserwebserver.htm">веб-сервера</a>. Для этого достаточно выполнить две команды:
+<br>
+</span><code><b>cd&nbsp;&lt;корневая&nbsp;директория&nbsp;сайта&gt;
+<br>
+</b><b>cgi</b><b>/parser3</b><b>.cgi</b><b>&nbsp;-p&nbsp;8080</b><b>
+<br>
+</b></code><span>После этого сайт будет доступен в&nbsp;браузере по&nbsp;адресу <span style="color:#7F97E1" class="blue"><u><a href="http://localhost:8080/" target="_blank">localhost:8080</a></u></span></span><span>.
+<br>
+
+<br>
+<b>Описание каталогов и&nbsp;файлов
+<br>
+</b></span><code>parser3.exe</code><span> или </span><code>parser3.cgi</code><span>&nbsp;- CGI-скрипт (и&nbsp;интерпретатор и&nbsp;веб-сервер);
+<br>
+</span><code>parser3isapi.dll</code><span> - ISAPI расширение веб-сервера IIS&nbsp;8.0 или&nbsp;новее.</span><code>
+<br>
+auto.p</code><span>&nbsp;- <a href="parserconfig.htm">конфигурационный файл</a>;</span><code>
+<br>
+parser3.charsets/</code><span>&nbsp;- каталог с&nbsp;файлами <a href="installcharset.htm">таблиц кодировок</a>:
+<br>
+<table border="0" cellpadding="1"><tr><td align="left" valign="top" width="157">
+<code>cp866.cfg<span>
+<br>
+</code></span></td><td align="left" valign="top" width="270">
+<code>&nbsp;-&nbsp;<span>Cyrillic [CP866]
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="157">
+<code>koi8-r.cfg<span>
+<br>
+</code></span></td><td align="left" valign="top" width="270">
+<code>&nbsp;-&nbsp;<span>Cyrillic [KOI8-R]
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="157">
+<code>koi8-u.cfg<span>
+<br>
+</code></span></td><td align="left" valign="top" width="270">
+<code>&nbsp;-&nbsp;<span>Cyrillic [KOI8-U]
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="157">
+<code>windows-1250.cfg<span>
+<br>
+</code></span></td><td align="left" valign="top" width="270">
+<code>&nbsp;-&nbsp;<span>Central European [windows-1250]
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="157">
+<code>windows-1251.cfg<span>
+<br>
+</code></span></td><td align="left" valign="top" width="270">
+<code><b>&nbsp;-&nbsp;</b><span>Cyrillic [windows-1251]
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="157">
+<code>windows-1254.cfg<span>
+<br>
+</code></span></td><td align="left" valign="top" width="270">
+<code><b>&nbsp;-&nbsp;</b><span>Turkish [windows-1254]
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="157">
+<code>windows-1257.cfg<span>
+<br>
+</code></span></td><td align="left" valign="top" width="270">
+<code><b>&nbsp;-&nbsp;</b><span>Baltic [windows-1257]
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="157">
+<code>x-mac-cyrillic.cfg<span>
+<br>
+</code></span></td><td align="left" valign="top" width="270">
+<code><b>&nbsp;-&nbsp;</b><span>Macintosh Cyrillic
+<br>
+</code></span></td></tr></table>
+<br>
+
+<br>
+Поскольку исходные коды являются открытыми, возможно собрать Parser самостоятельно (см.&nbsp;<a href="compilesrc.htm">Получение исходных кодов</a>) и&nbsp;написать свой SQL-драйвер.
+<br>
+
+<br>
+<i>Внимание: в&nbsp;целях безопасности версии скомпилированы так, что могут читать и&nbsp;исполнять только файлы, принадлежащие тому&nbsp;же пользователю или группе пользователей, от&nbsp;имени которых работает сам Parser.
+<br>
+</i>
+<br>
+<b>Как подключаются конфигурационные файлы</b>
+<br>
+
+<br>
+Для CGI-скрипта (</span><code>parser3.exe</code><span> или </span><code>parser3.cgi</code><span>):
+<br>
+Конфигурационный файл считывается из&nbsp;файла, заданного переменной окружения </span><code>CGI_PARSER_CONFIG</code><span>.
+<br>
+Если переменная не&nbsp;задана, ищется в&nbsp;том&nbsp;же каталоге, где расположен сам CGI-скрипт.
+<br>
+
+<br>
+Для ISAPI-расширения (</span><code>parser3isapi.dll</code><span>):
+<br>
+конфигурационный файл </span><code>auto.p</code><span> ищется в&nbsp;том&nbsp;же каталоге, где расположен сам файл.
+<br>
+</span></span>

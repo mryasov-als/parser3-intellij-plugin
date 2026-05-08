@@ -1,0 +1,42 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">load. Загрузка файла с&nbsp;удаленного сервера</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^curl:load[]
+<br>
+</b><b>^curl:load[</b><b><a href="curloptionsdesc.htm">опции</a></b><b>]
+<br>
+
+<br>
+</b><span>Метод выполняет загрузку файла с&nbsp;удаленного сервера. В рамках <a href="curlsession.htm">сессии</a> этот метод может быть вызван несколько раз с&nbsp;разными параметрами (или вообще без&nbsp;них). Пришедшие <b>cookies</b> помещаются в&nbsp;поле </code><code><b>cookies</b></code><span> в&nbsp;виде таблицы со&nbsp;столбцами </span><code><b>name</b></code><span>, </span><code><b>value</b></code><span>, </span><code><b>expires</b></code><span>, </span><code><b>max-age</b></code><span>, </span><code><b>domain</b></code><span>, </span><code><b>path</b></code><span>, </span><code><b>HTTPonly</b></code><span> и&nbsp;</span><code><b>secure</b></code><span>.&nbsp;&nbsp;&nbsp;<b><i>[3.4.</i></b><b><i>3</i></b><b><i>]</i></b></span><span><b><i>
+<br>
+</i></b></span><span>
+<br>
+Также доступно поле </span><code><b>tables</b></code><span>&nbsp;- это хеш, ключами которого являются поля заголовков HTTP-ответа в&nbsp;верхнем регистре, а&nbsp;значениями&nbsp;- таблицы с&nbsp;единственным столбцом </span><code><b>value</b></code><span>, содержащим все значения одноименных полей HTTP-ответа. <b><i>[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>5</i></b><b><i>]</i></b>
+<br>
+</span><span>
+<br>
+</span><span><b>Пример</b></span><span>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$file[^curl:load[
+<br>
+&nbsp;&nbsp;&nbsp;$.url[</b></code></span><code><b>HTTPs://store.artlebedev.ru/</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.useragent[</b></code></span><code><b>Parser3</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.timeout(</b></code></span><code><b>10</b><span style="color:#7F97E1" class="blue"><b>)
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;$.ssl_verifypeer(0)
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]]</b></code></span><span>
+<br>
+</span></span>

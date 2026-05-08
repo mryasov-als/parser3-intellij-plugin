@@ -1,0 +1,46 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">save. Сохранение таблицы в&nbsp;файл</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица.save[путь]</b>
+<br>
+<b>^таблица.save[путь;</b><b><a href="tableoptionsfmt.htm">опции</a></b><b>]</b>
+<br>
+<b>^таблица.save[nameless;путь]&nbsp;&nbsp;&nbsp;
+<br>
+^таблица.save[nameless;путь;</b><b><a href="tableoptionsfmt.htm">опции</a></b><b>]</b>
+<br>
+<b>^таблица.save[append;путь]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.3.0]</i></b></code><code>
+<br>
+<b>^таблица.save[append;путь;</b><b><a href="tableoptionsfmt.htm">опции</a></b><b>]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.3.0]</i></b></span><code>
+<br>
+</code><span>
+<br>
+Метод сохраняет таблицу в&nbsp;текстовый файл в&nbsp;формате tab-delimited. 
+<br>
+Использование опции </span><code><b>nameless</b></code><span> сохраняет таблицу без&nbsp;имен столбцов.
+<br>
+При использовании опции </span><code><b>append</b></code><span> таблица сохраняется с&nbsp;именами столбцов только в&nbsp;том случае, если файла еще не&nbsp;существует.
+<br>
+Также доступны опции записи (см.&nbsp;«<a href="tableoptionsfmt.htm">Опции формата файла</a>»), позволяющие, например, сохранить файл в&nbsp;формате&nbsp;CSV для&nbsp;последующей загрузки данных в&nbsp;программы, которые понимают такой формат&nbsp;(Miscrosoft Excel).
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^conf.save[</b></code></span><code><b>/conf/old_conf.txt</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Таблица </span><code><b>$conf</b></code><span> будет сохранена в&nbsp;текстовом файле </span><code>old_conf.txt</code><span> в&nbsp;каталоге </span><code><b>/conf/</b></code><span>.
+<br>
+</span></span>

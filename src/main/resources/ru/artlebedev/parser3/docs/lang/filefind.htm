@@ -1,0 +1,52 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">find. Поиск файла на&nbsp;диске</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file:find[файл]</b><span>
+<br>
+</code><code><b>^file:find[файл]{код,&nbsp;если&nbsp;файл&nbsp;не&nbsp;найден}</b></code><span>&nbsp;&nbsp;&nbsp;
+<br>
+</span><span>
+<br>
+Метод возвращает строку (объект класса </span><code><span style="color:#7F97E1" class="blue"><b><u><a href="stringclass.htm">string</a></u></b></code></span><span>), содержащую имя файла с&nbsp;путем от&nbsp;корня веб-пространства, если он существует по&nbsp;указанному пути, либо в&nbsp;каталогах более высокого уровня. В&nbsp;противном случае выполняется заданный код, если он указан.
+<br>
+
+<br>
+<b>Пример  без&nbsp;указания пути
+<br>
+</b></span><code><b>&lt;img&nbsp;src="</b><span style="color:#7F97E1" class="blue"><b>^file:find[</b></code></span><code><b>header.gif</b><span style="color:#7F97E1" class="blue"><b>]{</b></code></span><code><b>/i/header.gif</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><b>"</b><b>&nbsp;/</b><b>&gt;
+<br>
+</b></code><span>
+<br>
+Допустим, этот код расположен в&nbsp;документе </span><code>/news/sport/index.html</code><span>, здесь ищется файл </span><code><b>header.gif</b></code><span> в&nbsp;каталоге </span><code><b>/news/sport/</b></code><span>, разработанный специально для&nbsp;раздела спортивных новостей. Если он не&nbsp;найден и&nbsp;не существует </span><code><b>/news/sport/header.gif</b></code><span>, то&nbsp;используется стандартный заголовочный рисунок новостного раздела.
+<br>
+
+<br>
+<b>Пример с&nbsp;указанием пути
+<br>
+</b></span><code><b>&lt;img&nbsp;src="</b><span style="color:#7F97E1" class="blue"><b>^file:find[</b></code></span><code><b>/i/</b><span style="color:#7F97E1" class="blue"><b>$section</b></code></span><code><b>/</b><span style="color:#7F97E1" class="blue"><b>$subsection</b></code></span><code><b>/header.gif</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>"</b><b>&nbsp;/</b><b>&gt;
+<br>
+</b></code><span>
+<br>
+Здесь ищется файл </span><code><b>header.gif</b></code><span> в&nbsp;каталоге </span><code><b>/i/раздел/подраздел/</b></code><span>. Если он не&nbsp;найден здесь, файл будет последовательно искаться в&nbsp;каталогах
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>/i/раздел/
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>/i/
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>/
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><code><b></b></code></td><td></td></tr></table><code></span><span>
+<br>
+
+<br>
+</code></span>

@@ -1,0 +1,82 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Запись</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$cookie:имя[значение]&nbsp;&nbsp;&nbsp;
+<br>
+</b><b>
+<br>
+$cookie:имя[
+<br>
+&nbsp;&nbsp;&nbsp;$.value[значение]
+<br>
+&nbsp;&nbsp;&nbsp;...необязательные&nbsp;модификаторы...
+<br>
+]&nbsp;&nbsp;
+<br>
+</b><span>
+<br>
+Сохраняет значение в&nbsp;</code><code><b>cookie</b></code><span> с&nbsp;указанным именем. По&nbsp;умолчанию указанное значение сохраняется 90&nbsp;дней.
+<br>
+
+<br>
+<i>Примечание: записанное значение </i>сразу<i> доступно для&nbsp;</i><i><a href="cookiestats.htm">чтения</a></i><i>, но&nbsp;это не&nbsp;дает гарантии, что оно будет принято и&nbsp;записано браузером  (например, в&nbsp;случае если у&nbsp;посетителя </i>cookies<i> отключены или блокируются файерволом).
+<br>
+</i>
+<br>
+
+<br>
+Необязательные модификаторы:
+<br>
+</span><code><b>$.expires(число&nbsp;дней)</b></code><span>&nbsp;- задает число дней (может быть дробным, </span><code><b>1.5</b></code><span>&nbsp;= полтора дня), на&nbsp;которое сохраняется&nbsp;</span><code><b>cookie</b></code><span>;</span><span>
+<br>
+</span><code><b>$.expires[session]</b></code><span>&nbsp;- создает сеансовый </span><code><b>cookie</b></code><span> (</span><code><b>cookie</b></code><span> не&nbsp;будут сохраняться, а&nbsp;уничтожатся с&nbsp;закрытием окна&nbsp;браузера);
+<br>
+</span><code><b>$.expires[</b><b><a href="dateclass.htm">$date</a></b><b>]</b></code><span>&nbsp;- задает дату и&nbsp;время, до&nbsp;которой будут храниться </span><code><b>cookie</b></code><span>, здесь </span><code><b>$date</b></code><span> - переменная типа&nbsp;</span><code><b><a href="dateclass.htm">date</a></b></code><span>;
+<br>
+</span><code><b>$.domain[имя&nbsp;домена]</b></code><span>&nbsp;- задает cookie в&nbsp;домен с&nbsp;указанным именем;
+<br>
+</span><code><b>$.path[подраздел]</b></code><span>&nbsp;- задает cookie только на&nbsp;определенный подраздел сайта;
+<br>
+</span><code><b>$.HTTPonly(true)</b></code><span>&nbsp;- если указан ключ с&nbsp;</span><code><b><a href="boolclass.htm">bool</a></b></code><span>-значением, то&nbsp;будет сформирован </span><code><b>HTTP</b></code><span>-заголовок в&nbsp;котором у&nbsp;</span><code><b>cookie</b></code><span> этот параметр указан без&nbsp;значения; это может использоваться, например, для&nbsp;задания параметров&nbsp;</span><code><b><a href="http://msdn.microsoft.com/en-us/library/ms533046.aspx">HTTPonly</a></b></code><span> или </span><code><b>secure</b></code><span>.
+<br>
+
+<br>
+</span><span><b>
+<br>
+</b></span><span><b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$cookie:user[</b></code></span><code><b>Петя</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+Создаст </span><code><b>cookie</b></code><span> с&nbsp;именем </span><code><b>user</b></code><span> и&nbsp;запишет туда значение «</span><code><b>Петя</b></code><span>». </span><code><b>Сookie</b></code><span> будут храниться на&nbsp;диске посетителя 90&nbsp;дней.
+<br>
+
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$cookie:login_name[
+<br>
+&nbsp;&nbsp;&nbsp;$.value[</b></code></span><code><b>guest</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;$.expires(14)
+<br>
+]
+<br>
+</b></code></span><span>
+<br>
+Создаст на&nbsp;две недели </span><code><b>cookie</b></code><span> с&nbsp;именем </span><code><b>login_name</b></code><span> и&nbsp;запишет в&nbsp;него значение </span><code><b>guest</b></code><span>.
+<br>
+</span></span>

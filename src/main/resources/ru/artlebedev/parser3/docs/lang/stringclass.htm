@@ -1,0 +1,50 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">string (класс)</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Класс для&nbsp;работы со&nbsp;строками. В выражении строка считается определенной&nbsp;(<code><span style="color:#7F97E1" class="blue"><b><a href="exprops.htm">def</a></b></code></span><span>), если она не&nbsp;пуста. Если в&nbsp;строке содержится число, то&nbsp;при попытке использовать его в&nbsp;математических выражениях содержимое строки будет автоматически преобразовано в&nbsp;</span><code><span style="color:#7F97E1" class="blue"><b><a href="intdoubleclasses.htm">double</a></b></code></span><span>. Если строка пуста, ее числовое «значение» в&nbsp;математических выражениях считается нулем.
+<br>
+
+<br>
+Создание объекта класса&nbsp;</span><code><b>string</b></code><span>:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>Строка,&nbsp;которая&nbsp;содержится&nbsp;в&nbsp;объекте</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>Для совместимости с&nbsp;пустым хешем пустая и&nbsp;пробельная строки допускают обращение к&nbsp;произвольным полям (</span><code><b>$str.key</b></code><span>) без&nbsp;сообщения об&nbsp;ошибке.&nbsp;&nbsp;&nbsp;<b><i>[3.4.5]</i></b>
+<br>
+Ниже приведен пример кода, показывающего, когда такая возможность позволяет обойтись без&nbsp;дополнительных проверок.  
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^method[
+<br>
+&nbsp;&nbsp;&nbsp;^if($condition1){&nbsp;$.option1[</b></code></span><code><b>value1</b><span style="color:#7F97E1" class="blue"><b>]&nbsp;}
+<br>
+&nbsp;&nbsp;&nbsp;^if($condition2){&nbsp;$.option2[</b></code></span><code><b>value2</b><span style="color:#7F97E1" class="blue"><b>]&nbsp;}
+<br>
+]
+<br>
+
+<br>
+@method[options]
+<br>
+^if(def&nbsp;$options.option1){</b></code></span><code><b>&nbsp;code&nbsp;</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+
+<br>
+</b></code></span><span>Если оба условия будут ложны, то&nbsp;в&nbsp;качестве опций в&nbsp;метод будет передан не&nbsp;хеш, а&nbsp;строка, состоящая из&nbsp;пробельных символов. Тем не&nbsp;менее благодаря совместимости с&nbsp;пустым хешем код будет работать так, как&nbsp;задумано.
+<br>
+
+<br>
+</span></span>

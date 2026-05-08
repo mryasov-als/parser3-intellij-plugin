@@ -1,0 +1,70 @@
+ 
+<style>
+        
+                    
+             
+             
+  
+          
+                  
+                    
+  
+       
+
+  
+        
+           
+                    
+   
+  
+        
+   
+                 
+             
+    
+   
+   
+   
+    
+     
+      
+     
+    
+   
+   
+           
+
+    
+   
+   
+   
+    
+    
+   
+     
+        
+    
+   
+   
+   
+  </style>
+
+<script>
+	var list = [];
+	list.fo</script>
+
+<div class="item" style="font-weight: bold; font-size: 24px;">
+	<div class="item abc">
+		<td> x y </td>
+		 
+			<tr>
+				<td> ... </td>
+				<td> <a href=" "> </a> :  </td> 
+			</tr>
+		 
+	</div>
+</div>
+
+<div>
+	<strong class="aabbcc item asdfklj haskldjf asd"></strong>
+</div>

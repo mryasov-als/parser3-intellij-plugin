@@ -1,0 +1,370 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Свойства</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>@GET_имя[]
+<br>
+код,&nbsp;выдающий&nbsp;значение&nbsp;или&nbsp;метод.
+<br>
+
+<br>
+@SET_имя[value]
+<br>
+код,&nbsp;обрабатывающий&nbsp;новое&nbsp;значение&nbsp;$value.
+<br>
+</b><span>
+<br>
+</code><code><b>@GET_DEFAULT[]</b><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.3.0]</i></b></span><code><b>
+<br>
+@GET_DEFAULT[имя]</b><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.3.0]</i></b></span><code><b>
+<br>
+код,&nbsp;обрабатывающий&nbsp;обращения&nbsp;к&nbsp;несуществующим&nbsp;полям&nbsp;или&nbsp;вызовы&nbsp;несуществующих&nbsp;методов.
+<br>
+
+<br>
+@SET_DEFAULT[имя;значение]</b><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.1]</i></b></span><code><b>
+<br>
+код,&nbsp;обрабатывающий&nbsp;запись&nbsp;в&nbsp;несуществующие&nbsp;поля.
+<br>
+
+<br>
+@GET[]&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.3.0]</i></b></span><code><b>
+<br>
+@GET[тип&nbsp;обращения]</b></code><span><b><i>&nbsp;&nbsp;&nbsp;</i></b></span><span><b><i>[3.4.0]</i></b></span><code><b>
+<br>
+код,&nbsp;обрабатывающий&nbsp;обращения&nbsp;к&nbsp;объекту&nbsp;или&nbsp;классу&nbsp;в&nbsp;определенных&nbsp;контекстах&nbsp;вызова.
+<br>
+</b></code><span>
+<br>
+
+<br>
+Можно определить default getter (</span><code><b>@GET_DEFAULT[]</b></code><span>) - метод, который будет вызываться при обращении к&nbsp;несуществующим полям. Имя поля, к&nbsp;которому пытались обратиться, передается единственным параметром этому методу.
+<br>
+
+<br>
+<i>Важно: с&nbsp;этим методом нельзя работать как с&nbsp;обычным </i>«свойством»<i>, при попытке написать </i></span><code><b>$DEFAULT</b></code><span><i> будет выдано сообщение об ошибке.
+<br>
+</i>
+<br>
+Также можно определить default setter (</span><code><b>@SET_DEFAULT[name;value]</b></code><span>) - метод, который будет вызываться при попытках записи в&nbsp;несуществующие поля. Имя поля, к&nbsp;которому пытались обратиться, и&nbsp;записываемое значение будут переданы этому методу.
+<br>
+
+<br>
+У пользовательских классов можно определить специальное свойство </span><code><b>@GET[]</b></code><span>, которое будет вызываться при обращении к&nbsp;классу или объекту этого класса в&nbsp;определенных контекстах вызова, например: в&nbsp;скалярном контексте, в&nbsp;выражении и&nbsp;т.&nbsp;п. Если у&nbsp;этого свойства определен параметр, то&nbsp;через него будет передан </span><code><b>тип&nbsp;обращения</b></code><span>, который может принимать одно из&nbsp;следующих значений</span><span>: </span><code><b>def</b></code><span>, </span><code><b>expression</b></code><span>, </span><code><b>bool</b></code><span>, </span><code><b>double</b></code><span>, </span><code><b>hash</b></code><span>, </span><code><b>table</b></code><span> или </span><code><b>file</b></code><span>.
+<br>
+
+<br>
+<i>Примечание: при обычном присваивании вида </i></span><code><b>$a[$b]</b></code><span><i> метод </i></span><code><b>@GET[]</b></code><span><i> не&nbsp;вызывается.
+<br>
+</i>
+<br>
+Так названные <a href="definemethod.htm">методы</a> задают <i>«свойство»</i>, которым можно пользоваться как обычной <a href="vars.htm">переменной</a>:
+<br>
+<table border="1" cellpadding="1"><tr><td align="left" valign="top" width="179">
+<span><i>пишем
+<br>
+</i></span></td><td align="left" valign="top" width="195">
+<span><i>происходит
+<br>
+</i></span></td></tr><tr><td align="left" valign="top" width="179">
+<code><b>$имя</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="195">
+<code><b>^GET_имя[]</b><span>
+<br>
+</code></span></td></tr><tr><td align="left" valign="top" width="179">
+<code><b>$имя</b><b>[</b><b>значение</b><b>]</b><span>
+<br>
+</code></span></td><td align="left" valign="top" width="195">
+<code><b>^SET_имя</b><b><a href="params.htm">[значение]</a></b><span>
+<br>
+</code></span></td></tr></table>
+<br>
+<i>
+<br>
+</i><i>Примечание: если не&nbsp;требуется возможность записи или чтения свойства, соответствующий метод можно не&nbsp;определять.
+<br>
+
+<br>
+Важно: нельзя иметь и&nbsp;свойство, и&nbsp;переменную с&nbsp;одним именем.
+<br>
+</i>
+<br>
+
+<br>
+<b>Пример: возраст и&nbsp;эл.&nbsp;почта
+<br>
+</b>Возьмем человека - хранить удобно дату рождения, а&nbsp;выводить часто нужно возраст. Нужна эл.&nbsp;почта, но&nbsp;можно забыть проверить ее на&nbsp;корректность.
+<br>
+
+<br>
+Пусть людьми занимается <a href="defineclass.htm">класс</a>, его свойства «</span><code><b>возраст</b></code><span>» и&nbsp;</span><code><b>email</b></code><span> позволят спрятать ненужные детали, сделав код проще и&nbsp;нагляднее:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b><a href="opuse.htm">@USE</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+/person.p
+<br>
+
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mainclass.htm">@main[]</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+$person[^person::create[
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.name[</b></code></span><code><b>Василий&nbsp;Пупкин</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$.birthday[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="dateclass.htm">date</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datecreateabs.htm">create</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>(2000;8;5)]
+<br>
+]]
+<br>
+#&nbsp;можно&nbsp;менять,&nbsp;но&nbsp;значение&nbsp;проверят
+<br>
+$person.email[</b></code></span><code><b>vasya@pupkin.ru</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$person.name</b></code></span><code><b>&nbsp;(</b><span style="color:#7F97E1" class="blue"><b>$person.email</b></code></span><code><b>),&nbsp;возраст:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$person.age</b></code></span><code><b>&lt;br&nbsp;/&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+Выведет:
+<br>
+</span><code><b>Василий&nbsp;Пупкин&nbsp;(vasya@pupkin.ru),&nbsp;возраст:&nbsp;5&lt;br&nbsp;/&gt;&nbsp;</b></code><span>(с&nbsp;течением времени возраст будет увеличиваться)
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>При этом менять возраст человека нельзя:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>#&nbsp;это&nbsp;вызовет&nbsp;ошибку!
+<br>
+$person.age(</b></code></span><code><b>99</b><span style="color:#7F97E1" class="blue"><b>)
+<br>
+
+<br>
+</b></code></span><span>Также нельзя присваивать свойству </span><code><b>email</b></code><span> некорректные значения:</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+#&nbsp;это&nbsp;вызовет&nbsp;ошибку!
+<br>
+$person.email[</b></code></span><code><b>vasya#pupkin.ru</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+
+<br>
+</b></code></span><span><b>Определение класса person
+<br>
+</b></span><span>Чтобы вышеописанный пример сработал, нужно <a href="defineclass.htm">определить</a> класс </span><code><b>person</b></code><span> и&nbsp;его свойства.
+<br>
+В корне веб-пространства в&nbsp;файл </span><code>person.p</code><span> поместим следующий код:</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+@CLASS
+<br>
+person
+<br>
+
+<br>
+@create[p]
+<br>
+$name[$p.name]
+<br>
+$birthday[$p.birthday]
+<br>
+</b></code></span><span><i>
+<br>
+</i></span><code><span style="color:#7F97E1" class="blue"><b>#&nbsp;свойство&nbsp;«возраст»
+<br>
+@GET_age[]</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="definemethod.htm">[now;today;celebday]</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+$now[^date::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datenow.htm">now</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]]
+<br>
+$today[^date::create($now.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datefields.htm">year</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>;$now.month;$now.day)]
+<br>
+$celebday[^date::create($now.year;$birthday.month;$birthday.day)]
+<br>
+#&nbsp;числовое&nbsp;значение&nbsp;логического&nbsp;выражения:&nbsp;истина=1;&nbsp;ложь=0
+<br>
+$</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="definemethod.htm">result</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>(^if($birthday&gt;$today)(0)($today.year&nbsp;-&nbsp;$birthday.year&nbsp;-&nbsp;($today&lt;$celebday)))
+<br>
+
+<br>
+#&nbsp;свойство&nbsp;«e-mail»
+<br>
+@SET_email[value]
+<br>
+^if(</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="exprops.htm">!</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>^Lib:isEmail[$value]){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="opthrow.htm">throw</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[email.invalid;</b></code></span><code><b>Некорректная&nbsp;эл.&nbsp;почта:&nbsp;'</b><span style="color:#7F97E1" class="blue"><b>$value</b></code></span><code><b>'</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+}
+<br>
+#&nbsp;имя&nbsp;переменной&nbsp;не&nbsp;должно&nbsp;совпадать&nbsp;с&nbsp;именем&nbsp;свойства!
+<br>
+$private_email[$value]
+<br>
+
+<br>
+@GET_email[]
+<br>
+$private_email
+<br>
+</b></code></span><span>
+<br>
+<i>Примечание: метод </i></span><code><b>isEmail</b></code><span><i>, как и&nbsp;ряд других полезных методов и&nbsp;</i><i><a href="defineclass.htm">операторов</a></i><i>, можно скачать по&nbsp;следующему адресу: </i><i><a href="http://www.parser.ru/examples/lib/" target="_blank">www.parser.ru/examples/lib/</a></i><i>.
+<br>
+
+<br>
+Примечание: классы лучше помещать в&nbsp;отдельное удобное место и&nbsp;при подключении не&nbsp;указывать путь, см.&nbsp;</i></span><code><b><a href="app1pathclass.htm">$CLASS_PATH</a></b></code><span><i>.
+<br>
+</i><i>
+<br>
+
+<br>
+</i><b>Пример: класс, расширяющий функциональность системного класса table
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@main[]
+<br>
+$t[^MyTable::create{a&nbsp;&nbsp;&nbsp;b
+<br>
+0a&nbsp;&nbsp;&nbsp;0b
+<br>
+1a&nbsp;&nbsp;&nbsp;1b
+<br>
+2a&nbsp;&nbsp;&nbsp;2b
+<br>
+3a&nbsp;&nbsp;&nbsp;3b}]
+<br>
+
+<br>
+</b></code></span><code><b>Значение&nbsp;в&nbsp;выражении:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^eval($t)&lt;br&nbsp;/&gt;
+<br>
+</b></code></span><code><b>^^t.count:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^t.count[]&lt;br&nbsp;/&gt;
+<br>
+</b></code></span><code><b>Выводим&nbsp;содержимое&nbsp;пользовательского&nbsp;объекта:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>^print[$t]&lt;br&nbsp;/&gt;
+<br>
+
+<br>
+
+<br>
+&lt;br&nbsp;/&gt;
+<br>
+</b></code></span><code><b>Копируем&nbsp;объект&nbsp;и&nbsp;выводим&nbsp;^^c.count[]:</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+$c[^MyTable::create[$t]]
+<br>
+^c.count[]&lt;br&nbsp;/&gt;
+<br>
+</b></code></span><code><b>Удаляем&nbsp;две&nbsp;строки,&nbsp;начиная&nbsp;со&nbsp;строки&nbsp;с&nbsp;offset=1,&nbsp;и&nbsp;выводим&nbsp;содержимое&nbsp;пользовательского&nbsp;объекта:</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+^c.remove(1;2)
+<br>
+^print[$c]&lt;br&nbsp;/&gt;
+<br>
+
+<br>
+
+<br>
+&lt;br&nbsp;/&gt;
+<br>
+</b></code></span><code><b>Создаем&nbsp;объект&nbsp;системного&nbsp;класса&nbsp;table&nbsp;на&nbsp;основании&nbsp;объекта&nbsp;класса&nbsp;MyTable&nbsp;и&nbsp;выводим&nbsp;^^z.count[]:</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+$z[^table::create[$t]]
+<br>
+^z.count[]&lt;br&nbsp;/&gt;
+<br>
+
+<br>
+
+<br>
+@print[t]
+<br>
+^t.menu{$t.a=$t.b}[&lt;br&nbsp;/&gt;]
+<br>
+</b></code></span><span><b>
+<br>
+
+<br>
+Определение класса MyTable
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@CLASS
+<br>
+MyTable
+<br>
+
+<br>
+@create[uParam]
+<br>
+^switch[$uParam.CLASS_NAME]{
+<br>
+&nbsp;&nbsp;&nbsp;^case[string]{$t[^table::create{$uParam}]}
+<br>
+&nbsp;&nbsp;&nbsp;^case[table;MyTable]{$t[^table::create[$uParam]]}
+<br>
+&nbsp;&nbsp;&nbsp;^case[DEFAULT]{^throw[MyTable;</b></code></span><code><b>Unsupported&nbsp;type&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$uParam.CLASS_NAME]}
+<br>
+}
+<br>
+
+<br>
+#&nbsp;метод,&nbsp;возвращающий&nbsp;значение&nbsp;объекта&nbsp;в&nbsp;разных&nbsp;контекстах&nbsp;вызова
+<br>
+@GET[sMode]
+<br>
+^switch[$sMode]{
+<br>
+&nbsp;&nbsp;&nbsp;^case[table]{$result[$t]}
+<br>
+&nbsp;&nbsp;&nbsp;^case[bool]{$result($t!=0)}
+<br>
+&nbsp;&nbsp;&nbsp;^case[def]{$result(true)}
+<br>
+&nbsp;&nbsp;&nbsp;^case[expression;double]{$result($t)}
+<br>
+&nbsp;&nbsp;&nbsp;^case[DEFAULT]{^throw[MyTable;Unsupported&nbsp;mode&nbsp;'$sMode']}
+<br>
+}
+<br>
+
+<br>
+
+<br>
+#&nbsp;метод&nbsp;обрабатывает&nbsp;обращения&nbsp;к&nbsp;«столбцам»
+<br>
+@GET_DEFAULT[sName]
+<br>
+$result[$t.$sName]
+<br>
+
+<br>
+
+<br>
+#&nbsp;для&nbsp;всех&nbsp;существующих&nbsp;методов&nbsp;нужно&nbsp;написать&nbsp;обертки-wrappers
+<br>
+@count[]
+<br>
+^t.count[]
+<br>
+
+<br>
+@menu[jCode;sSeparator]
+<br>
+^t.menu{$jCode}[$sSeparator]
+<br>
+
+<br>
+
+<br>
+#&nbsp;добавляем&nbsp;новую&nbsp;функциональность
+<br>
+@remove[iOffset;iLimit]
+<br>
+$iLimit(^iLimit.int(0))
+<br>
+$t[^t.select(^t.offset[]&lt;$iOffset&nbsp;||&nbsp;^t.offset[]&gt;=$iOffset+$iLimit)]
+<br>
+</b></code></span><span><i>
+<br>
+</i></span></span>

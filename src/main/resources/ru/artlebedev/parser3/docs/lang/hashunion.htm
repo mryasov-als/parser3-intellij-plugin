@@ -1,0 +1,62 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">union. Объединение хешей</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^хеш_a.union[хеш_b]</b>&nbsp;&nbsp;&nbsp;<span>
+<br>
+</code><span>
+<br>
+Метод выполняет объединение двух хешей. Возвращает хеш, содержащий все ключи хеша&nbsp;</span><code><b>a</b></code><span> и&nbsp;те&nbsp;ключи из хеша&nbsp;</span><code><b>b</b></code><span>, которых нет в&nbsp;</span><code><b>a</b></code><span>. Результат необходимо присваивать новому хешу.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$man[
+<br>
+&nbsp;&nbsp;&nbsp;$.name[</b></code></span><code><b>Вася</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.age[</b></code></span><code><b>22</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.gender[</b></code></span><code><b>m</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+$woman[
+<br>
+&nbsp;&nbsp;&nbsp;$.name[</b></code></span><code><b>Маша</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.age[</b></code></span><code><b>20</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.weight[</b></code></span><code><b>50</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+$union_hash[^man.union[$woman]]
+<br>
+
+<br>
+</b></code></span><span>Получится хеш </span><code><b>$union_hash</b></code><span>:
+<br>
+</span><code><b>$union_hash[
+<br>
+&nbsp;&nbsp;&nbsp;$.name[Вася]
+<br>
+&nbsp;&nbsp;&nbsp;$.age[22]
+<br>
+&nbsp;&nbsp;&nbsp;$.gender[m]
+<br>
+&nbsp;&nbsp;&nbsp;$.weight[50]
+<br>
+]</b></code><span>
+<br>
+</span></span>

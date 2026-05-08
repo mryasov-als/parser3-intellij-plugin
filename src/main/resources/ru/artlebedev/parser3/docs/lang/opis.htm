@@ -1,0 +1,102 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">is. Проверка типа</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>объект&nbsp;is&nbsp;тип&nbsp;&nbsp;&nbsp;
+<br>
+</b><span>
+<br>
+Возвращает результат  «истина&nbsp;/&nbsp;ложь» в&nbsp;зависимости от&nbsp;того, относится&nbsp;ли левый операнд к&nbsp;заданному типу. Полезно использовать этот оператор в&nbsp;случае, если переменная может содержать единственное значение или набор значений (<a href="hash.htm">хеш</a>), а&nbsp;также для&nbsp;проверки определенности методов.
+<br>
+
+<br>
+</code><code><b>Тип</b></code><span> - имя типа, им может быть системное имя  (</span><code><b><a href="hashclass.htm">hash</a></b></code><span>, </span><code><b><a href="junctionclass.htm">junction</a></b></code><span>, …) или имя <a href="defineclass.htm">пользовательского</a> класса.
+<br>
+
+<br>
+</span><span><b>Простая проверка типа
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>@</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mainclass.htm">main</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]
+<br>
+$date[</b></code></span><code><b>1999-10-10</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>#$date[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datenow.htm">date::now</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>^if($date&nbsp;is&nbsp;string){
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;^parse[$date]
+<br>
+}{
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;^print_date[$date.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="datefields.htm">year</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>;$date.month;$date.day]
+<br>
+}
+<br>
+
+<br>
+@parse[date_string][date_parts]
+<br>
+$date_parts[^date_string.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="stringmatch.htm">match</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[(\d{4})-(\d{2})-(\d{2})][]]
+<br>
+^print_date[$date_parts.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="stringmatch.htm">1</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>;$date_parts.2;$date_parts.3]
+<br>
+
+<br>
+@print_date[year;month;day]
+<br>
+</b></code></span><code><b>Работаем&nbsp;с&nbsp;датой:&lt;br&nbsp;/&gt;
+<br>
+День:&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$day</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+Месяц:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$month</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+Год:&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$year</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+</b></code><span>
+<br>
+В этом примере в&nbsp;зависимости от&nbsp;типа переменной </span><code><b>$date</b></code><span> либо выполняется синтаксический анализ строки, либо методу </span><code><b>print_date</b></code><span> передаются поля объекта класса </span><code><b>date</b></code><span>:
+<br>
+
+<br>
+</span><span><b>Проверка определенности </b><b><a href="definemethod.htm">метода</a></b><b>
+<br>
+</b></span><span>Значение </span><code><b>$имя_метода</b></code><span>&nbsp;- это тоже </span><code><b><a href="junctionclass.htm">junction</a></b></code><span>, поэтому проверять существование метода необходимо так&nbsp;же&nbsp;- оператором </span><code><b>is</b></code><span>, а&nbsp;не </span><code><b><a href="opdef.htm">def</a></b></code><span>:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>@body[]
+<br>
+</b></code></span><code><b>тело
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+@</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="mainclass.htm">main</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[]
+<br>
+</b></code></span><code><b>Старт
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>^if($body&nbsp;is&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="junctionclass.htm">junction</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>){
+<br>
+&nbsp;&nbsp;&nbsp;^body[]
+<br>
+}{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;Метод&nbsp;body&nbsp;не&nbsp;определен!
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><code><b>Финиш
+<br>
+
+<br>
+</b></code><span><i>Внимание</i><i>: с&nbsp;</i><i>помощью данной проверки невозможно определить наличие в&nbsp;переменной </i><i><a href="vars.htm">кода</a></i><i>, т.&nbsp;к.&nbsp;любое обращение к&nbsp;нему вызывает его выполнение. Для такой проверки следует использовать&nbsp;</i></span><code><b><a href="reflectionis.htm">^reflection:is[]</a></b></code><span><i>.
+<br>
+</i>
+<br>
+</span></span>

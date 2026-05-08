@@ -1,0 +1,56 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">session. Создание сессии</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^curl:session{код}</b><span>
+<br>
+
+<br>
+</code><span>Метод создает cURL-сессию. Код метода обрабатывается Parser, позволяя работать с&nbsp;удаленным сервером. Внутри сессии могут быть установлены общие <a href="curloptions.htm">опции</a> и&nbsp;сделано несколько вызовов <a href="curlload.htm">метода</a> загрузки файла. Если удаленный сервер поддерживает </span><code><b>k</b><b>eep-alive</b></code><span>, то&nbsp;все запросы к&nbsp;нему будут сделаны в&nbsp;рамках одной установленной HTTP-сессии.
+<br>
+</span><span>
+<br>
+</span><span><b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^curl:session{
+<br>
+&nbsp;&nbsp;&nbsp;^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="curloptions.htm">curl:options</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.url[</b></code></span><code><b>HTTPs://store.artlebedev.ru/</b><span style="color:#7F97E1" class="blue"><b>]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.charset[UTF-8]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.timeout(1</b></code></span><code><b>0</b><span style="color:#7F97E1" class="blue"><b>)
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.ssl_verifypeer(0)
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;$file1[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="curlload.htm">curl:load</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.url[</b></code></span><code><b>HTTPs://store.artlebedev.ru/</b><b>login/</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$.postfields[Username=^taint[uri][$form:login]&amp;Password=^taint[uri][$form:password]&amp;btnSubmit=^taint[uri][</b></code></span><code><b>Войти</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+&nbsp;&nbsp;&nbsp;</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+
+<br>
+&nbsp;&nbsp;&nbsp;$file2[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="curlload.htm">curl:load</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><span>
+<br>
+</span></span>

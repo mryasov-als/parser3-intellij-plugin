@@ -1,0 +1,82 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Установка Parser на&nbsp;веб-сервер Apache как модуля сервера</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Для установки Parser необходимо внести изменения в&nbsp;основной конфигурационный файл веб-сервера, или, если доступ к&nbsp;нему отсутствует, необходима возможность использовать <code>.htaccess</code><span>-файлы.
+<br>
+
+<br>
+По&nbsp;умолчанию, в&nbsp;установке Apache возможность использования файлов </span><code>.htaccess</code><span> отключена. Если она необходима, нужно разрешить ее использовать (по&nbsp;крайней мере, задавать </span><code><span style="color:#7F97E1" class="blue"><u><a href="http://httpd.apache.org/docs/mod/core.html#allowoverride" target="_blank">FileInfo</a></u></code></span><span>). Для этого в&nbsp;основном конфигурационном файле веб-сервера (обычно </span><code>httpd.conf</code><span>) в&nbsp;секцию  </span><code>&lt;virtualhost&nbsp;…&gt;</code><span> созданного сайта или вне ее&nbsp;- для&nbsp;всех сайтов нужно добавить директивы:
+<br>
+</span><code><b>&lt;Directory&nbsp;/путь/к/вашему/веб/пространству&gt;
+<br>
+AllowOverride&nbsp;FileInfo
+<br>
+&lt;/Directory&gt;
+<br>
+</b></code><span>
+<br>
+<b>Под UNIX
+<br>
+</b>Необходимо собрать Parser из&nbsp;исходных кодов, задав опцию </span><code>--with-apache</code><span> у&nbsp;скрипта </span><code>buildall</code><span>.
+<br>
+</span><code><b>
+<br>
+#&nbsp;динамическая&nbsp;загрузка&nbsp;модуля&nbsp;
+<br>
+LoadModule&nbsp;parser3_module&nbsp;/path/to/mod_parser3.so
+<br>
+</b>
+<br>
+</code><span><b>Под Windows
+<br>
+</b>Необходимо собрать Parser из&nbsp;исходных кодов, используя заранее подготовленные файлы проектов&nbsp;(</span><code>.sln</code><span>). Поместить файл с&nbsp;исполняемым кодом модуля Parser (в текущей версии&nbsp;- </span><code>mod_parser3.dll</code><span>) в&nbsp;произвольный каталог. Добавить в&nbsp;файл </span><code>httpd.conf</code><span> после имеющихся строк </span><code>LoadModule</code><span>:</span><code>
+<br>
+<b>
+<br>
+</b><b>#&nbsp;динамическая&nbsp;загрузка&nbsp;модуля
+<br>
+LoadModule&nbsp;parser3_module&nbsp;x:\path\to\mod_parser3.dll
+<br>
+</b></code><span><i>
+<br>
+</i><i>Внимание: если это необходимо, сопутствующие </i></span><code>.dll</code><span><i>-файлы помещаются в&nbsp;тот&nbsp;же каталог.</i></span><code><b>
+<br>
+
+<br>
+</b></code><span>Нужно добавить в&nbsp;</span><code>.htaccess</code><span>-файл созданного сайта (или в&nbsp;</span><code>httpd.conf</code><span> в&nbsp;секцию </span><code>&lt;virtualhost&nbsp;…&gt;</code><span> или вне&nbsp;ее&nbsp;- для&nbsp;всех сайтов) следующие блоки:
+<br>
+</span><code><b>
+<br>
+</b><b>#&nbsp;назначение&nbsp;обработчиком&nbsp;.html-страниц
+<br>
+AddHandler&nbsp;parser3-handler&nbsp;html
+<br>
+
+<br>
+#&nbsp;задание&nbsp;</b><b><a href="parserconfig.htm">конфигурационного файла</a></b><b>
+<br>
+ParserConfig&nbsp;x:\path\to\parser3\config\auto.p
+<br>
+
+<br>
+#&nbsp;запрет&nbsp;на&nbsp;доступ&nbsp;к&nbsp;.p-файлам,&nbsp;в&nbsp;основном&nbsp;к&nbsp;auto.p
+<br>
+&lt;Files&nbsp;~&nbsp;"\.p$"&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Order&nbsp;allow,deny
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Deny&nbsp;from&nbsp;all
+<br>
+&lt;/Files&gt;
+<br>
+</b></code></span>

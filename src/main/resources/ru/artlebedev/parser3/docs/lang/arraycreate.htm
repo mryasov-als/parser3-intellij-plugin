@@ -1,0 +1,58 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">create. Создание массива с заданными значениями или пустого массива</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^array::create[элемент1;элемент2;...]
+<br>
+^</b><b>array</b><b>::create[]
+<br>
+</b><span>
+<br>
+Если указаны элементы, они будут добавлены в массив. Если параметры не заданы, будет создан пустой массив. В качестве элементов используются любые значения: числа, строки, массивы или хеши.
+<br>
+
+<br>
+<b>Пример создания массива с элементами
+<br>
+</b>
+<br>
+</code><code><span style="color:#7F97E1" class="blue"><b>$a[^array::create[M](20)[N]]
+<br>
+</b></code></span><span>
+<br>
+В этом случае массив </span><code><b>$a</b></code><span> будет содержать элементы с индексами 0, 1 и 2 со значениями M, 20 и N соответственно.
+<br>
+
+<br>
+Пустой массив, создаваемый конструктором без&nbsp;параметров, нужен в&nbsp;ситуации, когда необходимо динамически наполнить массив данными, например:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$dyn[^array::create[]]
+<br>
+^for[i](1;10){
+<br>
+&nbsp;&nbsp;&nbsp;$dyn.$i[$value]
+<br>
+}
+<br>
+</b></code></span><span>Перед выполнением </span><code><b>for</b></code><span> мы определили, чт<i>о</i> именно наполняем</span><span>.</span><span>
+<br>
+
+<br>
+Если предполагается изменение содержимого массива, но&nbsp;необходимо сохранить исходные значения, то это можно сделать с помощью <a href="array_copy.htm">конструктора копирования</a>:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>dyn</b></code></span><code><span style="color:#7F97E1" class="blue"><b>_copy[^array::copy[$dyn]]
+<br>
+</b></code></span><span><i>
+<br>
+</i></span></span>

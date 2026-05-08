@@ -1,0 +1,54 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">html. Вывод изображения</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^картинка.html[]</b>&nbsp;&nbsp;&nbsp;
+<br>
+<b>^картинка.html[хеш]&nbsp;&nbsp;&nbsp;
+<br>
+</b><span>
+<br>
+Метод создает следующий HTML-тег:
+<br>
+</code><code><b>&lt;img&nbsp;src="</b><span style="color:#7F97E1" class="blue"><b>$image.src</b></code></span><code><b>"&nbsp;width="</b><span style="color:#7F97E1" class="blue"><b>$image.width</b></code></span><code><b>"&nbsp;height="</b><span style="color:#7F97E1" class="blue"><b>$image.height</b></code></span><code><b>"</b><b>&nbsp;border="0"</b><b>&nbsp;/&gt;</b></code><span>
+<br>
+</span><span>
+<br>
+В качестве параметра методу может быть передан хеш, содержащий дополнительные атрибуты изображения, например </span><code><b>alt</b></code><span> и&nbsp;</span><code><b>border</b></code><span>, задающие надпись, которая появляется при наведении курсора, и&nbsp;ширину рамки. 
+<br>
+
+<br>
+<i>Замечание: атрибуты изображения можно переопределять.
+<br>
+</i>
+<br>
+<i>Замечание: чтобы метод не&nbsp;выводил атрибут&nbsp;</i></span><code><b>border</b></code><span><i>,</i><i> </i><i>ему необходимо передать параметр&nbsp;</i></span><code><b>$.border[]</b></code><span><i>&nbsp;&nbsp;&nbsp;</i><b><i>[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>1</i></b><b><i>]</i></b><i>
+<br>
+</i>
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$photo[^image::</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="imagemeasure.htm">measure</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>myphoto.jpg</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+^photo.html[
+<br>
+&nbsp;&nbsp;&nbsp;$.border[</b></code></span><code><b>0</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+&nbsp;&nbsp;&nbsp;$.alt[</b></code></span><code><b>Это&nbsp;я&nbsp;в&nbsp;молодости…</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+]
+<br>
+</b></code></span><span>
+<br>
+В браузере будет выведена картинка из&nbsp;переменной </span><code><b>$photo</b></code><span>.  При наведении курсора будет появляться надпись: </span><code><b>Это&nbsp;я&nbsp;в&nbsp;молодости…</b></code><span>
+<br>
+</span></span>

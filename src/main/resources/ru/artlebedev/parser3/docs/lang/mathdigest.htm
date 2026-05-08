@@ -1,0 +1,36 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">digest. Криптографическое хеширование</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.3]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^math:digest[алгоритм;строка&nbsp;или&nbsp;файл;&nbsp;$.format[hex|base64]&nbsp;$.hmac[ключевая&nbsp;строка]&nbsp;]
+<br>
+^math:digest[алгоритм;строка&nbsp;или&nbsp;файл;&nbsp;$.format[hex|base64|file]&nbsp;$.hmac[ключевая&nbsp;строка|ключевой&nbsp;файл]&nbsp;]&nbsp;</b><span><b><i>[3.</i></b><b><i>5</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]
+<br>
+</i></b></code><code><b>
+<br>
+</b></code><span> 
+<br>
+Метод объединяет возможность работы с&nbsp;разными алгоритмами криптографического хеширования. Хеширование применяется к&nbsp;переданной </span><code><b>строке</b></code><span> или </span><code><b>файлу</b></code><span>.
+<br>
+ 
+<br>
+Поддерживаются следующие </span><code><b>алгоритмы</b></code><span>: </span><code><b>md5</b></code><span>, </span><code><b>sha1</b></code><span>, </span><code><b>sha256</b></code><span>, </span><code><b>sha512</b></code><span>. Результирующий хеш, в&nbsp;зависимости от&nbsp;опции&nbsp;</span><code><b>$.format</b></code><span>, преобразуется в&nbsp;шестнадцатеричное представление (по&nbsp;умолчанию) или строку в&nbsp;формате&nbsp;Base64 или выдается в виде бинарного файла </span><code><b>&nbsp;</b></code><span><b><i>[3.</i></b><b><i>5</i></b><b><i>.</i></b><b><i>0</i></b><b><i>]</i></b>.
+<br>
+ 
+<br>
+Опция&nbsp;</span><code><b>$.hmac[ключевая&nbsp;строка</b><b>|</b><b>ключевой&nbsp;файл]</b></code><span> предназначена для&nbsp;проверки целостности переданных данных на&nbsp;основе секретного ключа и&nbsp;хеш-функций&nbsp;(<a href="http://ru.wikipedia.org/wiki/HMAC" target="_blank">HMAC</a>),
+<br>
+
+<br>
+</span></span>

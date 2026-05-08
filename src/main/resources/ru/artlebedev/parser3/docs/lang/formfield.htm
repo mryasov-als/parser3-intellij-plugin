@@ -1,0 +1,86 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Получение значения поля формы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$form:поле_формы&nbsp;&nbsp;&nbsp;</b>
+<br>
+<span>
+<br>
+Такая конструкция возвращает значение поля формы. Возвращаемый объект может принадлежать либо классу&nbsp;</code><code><b><a href="fileclass.htm">file</a></b></code><span>, если поле формы имеет тип </span><code><b>file</b></code><span>, либо классу </span><code><span style="color:#7F97E1" class="blue"><b><u><a href="stringclass.htm">string</a></u></b></code></span><span>. Дальнейшая работа с&nbsp;объектом возможна только методами, определенными для&nbsp;соответствующих классов.
+<br>
+
+<br>
+Поле без&nbsp;имени считается имеющим имя </span><code><b>nameless</b></code><span>. Координаты нажатия пользователем на&nbsp;картинку с&nbsp;атрибутом </span><code><b>ISMAP</b></code><span> доступны через </span><code><b>$form:</b><b><a href="formimap.htm">imap</a></b></code><span>.
+<br>
+
+<br>
+Необходимо помнить, что если в&nbsp;HTML используется </span><code><b>&lt;input&nbsp;type="image"</b><b>&nbsp;</b><b>name="fieldname"&nbsp;/&gt;</b></code><span>, то&nbsp;при нажатии пользователем на&nbsp;эту кнопку мышью, браузером на&nbsp;сервер передаются координаты места произошедшего события в&nbsp;полях&nbsp;</span><code><b>fieldname.x</b></code><span> и&nbsp;</span><code><b>fieldname.y</b></code><span>.
+<br>
+
+<br>
+</span><span><b>
+<br>
+</b></span><span><b>Пример: текстовое поле, поле типа </b><b>image</b><b> и&nbsp;загрузка файла
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^if(def&nbsp;$form:photo){
+<br>
+&nbsp;&nbsp;&nbsp;^form:photo.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="filesave.htm">save</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[binary;/upload/photos/beauty.^file:justext[$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>form:photo</b></code></span><code><span style="color:#7F97E1" class="blue"><b>.name]]</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;</b></code></span><code><b>Файл&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$form:photo.name</b></code></span><code><b>&nbsp;загружен&nbsp;на&nbsp;сервер.</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+}
+<br>
+^if(def&nbsp;$form:user){
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;Пользователь:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$form:user</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+^if(def</b></code></span><code><span style="color:#7F97E1" class="blue"><b>&nbsp;$form:[action.x]){</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;</b><b>Координаты:&lt;br&nbsp;/&gt;
+<br>
+&nbsp;&nbsp;&nbsp;X:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$form:[action.x]</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+&nbsp;&nbsp;&nbsp;</b><b>Y</b><b>:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$form:[action.y]</b></code></span><code><b>&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}
+<br>
+</b></code></span><code><b>&lt;form&nbsp;method="post"&nbsp;enctype="multipart/form-data"&gt;
+<br>
+&lt;input&nbsp;type="file"&nbsp;name="photo"&nbsp;</b><b>/</b><b>&gt;
+<br>
+&lt;input&nbsp;type="text"&nbsp;name="user"</b><b>&nbsp;/</b><b>&gt;
+<br>
+&lt;input&nbsp;type="image"&nbsp;</b><b>name="action"&nbsp;</b><b>src="/i/button.gif"</b><b>&nbsp;width="75"&nbsp;height="25"&nbsp;/</b><b>&gt;
+<br>
+&lt;/form&gt;
+<br>
+
+<br>
+</b></code><span>Этот код сохранит картинку, выбранную пользователем в&nbsp;поле формы и&nbsp;присланную на&nbsp;сервер, в&nbsp;заданном файле.
+<br>
+
+<br>
+
+<br>
+<b>Пример: безымянное поле
+<br>
+</b></span><code><b>&lt;img&nbsp;src="/show.html?123&amp;a=b"&gt;
+<br>
+</b></code><span>
+<br>
+Внутри </span><code>show.html</code><span> строка </span><code><b>123</b></code><span> доступна как </span><code><b>$form:nameless</b></code><span>.
+<br>
+
+<br>
+</span></span>

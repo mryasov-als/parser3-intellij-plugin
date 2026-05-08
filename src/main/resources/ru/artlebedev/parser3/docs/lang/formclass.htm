@@ -1,0 +1,40 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">form (класс)</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Класс <code><b>form</b></code><span> предназначен для&nbsp;работы с&nbsp;полями (элементами) форм. Класс имеет статические поля, доступные только для&nbsp;чтения.
+<br>
+
+<br>
+Для проверки заполнения формы и&nbsp;редактирования имеющихся записей из&nbsp;базы данных удобно использовать такой подход:
+<br>
+
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>^if($edit){
+<br>
+#&nbsp;запись&nbsp;из&nbsp;базы
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$record[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="tablesql.htm">table::sql</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>{</b></code></span><code><b>…&nbsp;where&nbsp;id=…</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+}{
+<br>
+#&nbsp;новая&nbsp;запись,&nbsp;ошибка&nbsp;при&nbsp;заполнении,&nbsp;необходимо&nbsp;вывести&nbsp;
+<br>
+#&nbsp;поля&nbsp;формы
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;$record[$form:</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="formfields.htm">fields</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>]
+<br>
+}
+<br>
+</b></code></span><code><b>&lt;input&nbsp;name="age"&nbsp;value="</b><span style="color:#7F97E1" class="blue"><b>$record.age</b></code></span><code><b>"</b><b>&nbsp;/</b><b>&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span></span>

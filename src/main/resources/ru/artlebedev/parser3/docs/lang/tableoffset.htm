@@ -1,0 +1,56 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">offset. Смещение указателя текущей строки</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица.offset(число)&nbsp;&nbsp;
+<br>
+^таблица.offset[cur|set](число)
+<br>
+</b><span>
+<br>
+Метод смещает указатель текущей строки на&nbsp;указанное </code><code><b>число</b></code><span> вниз. Если аргумент метода отрицательный, то&nbsp;указатель перемещается вверх. Смещение указателя осуществляется циклически, то&nbsp;есть, достигнув последней строки таблицы, указатель возвращается на&nbsp;первую строку.
+<br>
+
+<br>
+Необязательный параметр:</span><span>
+<br>
+</span><code><b>cur</b></code><span>&nbsp;- смещает указатель относительно текущей строки;
+<br>
+</span><code><b>set</b></code><span>&nbsp;- смещает указатель относительно первой строки.
+<br>
+
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^goods.offset(-1)
+<br>
+</b></code></span><code><b>&lt;table&nbsp;border="1"&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&lt;tr&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;td&gt;</b><span style="color:#7F97E1" class="blue"><b>$goods.pos</b></code></span><code><b>&lt;/td&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;td&gt;</b><span style="color:#7F97E1" class="blue"><b>$goods.good</b></code></span><code><b>&lt;/td&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></code></span><code><b>&lt;td&gt;</b><span style="color:#7F97E1" class="blue"><b>$goods.price</b></code></span><code><b>&lt;/td&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;&lt;/tr&gt;
+<br>
+&lt;/table&gt;
+<br>
+</b></code><span>
+<br>
+Результатом выполнения кода будет HTML-таблица, содержащая последнюю строку таблицы из&nbsp;предыдущего примера (метод </span><code><b>menu</b></code><span>).
+<br>
+</span></span>

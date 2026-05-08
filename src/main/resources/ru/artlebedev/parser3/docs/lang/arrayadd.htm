@@ -1,0 +1,42 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">add. Добавление элементов из другого массива или хеша с перезаписью</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^массив.add[другой_массив_или_хеш]
+<br>
+</b><span>
+<br>
+Метод добавляет элементы из переданного массива или хеша в текущий массив. Если имеются элементы с одинаковыми индексами, то значениями из переданного массива или хеша будут перезаписаны значения в текущем массиве.
+<br>
+
+<br>
+<b>Пример</b></code><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$</b></code></span><code><span style="color:#7F97E1" class="blue"><b>data</b></code></span><code><span style="color:#7F97E1" class="blue"><b>[</b></code></span><code><b>name</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>age</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>gender</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>$more[</b></code></span><code><b>phone</b><span style="color:#7F97E1" class="blue"><b>;</b></code></span><code><b>address</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>^data.add[$more]
+<br>
+^data.add[&nbsp;$.4[</b></code></span><code><b>email</b><span style="color:#7F97E1" class="blue"><b>]&nbsp;]
+<br>
+</b></code></span><span>
+<br>
+Новое содержание массива </span><code><b>$data</b></code><span>:</span><span>
+<br>
+</span><code><b>$man[phone;address;</b><b>gender;&lt;</b><b>дырка</b><b>&gt;;email</b><b>]
+<br>
+
+<br>
+</b></code><span><i>
+<br>
+</i></span></span>

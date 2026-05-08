@@ -1,0 +1,46 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">save. Сохранение документа в&nbsp;файл</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^документ.save[путь]
+<br>
+^документ.save[путь;</b><b><a href="xdocoptions.htm">Параметры_преобразования_в_текст</a></b><b>]
+<br>
+</b><span>
+<br>
+Метод сохраняет </code><code><b>документ</b></code><span> в&nbsp;текстовый файл. Возможно задание </span><code><b>параметров_преобразования</b></code><span> в&nbsp;текст. По&nbsp;умолчанию создается XML-представление документа с&nbsp;заголовком </span><code><span style="color:#7F97E1" class="blue"><b>&lt;?xml&nbsp;…&nbsp;?&gt;</b></code></span><span> (можно отключить вывод заголовка, задав <a href="xdocoptions.htm">соответствующий параметр</a>).
+<br>
+
+<br>
+</span><code><b>Путь</b></code><span>&nbsp;- путь к&nbsp;файлу.
+<br>
+
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$document[</b></code></span><code><b>^xdoc::</b><b><a href="xdoccreatexml.htm">create</a></b><b>{&lt;?xml&nbsp;version="1.0"&nbsp;encoding="windows-1251"&nbsp;?&gt;
+<br>
+&lt;document&gt;
+<br>
+строка1&lt;br/&gt;
+<br>
+строка2&lt;br/&gt;
+<br>
+&lt;/document&gt;</b><span style="color:#7F97E1" class="blue"><b>}]
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><span style="color:#7F97E1" class="blue"><b>^document.save[saved.xml]</b></code></span><span>
+<br>
+</span></span>

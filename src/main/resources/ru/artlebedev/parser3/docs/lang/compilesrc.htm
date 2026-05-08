@@ -1,0 +1,84 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">Получение исходных кодов</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<span>Исходные коды Parser&nbsp;3 можно скачать из&nbsp;раздела «<span style="color:#7F97E1" class="blue"><u><a href="http://www.parser.ru/download/src/" target="_blank">Скачать</a></u></span><span>» с&nbsp;сервера parser.ru или получить из&nbsp;CVS:
+<br>
+</span><code>cvs&nbsp;-d&nbsp;:pserver:anonymous@cvs.parser.ru:/parser3project&nbsp;login
+<br>
+</code><span>Пароль пустой.
+<br>
+
+<br>
+</span><code>cvs&nbsp;-d&nbsp;:pserver:anonymous@cvs.parser.ru:/parser3project&nbsp;get&nbsp;-r&nbsp;имя_ветки&nbsp;имя_модуля
+<br>
+</code><span>
+<br>
+</span><code>Имя_ветки</code><span> - если не&nbsp;указывать </span><code><b>-r</b></code><span>, будет загружена текущая разрабатываемая версия&nbsp;(HEAD).
+<br>
+Для загрузки стабильной версии нужно запросить ветку </span><code>release_3_X_X</code><span> (например, </span><code>release_3_4_6</code><span>).
+<br>
+</span><code><b>
+<br>
+</b>Имя&nbsp;модуля</code><span>:</span><code><b>
+<br>
+</b></code><span>Имя основного модуля: </span><code>parser3<b>
+<br>
+</b></code><span>
+<br>
+Модуль, необходимый для&nbsp;сборки Parser&nbsp;3 и&nbsp;SQL-драйверов под Windows: </span><code>win32</code><span>
+<br>
+
+<br>
+Модуль с&nbsp;SQL-драйверами: </span><code>sql</code><span>
+<br>
+
+<br>
+В&nbsp;нем доступны каталоги:
+<br>
+</span><code>sql/mysql
+<br>
+sql/pgsql
+<br>
+sql/oracle
+<br>
+sql/odbc
+<br>
+sql/sqlite
+<br>
+</code><span>
+<br>
+Для сборки SQL-драйверов необходимо наличие исходных кодов&nbsp;Parser&nbsp;3. Поскольку </span><code>.h</code><span>-файлы ищутся по&nbsp;относительным путям, структура каталогов должна быть следующей:
+<br>
+</span><code>
+<br>
+parser3project/&nbsp;</code><span>- директория, где находятся исходные коды;</span><code>
+<br>
+&nbsp;&nbsp;|
+<br>
+&nbsp;&nbsp;|__parser3/&nbsp;</code><span>- исходные коды Parser;</span><code>&nbsp;
+<br>
+&nbsp;&nbsp;|
+<br>
+&nbsp;&nbsp;|__sql/
+<br>
+&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__mysql/&nbsp;</code><span>- исходные коды драйвера MySQL;</span><code>
+<br>
+&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|__...&nbsp;</code><span>- исходные коды других необходимых драйверов;
+<br>
+</span><code>&nbsp;&nbsp;|
+<br>
+&nbsp;&nbsp;|__win32/&nbsp;</code><span>- каталог, необходимый для&nbsp;сборки Parser&nbsp;3 под Windows.</span><code>
+<br>
+</code><span>
+<br>
+</span></span>

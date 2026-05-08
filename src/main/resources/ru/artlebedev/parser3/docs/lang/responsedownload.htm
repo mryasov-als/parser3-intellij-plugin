@@ -1,0 +1,46 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">download. Задание нового тела ответа</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$response:download[DATA]</b>&nbsp;&nbsp;&nbsp;<span>
+<br>
+</code><span>
+<br>
+Идентичен </span><code><b>$response:</b><b><a href="responsebody.htm">body</a></b></code><span>, но&nbsp;выставляет флаг, который браузер воспринимает как&nbsp;«Предложить посетителю сохранить файл на&nbsp;диске».
+<br>
+
+<br>
+Имя файла передается браузеру в заголовке Content-Disposition. С версии 3.5.0 в него добавлено поле filename* для поддержки имен файлов в кодировке UTF-8.
+<br>
+
+<br>
+Браузеры умеют отображать файлы некоторых типов прямо внутри своего окна (например DOC- и&nbsp;PDF-файлы). Однако бывает необходимо дать возможность посетителю скачать файл по&nbsp;простому нажатию на&nbsp;ссылку.
+<br>
+
+<br>
+<b>Пример: выдача PDF-файла
+<br>
+</b>Посетитель заходит на&nbsp;страницу с&nbsp;таким HTML:
+<br>
+</span><code><b>&lt;a&nbsp;href="/download_documentation.html"&gt;Скачать&nbsp;документацию&lt;/a&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+</span><code>download_documentation.html</code><span>:
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$response:download[^</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="fileload.htm">file::load</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[binary;</b></code></span><code><b>documentation.pdf</b><span style="color:#7F97E1" class="blue"><b>]]</b></code></span><code><b>
+<br>
+</b></code><span>
+<br>
+и&nbsp;нажимает на&nbsp;ссылку. Браузер предлагает ему скачать или открыть файл.
+<br>
+</span></span>

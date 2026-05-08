@@ -1,0 +1,36 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">rename. Изменение названия столбца&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.</i></b><b><i>4</i></b><b><i>.</i></b><b><i>6</i></b><b><i>]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^таблица.</b><b>rename[</b><b>старое&nbsp;название&nbsp;столбца</b><b>;</b><b>новое&nbsp;название&nbsp;столбца</b><b>]</b><b>
+<br>
+^таблица.rename</b><b>[&nbsp;$.</b><b>старое</b><b>_</b><b>название</b><b>_</b><b>столбца</b><b>[</b><b>новое&nbsp;название&nbsp;столбца</b><b>]&nbsp;</b><b>…</b><b>&nbsp;]</b><b>
+<br>
+</b><span>
+<br>
+Метод изменяет названия одного или нескольких столбцов таблицы.
+<br>
+
+<br>
+<b>Пример
+<br>
+</b></code><code><span style="color:#7F97E1" class="blue"><b>^data.rename[&nbsp;$.dt1[create_date]&nbsp;$.dt2[modify_date]&nbsp;]
+<br>
+</b></code></span><span>
+<br>
+После выполнения кода колонка </span><code><b>dt1</b></code><span> будет называться  </span><code><b>create_date</b></code><span>, а&nbsp;колонка </span><code><b>dt2</b></code><span>&nbsp;- </span><code><b>modify_date</b></code><span>.
+<br>
+
+<br>
+</span></span>

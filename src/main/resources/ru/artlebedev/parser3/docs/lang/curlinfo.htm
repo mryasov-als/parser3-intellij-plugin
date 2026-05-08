@@ -1,0 +1,356 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">info. Информация о&nbsp;последнем запросе</b><span><b><i>&nbsp;&nbsp;&nbsp;[3.4.4]</i></span>&nbsp;<link-to-docs /><span><b>
+<br>
+</b></span></span>
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^curl:info[название]
+<br>
+</b><b>^curl:info[]
+<br>
+</b><b>
+<br>
+</b><span>Метод возвращает информацию о&nbsp;последнем запросе. Результатом является либо конкретное значение, либо&nbsp;хеш со&nbsp;всеми значениями.
+<br>
+</code><span>
+<br>
+</span><span>Поддерживаемые значения параметра </span><code><b>название</b></code><span>:
+<br>
+
+<br>
+<table border="1" cellpadding="1"><tr><td align="left" valign="top" width="172">
+<span><b>Название</b><span>
+<br>
+</span></span></td><td align="left" valign="top" width="60">
+<span><b>Тип
+<br>
+</b></span></td><td align="left" valign="top" width="238">
+<span><b>Аналог в&nbsp;</b><code><b>libcurl</b></code><span><b>
+<br>
+</b></span></span></td><td align="left" valign="top" width="191">
+<span><b>Описание
+<br>
+</b></span></td></tr><tr><td align="left" valign="top" width="172">
+<span>appconnect_time
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_APPCONNECT_TIME.html" target="_blank">CURLINFO_APPCONNECT_TIME</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Время до установки SSL-соединения.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>connect_time
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_CONNECT_TIME.html" target="_blank">CURLINFO_CONNECT_TIME</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Время до установки соединения.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>content_length_download
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_CONTENT_LENGTH_DOWNLOAD.html" target="_blank">CURLINFO_CONTENT_LENGTH_DOWNLOAD</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Значение заголовка <span>Content-length</span><span> полученных данных.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="172">
+<span>content_length_upload
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_CONTENT_LENGTH_UPLOAD.html" target="_blank">CURLINFO_CONTENT_LENGTH_UPLOAD</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Значение заголовка <span>Content-length</span><span> переданных данных.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="172">
+<span>content_type
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="stringclass.htm">string</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_CONTENT_TYPE.html" target="_blank">CURLINFO_CONTENT_TYPE</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Значение заголовка <span>Content-type</span><span>.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="172">
+<span>effective_url
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="stringclass.htm">string</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_EFFECTIVE_URL.html" target="_blank">CURLINFO_EFFECTIVE_URL</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Последний использованный URL.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>header_size
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">int</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_HEADER_SIZE.html" target="_blank">CURLINFO_HEADER_SIZE</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Размер всех заголовков в&nbsp;байтах.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>httpauth_avail
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">int</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_HTTPAUTH_AVAIL.html" target="_blank">CURLINFO_HTTPAUTH_AVAIL</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Доступные методы HTTP-аутентификации.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>namelookup_time
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_NAMELOOKUP_TIME.html" target="_blank">CURLINFO_NAMELOOKUP_TIME</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Время от начала до завершения определения IP-адреса по имени.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>num_connects
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">int</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_NUM_CONNECTS.html" target="_blank">CURLINFO_NUM_CONNECTS</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Число успешных соединений, потребовавшихся для предыдущего запроса.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>os_errno
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">int</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_OS_ERRNO.html" target="_blank">CURLINFO_OS_ERRNO</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Код <span>errno&nbsp;</span><span>последней ошибки соединения.
+<br>
+</span></span></td></tr><tr><td align="left" valign="top" width="172">
+<span>pretransfer_time
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_PRETRANSFER_TIME.html" target="_blank">CURLINFO_PRETRANSFER_TIME</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Время от начала запроса до начала передачи данных.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>primary_ip
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="stringclass.htm">string</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_PRIMARY_IP.html" target="_blank">CURLINFO_PRIMARY_IP</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>IP-адрес последнего соединения.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>proxyauth_avail
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">int</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_PROXYAUTH_AVAIL.html" target="_blank">CURLINFO_PROXYAUTH_AVAIL</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Доступные методы HTTP-аутентификации прокси-сервера.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>redirect_count
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="stringclass.htm">string</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_REDIRECT_COUNT.html" target="_blank">CURLINFO_REDIRECT_COUNT</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Общее число совершенных переходов по&nbsp;редиректам.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>redirect_time
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_REDIRECT_TIME.html" target="_blank">CURLINFO_REDIRECT_TIME</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Время, потребовавшееся для совершения редиректов до&nbsp;финального соединения.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>redirect_url
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="stringclass.htm">string</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_REDIRECT_URL.html" target="_blank">CURLINFO_REDIRECT_URL</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>URL, по&nbsp;которому был&nbsp;бы совершен переход, если&nbsp;бы был включен переход по&nbsp;редиректам.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>request_size
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">int</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_REQUEST_SIZE.html" target="_blank">CURLINFO_REQUEST_SIZE</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Размер совершенных HTTP-запросов в&nbsp;байтах.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>response_code
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">int</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_RESPONSE_CODE.html" target="_blank">CURLINFO_RESPONSE_CODE</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Последний полученный код HTTP-ответа.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>size_download
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_SIZE_DOWNLOAD.html" target="_blank">CURLINFO_SIZE_DOWNLOAD</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Размер полученных данных.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>size_upload
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_SIZE_UPLOAD.html" target="_blank">CURLINFO_SIZE_UPLOAD</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Размер переданных данных.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>speed_download
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_SPEED_DOWNLOAD.html" target="_blank">CURLINFO_SPEED_DOWNLOAD</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Средняя скорость получения данных.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>speed_upload
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">double</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_SPEED_UPLOAD.html" target="_blank">CURLINFO_SPEED_UPLOAD</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Средняя скорость передачи данных.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<span>ssl_verifyresult
+<br>
+</span></td><td align="left" valign="top" width="60">
+<span><a href="intdoubleclasses.htm">int</a>
+<br>
+</span></td><td align="left" valign="top" width="238">
+<span><a href="https://curl.haxx.se/libcurl/c/CURLINFO_SSL_VERIFYRESULT.html" target="_blank">CURLINFO_SSL_VERIFYRESULT</a>
+<br>
+</span></td><td align="left" valign="top" width="191">
+<span>Результат проверки SSL-сертификата.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<code><b>starttransfer_time
+<br>
+</b></code></td><td align="left" valign="top" width="60">
+<p align="center"><span><a href="intdoubleclasses.htm">double</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="238">
+<code><b><a href="https://curl.haxx.se/libcurl/c/CURLINFO_STARTTRANSFER_TIME.html" target="_blank">CURLINFO_STARTTRANSFER_TIME</a></b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="191">
+<span>Время от&nbsp;начала запроса до&nbsp;начала получения данных.
+<br>
+</span></td></tr><tr><td align="left" valign="top" width="172">
+<code><b>total_time
+<br>
+</b></code></td><td align="left" valign="top" width="60">
+<p align="center"><span><a href="intdoubleclasses.htm">double</a><span>
+<br>
+</span></span></p></td><td align="left" valign="top" width="238">
+<code><b><a href="https://curl.haxx.se/libcurl/c/CURLINFO_TOTAL_TIME.html" target="_blank">CURLINFO_TOTAL_TIME</a></b><b>
+<br>
+</b></code></td><td align="left" valign="top" width="191">
+<span>Общее время последнего запроса.
+<br>
+</span></td></tr></table>
+<br>
+</span></span>

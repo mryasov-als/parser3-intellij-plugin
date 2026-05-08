@@ -1,0 +1,76 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">load. Загрузка файла с&nbsp;диска или HTTP-сервера</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file::load[формат;</b><b><a href="app1.htm">имя файла</a></b><b>]
+<br>
+^file::load[формат;</b><b><a href="app1.htm">имя файла</a></b><b>;</b><b><a href="app1.htm">опции загрузки</a></b><b>]
+<br>
+^file::load[формат;</b><b><a href="app1.htm">имя файла</a></b><b>;новое&nbsp;имя&nbsp;файла]</b><span>
+<br>
+</code><code><b>^file::load[формат;</b><b><a href="app1.htm">имя файла</a></b><b>;новое&nbsp;имя&nbsp;файла;</b><b><a href="app1.htm">опции загрузки</a></b><b>]</b></code><span>
+<br>
+</span><span>
+<br>
+Загружает файл с&nbsp;диска или HTTP-сервера.
+<br>
+
+<br>
+</span><code><b>Формат</b></code><span>&nbsp;- формат представления загружаемого файла. Может быть </span><code><b>text</b></code><span>(текстовым) или </span><code><b>binary</b></code><span>(двоичным). Различие между этими типами заключается в&nbsp;разных символах переноса строк. Для PC эти символы </span><code><b>0D&nbsp;0A</b></code><span>. При&nbsp;использовании формата </span><code><b>text</b></code><span> при загрузке файла символ&nbsp;</span><code><b>0D</b></code><span> будет отброшен за&nbsp;ненадобностью, при записи методом </span><code><b><a href="filesave.htm">save</a></b></code><span>&nbsp;- будет добавлен. 
+<br>
+
+<br>
+</span><code><b>имя&nbsp;файла</b></code><span>&nbsp;- имя файла с&nbsp;<a href="app1.htm">путем</a> или URL файла на&nbsp;HTTP-сервере.
+<br>
+
+<br>
+Необходимо иметь в&nbsp;виду, что, если в&nbsp;конструкторе задан параметр </span><code><b>новое&nbsp;имя&nbsp;файла</b></code><span>, его значение будет присвоено полю </span><code><b>name</b></code><span>. Этот параметр удобно задействовать при использовании метода </span><code><b>mail:send</b></code><span> для&nbsp;передачи файла под нужным именем.
+<br>
+</span><code><b>
+<br>
+опции&nbsp;загрузки</b></code><span> - см.&nbsp;«<a href="app1.htm">Приложение 1. Пути к файлам и каталогам, работа с HTTP-серверами</a>».
+<br>
+
+<br>
+Если файл был загружен с&nbsp;HTTP-сервера, поля заголовков HTTP-ответа в&nbsp;верхнем регистре доступны как <a href="filefields.htm">поля</a> объекта класса </span><code><b>file</b></code><span>. Также доступно поле </span><code><b>tables</b></code><span>&nbsp;- это хеш, ключами которого являются поля-заголовки HTTP-ответа в&nbsp;верхнем регистре, а&nbsp;значениями&nbsp;- таблицы с&nbsp;единственным столбцом </span><code><b>value</b></code><span>, содержащим все значения одноименных полей HTTP-ответа. Пришедшие <b>cookies</b> помещаются в&nbsp;поле </span><code><b>cookies</b></code><span> в&nbsp;виде таблицы со&nbsp;столбцами </span><code><b>name</b></code><span>, </span><code><b>value</b></code><span>, </span><code><b>expires</b></code><span>, </span><code><b>max-age</b></code><span>, </span><code><b>domain</b></code><span>, </span><code><b>path</b></code><span>, </span><code><b>HTTPonly</b></code><span> и&nbsp;</span><code><b>secure</b></code><span>.&nbsp;&nbsp;&nbsp;<b><i>[3.4.2]</i></b>
+<br>
+
+<br>
+<b>Пример загрузки файла с&nbsp;диска
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$f[^file::load[binary;</b></code></span><code><b>article.txt</b><span style="color:#7F97E1" class="blue"><b>]]
+<br>
+</b></code></span><code><b>Файл&nbsp;с&nbsp;именем&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$f.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="filefields.htm">name</a></b></code></span><code><b>&nbsp;имеет&nbsp;размер&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$f.size</b></code></span><code><b>&nbsp;и&nbsp;содержит&nbsp;текст:&lt;br&nbsp;/&gt;
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>$f.text
+<br>
+</b></code></span><span>
+<br>
+выведет размер, имя и&nbsp;текст файла.
+<br>
+
+<br>
+<b>Пример загрузки файла с&nbsp;HTTP-сервера
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$file[^file::load[text;</b></code></span><code><b>HTTP://www.parser.ru/</b><span style="color:#7F97E1" class="blue"><b>;
+<br>
+&nbsp;&nbsp;&nbsp;$.timeout(5)
+<br>
+]]
+<br>
+</b></code></span><code><b>Программное&nbsp;обеспечение&nbsp;сервера:&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$file.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="filefields.htm">SERVER</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><code><b>&lt;hr&nbsp;/&gt;
+<br>
+&lt;pre&gt;</b><span style="color:#7F97E1" class="blue"><b>$file.text</b></code></span><code><b>&lt;/pre&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span></span>

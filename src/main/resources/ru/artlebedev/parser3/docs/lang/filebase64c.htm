@@ -1,0 +1,110 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">base64. Декодирование из&nbsp;Base64</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^file::base64[закодированное]
+<br>
+^file::base64[text|binary;имя&nbsp;файла;закодированное;опции]</b><span><b>&nbsp;&nbsp;&nbsp;</b></code><span><b><i>[3.4.1]</i></b>
+<br>
+
+<br>
+Декодирует файл из&nbsp;Base64-представления. Для кодирования файла следует использовать </span><code><b>^файл.</b><b><a href="filebase64m.htm">base64</a></b><b>[].
+<br>
+
+<br>
+</b></code><span>Можно задать <a href="hash.htm">хеш</a> опций:
+<br>
+<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span><font face="Symbol" size="2" color="#000000">&#183;</font></span></span></td><td><span> </span><code><b>$.strict(true)</b></code><span>&nbsp;- будет выдаваться исключение при невозможности декодирования <b>всех</b> символов. Без&nbsp;указания данной опции файл будет создан из&nbsp;того, что было успешно декодировано.</span><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.4.2]</i></b>
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.url-safe(false|true)</b></code><span> - использовать модифицированный алфавит, все символы которого не&nbsp;преобразовывались в&nbsp;%XX в&nbsp;URL (вместо «+» и&nbsp;«/» используются «-» и&nbsp;«_»). По&nbsp;умолчанию не&nbsp;использовать.</span><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.4.6]</i></b>
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.pad(true|false)</b></code><span> - при кодировании были добавлены символы <span style="color:#7F97E1" class="blue"><u><a href="https://en.wikipedia.org/wiki/Base64#Output_padding" target="_blank">паддинга</a></u></span></span><span> (=), по&nbsp;умолчанию.</span><span><b>&nbsp;&nbsp;&nbsp;</b></span><span><b><i>[3.4.6]</i></b>
+&nbsp;<br>
+</span></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td width="14"><span></span><code><b></b><font face="Symbol" size="2" color="#000000">&#183;</font><b></b></code></td><td><code><b>$.content-type[...]</b></code><span> - задать content-type создаваемого файла.</span><code><b>
+&nbsp;<br>
+</b></code></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr valign="top"><td><code><b></b></code></td><td></td></tr></table><code><b>
+<br>
+
+<br>
+</b></code><span><i>Подробная информация  о&nbsp;Base64 доступна по&nbsp;ссылке: </i><i><a href="http://www.ietf.org/rfc/rfc2045.txt" target="_blank">ietf.org/rfc/rfc2045.txt</a></i><i> и&nbsp;</i><i><a href="http://en.wikipedia.org/wiki/Base64" target="_blank">wikipedia.org/wiki/Base64</a></i><i>
+<br>
+</i>
+<br>
+<b>Пример</b>
+<br>
+</span><code><span style="color:#7F97E1" class="blue"><b>$encoded[
+<br>
+</b></code></span><code><b>R0lGODdhyAAyANUAAP////j88fLz8O/v7+v21uns4uTyyd/f397vu9vf1NfsrtDpoM/Pz8rmk8Tj
+<br>
+hr+/v73geK+vr6nWUJ+fn52jkJzQNZXNJ4+Pj39/f3BwcGBgYFBQUEBAQDAwMCAgIBAQEAAAAAAA
+<br>
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+<br>
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAyAAyAAAG/0CAcEgsChkRjHIZ
+<br>
+ORif0Kh0Sq1ar9isdkudaD6gsHj80US46LR6zW5zBxjweE73YAbuvH7P71/kdIFzHxN9hoeIiUQH
+<br>
+HIKOgRx4ipOUlVgPgHQcGUsYGY2CHwyWpKWlE4IbZ1ADE6CDo6ays3wRkE5VD69iorS+v2gMmSAf
+<br>
+q1h/g7jAy8ysHnMdylnC0M3W1wAZ0JJvz2MY2OG+DIPcwcPS4uqUuyAPbbZjGuv0kwdzGXkbc+n1
+<br>
+/nnaeJkzQqCBwQYIDASQcm/MhSmdIkrE8HDKgAcYM2rE2M8Ig40gNw68GLJkxwEXJqoE96SkSwDe
+<br>
+wrCEQqCChZs4JSyMomFMh/8pjwLNizKgQ1BisaCgOjrm3ZCiTMXMfGo0apgnPa2CIDemo5CaOMNa
+<br>
+0BmFqxivQrSGGepxmKNeT5ZqdQqAQcyoUwFAVWskq9YLPqOAFRuWLJS7haKoXdtWK1wicucecXt0
+<br>
+6l6+RPxq1ZzvyWDChXf2/SZlcZjOk00bAxBZ8gHKlYlUXSzbNIhdq4d8xglBAWHDRQCL4SCFg/Hj
+<br>
+yJPfJT4Ew5zkyTNN3eUBunXjox48vw49cVp5KyUSgcbdelOCNsVCEOJbLPAh2oezcS6/+ZzipIfs
+<br>
+ykslvhguc9CFRYBXEEjEbjetN0R7oRXh323zjcGcEPT9F8V+RGB4yX1bGJj/hYdUZCIgghYoSASD
+<br>
+OYkGwIMTplEhhPZ9s9Jd0+V3xYMghIdBbkOQVx5y451nxS50kagAFCjeBByLEdZHoW01SpXFa5s9
+<br>
+YRsIQYoh4BS4fZVeWEdGkeRYOwkXRotovNjii1pFKZMW1FjFVo+2ZRnGllJoBo6RVIxZAQEA6Nnk
+<br>
+mUSwaZWbOW4RZ1RzAnClne5cYSYIPy1AWJh9EuYATGN456KEhUKZoY1ZXMZURd+ZBimeZc1RAAAo
+<br>
+YloFiuslwM+gMD4po0o0jirlGy5hNFuidIpxQbAbrYpFJhSwd5OsVrSnYEBheNCGmqGOgd+vQmjI
+<br>
+h7eOCvmhuFVo9oEA7EF7/wUBm+qVCWpqYBujhVCAC64e4IJYILlUmPWmG9SGgRaFOi6xy5oc1kvq
+<br>
+vf3+iJx0kHbg8HHKYtFOUmrg2KiVpsHL5rb/dktqLqY9Fmidxd6ZBY4eDLTFAOhQYVqjH1+48Mj9
+<br>
+LWayEJpZVTEWPXfgMhamggCvYmptXLPC3ALA8BQ4HrXzED0z9fMVMG/DxQHDUjq0EUk/sfQT9uIM
+<br>
+tWMYGxGw1SlHCicdH7A6RQTDTA3FHBqEh2oRByRblkbSfJTRwE+QhOzg/R6uEREicdHaWoQPccA+
+<br>
+dPCItJb/ZJ7F42ulXUQEVYfhqcz8am56FBPA9sEGGEyA0QQYbKC65aWVflL67UUw0LVpHXhOOua4
+<br>
+B1+4oVZ9wJ8V+gqvPAAHhP7IBxl8XUXyyyuPUjuBbDCB9FY0Xv33Dqa0gXF5Hwv++einr/767Lfv
+<br>
+/vvwxy///PTXj0YQADs=
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+$original[^file::base64[$encoded]]
+<br>
+$filespec[</b></code></span><code><b>/p2.gif</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^original.save[binary;$filespec]
+<br>
+</b></code></span><code><b>&lt;img&nbsp;src="</b><span style="color:#7F97E1" class="blue"><b>$filespec"&nbsp;/</b></code></span><code><b>&gt;</b><span style="color:#7F97E1" class="blue"><b>
+<br>
+</b></code></span><span>
+<br>
+Выведет…
+<br>
+<img src="clip0001.png" width="200" height="50" border="0">
+<br>
+</span></span>

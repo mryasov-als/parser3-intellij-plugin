@@ -1,0 +1,40 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">fields. Все поля формы</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>$form:fields</b>&nbsp;&nbsp;&nbsp;<span>
+<br>
+</code><span>
+<br>
+Поле возвращает <a href="hash.htm">хеш</a> со&nbsp;всеми элементами формы или параметрами, переданными через URL. Имена ключей хеша&nbsp;- это названия элементов формы, значениями ключей являются значения элементов формы.
+<br>
+
+<br>
+<b>Пример</b></span><span><b>
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>^form:fields.</b></code></span><code><span style="color:#7F97E1" class="blue"><b><a href="hashforeach.htm">foreach</a></b></code></span><code><span style="color:#7F97E1" class="blue"><b>[field;value]{
+<br>
+</b></code></span><code><b>&nbsp;&nbsp;&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$field</b></code></span><code><b>&nbsp;-&nbsp;</b><span style="color:#7F97E1" class="blue"><b>$value</b></code></span><code><b>
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>}[</b></code></span><code><b>&lt;br</b><b>&nbsp;/</b><b>&gt;</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+</b></code></span><span>
+<br>
+Пример выведет на&nbsp;экран все поля формы и&nbsp;соответствующие значения. Предположим, что URI страницы </span><code><b>www.mysite.ru/testing/index.html?name=dvoechnik&amp;mark=2</b></code><span>. Тогда пример выдаст следующее:
+<br>
+
+<br>
+</span><code><b>name&nbsp;-&nbsp;dvoechnik</b></code><span><b>
+<br>
+</b></span><code><b>mark&nbsp;-&nbsp;2</b></code><span>
+<br>
+</span></span>

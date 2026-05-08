@@ -1,0 +1,50 @@
+<table border="0" cellspacing="0" cellpadding="2">
+  <tr>
+    <td>
+      
+<span class="title">pos. Получение позиции подстроки</span>&nbsp;<link-to-docs />
+    </td>
+  </tr>
+  <tr><td><hr /></td></tr>
+</table>
+<br>
+
+
+
+<code><b>^строка.pos[подстрока]</b>&nbsp;&nbsp;&nbsp;
+<br>
+<b>^строка.pos[подстрока](позиция&nbsp;начала&nbsp;поиска)</b><b>&nbsp;&nbsp;&nbsp;</b><span><b><i>[3.3.0]
+<br>
+</i></b>
+<br>
+Метод возвращает число </code><code><b><a href="intdoubleclasses.htm">int</a></b></code><span>&nbsp;- позицию первого символа </span><code><b>подстроки</b></code><span> в&nbsp;строке (начиная с&nbsp;нуля), или -1, если подстрока не&nbsp;найдена. Если задана </span><code><b>позиция&nbsp;начала&nbsp;поиска</b></code><span>, то&nbsp;поиск подстроки будет начинаться с&nbsp;указанной </span><code><b>позиции</b></code><span>.
+<br>
+
+<br>
+
+<br>
+<b>Примеры
+<br>
+</b></span><code><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>полигон</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^str.pos[гон]</b></code></span><code>
+<br>
+</code><span>
+<br>
+Вернет: </span><code><b>4
+<br>
+
+<br>
+
+<br>
+</b><span style="color:#7F97E1" class="blue"><b>$str[</b></code></span><code><b>полигон</b><span style="color:#7F97E1" class="blue"><b>]
+<br>
+^str.pos[о](2)</b></code></span><code>
+<br>
+</code><span>
+<br>
+Вернет: </span><code><b>5</b></code><span>
+<br>
+
+<br>
+</span></span>
