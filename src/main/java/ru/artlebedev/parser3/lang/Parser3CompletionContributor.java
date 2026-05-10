@@ -3,6 +3,7 @@ package ru.artlebedev.parser3.lang;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
+import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -36,6 +37,8 @@ import java.util.List;
  *  - $var. игнорируем — для переменных автокомплит не нужен.
  */
 public class Parser3CompletionContributor extends CompletionContributor {
+
+	private static final double USER_TEMPLATE_PRIORITY = -1000.0;
 
 	public Parser3CompletionContributor() {
 
@@ -76,8 +79,11 @@ public class Parser3CompletionContributor extends CompletionContributor {
 						}
 
 						boolean explicitCompletion = !parameters.isAutoPopup();
+						boolean suppressExplicitUserTemplates =
+								ru.artlebedev.parser3.completion.P3VariableInsertHandler
+										.consumeVariableDotAutoPopupUserTemplateSuppression(parameters.getEditor());
 						boolean explicitUserTemplatesAdded = false;
-						if (explicitCompletion) {
+						if (explicitCompletion && !suppressExplicitUserTemplates) {
 							fillUserTemplates(result.withPrefixMatcher(""), null);
 							explicitUserTemplatesAdded = true;
 						}
@@ -148,6 +154,9 @@ public class Parser3CompletionContributor extends CompletionContributor {
 						// Если есть точка но нет ^ — не показываем ничего
 						// (точка сама по себе не является контекстом для автокомплита)
 						if (hasDot && !hasCaret) {
+							if (suppressExplicitUserTemplates) {
+								fillUserTemplates(result.withPrefixMatcher(""), ".");
+							}
 							return;
 						}
 
@@ -368,7 +377,7 @@ public class Parser3CompletionContributor extends CompletionContributor {
 				builder = builder.bold();
 			}
 			used.add(lookupText);
-			result.addElement(builder);
+			result.addElement(PrioritizedLookupElement.withPriority(builder, USER_TEMPLATE_PRIORITY));
 		}
 	}
 

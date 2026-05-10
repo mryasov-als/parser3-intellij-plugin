@@ -3,6 +3,7 @@ package ru.artlebedev.parser3;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Тесты переменных с типами: определение типа, навигация ^var.method[],
@@ -3003,6 +3004,384 @@ public class x7_VariableTypeTest extends Parser3TestCase {
 
 		boolean hasTargets = targets != null && targets.length > 0;
 		assertFalse("Синтетический readChain-ключ item_id не должен давать таргет навигации", hasTargets);
+	}
+
+	/**
+	 * Простое чтение локального $user.login в CLASS с @OPTIONS locals не должно
+	 * затенять реальный MAIN-хеш $user и ломать навигацию по соседним ключам.
+	 */
+	public void testReadChain_localClassUsageDoesNotShadowMainHashKeyNavigation() {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$profileData[\n" +
+						"	$.login[test_user]\n" +
+						"	$.email[test@example.com]\n" +
+						"	$.roles[^hash::create[]]\n" +
+						"]\n");
+		createParser3FileInDir("www/_mod/auto.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$profileData.login\n" +
+						"$value[$profileData.email]\n");
+
+		com.intellij.openapi.vfs.VirtualFile vFile = myFixture.findFileInTempDir("www/_mod/auto.p");
+		assertNotNull("Файл не найден", vFile);
+		myFixture.configureFromExistingVirtualFile(vFile);
+
+		String content = readFile(vFile);
+		int usagePos = content.indexOf("$profileData.email");
+		assertTrue("Использование $profileData.email не найдено", usagePos >= 0);
+		int clickOffset = usagePos + "$profileData.".length() + 1;
+		myFixture.getEditor().getCaretModel().moveToOffset(clickOffset);
+
+		PsiElement[] targets = GotoDeclarationAction.findAllTargetElements(
+				getProject(), myFixture.getEditor(), clickOffset);
+
+		assertNotNull("Должны быть таргеты для $profileData.email", targets);
+		assertTrue("Должен быть хотя бы один таргет для $profileData.email", targets.length > 0);
+
+		com.intellij.openapi.vfs.VirtualFile autoFile = myFixture.findFileInTempDir("www/auto.p");
+		assertNotNull("MAIN auto.p не найден", autoFile);
+		String autoContent = readFile(autoFile);
+		int expectedEmailPos = autoContent.indexOf("$.email");
+		assertTrue("Определение $.email не найдено", expectedEmailPos >= 0);
+		expectedEmailPos += 2;
+
+		int wrongLoginPos = content.indexOf("$profileData.login");
+		assertTrue("Read-only $profileData.login не найден", wrongLoginPos >= 0);
+
+		boolean foundEmailDefinition = false;
+		boolean foundReadOnlyLogin = false;
+		for (PsiElement target : targets) {
+			PsiFile targetFile = target.getContainingFile();
+			if (targetFile == null || targetFile.getVirtualFile() == null) continue;
+			int targetOffset = target.getTextOffset();
+			if (targetFile.getVirtualFile().equals(autoFile)
+					&& targetOffset >= expectedEmailPos
+					&& targetOffset <= expectedEmailPos + "email".length()) {
+				foundEmailDefinition = true;
+			}
+			if (targetFile.getVirtualFile().equals(vFile)
+					&& targetOffset >= wrongLoginPos
+					&& targetOffset <= wrongLoginPos + "$profileData.login".length()) {
+				foundReadOnlyLogin = true;
+			}
+		}
+
+		assertTrue("Навигация должна вести к реальному $.email из MAIN auto.p, targets=" + describeTargets(targets),
+				foundEmailDefinition);
+		assertFalse("Навигация не должна вести к read-only $profileData.login", foundReadOnlyLogin);
+	}
+
+	/**
+	 * Вложенная read-only цепочка из class-файла не должна становиться таргетом
+	 * сама для себя, если корень пришёл из MAIN method-result.
+	 */
+	public void testReadChain_nestedLocalClassUsageDoesNotNavigateToItself() {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$person[^getPerson[]]\n" +
+						"\n" +
+						"@getPerson[][locals]\n" +
+						"$result[\n" +
+						"	$.login[test_user]\n" +
+						"	$.fields[\n" +
+						"		$.remote(true)\n" +
+						"		$.email[test@example.com]\n" +
+						"	]\n" +
+						"]\n");
+		createParser3FileInDir("www/_mod/auto.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$person.fields.remote — read-only diagnostic text\n");
+
+		com.intellij.openapi.vfs.VirtualFile usageFile = myFixture.findFileInTempDir("www/_mod/auto.p");
+		assertNotNull("Файл использования не найден", usageFile);
+		com.intellij.openapi.vfs.VirtualFile mainAutoFile = myFixture.findFileInTempDir("www/auto.p");
+		assertNotNull("MAIN auto.p не найден", mainAutoFile);
+
+		assertNestedReadChainTarget(
+				usageFile,
+				mainAutoFile,
+				"$person.fields.remote",
+				"fields",
+				"$.fields",
+				"read-only $person.fields.remote не должен быть таргетом для fields");
+		assertNestedReadChainTarget(
+				usageFile,
+				mainAutoFile,
+				"$person.fields.remote",
+				"remote",
+				"$.remote",
+				"read-only $person.fields.remote не должен быть таргетом для remote");
+	}
+
+	/**
+	 * Если у nested read-only цепочки нет реального определения, навигация не должна
+	 * возвращать саму строку чтения как declaration target.
+	 */
+	public void testReadChain_nestedLocalClassUsageWithoutRealKeyHasNoSelfNavigation() {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$person[^getPerson[]]\n" +
+						"\n" +
+						"@getPerson[][locals]\n" +
+						"$result[\n" +
+						"	$.login[test_user]\n" +
+						"]\n");
+		createParser3FileInDir("www/_mod/auto.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$person.fields.remote\n");
+
+		com.intellij.openapi.vfs.VirtualFile usageFile = myFixture.findFileInTempDir("www/_mod/auto.p");
+		assertNotNull("Файл использования не найден", usageFile);
+
+		assertNestedReadChainHasNoTargets(usageFile, "$person.fields.remote", "fields");
+		assertNestedReadChainHasNoTargets(usageFile, "$person.fields.remote", "remote");
+	}
+
+	/**
+	 * Минимизация реального кейса из www/_mod/auto.p:8.
+	 * Корневой $person приходит из @getPerson[], внутри которого форма переносится
+	 * через $p[^get_persons[]], $p[^p.at[first]], $p.fields.remote и $person[$p].
+	 * Если completion взял fields/remote из read-chain источника, navigation должен
+	 * вести к этому источнику, а не молча терять target.
+	 */
+	public void testReadChain_nestedLocalClassUsageFromCopiedMethodResultNavigatesToReadChainSource() {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$person[^getPerson[]]\n" +
+						"\n" +
+						"@getPerson[][locals]\n" +
+						"$person[^hash::create[]]\n" +
+						"$p[^get_persons[]]\n" +
+						"^if($p){\n" +
+						"	$p[^p.at[first]]\n" +
+						"	$p.remote[$p.fields.remote]\n" +
+						"	$person[$p]\n" +
+						"}\n" +
+						"$result[$person]\n" +
+						"\n" +
+						"@get_persons[][locals]\n" +
+						"$result[^table::create{login\n" +
+						"test_user}]\n");
+		createParser3FileInDir("www/_mod/auto.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$person.fields.remote — read-only diagnostic text\n");
+
+		com.intellij.openapi.vfs.VirtualFile usageFile = myFixture.findFileInTempDir("www/_mod/auto.p");
+		assertNotNull("Файл использования не найден", usageFile);
+		com.intellij.openapi.vfs.VirtualFile mainAutoFile = myFixture.findFileInTempDir("www/auto.p");
+		assertNotNull("MAIN auto.p не найден", mainAutoFile);
+
+		assertNestedReadChainSourceTarget(
+				usageFile,
+				mainAutoFile,
+				"$person.fields.remote",
+				"fields",
+				"$p.fields.remote",
+				"fields");
+		assertNestedReadChainSourceTarget(
+				usageFile,
+				mainAutoFile,
+				"$person.fields.remote",
+				"remote",
+				"$p.fields.remote",
+				"remote");
+	}
+
+	private void assertNestedReadChainSourceTarget(
+			@NotNull com.intellij.openapi.vfs.VirtualFile usageFile,
+			@NotNull com.intellij.openapi.vfs.VirtualFile targetFile,
+			@NotNull String usagePattern,
+			@NotNull String clickedName,
+			@NotNull String sourcePattern,
+			@NotNull String sourceName
+	) {
+		myFixture.configureFromExistingVirtualFile(usageFile);
+
+		String usageContent = readFile(usageFile);
+		int usagePos = usageContent.indexOf(usagePattern);
+		assertTrue("Использование " + usagePattern + " не найдено", usagePos >= 0);
+		int clickedNamePos = usagePattern.indexOf(clickedName);
+		assertTrue("Сегмент " + clickedName + " не найден в " + usagePattern, clickedNamePos >= 0);
+		int clickOffset = usagePos + clickedNamePos + 1;
+		myFixture.getEditor().getCaretModel().moveToOffset(clickOffset);
+
+		PsiElement[] targets = GotoDeclarationAction.findAllTargetElements(
+				getProject(), myFixture.getEditor(), clickOffset);
+
+		assertNotNull("Должны быть targets для " + usagePattern + "." + clickedName, targets);
+		assertTrue("Должен быть хотя бы один target для " + usagePattern + "." + clickedName
+						+ ", targets=" + describeTargets(targets),
+				targets.length > 0);
+
+		String targetContent = readFile(targetFile);
+		int sourcePos = targetContent.indexOf(sourcePattern);
+		assertTrue("Источник " + sourcePattern + " не найден", sourcePos >= 0);
+		int sourceNamePos = sourcePattern.indexOf(sourceName);
+		assertTrue("Сегмент " + sourceName + " не найден в " + sourcePattern, sourceNamePos >= 0);
+		int expectedPos = sourcePos + sourceNamePos;
+
+		boolean foundSource = false;
+		boolean foundSelfUsage = false;
+		for (PsiElement target : targets) {
+			PsiFile psiFile = target.getContainingFile();
+			if (psiFile == null || psiFile.getVirtualFile() == null) continue;
+			int targetOffset = target.getTextOffset();
+			if (psiFile.getVirtualFile().equals(targetFile)
+					&& targetOffset >= expectedPos
+					&& targetOffset <= expectedPos + sourceName.length()) {
+				foundSource = true;
+			}
+			if (psiFile.getVirtualFile().equals(usageFile)
+					&& targetOffset >= usagePos
+					&& targetOffset <= usagePos + usagePattern.length()) {
+				foundSelfUsage = true;
+			}
+		}
+
+		assertTrue("Навигация должна вести к read-chain источнику " + sourcePattern
+						+ ", targets=" + describeTargets(targets),
+				foundSource);
+		assertFalse("Навигация не должна вести на read-only usage " + usagePattern
+						+ ", targets=" + describeTargets(targets),
+				foundSelfUsage);
+	}
+
+	private void assertNestedReadChainHasNoTargets(
+			@NotNull com.intellij.openapi.vfs.VirtualFile usageFile,
+			@NotNull String usagePattern,
+			@NotNull String clickedName
+	) {
+		myFixture.configureFromExistingVirtualFile(usageFile);
+
+		String usageContent = readFile(usageFile);
+		int usagePos = usageContent.indexOf(usagePattern);
+		assertTrue("Использование " + usagePattern + " не найдено", usagePos >= 0);
+		int clickedNamePos = usagePattern.indexOf(clickedName);
+		assertTrue("Сегмент " + clickedName + " не найден в " + usagePattern, clickedNamePos >= 0);
+		int clickOffset = usagePos + clickedNamePos + 1;
+		myFixture.getEditor().getCaretModel().moveToOffset(clickOffset);
+
+		PsiElement[] targets = GotoDeclarationAction.findAllTargetElements(
+				getProject(), myFixture.getEditor(), clickOffset);
+
+		boolean hasTargets = targets != null && targets.length > 0;
+		assertFalse("Read-only " + usagePattern + " без реального " + clickedName
+						+ " не должен вести на себя, targets=" + describeTargets(targets),
+				hasTargets);
+	}
+
+	private void assertNestedReadChainTarget(
+			@NotNull com.intellij.openapi.vfs.VirtualFile usageFile,
+			@NotNull com.intellij.openapi.vfs.VirtualFile targetFile,
+			@NotNull String usagePattern,
+			@NotNull String clickedName,
+			@NotNull String expectedPattern,
+			@NotNull String selfTargetMessage
+	) {
+		myFixture.configureFromExistingVirtualFile(usageFile);
+
+		String usageContent = readFile(usageFile);
+		int usagePos = usageContent.indexOf(usagePattern);
+		assertTrue("Использование " + usagePattern + " не найдено", usagePos >= 0);
+		int clickedNamePos = usagePattern.indexOf(clickedName);
+		assertTrue("Сегмент " + clickedName + " не найден в " + usagePattern, clickedNamePos >= 0);
+		int clickOffset = usagePos + clickedNamePos + 1;
+		myFixture.getEditor().getCaretModel().moveToOffset(clickOffset);
+
+		PsiElement[] targets = GotoDeclarationAction.findAllTargetElements(
+				getProject(), myFixture.getEditor(), clickOffset);
+
+		assertNotNull("Должны быть таргеты для " + usagePattern + "." + clickedName, targets);
+		assertTrue("Должен быть хотя бы один таргет для " + usagePattern + "." + clickedName
+						+ ", targets=" + describeTargets(targets),
+				targets.length > 0);
+
+		String targetContent = readFile(targetFile);
+		int expectedPos = targetContent.indexOf(expectedPattern);
+		assertTrue("Ожидаемое определение " + expectedPattern + " не найдено", expectedPos >= 0);
+		expectedPos += 2;
+
+		boolean foundRealKey = false;
+		boolean foundSelfUsage = false;
+		for (PsiElement target : targets) {
+			PsiFile psiFile = target.getContainingFile();
+			if (psiFile == null || psiFile.getVirtualFile() == null) continue;
+			int targetOffset = target.getTextOffset();
+			if (psiFile.getVirtualFile().equals(targetFile)
+					&& targetOffset >= expectedPos
+					&& targetOffset <= expectedPos + clickedName.length()) {
+				foundRealKey = true;
+			}
+			if (psiFile.getVirtualFile().equals(usageFile)
+					&& targetOffset >= usagePos
+					&& targetOffset <= usagePos + usagePattern.length()) {
+				foundSelfUsage = true;
+			}
+		}
+
+		assertTrue("Навигация должна вести к реальному " + expectedPattern
+						+ ", targets=" + describeTargets(targets),
+				foundRealKey);
+		assertFalse(selfTargetMessage + ", targets=" + describeTargets(targets), foundSelfUsage);
+	}
+
+	private String describeTargets(PsiElement[] targets) {
+		if (targets == null) return "<null>";
+		StringBuilder result = new StringBuilder();
+		for (PsiElement target : targets) {
+			PsiFile targetFile = target.getContainingFile();
+			result.append('[');
+			result.append(targetFile != null && targetFile.getVirtualFile() != null
+					? targetFile.getVirtualFile().getPath()
+					: "<no-file>");
+			result.append(':').append(target.getTextOffset()).append(" '").append(target.getText()).append("']");
+		}
+		return result.toString();
 	}
 
 	/**

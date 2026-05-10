@@ -34,6 +34,18 @@ intellijPlatform {
 		name = 'Parser 3 Support'
 		version = pluginVersion
 		description = 'Parser3 language support for IntelliJ IDEA: syntax highlighting, code completion, navigation, quick documentation, formatting, folding, HTML/CSS/JavaScript/SQL injections, and safe refactoring for @USE and ^use[] paths.<br /><br /><em>Requires IntelliJ IDEA 2026.1 or newer.</em>'
+		changeNotes = '''
+			<ul>
+				<li>Removed usages of IntelliJ internal APIs.</li>
+				<li>Fixed CLASS_PATH path insertion: completion no longer overwrites brackets.</li>
+				<li>Improved variable and template insertion: correct behavior after MAIN, popup focus, and selected item highlighting.</li>
+				<li>Fixed variable auto-popup after a manually typed dot, after completing a variable name, and after an exact variable name.</li>
+				<li>Improved MAIN/self/read-chain variable completion: correct priorities, separated MAIN variables, and no extra suggestions.</li>
+				<li>Improved completion performance on large autouse projects: context reuse, object-dot completion caching, and less unnecessary class scanning.</li>
+				<li>Fixed navigation for hash keys from dot-chain, read-chain hash keys, and nested read-only chains.</li>
+				<li>Added regression and performance tests for completion, navigation, and read-chain scenarios.</li>
+			</ul>
+		'''
 		vendor {
 			name = 'Art. Lebedev Studio'
 			url = 'https://www.artlebedev.ru/'

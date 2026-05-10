@@ -47,7 +47,7 @@ public final class P3ScopeContext {
 	private final @NotNull List<VirtualFile> positionallyVisibleFiles;
 	private final @NotNull List<VirtualFile> allProjectFiles;
 	private final @NotNull List<VirtualFile> methodSearchFiles;
-	private final @NotNull List<VirtualFile> classSearchFiles;
+	private @Nullable List<VirtualFile> classSearchFiles;
 	private final @NotNull List<VirtualFile> variableSearchFiles;
 	private final @NotNull Map<VirtualFile, Integer> useOffsetMap;
 	private final @NotNull Map<VirtualFile, Boolean> inheritedMainLocalsMap;
@@ -105,10 +105,6 @@ public final class P3ScopeContext {
 		this.hasAutouse = hasAutouseInFiles(project, methodSearchFiles);
 		logPerf("hasAutouseInFiles", autouseStart, currentFile, cursorOffset,
 				"hasAutouse=" + hasAutouse);
-		long classSearchStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
-		this.classSearchFiles = buildClassSearchFiles(visibilityService);
-		logPerf("buildClassSearchFiles", classSearchStart, currentFile, cursorOffset,
-				"classSearchFiles=" + classSearchFiles.size());
 		if (DEBUG_PERF) {
 			System.out.println("[P3ScopeContext.PERF] TOTAL: "
 					+ (System.currentTimeMillis() - totalStart) + "ms"
@@ -118,7 +114,7 @@ public final class P3ScopeContext {
 					+ " visibleFiles=" + visibleFiles.size()
 					+ " positionallyVisibleFiles=" + positionallyVisibleFiles.size()
 					+ " methodSearchFiles=" + methodSearchFiles.size()
-					+ " classSearchFiles=" + classSearchFiles.size()
+					+ " classSearchFiles=lazy"
 					+ " variableSearchFiles=" + variableSearchFiles.size()
 					+ " hasAutouse=" + hasAutouse);
 		}
@@ -182,10 +178,22 @@ public final class P3ScopeContext {
 	}
 
 	public @NotNull List<VirtualFile> getClassSearchFiles() {
-		return classSearchFiles;
+		List<VirtualFile> cached = classSearchFiles;
+		if (cached != null) {
+			return cached;
+		}
+
+		P3VisibilityService visibilityService = P3VisibilityService.getInstance(project);
+		long classSearchStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
+		List<VirtualFile> computed = buildClassSearchFiles(visibilityService);
+		this.classSearchFiles = computed;
+		logPerf("buildClassSearchFiles", classSearchStart, currentFile, cursorOffset,
+				"classSearchFiles=" + computed.size());
+		return computed;
 	}
 
 	public @NotNull List<VirtualFile> getClassSearchFilesForClass(@NotNull String className) {
+		List<VirtualFile> classSearchFiles = getClassSearchFiles();
 		if (allMethodsMode || hasAutouse) {
 			return classSearchFiles;
 		}
@@ -230,7 +238,7 @@ public final class P3ScopeContext {
 	}
 
 	public boolean canSeeClassSourceFile(@NotNull VirtualFile sourceFile) {
-		return classSearchFiles.contains(sourceFile);
+		return getClassSearchFiles().contains(sourceFile);
 	}
 
 	public int getUseOffset(@NotNull VirtualFile sourceFile) {

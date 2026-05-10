@@ -1226,7 +1226,7 @@ Injected CSS document:       position 50
 ```
 
 При работе с injected документами:
-- `editor.getDocument()` — возвращает `DocumentWindowImpl` (injected)
+- `editor.getDocument()` — возвращает `DocumentWindow` (injected)
 - `parameters.getOffset()` — может быть в координатах HOST документа
 - Это вызывает `StringIndexOutOfBoundsException`!
 
@@ -1249,8 +1249,8 @@ if (offset > text.length()) {
 `Parser3EnterHandler` должен работать с host документом при нажатии Enter внутри `<style>` или `<script>`:
 
 ```java
-if (document instanceof DocumentWindowImpl) {
-DocumentWindowImpl injectedDoc = (DocumentWindowImpl) document;
+if (document instanceof DocumentWindow) {
+DocumentWindow injectedDoc = (DocumentWindow) document;
 
 // Находим host файл
 PsiElement context = file.getContext();

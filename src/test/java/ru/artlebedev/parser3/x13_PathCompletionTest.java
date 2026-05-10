@@ -222,6 +222,33 @@ public class x13_PathCompletionTest extends Parser3TestCase {
 		);
 	}
 
+	public void testClassPathTableCreateInsertKeepsClosingBracesOnSameLine() {
+		createParser3FileInDir("data/classes/sample.p", "@CLASS\nSample\n");
+		createParser3FileInDir("www/errors/test_classpath_table_create_insert.p",
+				"@main[]\n" +
+						"$MAIN:CLASS_PATH[^table::create{path\n" +
+						"/../dat<caret>}]\n");
+		VirtualFile vf = myFixture.findFileInTempDir("www/errors/test_classpath_table_create_insert.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		myFixture.complete(CompletionType.BASIC);
+		LookupElement[] elements = myFixture.getLookupElements();
+		assertNotNull("Должны быть варианты path completion", elements);
+
+		LookupElement dataDir = Arrays.stream(elements)
+				.filter(e -> "/../data/".equals(e.getLookupString()))
+				.findFirst()
+				.orElse(null);
+		assertNotNull("Должен быть lookup element '/../data/'", dataDir);
+
+		myFixture.getLookup().setCurrentItem(dataDir);
+		myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR);
+
+		String text = myFixture.getEditor().getDocument().getText();
+		assertTrue("Закрывающие скобки table::create не должны затираться: " + text,
+				text.contains("/../data/}]"));
+	}
+
 	public void testDirectoryInsertKeepsTrailingSlash() {
 		createParser3FileInDir("www/test_insert_target.p",
 				"@main[]\n# на основе parser3/tests/152.html: минимальный кейс вставки пути\n$f[^file::load[text;lib/<caret>]]");

@@ -5,6 +5,7 @@ import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
@@ -93,10 +94,9 @@ public class Parser3EnterHandler extends EnterHandlerDelegateAdapter {
 		int initialHostOffset = -1;
 
 		// Для инжектированных документов (HTML, CSS, JS) — работаем через host документ
-		if (document instanceof com.intellij.psi.impl.source.tree.injected.DocumentWindowImpl) {
+		if (document instanceof DocumentWindow) {
 			isInjected = true;
-			com.intellij.psi.impl.source.tree.injected.DocumentWindowImpl injectedDoc =
-					(com.intellij.psi.impl.source.tree.injected.DocumentWindowImpl) document;
+			DocumentWindow injectedDoc = (DocumentWindow) document;
 
 			// Находим host файл
 			com.intellij.psi.PsiElement context = file.getContext();

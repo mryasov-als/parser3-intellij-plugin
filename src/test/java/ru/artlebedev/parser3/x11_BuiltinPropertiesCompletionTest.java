@@ -274,6 +274,15 @@ public class x11_BuiltinPropertiesCompletionTest extends Parser3TestCase {
 				completions.contains("date:"));
 	}
 
+	public void testDateAppearsAsBuiltinClassAfterCaret() {
+		List<String> completions = getPresentableTexts(parser274RealDateBase("^date<caret>"));
+		assertTrue("^date должен предлагать builtin-class date: " + completions,
+				completions.contains("date:"));
+
+		List<String> lookupStrings = getCompletions(parser274RealDateBase("^date<caret>"));
+		assertContains(lookupStrings, "now", "^date должен продолжать показывать constructor/static methods");
+	}
+
 	public void testDateStaticCalendarResultInferredAsTable() {
 		List<String> completions = getCompletions(
 				parser202RealDateCalendarBase("^calendar.<caret>")

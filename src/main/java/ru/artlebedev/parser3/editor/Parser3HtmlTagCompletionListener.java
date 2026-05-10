@@ -4,10 +4,9 @@ import com.intellij.codeInsight.lookup.LookupEvent;
 import com.intellij.codeInsight.lookup.LookupListener;
 import com.intellij.codeInsight.lookup.LookupManagerListener;
 import com.intellij.codeInsight.lookup.Lookup;
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -15,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.artlebedev.parser3.utils.Parser3PsiUtils;
 import com.intellij.util.Alarm;
+import ru.artlebedev.parser3.completion.P3VariableInsertHandler;
 
 /**
  * Отслеживает completion lookup и восстанавливает отступ закрывающего HTML тега
@@ -84,9 +84,7 @@ public class Parser3HtmlTagCompletionListener implements LookupManagerListener {
 		// Для работы с indent нужен host документ и host editor
 		Document hostDocument;
 		Editor hostEditor;
-		if (editor.getDocument() instanceof com.intellij.psi.impl.source.tree.injected.DocumentWindowImpl) {
-			com.intellij.psi.impl.source.tree.injected.DocumentWindowImpl injectedDoc =
-					(com.intellij.psi.impl.source.tree.injected.DocumentWindowImpl) editor.getDocument();
+		if (editor.getDocument() instanceof DocumentWindow) {
 			// Ищем host document
 			com.intellij.psi.PsiElement ctx = psiFile.getContext();
 			if (ctx == null) {
@@ -150,6 +148,13 @@ public class Parser3HtmlTagCompletionListener implements LookupManagerListener {
 			}
 
 			@Override
+			public void focusDegreeChanged() {
+				// Auto-popup может позднее вернуться в UNFOCUSED: Enter уже работает
+				// через currentItem, но строка не подсвечивается синим.
+				ensureDefaultLookupSelection(newLookup, project);
+			}
+
+			@Override
 			public void itemSelected(@NotNull LookupEvent event) {
 				if (DEBUG) {
 					System.out.println("[P3HtmlTagCompletion] itemSelected! item=" +
@@ -169,6 +174,7 @@ public class Parser3HtmlTagCompletionListener implements LookupManagerListener {
 				if (DEBUG) System.out.println("[P3HtmlTagCompletion] lookupCanceled");
 			}
 		});
+		ensureDefaultLookupSelection(newLookup, project);
 	}
 
 	private static void ensureDefaultLookupSelection(@NotNull Lookup lookup, @NotNull Project project) {
@@ -181,9 +187,7 @@ public class Parser3HtmlTagCompletionListener implements LookupManagerListener {
 				if (project.isDisposed()) {
 					return;
 				}
-				if (selectFirstItemIfNeeded(lookup)) {
-					return;
-				}
+				P3VariableInsertHandler.ensureFirstLookupItemSelected(lookup);
 				attemptsLeft[0]--;
 				if (attemptsLeft[0] > 0) {
 					alarm.addRequest(this, 30);
@@ -191,25 +195,6 @@ public class Parser3HtmlTagCompletionListener implements LookupManagerListener {
 			}
 		};
 		alarm.addRequest(trySelect, 0);
-	}
-
-	private static boolean selectFirstItemIfNeeded(@NotNull Lookup lookup) {
-		if (!(lookup instanceof LookupImpl)) {
-			return false;
-		}
-		LookupImpl lookupImpl = (LookupImpl) lookup;
-		if (lookupImpl.isLookupDisposed()) {
-			return false;
-		}
-		if (lookupImpl.getCurrentItem() != null) {
-			return true;
-		}
-		java.util.List<LookupElement> items = lookupImpl.getItems();
-		if (items.isEmpty()) {
-			return false;
-		}
-		lookupImpl.setCurrentItem(items.get(0));
-		return true;
 	}
 
 	/**

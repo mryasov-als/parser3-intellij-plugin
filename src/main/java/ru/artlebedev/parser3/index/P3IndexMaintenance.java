@@ -114,12 +114,11 @@ public final class P3IndexMaintenance {
 	}
 
 	public static void ensureParser3IndexesUpToDate(@NotNull Project project) {
-		FileBasedIndex index = FileBasedIndex.getInstance();
-		GlobalSearchScope scope = getParser3IndexScope(project);
-		index.ensureUpToDate(P3MethodFileIndex.NAME, project, scope);
-		index.ensureUpToDate(P3ClassFileIndex.NAME, project, scope);
+		if (DumbService.getInstance(project).isDumb()) {
+			return;
+		}
 		if (DEBUG) {
-			System.out.println("[P3IndexMaintenance] ensureUpToDate project=" + project.getName());
+			System.out.println("[P3IndexMaintenance] indexes are smart project=" + project.getName());
 		}
 	}
 

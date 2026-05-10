@@ -108,7 +108,14 @@ public final class P3TableColumnArgumentCompletionSupport {
 
 		String textForAnalysis = buildTextWithTypedChar(editorText, cursorOffset, typeChar);
 		int analysisOffset = Math.min(textForAnalysis.length(), Math.max(0, cursorOffset + 1));
-		return isColumnArgumentContext(project, currentFile, textForAnalysis, analysisOffset);
+		return isColumnArgumentSyntaxContext(textForAnalysis, analysisOffset);
+	}
+
+	public static boolean isColumnArgumentSyntaxContext(
+			@NotNull CharSequence text,
+			int cursorOffset
+	) {
+		return findContext(text.toString(), cursorOffset) != null;
 	}
 
 	public static boolean isColumnArgumentContext(

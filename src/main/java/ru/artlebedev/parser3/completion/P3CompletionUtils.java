@@ -151,6 +151,80 @@ public final class P3CompletionUtils {
 		return detectHashDeleteKeyContext(text, offset) != null;
 	}
 
+	/**
+	 * Проверяет, что пользователь вручную набирает точку после Parser3-переменной.
+	 * В этом месте нужно открыть следующий popup с ключами/методами сразу после вставки точки.
+	 */
+	public static boolean shouldAutoPopupVariableDot(@NotNull CharSequence text, int offset, char typedChar) {
+		if (typedChar != '.') return false;
+		int safeOffset = Math.max(0, Math.min(offset, text.length()));
+		if (safeOffset == 0) return false;
+		int receiverEnd = safeOffset;
+		if (safeOffset > 0 && text.charAt(safeOffset - 1) == '.') {
+			receiverEnd = safeOffset - 1;
+		}
+		if (receiverEnd == 0) return false;
+
+		int start = findDollarVariableStartBeforeDot(text, receiverEnd);
+		if (start < 0 || start >= receiverEnd) return false;
+		if (start > 0 && text.charAt(start - 1) == '^') return false;
+
+		String receiver = text.subSequence(start + 1, receiverEnd).toString();
+		if (receiver.isEmpty()) return false;
+		if (receiver.contains("IntellijIdeaRulezzz")) return false;
+		if (receiver.endsWith(".")) return false;
+
+		if (receiver.startsWith("{")) {
+			receiver = receiver.substring(1);
+		}
+		if (receiver.isEmpty()) return false;
+
+		return isValidDollarVariableReceiver(receiver);
+	}
+
+	private static int findDollarVariableStartBeforeDot(@NotNull CharSequence text, int offset) {
+		int i = offset - 1;
+		while (i >= 0) {
+			char ch = text.charAt(i);
+			if (isVarIdentChar(ch) || ch == '.' || ch == ':') {
+				i--;
+				continue;
+			}
+			if (ch == '$') {
+				return i;
+			}
+			if (ch == '{' && i > 0 && text.charAt(i - 1) == '$') {
+				return i - 1;
+			}
+			if (ch == '\n' || ch == '\r' || Character.isWhitespace(ch)) {
+				return -1;
+			}
+			return -1;
+		}
+		return -1;
+	}
+
+	private static boolean isValidDollarVariableReceiver(@NotNull String receiver) {
+		String normalized = receiver;
+		if (normalized.startsWith("self.")) {
+			normalized = normalized.substring(5);
+		} else if (normalized.startsWith("MAIN:") || normalized.startsWith("BASE:")) {
+			normalized = normalized.substring(5);
+		}
+		if (normalized.isEmpty()) return false;
+		String[] parts = normalized.split("\\.");
+		for (String part : parts) {
+			if (part.isEmpty()) return false;
+			if (!isVarIdentChar(part.charAt(0))) return false;
+			for (int i = 1; i < part.length(); i++) {
+				if (!isVarIdentChar(part.charAt(i))) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	private static int findCurrentArgumentOpeningBracket(@NotNull CharSequence text, int offset) {
 		int depth = 0;
 		for (int i = offset - 1; i >= 0; i--) {

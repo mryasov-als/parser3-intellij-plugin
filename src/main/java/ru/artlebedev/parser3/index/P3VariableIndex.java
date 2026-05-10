@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Сервис для поиска типов переменных в Parser3.
@@ -37,6 +38,8 @@ public final class P3VariableIndex {
 	private static final boolean DEBUG_PERF = false;
 	private static final Map<String, HashEntryInfo> TRY_EXCEPTION_HASH_KEYS = createTryExceptionHashKeys();
 	private static final List<String> STRING_MATCH_COLUMNS = List.of("prematch", "match", "postmatch", "1");
+	private static final ThreadLocal<ResolveRequestCache> RESOLVE_REQUEST_CACHE =
+			ThreadLocal.withInitial(ResolveRequestCache::new);
 
 	private final Project project;
 
@@ -46,6 +49,130 @@ public final class P3VariableIndex {
 
 	public static P3VariableIndex getInstance(@NotNull Project project) {
 		return project.getService(P3VariableIndex.class);
+	}
+
+	public <T> T withSharedResolveCache(@NotNull Supplier<T> supplier) {
+		return withResolveRequestCache(supplier);
+	}
+
+	private <T> T withResolveRequestCache(@NotNull Supplier<T> supplier) {
+		ResolveRequestCache cache = RESOLVE_REQUEST_CACHE.get();
+		cache.depth++;
+		try {
+			return supplier.get();
+		} finally {
+			cache.depth--;
+			if (cache.depth == 0) {
+				cache.clear();
+			}
+		}
+	}
+
+	private static final class ResolveRequestCache {
+		int depth = 0;
+		final @NotNull Map<ScopeFilesKey, CachedScopeFiles> scopeFiles = new HashMap<>();
+		final @NotNull Map<ChainResolveKey, ChainResolveInfo> chainResolve = new HashMap<>();
+		final @NotNull Set<ChainResolveKey> chainResolveMisses = new HashSet<>();
+		final @NotNull Map<ScopeFilesKey, CursorContext> cursorContexts = new HashMap<>();
+		final @NotNull Map<ScopeFilesKey, Map<String, List<P3VariableFileIndex.VariableTypeInfo>>> parsedCurrentFiles = new HashMap<>();
+
+		void clear() {
+			scopeFiles.clear();
+			chainResolve.clear();
+			chainResolveMisses.clear();
+			cursorContexts.clear();
+			parsedCurrentFiles.clear();
+		}
+	}
+
+	private static final class CachedScopeFiles {
+		final @NotNull List<VirtualFile> variableFiles;
+		final @NotNull List<VirtualFile> classFiles;
+
+		CachedScopeFiles(
+				@NotNull List<VirtualFile> variableFiles,
+				@NotNull List<VirtualFile> classFiles
+		) {
+			this.variableFiles = variableFiles;
+			this.classFiles = classFiles;
+		}
+	}
+
+	private static final class ScopeFilesKey {
+		final @NotNull VirtualFile file;
+		final int offset;
+
+		ScopeFilesKey(@NotNull VirtualFile file, int offset) {
+			this.file = file;
+			this.offset = offset;
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other) return true;
+			if (!(other instanceof ScopeFilesKey)) return false;
+			ScopeFilesKey key = (ScopeFilesKey) other;
+			return offset == key.offset && file.equals(key.file);
+		}
+
+		@Override
+		public int hashCode() {
+			return 31 * file.hashCode() + offset;
+		}
+	}
+
+	private static final class ChainResolveKey {
+		final @NotNull String varKey;
+		final @NotNull VirtualFile file;
+		final int offset;
+		final @NotNull List<VirtualFile> visibleFiles;
+		final @NotNull List<VirtualFile> classFiles;
+		final @NotNull java.util.Set<String> visitedValues;
+		final @NotNull java.util.Set<String> resolvingVarKeys;
+
+		ChainResolveKey(
+				@NotNull String varKey,
+				@NotNull List<VirtualFile> visibleFiles,
+				@NotNull List<VirtualFile> classFiles,
+				@NotNull VirtualFile file,
+				int offset,
+				@NotNull java.util.Set<String> visitedValues,
+				@NotNull java.util.Set<String> resolvingVarKeys
+		) {
+			this.varKey = varKey;
+			this.visibleFiles = List.copyOf(visibleFiles);
+			this.classFiles = List.copyOf(classFiles);
+			this.file = file;
+			this.offset = offset;
+			this.visitedValues = java.util.Set.copyOf(visitedValues);
+			this.resolvingVarKeys = java.util.Set.copyOf(resolvingVarKeys);
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other) return true;
+			if (!(other instanceof ChainResolveKey)) return false;
+			ChainResolveKey key = (ChainResolveKey) other;
+			return offset == key.offset
+					&& varKey.equals(key.varKey)
+					&& file.equals(key.file)
+					&& visibleFiles.equals(key.visibleFiles)
+					&& classFiles.equals(key.classFiles)
+					&& visitedValues.equals(key.visitedValues)
+					&& resolvingVarKeys.equals(key.resolvingVarKeys);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = varKey.hashCode();
+			result = 31 * result + file.hashCode();
+			result = 31 * result + offset;
+			result = 31 * result + visibleFiles.hashCode();
+			result = 31 * result + classFiles.hashCode();
+			result = 31 * result + visitedValues.hashCode();
+			result = 31 * result + resolvingVarKeys.hashCode();
+			return result;
+		}
 	}
 
 	// ===== Видимая переменная — результат работы единственного источника =====
@@ -302,10 +429,24 @@ public final class P3VariableIndex {
 	}
 
 	private @NotNull CursorContext buildCursorContext(@NotNull VirtualFile file, int offset) {
+		ResolveRequestCache cache = RESOLVE_REQUEST_CACHE.get();
+		ScopeFilesKey key = new ScopeFilesKey(file, offset);
+		if (cache.depth > 0) {
+			CursorContext cached = cache.cursorContexts.get(key);
+			if (cached != null) {
+				return cached;
+			}
+		}
+
 		String text = readFileTextSmart(file);
+		CursorContext result;
 		if (text == null) {
-			return new CursorContext(null, null, null, null, null, false, false, offset,
+			result = new CursorContext(null, null, null, null, null, false, false, offset,
 					java.util.Collections.emptySet());
+			if (cache.depth > 0) {
+				cache.cursorContexts.put(key, result);
+			}
+			return result;
 		}
 		List<Parser3ClassUtils.ClassBoundary> cb = Parser3ClassUtils.findClassBoundaries(text);
 		List<Parser3ClassUtils.MethodBoundary> mb = Parser3ClassUtils.findMethodBoundaries(text, cb);
@@ -322,7 +463,37 @@ public final class P3VariableIndex {
 		// Собираем иерархию классов (@BASE цепочка)
 		java.util.Set<String> classHierarchy = buildClassHierarchy(ownerClass);
 
-		return new CursorContext(text, cb, mb, ownerClass, method, inheritedMainLocals, hasLocals, offset, classHierarchy);
+		result = new CursorContext(text, cb, mb, ownerClass, method, inheritedMainLocals, hasLocals, offset, classHierarchy);
+		if (cache.depth > 0) {
+			cache.cursorContexts.put(key, result);
+		}
+		return result;
+	}
+
+	private @NotNull Map<String, List<P3VariableFileIndex.VariableTypeInfo>> parseCurrentFileVariables(
+			@NotNull CursorContext ctx,
+			@NotNull VirtualFile currentFile,
+			int currentOffset
+	) {
+		if (ctx.text == null) {
+			return java.util.Collections.emptyMap();
+		}
+
+		ResolveRequestCache cache = RESOLVE_REQUEST_CACHE.get();
+		ScopeFilesKey key = new ScopeFilesKey(currentFile, currentOffset);
+		if (cache.depth > 0) {
+			Map<String, List<P3VariableFileIndex.VariableTypeInfo>> cached = cache.parsedCurrentFiles.get(key);
+			if (cached != null) {
+				return cached;
+			}
+		}
+
+		Map<String, List<P3VariableFileIndex.VariableTypeInfo>> parsed =
+				P3VariableFileIndex.parseVariablesFromText(ctx.text);
+		if (cache.depth > 0) {
+			cache.parsedCurrentFiles.put(key, parsed);
+		}
+		return parsed;
 	}
 
 	/**
@@ -435,7 +606,7 @@ public final class P3VariableIndex {
 		// 1. Текущий файл — парсим из Document (несохранённые изменения)
 		if (ctx.text != null) {
 			long currentParseStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
-			currentFileData = P3VariableFileIndex.parseVariablesFromText(ctx.text);
+			currentFileData = parseCurrentFileVariables(ctx, currentFile, cursorOffset);
 			if (DEBUG_PERF) {
 				System.out.println("[P3VarIndex.PERF] parseCurrentFileVariables: "
 						+ (System.currentTimeMillis() - currentParseStart) + "ms"
@@ -534,11 +705,7 @@ public final class P3VariableIndex {
 				String dedupKey = paramName + "|null";
 				VisibleVariable existing = dedup.get(dedupKey);
 				// Если уже есть локальное присваивание внутри текущего метода — не перезаписываем
-				boolean hasLocalAssignment = existing != null
-						&& !existing.isMethodParam
-						&& existing.file.equals(currentFile)
-						&& existing.offset > ctx.method.start
-						&& existing.offset < ctx.method.end;
+				boolean hasLocalAssignment = hasLocalAssignmentInCurrentMethod(dedup, paramName, currentFile, ctx.method);
 				if (hasLocalAssignment) continue;
 				long parameterTypeStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
 				String paramType = findParameterType(paramName, currentFile, cursorOffset);
@@ -577,6 +744,23 @@ public final class P3VariableIndex {
 		}
 
 		return new ArrayList<>(dedup.values());
+	}
+
+	private static boolean hasLocalAssignmentInCurrentMethod(
+			@NotNull Map<String, VisibleVariable> dedup,
+			@NotNull String paramName,
+			@NotNull VirtualFile currentFile,
+			@NotNull Parser3ClassUtils.MethodBoundary method
+	) {
+		for (VisibleVariable variable : dedup.values()) {
+			if (variable.isMethodParam) continue;
+			if (!paramName.equals(variable.cleanName)) continue;
+			if (!variable.file.equals(currentFile)) continue;
+			if (variable.offset <= method.start || variable.offset >= method.end) continue;
+			if (variable.varKey.startsWith("self.") || variable.varKey.startsWith("MAIN:")) continue;
+			return true;
+		}
+		return false;
 	}
 
 	private @Nullable VisibleVariable createSpecialMethodParam(
@@ -1031,7 +1215,9 @@ public final class P3VariableIndex {
 				String effectiveSourceVarKey = shape.effectiveSourceVarKey();
 
 				String cleanName = extractPureVarName(varKey);
-				String dedupKey = cleanName + "|" + structuralVisible.ownerClass;
+				String varPrefix = extractVarPrefix(varKey);
+				String dedupKey = (varPrefix != null ? varPrefix : "")
+						+ cleanName + "|" + structuralVisible.ownerClass;
 
 				// Дедупликация с учётом позиции ^use[] в текущем файле:
 				// - useOffset > existingEffective → этот файл подключён позже → перезаписываем
@@ -1142,6 +1328,12 @@ public final class P3VariableIndex {
 			boolean hasLocals,
 			@Nullable java.util.Set<String> methodParams
 	) {
+		long filterStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
+		int duplicateCount = 0;
+		int syntheticCheckCount = 0;
+		long syntheticCheckTime = 0;
+		int syntheticExistingWins = 0;
+		int syntheticNewSkipped = 0;
 		Map<String, VisibleVariable> result = new LinkedHashMap<>();
 
 		for (VisibleVariable v : variables) {
@@ -1196,8 +1388,38 @@ public final class P3VariableIndex {
 			// но локальная $var всегда побеждает над $self.var (при @OPTIONS locals),
 			// и параметр метода не перезаписывается ничем.
 			if (result.containsKey(v.cleanName)) {
+				duplicateCount++;
 				VisibleVariable existing = result.get(v.cleanName);
 				if (existing.isMethodParam) continue; // параметр не перезаписываем
+				long syntheticStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
+				boolean existingSyntheticReadChain = isSyntheticReadChainOnly(existing);
+				boolean newSyntheticReadChain = isSyntheticReadChainOnly(v);
+				if (DEBUG_PERF) {
+					syntheticCheckCount += 2;
+					syntheticCheckTime += System.currentTimeMillis() - syntheticStart;
+				}
+				if (existingSyntheticReadChain && !newSyntheticReadChain) {
+					syntheticExistingWins++;
+					result.put(v.cleanName, v);
+					continue;
+				}
+				if (!existingSyntheticReadChain && newSyntheticReadChain) {
+					syntheticNewSkipped++;
+					continue;
+				}
+				if ("normal".equals(contextType)
+						&& existing.varKey.startsWith("MAIN:")
+						&& !v.varKey.startsWith("MAIN:")
+						&& !v.varKey.startsWith("self.")) {
+					result.put(v.cleanName, v);
+					continue;
+				}
+				if ("MAIN".equals(contextType)
+						&& !existing.varKey.startsWith("MAIN:")
+						&& v.varKey.startsWith("MAIN:")) {
+					result.put(v.cleanName, v);
+					continue;
+				}
 				// Если в result уже $self.var, а новый — простой $var (без self.) — заменяем
 				if (existing.varKey.startsWith("self.") && !v.varKey.startsWith("self.")) {
 					result.put(v.cleanName, v);
@@ -1207,7 +1429,32 @@ public final class P3VariableIndex {
 			}
 		}
 
+		if (DEBUG_PERF) {
+			System.out.println("[P3VarIndex.PERF] filterByContext: "
+					+ (System.currentTimeMillis() - filterStart) + "ms"
+					+ " context=" + contextType
+					+ " input=" + variables.size()
+					+ " output=" + result.size()
+					+ " duplicates=" + duplicateCount
+					+ " syntheticChecks=" + syntheticCheckCount
+					+ " syntheticCheckTime=" + syntheticCheckTime + "ms"
+					+ " syntheticExistingWins=" + syntheticExistingWins
+					+ " syntheticNewSkipped=" + syntheticNewSkipped
+					+ " hasLocals=" + hasLocals
+					+ " owner=" + cursorOwnerClass);
+		}
+
 		return result;
+	}
+
+	private static boolean isSyntheticReadChainOnly(@NotNull VisibleVariable variable) {
+		if (!variable.isAdditive) return false;
+		P3VariableFileIndex.VariableTypeInfo info = new P3VariableFileIndex.VariableTypeInfo(
+				variable.offset, variable.className, variable.ownerClass, null,
+				variable.methodName, variable.targetClassName, extractVarPrefix(variable.varKey), variable.isLocal,
+				variable.columns, variable.sourceVarKey, variable.hashKeys, variable.hashSourceVars,
+				variable.isAdditive, variable.receiverVarKey);
+		return P3VariableEffectiveShape.isSyntheticReadChainAdditive(info);
 	}
 
 	/**
@@ -1355,14 +1602,14 @@ public final class P3VariableIndex {
 			@NotNull VirtualFile currentFile,
 			int currentOffset
 	) {
-		return analyzeResolvedVariableInternal(
+		return withResolveRequestCache(() -> analyzeResolvedVariableInternal(
 				variable,
 				visibleFiles,
 				currentFile,
 				currentOffset,
 				new java.util.HashSet<>(),
 				new java.util.HashSet<>()
-		);
+		));
 	}
 
 	public @Nullable VariableCompletionInfo resolveEffectiveVariable(
@@ -1371,14 +1618,14 @@ public final class P3VariableIndex {
 			@NotNull VirtualFile currentFile,
 			int currentOffset
 	) {
-		return resolveEffectiveVariableInternal(
+		return withResolveRequestCache(() -> resolveEffectiveVariableInternal(
 				varKey,
 				visibleFiles,
 				currentFile,
 				currentOffset,
 				new java.util.HashSet<>(),
 				new java.util.HashSet<>()
-		);
+		));
 	}
 
 	private @Nullable VariableCompletionInfo resolveEffectiveVariableInternal(
@@ -1398,14 +1645,17 @@ public final class P3VariableIndex {
 		}
 
 		VisibleVariable variable = findRawVisibleVariable(varKey, visibleFiles, currentFile, currentOffset);
-		VariableCompletionInfo getterInfo = findGetterPropertyCompletionInfo(
-				varKey,
-				currentFile,
-				currentOffset,
-				visitedValues,
-				resolvingVarKeys
-		);
-		if (getterInfo != null && shouldPreferGetterProperty(variable)) {
+		boolean canPreferGetter = variable == null || shouldPreferGetterProperty(variable);
+		VariableCompletionInfo getterInfo = canPreferGetter
+				? findGetterPropertyCompletionInfo(
+						varKey,
+						currentFile,
+						currentOffset,
+						visitedValues,
+						resolvingVarKeys
+				)
+				: null;
+		if (getterInfo != null) {
 			resolvingVarKeys.remove(resolveKey);
 			return getterInfo;
 		}
@@ -1628,7 +1878,7 @@ public final class P3VariableIndex {
 			String sourceVarKey = P3VariableEffectiveShape.decodeHashSourceVarKey(resolved.sourceVarKey);
 			int sourceLookupOffset = P3VariableEffectiveShape.decodeHashSourceLookupOffset(resolved.sourceVarKey, currentOffset);
 			ChainResolveInfo chainInfo =
-					resolveEffectiveChainInternal(
+					resolveEffectiveChainCached(
 							sourceVarKey,
 							visibleFiles,
 							currentFile,
@@ -1700,14 +1950,14 @@ public final class P3VariableIndex {
 			@NotNull VirtualFile currentFile,
 			int currentOffset
 	) {
-		return resolveValueRefInternal(
+		return withResolveRequestCache(() -> resolveValueRefInternal(
 				toResolvedValue(variable),
 				visibleFiles,
 				currentFile,
 				currentOffset,
 				new java.util.HashSet<>(),
 				new java.util.HashSet<>()
-		);
+		));
 	}
 
 	private @NotNull P3ResolvedValue resolveValueRefInternal(
@@ -1762,7 +2012,7 @@ public final class P3VariableIndex {
 			String sourceVarKey = P3VariableEffectiveShape.decodeHashSourceVarKey(value.sourceVarKey);
 			int sourceLookupOffset = P3VariableEffectiveShape.decodeHashSourceLookupOffset(value.sourceVarKey, currentOffset);
 			ChainResolveInfo chainInfo =
-					resolveEffectiveChainInternal(
+					resolveEffectiveChainCached(
 							sourceVarKey,
 							visibleFiles,
 							currentFile,
@@ -1790,7 +2040,7 @@ public final class P3VariableIndex {
 			@NotNull java.util.Set<String> resolvingVarKeys
 	) {
 		ChainResolveInfo chainInfo =
-				resolveEffectiveChainInternal(
+				resolveEffectiveChainCached(
 						receiverVarKey,
 						visibleFiles,
 						currentFile,
@@ -1822,14 +2072,44 @@ public final class P3VariableIndex {
 			@NotNull VirtualFile currentFile,
 			int cursorOffset
 	) {
-		return new P3ScopeContext(project, currentFile, cursorOffset).getVariableSearchFiles();
+		return getScopeFiles(currentFile, cursorOffset).variableFiles;
 	}
 
 	private @NotNull java.util.List<VirtualFile> getVisibleFilesForClassMembers(
 			@NotNull VirtualFile currentFile,
 			int cursorOffset
 	) {
-		return new P3ScopeContext(project, currentFile, cursorOffset).getClassSearchFiles();
+		return getScopeFiles(currentFile, cursorOffset).classFiles;
+	}
+
+	private void putScopeFiles(
+			@NotNull VirtualFile currentFile,
+			int cursorOffset,
+			@NotNull List<VirtualFile> variableFiles,
+			@NotNull List<VirtualFile> classFiles
+	) {
+		RESOLVE_REQUEST_CACHE.get().scopeFiles.put(
+				new ScopeFilesKey(currentFile, cursorOffset),
+				new CachedScopeFiles(variableFiles, classFiles));
+	}
+
+	private @NotNull CachedScopeFiles getScopeFiles(
+			@NotNull VirtualFile currentFile,
+			int cursorOffset
+	) {
+		ResolveRequestCache cache = RESOLVE_REQUEST_CACHE.get();
+		ScopeFilesKey key = new ScopeFilesKey(currentFile, cursorOffset);
+		CachedScopeFiles cached = cache.scopeFiles.get(key);
+		if (cached != null) {
+			return cached;
+		}
+
+		P3ScopeContext scopeContext = new P3ScopeContext(project, currentFile, cursorOffset);
+		CachedScopeFiles computed = new CachedScopeFiles(
+				scopeContext.getVariableSearchFiles(),
+				scopeContext.getClassSearchFiles());
+		cache.scopeFiles.put(key, computed);
+		return computed;
 	}
 
 	private static @NotNull P3ResolvedValue toResolvedValue(@NotNull VisibleVariable variable) {
@@ -2093,14 +2373,77 @@ public final class P3VariableIndex {
 			@NotNull VirtualFile currentFile,
 			int currentOffset
 	) {
-		return resolveEffectiveChainInternal(
+		return withResolveRequestCache(() -> resolveEffectiveChainCached(
 				varKey,
 				visibleFiles,
 				currentFile,
 				currentOffset,
 				new java.util.HashSet<>(),
 				new java.util.HashSet<>()
+		));
+	}
+
+	public @Nullable ChainResolveInfo resolveEffectiveChain(
+			@NotNull String varKey,
+			@NotNull List<VirtualFile> visibleFiles,
+			@NotNull List<VirtualFile> classFiles,
+			@NotNull VirtualFile currentFile,
+			int currentOffset
+	) {
+		return withResolveRequestCache(() -> {
+			putScopeFiles(currentFile, currentOffset, visibleFiles, classFiles);
+			return resolveEffectiveChainCached(
+					varKey,
+					visibleFiles,
+					currentFile,
+					currentOffset,
+					new java.util.HashSet<>(),
+					new java.util.HashSet<>()
+			);
+		});
+	}
+
+	private @Nullable ChainResolveInfo resolveEffectiveChainCached(
+			@NotNull String varKey,
+			@NotNull List<VirtualFile> visibleFiles,
+			@NotNull VirtualFile currentFile,
+			int currentOffset,
+			@NotNull java.util.Set<String> visitedValues,
+			@NotNull java.util.Set<String> resolvingVarKeys
+	) {
+		ResolveRequestCache cache = RESOLVE_REQUEST_CACHE.get();
+		CachedScopeFiles scope = cache.scopeFiles.get(new ScopeFilesKey(currentFile, currentOffset));
+		List<VirtualFile> classFiles = scope != null ? scope.classFiles : java.util.Collections.emptyList();
+		ChainResolveKey key = new ChainResolveKey(
+				varKey,
+				visibleFiles,
+				classFiles,
+				currentFile,
+				currentOffset,
+				visitedValues,
+				resolvingVarKeys
 		);
+		if (cache.chainResolve.containsKey(key)) {
+			return cache.chainResolve.get(key);
+		}
+		if (cache.chainResolveMisses.contains(key)) {
+			return null;
+		}
+
+		ChainResolveInfo result = resolveEffectiveChainInternal(
+				varKey,
+				visibleFiles,
+				currentFile,
+				currentOffset,
+				visitedValues,
+				resolvingVarKeys
+		);
+		if (result == null) {
+			cache.chainResolveMisses.add(key);
+		} else {
+			cache.chainResolve.put(key, result);
+		}
+		return result;
 	}
 
 	private @Nullable ChainResolveInfo resolveEffectiveChainInternal(
@@ -2215,7 +2558,7 @@ public final class P3VariableIndex {
 						String oldKey = P3VariableParser.getRenamedHashSource(entry);
 						if (oldKey != null && !oldKey.isEmpty()) {
 							String oldChain = buildFieldPath(segments, 0, i) + "." + oldKey;
-							ChainResolveInfo oldInfo = resolveEffectiveChainInternal(
+							ChainResolveInfo oldInfo = resolveEffectiveChainCached(
 									oldChain,
 									visibleFiles,
 									currentFile,
@@ -2453,7 +2796,8 @@ public final class P3VariableIndex {
 			@NotNull VirtualFile currentFile,
 			int currentOffset
 	) {
-		return resolveSourceVariable(var, getVisibleFilesForCurrent(currentFile, currentOffset), currentFile, currentOffset);
+		return withResolveRequestCache(() ->
+				resolveSourceVariable(var, getVisibleFilesForCurrent(currentFile, currentOffset), currentFile, currentOffset));
 	}
 
 	private @NotNull VisibleVariable resolveSourceVariable(
@@ -2545,7 +2889,8 @@ public final class P3VariableIndex {
 			@NotNull VirtualFile currentFile,
 			int currentOffset
 	) {
-		return resolveAllHashKeys(rootVar, getVisibleFilesForCurrent(currentFile, currentOffset), currentFile, currentOffset);
+		return withResolveRequestCache(() ->
+				resolveAllHashKeys(rootVar, getVisibleFilesForCurrent(currentFile, currentOffset), currentFile, currentOffset));
 	}
 
 	private @Nullable java.util.Map<String, HashEntryInfo> resolveAllHashKeys(
@@ -3139,7 +3484,7 @@ public final class P3VariableIndex {
 		if (ctx.text == null) return null;
 
 		// 1. Текущий файл — с проверкой offset
-		var currentFileData = P3VariableFileIndex.parseVariablesFromText(ctx.text);
+		var currentFileData = parseCurrentFileVariables(ctx, currentFile, currentOffset);
 		if (DEBUG_ALWAYS) System.out.println("[mergeAliasHashKeys] chain=" + canonicalChain + " fileData.keys=" + currentFileData.keySet());
 		java.util.Map<String, HashEntryInfo> result = mergeAliasKeysFromCurrentFile(canonicalChain, currentFile, currentFileData, currentOffset, null);
 
@@ -3266,7 +3611,7 @@ public final class P3VariableIndex {
 		CursorContext ctx = buildCursorContext(currentFile, currentOffset);
 		if (ctx.text == null) return null;
 
-		var fileData = P3VariableFileIndex.parseVariablesFromText(ctx.text);
+		var fileData = parseCurrentFileVariables(ctx, currentFile, currentOffset);
 		String targetSvk = "foreach:" + rootVarPureName;
 		int rootDefinitionOffset = findActiveRootVariableOffset(rootVarPureName, currentFile, currentOffset);
 		if (DEBUG_ALWAYS) System.out.println("[findForeachAdditiveKeys] looking for svk=" + targetSvk + " in " + fileData.keySet());
@@ -3342,7 +3687,7 @@ public final class P3VariableIndex {
 		CursorContext ctx = buildCursorContext(currentFile, currentOffset);
 		if (ctx.text == null) return null;
 
-		var fileData = P3VariableFileIndex.parseVariablesFromText(ctx.text);
+		var fileData = parseCurrentFileVariables(ctx, currentFile, currentOffset);
 		String targetSvk = "foreach_field:" + rootVarPureName + ":" + fieldPath;
 		String collectionVarKey = rootVarPureName + "." + fieldPath;
 		int rootDefinitionOffset = findActiveRootVariableOffset(rootVarPureName, currentFile, currentOffset);

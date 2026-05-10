@@ -157,7 +157,7 @@ public final class P3UseCompletionContributor extends CompletionContributor {
 			}
 
 			if (insertMode == P3PathCompletionContext.InsertMode.LINE) {
-				return ch == ' ' || ch == '\t';
+				return ch == ' ' || ch == '\t' || ch == ']' || ch == '}';
 			}
 
 			if (insertMode == P3PathCompletionContext.InsertMode.ARGUMENT) {

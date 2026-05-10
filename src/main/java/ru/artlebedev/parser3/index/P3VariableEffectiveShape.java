@@ -139,6 +139,38 @@ final class P3VariableEffectiveShape {
 		);
 	}
 
+	static boolean isSyntheticReadChainAdditive(@NotNull P3VariableFileIndex.VariableTypeInfo info) {
+		return info.isAdditive
+				&& info.columns == null
+				&& info.sourceVarKey == null
+				&& (info.hashSourceVars == null || info.hashSourceVars.isEmpty())
+				&& info.methodName == null
+				&& info.targetClassName == null
+				&& info.receiverVarKey == null
+				&& containsOnlySyntheticReadChainKeys(info.hashKeys);
+	}
+
+	private static boolean containsOnlySyntheticReadChainKeys(@Nullable Map<String, HashEntryInfo> hashKeys) {
+		if (hashKeys == null || hashKeys.isEmpty()) return false;
+		for (HashEntryInfo entry : hashKeys.values()) {
+			if (!isSyntheticReadChainEntry(entry)) return false;
+		}
+		return true;
+	}
+
+	private static boolean isSyntheticReadChainEntry(@NotNull HashEntryInfo entry) {
+		if (entry.offset >= 0
+				|| entry.columns != null
+				|| entry.sourceVarKey != null
+				|| entry.methodName != null
+				|| entry.targetClassName != null
+				|| entry.receiverVarKey != null) {
+			return false;
+		}
+		if (entry.nestedKeys == null || entry.nestedKeys.isEmpty()) return true;
+		return containsOnlySyntheticReadChainKeys(entry.nestedKeys);
+	}
+
 	private boolean canInheritBestStructure(@NotNull P3VariableFileIndex.VariableTypeInfo structuralVisible) {
 		boolean isForeachScopedSource =
 				ignoreForeachScopedSource

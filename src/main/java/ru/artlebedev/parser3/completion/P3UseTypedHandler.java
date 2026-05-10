@@ -95,6 +95,13 @@ public class P3UseTypedHandler extends TypedHandlerDelegate {
 			return Result.CONTINUE;
 		}
 
+		if (P3CompletionUtils.shouldAutoPopupVariableDot(text, offset, c)) {
+			ApplicationManager.getApplication().invokeLater(
+					() -> P3VariableInsertHandler.showBasicCompletion(project, editor)
+			);
+			return Result.STOP;
+		}
+
 		if (c != '/' && c != '.' && c != '[' && c != '{' && c != ';') {
 			return Result.CONTINUE;
 		}

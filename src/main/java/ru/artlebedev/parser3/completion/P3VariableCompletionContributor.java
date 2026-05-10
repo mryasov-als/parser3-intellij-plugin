@@ -20,6 +20,7 @@ import ru.artlebedev.parser3.utils.Parser3ChainUtils;
 import ru.artlebedev.parser3.utils.Parser3IdentifierUtils;
 import ru.artlebedev.parser3.utils.Parser3PsiUtils;
 import ru.artlebedev.parser3.visibility.P3ScopeContext;
+import ru.artlebedev.parser3.visibility.P3VariableScopeContext;
 
 import java.util.*;
 
@@ -741,7 +742,8 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 		long t1 = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		// Тот же источник данных что и для ^var.
 		P3VariableIndex varTypeIndex = P3VariableIndex.getInstance(project);
-		List<P3VariableIndex.VisibleVariable> allVisible = varTypeIndex.getVisibleVariables(visibleFiles, virtualFile, cursorOffset);
+		List<P3VariableIndex.VisibleVariable> allVisible =
+				varTypeIndex.getVisibleVariables(new P3VariableScopeContext(scopeContext));
 		if (DEBUG_PERF) System.out.println("[P3VarCompletion.PERF] getVisibleVariables: " + (System.currentTimeMillis() - t1) + "ms, allVisible=" + allVisible.size());
 
 		// Определяем текущий класс для фильтрации
@@ -769,7 +771,7 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 		long getterNamesStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		if (cursorOwnerClass != null && ("self".equals(varCtx.contextType) || "normal".equals(varCtx.contextType))) {
 			getterPropertyNames = P3VariableMethodCompletionContributor.collectGetterPropertyNames(
-					project, cursorOwnerClass, virtualFile, cursorOffset);
+					project, cursorOwnerClass, scopeContext.getClassSearchFiles());
 		}
 		if (DEBUG_PERF) {
 			System.out.println("[P3VarCompletion.PERF] collectGetterPropertyNames: "
@@ -802,18 +804,20 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 		}
 
 		long t3 = DEBUG_PERF ? System.currentTimeMillis() : 0;
-		int findColumnsCallCount = 0;
-		long findColumnsTime = 0;
-		int skippedByPrefixCount = 0;
+		final int[] findColumnsCallCount = {0};
+		final long[] findColumnsTime = {0};
+		final int[] skippedByPrefixCount = {0};
+		final java.util.Set<String> getterPropertyNamesForLoop = getterPropertyNames;
+		varTypeIndex.withSharedResolveCache(() -> {
 		for (Map.Entry<String, P3VariableIndex.VisibleVariable> entry : filtered.entrySet()) {
 			String varName = entry.getKey();
 			P3VariableIndex.VisibleVariable v = entry.getValue();
-			if (shouldHideClassPropertyBehindGetter(v, varName, getterPropertyNames)) {
+			if (shouldHideClassPropertyBehindGetter(v, varName, getterPropertyNamesForLoop)) {
 				if (DEBUG) System.out.println("[P3VarCompletion.addVars] skip class-property duplicate for getter: " + varName);
 				continue;
 			}
 			if (!varCtx.typedPrefix.isEmpty() && !varResult.getPrefixMatcher().prefixMatches(varName)) {
-				skippedByPrefixCount++;
+				skippedByPrefixCount[0]++;
 				continue;
 			}
 
@@ -828,8 +832,8 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 			P3VariableIndex.VariableCompletionInfo completionInfo =
 					varTypeIndex.analyzeVariableCompletion(v, visibleFiles, virtualFile, cursorOffset);
 			if (DEBUG_PERF) {
-				findColumnsCallCount++;
-				findColumnsTime += System.currentTimeMillis() - tc0;
+				findColumnsCallCount[0]++;
+				findColumnsTime[0] += System.currentTimeMillis() - tc0;
 			}
 			v = completionInfo.variable;
 
@@ -869,15 +873,23 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 					}
 					// Открываем popup с колонками/ключами хеша
 					int popupOffset = Math.min(newTail, doc.getTextLength());
-					com.intellij.psi.PsiDocumentManager.getInstance(context.getProject()).commitDocument(doc);
 					P3VariableInsertHandler.moveCaretToHostOffset(editor, doc, popupOffset);
-					com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater(() -> {
+					Runnable previous = context.getLaterRunnable();
+					context.setLaterRunnable(() -> {
+						if (previous != null) {
+							previous.run();
+						}
 						if (context.getProject().isDisposed()) {
 							return;
 						}
-						com.intellij.psi.PsiDocumentManager.getInstance(context.getProject()).commitDocument(doc);
 						P3VariableInsertHandler.moveCaretToHostOffset(editor, doc, Math.min(popupOffset, doc.getTextLength()));
-						P3VariableInsertHandler.showBasicCompletion(context.getProject(), editor);
+						com.intellij.openapi.application.ApplicationManager.getApplication().invokeLater(() -> {
+							if (context.getProject().isDisposed()) {
+								return;
+							}
+							P3VariableInsertHandler.moveCaretToHostOffset(editor, doc, Math.min(popupOffset, doc.getTextLength()));
+							P3VariableInsertHandler.showBasicCompletion(context.getProject(), editor);
+						});
 					});
 						});
 			} else if (varCtx.needsClosingBrace) {
@@ -894,6 +906,8 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 
 			varResult.addElement(PrioritizedLookupElement.withPriority(element, priority));
 		}
+		return null;
+		});
 
 		// Параметры метода теперь приходят через filtered (isMethodParam=true в VisibleVariable),
 		// добавленные в getVisibleVariables как единственный источник истины.
@@ -919,7 +933,7 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 		long t4 = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		if (cursorOwnerClass != null && ("self".equals(varCtx.contextType) || "normal".equals(varCtx.contextType))) {
 			P3VariableMethodCompletionContributor.addGetterProperties(
-					project, cursorOwnerClass, virtualFile, cursorOffset, varResult);
+					project, cursorOwnerClass, scopeContext.getClassSearchFiles(), varResult);
 		}
 		if (DEBUG_PERF) System.out.println("[P3VarCompletion.PERF] addGetterProperties: " + (System.currentTimeMillis() - t4) + "ms");
 
@@ -933,9 +947,9 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 			long totalTime = System.currentTimeMillis() - startTime;
 			System.out.println("[P3VarCompletion.PERF] addVariableCompletions TOTAL: " + totalTime + "ms"
 					+ " filtered=" + filtered.size()
-					+ " skippedByPrefix=" + skippedByPrefixCount
-					+ " findColumnsCallCount=" + findColumnsCallCount
-					+ " findColumnsTime=" + findColumnsTime + "ms");
+					+ " skippedByPrefix=" + skippedByPrefixCount[0]
+					+ " findColumnsCallCount=" + findColumnsCallCount[0]
+					+ " findColumnsTime=" + findColumnsTime[0] + "ms");
 		}
 	}
 

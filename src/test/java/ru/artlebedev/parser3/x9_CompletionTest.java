@@ -6,7 +6,9 @@ import com.intellij.codeInsight.editorActions.CompletionAutoPopupHandler;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.codeInsight.lookup.LookupFocusDegree;
 import com.intellij.codeInsight.lookup.LookupManager;
+import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.TestModeFlags;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +16,7 @@ import ru.artlebedev.parser3.completion.P3ClassCompletionContributor;
 import ru.artlebedev.parser3.templates.Parser3UserTemplate;
 import ru.artlebedev.parser3.templates.Parser3UserTemplatesService;
 import ru.artlebedev.parser3.visibility.P3ScopeContext;
+import ru.artlebedev.parser3.visibility.P3VariableScopeContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -268,7 +271,8 @@ public class x9_CompletionTest extends Parser3TestCase {
 				.filter(e -> lookupString.equals(e.getLookupString()))
 				.findFirst()
 				.orElse(null);
-		assertNotNull("Должен быть lookup element '" + lookupString + "'", target);
+		assertNotNull("Должен быть lookup element '" + lookupString + "', есть: " +
+				Arrays.stream(elements).map(LookupElement::getLookupString).collect(Collectors.toList()), target);
 		myFixture.getLookup().setCurrentItem(target);
 		myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR);
 	}
@@ -2814,6 +2818,58 @@ public class x9_CompletionTest extends Parser3TestCase {
 				1, duplicateUseCount);
 	}
 
+	public void testVariableScopeContextUsesAlreadyComputedUseOffsets() {
+		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		VirtualFile currentFile = createParser3FileInDir("scope-context-reuse/current.p",
+				// Минимальный fixture для проверки переиспользования уже рассчитанного use-offset.
+				"@main[]\n" +
+						"$current[1]\n");
+		VirtualFile futureUseFile = createParser3FileInDir("scope-context-reuse/future-use.p",
+				// Минимальный fixture для проверки позиционной видимости внешнего файла.
+				"@main[]\n" +
+						"$external[1]\n");
+
+		java.util.Map<VirtualFile, Integer> useOffsets = new java.util.HashMap<>();
+		useOffsets.put(futureUseFile, 100);
+		P3VariableScopeContext scopeContext = new P3VariableScopeContext(
+				getProject(),
+				currentFile,
+				10,
+				java.util.Arrays.asList(currentFile, futureUseFile),
+				useOffsets);
+
+		assertEquals("Переданный use-offset должен сохраниться без пересборки P3ScopeContext",
+				100, scopeContext.getUseOffset(futureUseFile));
+		assertFalse("Файл из будущего ^use[] не должен быть видим в позиции до use-offset",
+				scopeContext.isSourceVisibleAtCursor(futureUseFile));
+	}
+
+	public void testAllProjectFilesCacheRefreshesAfterParser3Modification() {
+		ru.artlebedev.parser3.visibility.P3VisibilityService visibilityService =
+				ru.artlebedev.parser3.visibility.P3VisibilityService.getInstance(getProject());
+		VirtualFile firstFile = createParser3FileInDir("all-project-cache/first.p",
+				// Минимальный fixture для проверки кеша списка Parser3-файлов.
+				"@main[]\n" +
+						"$first[1]\n");
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+
+		List<VirtualFile> firstRead = visibilityService.getAllProjectFiles();
+		assertTrue("Первый файл должен быть в списке Parser3-файлов",
+				firstRead.contains(firstFile));
+
+		VirtualFile secondFile = createParser3FileInDir("all-project-cache/second.p",
+				// Минимальный fixture для проверки инвалидации кеша списка Parser3-файлов.
+				"@main[]\n" +
+						"$second[1]\n");
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+
+		List<VirtualFile> secondRead = visibilityService.getAllProjectFiles();
+		assertTrue("Кеш списка Parser3-файлов должен обновиться после добавления файла",
+				secondRead.contains(secondFile));
+	}
+
 	public void testScopeContext_cyclicBaseFromParser387DoesNotOverflowCompletion() {
 		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
 		createParser3FileInDir("scope-parser387/A.p",
@@ -5340,6 +5396,902 @@ public class x9_CompletionTest extends Parser3TestCase {
 				completions.contains("person."));
 	}
 
+	public void testDollarMainCompletion_selectReadChainVariableKeepsCurrentLine() {
+		String content =
+				"@main[]\n" +
+						"$MAIN:person.subgroups[^hash::create[]]\n" +
+						"\n" +
+						"@create[]\n" +
+						"$MAIN:perso<caret>\n" +
+						"\n" +
+						"@get_rights[person]\n" +
+						"^if(!$person){$person[$MAIN:person]}\n" +
+						"\n" +
+						"$person.subgroups[^hash::create[]]\n";
+		configureParser3TextFile("main_completion_read_chain_insert.p", content);
+
+		myFixture.complete(CompletionType.BASIC);
+		selectCompletion("person.");
+		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		try {
+			AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+		} catch (java.util.concurrent.TimeoutException e) {
+			throw new AssertionError("Не дождались delayed auto-popup actions", e);
+		}
+		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+
+		String text = myFixture.getEditor().getDocument().getText();
+		assertTrue("Выбор person. после $MAIN:perso должен править текущую строку: " + text,
+				text.contains("$MAIN:person.\n"));
+		assertTrue("Выбор person. не должен затирать нижний read-chain key subgroups: " + text,
+				text.contains("$person.subgroups[^hash::create[]]"));
+
+		Lookup nextLookup = myFixture.getLookup();
+		assertNotNull("Автопопап после person. должен быть открыт", nextLookup);
+		assertTrue("Автопопап после person. должен быть LookupImpl", nextLookup instanceof LookupImpl);
+		LookupImpl nextLookupImpl = (LookupImpl) nextLookup;
+		waitForDefaultLookupSelection(nextLookupImpl);
+		LookupElement[] nextElements = myFixture.getLookupElements();
+		List<String> nextLookupStrings = nextElements == null ? List.of() : Arrays.stream(nextElements)
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertNotNull("Автопопап после person. должен сразу выбрать первый пункт", nextLookup.getCurrentItem());
+		assertTrue("Автопопап после person. должен быть сфокусирован, чтобы Enter сразу вставлял выбранный пункт",
+				nextLookup.isFocused());
+		assertEquals("Автопопап после person. должен визуально выбрать первую строку",
+				0,
+				nextLookupImpl.getSelectedIndex());
+		assertTrue("Автопопап после person. должен иметь хотя бы один пункт", nextElements != null && nextElements.length > 0);
+		assertEquals("Автопопап после person. должен выбрать первый пункт, чтобы Enter сразу вставлял его",
+				nextElements[0].getLookupString(),
+				nextLookup.getCurrentItem().getLookupString());
+		nextLookupImpl.setLookupFocusDegree(LookupFocusDegree.UNFOCUSED);
+		waitForFocusedLookup(nextLookupImpl);
+		assertEquals("Автопопап после сброса focus degree должен вернуть синий focused-selection",
+				LookupFocusDegree.FOCUSED,
+				nextLookupImpl.getLookupFocusDegree());
+		assertEquals("Автопопап после сброса focus degree должен сохранить визуальный выбор первой строки",
+				0,
+				nextLookupImpl.getSelectedIndex());
+		assertTrue("Автопопап после person. должен показывать dot-шаблон .foreach[]: " + nextLookupStrings,
+				nextLookupStrings.contains("foreach[]"));
+		assertFalse("Автопопап после person. не должен показывать caret-шаблон ^curl:load[]: " + nextLookupStrings,
+				nextLookupStrings.contains("curl:load[]"));
+		assertFalse("Автопопап после person. не должен показывать mail-шаблоны без явного Ctrl+Space: " + nextLookupStrings,
+				nextLookupStrings.contains("mail:send[]"));
+	}
+
+	public void testDollarCompletion_manualTypedDotOpensHashKeysPopup() throws Throwable {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$person[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.fields[^hash::create[]]\n" +
+						"]\n" +
+						"$person.fields.remote[test_value]\n");
+
+		createParser3FileInDir("www/_mod/auto.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"<caret>\n");
+		VirtualFile vf = myFixture.findFileInTempDir("www/_mod/auto.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type("$person.");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались delayed auto-popup actions после ручного ввода $person.", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+
+		com.intellij.openapi.editor.Document hostDocument =
+				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+		String text = hostDocument.getText();
+		assertTrue("Ручной ввод должен оставить в файле $person.: " + text,
+				text.contains("$person."));
+
+		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+		assertNotNull("После ручного ввода $person. должен автоматически открыться popup с ключами", activeLookup);
+		assertTrue("Popup после ручного ввода $person. должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
+		List<String> names = activeLookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertTrue("Popup после ручного ввода $person. должен содержать login, есть: " + names,
+				names.contains("login"));
+		assertTrue("Popup после ручного ввода $person. должен содержать fields., есть: " + names,
+				names.contains("fields."));
+		assertFalse("После ручной точки не должен оставаться popup корневой переменной person.: " + names,
+				names.contains("person."));
+		LookupElement selected = activeLookup.getCurrentItem();
+		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
+		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testDollarCompletion_typedDotWithActiveVariablePopupOpensHashKeysPopup() throws Throwable {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$person[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.fields[^hash::create[]]\n" +
+						"]\n" +
+						"$person.fields.remote[test_value]\n");
+
+		createParser3FileInDir("www/_mod/active_variable_popup_dot.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$pers<caret>\n");
+		VirtualFile vf = myFixture.findFileInTempDir("www/_mod/active_variable_popup_dot.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		myFixture.complete(CompletionType.BASIC);
+		Lookup variableLookup = myFixture.getLookup();
+		assertNotNull("После $pers должен открыться popup переменных", variableLookup);
+		assertTrue("Popup переменных должен быть LookupImpl", variableLookup instanceof LookupImpl);
+		LookupElement personElement = Arrays.stream(myFixture.getLookupElements())
+				.filter(e -> "person.".equals(e.getLookupString()))
+				.findFirst()
+				.orElse(null);
+		assertNotNull("Popup переменных должен содержать person.", personElement);
+		((LookupImpl) variableLookup).setCurrentItem(personElement);
+
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type(".");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались delayed auto-popup actions после точки в активном popup", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+
+		com.intellij.openapi.editor.Document hostDocument =
+				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+		String text = hostDocument.getText();
+		assertTrue("Ручная точка в активном popup должна вставить $person.: " + text,
+				text.contains("$person."));
+		assertFalse("Ручная точка в активном popup не должна дублировать точку: " + text,
+				text.contains("$person.."));
+
+		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+		assertNotNull("После ручной точки в активном popup должен открыться popup с ключами", activeLookup);
+		assertTrue("Popup после $person. должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
+		List<String> names = activeLookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertTrue("Popup после $person. должен содержать login, есть: " + names,
+				names.contains("login"));
+		assertTrue("Popup после $person. должен содержать fields., есть: " + names,
+				names.contains("fields."));
+		assertFalse("После ручной точки не должен оставаться popup корневой переменной person.: " + names,
+				names.contains("person."));
+		LookupElement selected = activeLookup.getCurrentItem();
+		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
+		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testDollarCompletion_continueTypingVariableNameThenDotOpensHashKeysPopup() throws Throwable {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$person[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.fields[^hash::create[]]\n" +
+						"]\n" +
+						"$person.fields.remote[test_value]\n");
+
+		createParser3FileInDir("www/_mod/continue_typing_variable_dot.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"<caret>\n");
+		VirtualFile vf = myFixture.findFileInTempDir("www/_mod/continue_typing_variable_dot.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type("$per");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались popup переменных после ручного ввода $per", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+
+			myFixture.type("son.");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались popup ключей после допечатки son.", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+
+		com.intellij.openapi.editor.Document hostDocument =
+				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+		String text = hostDocument.getText();
+		assertTrue("Допечатка son. после $per должна оставить в файле $person.: " + text,
+				text.contains("$person."));
+		assertFalse("Допечатка son. после $per не должна дублировать точку: " + text,
+				text.contains("$person.."));
+
+		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+		assertNotNull("После допечатки son. должен автоматически открыться popup с ключами", activeLookup);
+		assertTrue("Popup после допечатки son. должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
+		List<String> names = activeLookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertTrue("Popup после допечатки son. должен содержать login, есть: " + names,
+				names.contains("login"));
+		assertTrue("Popup после допечатки son. должен содержать fields., есть: " + names,
+				names.contains("fields."));
+		assertFalse("После допечатки son. не должен оставаться popup корневой переменной person.: " + names,
+				names.contains("person."));
+		LookupElement selected = activeLookup.getCurrentItem();
+		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
+		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testDollarCompletion_continueExistingVariableNameThenDotOpensHashKeysPopup() throws Throwable {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$person[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.fields[^hash::create[]]\n" +
+						"]\n" +
+						"$person.fields.remote[test_value]\n");
+
+		createParser3FileInDir("www/_mod/continue_existing_variable_dot.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$per<caret>\n");
+		VirtualFile vf = myFixture.findFileInTempDir("www/_mod/continue_existing_variable_dot.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type("son.");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались popup ключей после допечатки существующего $per до $person.", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+
+		com.intellij.openapi.editor.Document hostDocument =
+				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+		String text = hostDocument.getText();
+		assertTrue("Допечатка существующего $per должна оставить в файле $person.: " + text,
+				text.contains("$person."));
+		assertFalse("Допечатка существующего $per не должна дублировать точку: " + text,
+				text.contains("$person.."));
+
+		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+		assertNotNull("После допечатки существующего $per должен автоматически открыться popup с ключами", activeLookup);
+		assertTrue("Popup после допечатки существующего $per должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
+		List<String> names = activeLookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertTrue("Popup после допечатки существующего $per должен содержать login, есть: " + names,
+				names.contains("login"));
+		assertTrue("Popup после допечатки существующего $per должен содержать fields., есть: " + names,
+				names.contains("fields."));
+		assertFalse("После допечатки существующего $per не должен оставаться popup корневой переменной person.: " + names,
+				names.contains("person."));
+		LookupElement selected = activeLookup.getCurrentItem();
+		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
+		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testDollarCompletion_continueExistingVariableNameInModuleAutoThenDotOpensHashKeysPopup() throws Throwable {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@USE\n" +
+						"search.p\n" +
+						"\n" +
+						"@auto[]\n" +
+						"$person[^getPerson[]]\n");
+		createParser3FileInDir("www/search.p",
+				"@getPerson[]\n" +
+						"$result[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.fields[^hash::create[]]\n" +
+						"]\n" +
+						"$result.fields.remote[test_value]\n" +
+						"^result\n");
+
+		createParser3FileInDir("www/_mod/auto.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$per<caret>\n" +
+						"$person.subgroups[^hash::create[]]\n" +
+						"\n" +
+						"@get_rights[person]\n" +
+						"^if(!$person){$person[$MAIN:person]}\n");
+		VirtualFile vf = myFixture.findFileInTempDir("www/_mod/auto.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type("son.");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались popup ключей после допечатки $per в модульном auto.p", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+
+		com.intellij.openapi.editor.Document hostDocument =
+				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+		String text = hostDocument.getText();
+		assertTrue("Допечатка существующего $per в модульном auto.p должна оставить в файле $person.: " + text,
+				text.contains("$person."));
+		assertFalse("Допечатка существующего $per в модульном auto.p не должна дублировать точку: " + text,
+				text.contains("$person.."));
+
+		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+		assertNotNull("После допечатки существующего $per в модульном auto.p должен автоматически открыться popup с ключами", activeLookup);
+		assertTrue("Popup после допечатки существующего $per в модульном auto.p должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
+		List<String> names = activeLookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertTrue("Popup после допечатки существующего $per в модульном auto.p должен содержать login, есть: " + names,
+				names.contains("login"));
+		assertTrue("Popup после допечатки существующего $per в модульном auto.p должен содержать fields., есть: " + names,
+				names.contains("fields."));
+		assertFalse("После допечатки существующего $per в модульном auto.p не должен оставаться popup корневой переменной person.: " + names,
+				names.contains("person."));
+		LookupElement selected = activeLookup.getCurrentItem();
+		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
+		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testDollarCompletion_typedDotAfterExactVariableWithActiveRootPopupHidesRootPopup() throws Throwable {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$person[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.fields[^hash::create[]]\n" +
+						"]\n" +
+						"$person.fields.remote[test_value]\n");
+
+		createParser3FileInDir("www/_mod/active_exact_variable_popup_dot.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$person<caret>\n");
+		VirtualFile vf = myFixture.findFileInTempDir("www/_mod/active_exact_variable_popup_dot.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		myFixture.complete(CompletionType.BASIC);
+		Lookup variableLookup = myFixture.getLookup();
+		assertNotNull("После $person должен открыться popup переменных", variableLookup);
+		assertTrue("Popup переменных должен быть LookupImpl", variableLookup instanceof LookupImpl);
+		LookupElement personElement = Arrays.stream(myFixture.getLookupElements())
+				.filter(e -> "person.".equals(e.getLookupString()))
+				.findFirst()
+				.orElse(null);
+		assertNotNull("Popup переменных должен содержать person.", personElement);
+		((LookupImpl) variableLookup).setCurrentItem(personElement);
+
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type(".");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались popup ключей после точки при точном $person и активном root-popup", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+
+		com.intellij.openapi.editor.Document hostDocument =
+				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+		String text = hostDocument.getText();
+		assertTrue("Точка при точном root-popup должна оставить в файле $person.: " + text,
+				text.contains("$person."));
+		assertFalse("Точка при точном root-popup не должна дублировать точку: " + text,
+				text.contains("$person.."));
+
+		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+		assertNotNull("После точки при точном root-popup должен открыться popup с ключами", activeLookup);
+		assertTrue("Popup после $person. должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
+		List<String> names = activeLookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertTrue("Popup после $person. должен содержать login, есть: " + names,
+				names.contains("login"));
+		assertTrue("Popup после $person. должен содержать fields., есть: " + names,
+				names.contains("fields."));
+		assertFalse("После точки не должен оставаться popup корневой переменной person.: " + names,
+				names.contains("person."));
+		LookupElement selected = activeLookup.getCurrentItem();
+		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
+		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testDollarCompletion_typedDotWithActiveVariablePopupSelectsMatchingDottedItem() throws Throwable {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$personName[test_value]\n" +
+						"$person[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.fields[^hash::create[]]\n" +
+						"]\n" +
+						"$person.fields.remote[test_value]\n");
+
+		createParser3FileInDir("www/_mod/active_variable_popup_wrong_item_dot.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$person<caret>\n");
+		VirtualFile vf = myFixture.findFileInTempDir("www/_mod/active_variable_popup_wrong_item_dot.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		myFixture.complete(CompletionType.BASIC);
+		Lookup variableLookup = myFixture.getLookup();
+		assertNotNull("После $person должен открыться popup переменных", variableLookup);
+		assertTrue("Popup переменных должен быть LookupImpl", variableLookup instanceof LookupImpl);
+		LookupElement personNameElement = Arrays.stream(myFixture.getLookupElements())
+				.filter(e -> "personName".equals(e.getLookupString()))
+				.findFirst()
+				.orElse(null);
+		assertNotNull("Popup переменных должен содержать соседнюю переменную personName", personNameElement);
+		((LookupImpl) variableLookup).setCurrentItem(personNameElement);
+
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type(".");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались popup ключей после точки при неверном текущем пункте lookup", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+
+		com.intellij.openapi.editor.Document hostDocument =
+				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+		String text = hostDocument.getText();
+		assertTrue("Точка в активном popup должна вставить $person.: " + text,
+				text.contains("$person."));
+		assertFalse("Точка в активном popup не должна вставлять соседнюю переменную: " + text,
+				text.contains("$personName"));
+
+		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+		assertNotNull("После точки при неверном текущем пункте lookup должен открыться popup с ключами", activeLookup);
+		assertTrue("Popup после $person. должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
+		List<String> names = activeLookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertTrue("Popup после $person. должен содержать login, есть: " + names,
+				names.contains("login"));
+		assertTrue("Popup после $person. должен содержать fields., есть: " + names,
+				names.contains("fields."));
+		assertFalse("После точки не должен оставаться popup корневой переменной person.: " + names,
+				names.contains("person."));
+		LookupElement selected = activeLookup.getCurrentItem();
+		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
+		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testDollarMainCompletion_usesParentAutoShapeWithoutLocalParamLeak() {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("cgi/auto.p",
+				"@auto[]\n" +
+						"$config[^hash::create[]]\n" +
+						"$MAIN:user.itemFlag\n");
+		setMainAuto("cgi/auto.p");
+		replaceParser3FileInDir("www/auto.p",
+				"@USE\n" +
+						"search.p\n" +
+						"\n" +
+						"@auto[]\n" +
+						"$user[^getUser[]]\n" +
+						"\n" +
+						"@getUser[][locals]\n" +
+						"$local[^get_users[\n" +
+						"\t$.itemFlag(true)\n" +
+						"]]\n" +
+						"$local[^local.at[first]]\n" +
+						"$local.itemFlag(true)\n" +
+						"$result[$local]\n");
+		replaceParser3FileInDir("www/search.p",
+				"@get_users[settings][locals]\n" +
+						"$result[^hash::sql{SELECT user_id, login FROM users}]\n" +
+						"\n" +
+						"@search[settings]\n" +
+						"$result[\n" +
+						"\t$.itemFlag[$MAIN:user.itemFlag]\n" +
+						"]\n");
+
+		String content =
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$MAIN:user.<caret> -- здесь нужен только обезличенный ключ itemFlag\n" +
+						"\n" +
+						"@get_rights[user]\n" +
+						"^if(!$user){$user[$MAIN:user]}\n" +
+						"\n" +
+						"$user.groups[^hash::create[]]\n";
+		List<String> completions = getCompletions("www/_mod/auto.p", content);
+
+		assertTrue("$MAIN:user. должен показывать ключ из parent auto/search, есть: " + completions,
+				completions.contains("itemFlag"));
+		assertFalse("$MAIN:user. не должен подтягивать SQL-поля результата parent auto, есть: " + completions,
+				completions.contains("login"));
+		assertFalse("$MAIN:user. не должен подтягивать ключ локального параметра нижнего метода, есть: " + completions,
+				completions.contains("groups"));
+	}
+
+	public void testDollarMainCompletion_doesNotUseSyntheticReadChainWhenExplicitMainShapeExists() {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@USE\n" +
+						"search.p\n" +
+						"\n" +
+						"@auto[]\n" +
+						"$user[^hash::create[]]\n" +
+						"$user.login[test_user]\n");
+		replaceParser3FileInDir("www/search.p",
+				"@search[]\n" +
+						"$result[\n" +
+						"\t$.itemFlag($MAIN:user.itemFlag)\n" +
+						"]\n");
+
+		String content =
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$MAIN:user.<caret>\n";
+		List<String> completions = getCompletions("www/_mod/auto.p", content);
+
+		assertTrue("$MAIN:user. должен брать реальные ключи из parent auto, есть: " + completions,
+				completions.contains("login"));
+		assertFalse("$MAIN:user. не должен брать synthetic read-chain из $.itemFlag($MAIN:user.itemFlag), есть: " + completions,
+				completions.contains("itemFlag"));
+	}
+
+	public void testDollarCompletion_readOnlyLocalChainDoesNotShadowMainHashShape() {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$user[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.email[test@example.com]\n" +
+						"\t$.roles[^hash::create[]]\n" +
+						"]\n");
+
+		String content =
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$user.login\n" +
+						"$user.<caret>\n";
+		List<String> completions = getCompletions("www/_mod/auto.p", content);
+
+		assertTrue("Read-only $user.login не должен затенять MAIN hash key email, есть: " + completions,
+				completions.contains("email"));
+		assertTrue("Read-only $user.login должен сохранить MAIN hash key roles, есть: " + completions,
+				completions.contains("roles"));
+		assertEquals("login не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "login"));
+	}
+
+	public void testDollarCompletion_repeatedReadOnlyLocalChainKeepsMainHashShape() {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$user[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.email[test@example.com]\n" +
+						"\t$.settings[$.enabled(true)]\n" +
+						"]\n");
+
+		String content =
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$user.login\n" +
+						"$user.login\n" +
+						"$user.<caret>\n";
+		List<String> completions = getCompletions("www/_mod/auto.p", content);
+
+		assertTrue("Повторный read-only $user.login не должен оставлять только login, есть: " + completions,
+				completions.contains("email"));
+		assertTrue("Повторный read-only $user.login должен сохранить settings, есть: " + completions,
+				completions.contains("settings."));
+		assertEquals("login не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "login"));
+	}
+
+	public void testDollarCompletion_sourceCopyThenReadOnlyChainKeepsCopiedMainHashShape() {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/auto.p",
+				"@auto[]\n" +
+						"$user[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.email[test@example.com]\n" +
+						"\t$.rights[$.read(true)]\n" +
+						"]\n");
+
+		String content =
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@getRights[user]\n" +
+						"^if(!$user){$user[$MAIN:user]}\n" +
+						"$user.login\n" +
+						"$user.groups[^hash::create[]]\n" +
+						"$user.<caret>\n";
+		List<String> completions = getCompletions("www/_mod/auto.p", content);
+
+		assertTrue("Source-copy $user[$MAIN:user] должен сохранить email после read-only ключа, есть: " + completions,
+				completions.contains("email"));
+		assertTrue("Source-copy $user[$MAIN:user] должен сохранить rights после read-only ключа, есть: " + completions,
+				completions.contains("rights."));
+		assertTrue("Локальная additive-запись должна добавиться поверх source-copy, есть: " + completions,
+				completions.contains("groups"));
+		assertEquals("login не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "login"));
+	}
+
+	public void testDollarCompletion_selfHashReadOnlyChainDoesNotNarrowExplicitSelfShape() {
+		String content =
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$self.user[\n" +
+						"\t$.login[test_user]\n" +
+						"\t$.email[test@example.com]\n" +
+						"\t$.rights[$.read(true)]\n" +
+						"]\n" +
+						"$self.user.login\n" +
+						"$self.user.<caret>\n";
+		List<String> completions = getCompletions("self_hash_read_only_chain_keeps_shape.p", content);
+
+		assertTrue("$self.user.login не должен сужать явный $self.user до login, есть: " + completions,
+				completions.contains("email"));
+		assertTrue("$self.user.login должен сохранить rights, есть: " + completions,
+				completions.contains("rights."));
+		assertEquals("login не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "login"));
+	}
+
+	public void testDollarCompletion_tableColumnReadOnlyChainDoesNotNarrowTableShape() {
+		String content =
+				"@main[]\n" +
+						"# на основе parser3/tests/012.html: чтение table column не меняет table shape\n" +
+						"$items[^table::create{user_id\tlogin\temail\n1\ttest_user\ttest@example.com}]\n" +
+						"$items.login\n" +
+						"$items.<caret>\n";
+		List<String> completions = getCompletions("table_column_read_only_chain_keeps_shape.p", content);
+
+		assertTrue("Read-only $items.login не должен удалить колонку email, есть: " + completions,
+				completions.contains("email"));
+		assertTrue("Read-only $items.login не должен удалить колонку user_id, есть: " + completions,
+				completions.contains("user_id"));
+		assertEquals("login не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "login"));
+	}
+
+	public void testDollarSelfCompletion_usesClassShapeFromOtherFileWithoutLocalParamLeak() {
+		try {
+			setDocumentRoot("www");
+		} catch (java.io.IOException e) {
+			throw new AssertionError("Не удалось настроить document_root для обезличенного fixture", e);
+		}
+		replaceParser3FileInDir("www/classes/TestModuleShape.p",
+				"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$self.user.itemFlag(true)\n" +
+						"$user[^hash::sql{SELECT user_id, login FROM users}]\n" +
+						"$user.login[test_user]\n");
+		replaceParser3FileInDir("www/classes/OtherModuleShape.p",
+				"@CLASS\n" +
+						"OtherModule\n" +
+						"\n" +
+						"@create[]\n" +
+						"$self.user.foreignFlag(true)\n");
+
+		String content =
+				"@USE\n" +
+						"../classes/TestModuleShape.p\n" +
+						"../classes/OtherModuleShape.p\n" +
+						"\n" +
+						"@CLASS\n" +
+						"TestModule\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@create[]\n" +
+						"$self.user.<caret> -- здесь нужен только обезличенный class key itemFlag\n" +
+						"\n" +
+						"@get_rights[user]\n" +
+						"^if(!$user){$user[$self.user]}\n" +
+						"$user.groups[^hash::create[]]\n";
+		List<String> completions = getCompletions("www/_mod/auto.p", content);
+
+		assertTrue("$self.user. должен показывать ключ из того же класса другого файла, есть: " + completions,
+				completions.contains("itemFlag"));
+		assertFalse("$self.user. не должен подтягивать SQL-поля простой $user из другого файла, есть: " + completions,
+				completions.contains("login"));
+		assertFalse("$self.user. не должен подтягивать ключ локального параметра нижнего метода, есть: " + completions,
+				completions.contains("groups"));
+		assertFalse("$self.user. не должен подтягивать ключ self.user из другого класса, есть: " + completions,
+				completions.contains("foreignFlag"));
+	}
+
+	private static void waitForFocusedLookup(@NotNull LookupImpl lookup) {
+		for (int i = 0; i < 30; i++) {
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			if (lookup.getLookupFocusDegree() == LookupFocusDegree.FOCUSED) {
+				return;
+			}
+			try {
+				Thread.sleep(30);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new AssertionError("Прервали ожидание focused-состояния lookup", e);
+			}
+		}
+		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+	}
+
+	private static void waitForDefaultLookupSelection(@NotNull LookupImpl lookup) {
+		for (int i = 0; i < 30; i++) {
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			if (lookup.getCurrentItem() != null
+					&& lookup.getSelectedIndex() == 0
+					&& lookup.getLookupFocusDegree() == LookupFocusDegree.FOCUSED) {
+				return;
+			}
+			try {
+				Thread.sleep(30);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				throw new AssertionError("Прервали ожидание выбора первого пункта lookup", e);
+			}
+		}
+		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+	}
+
 	public void testDollarCompletion_infersReadChainFromBraceVariableInCallArgs() {
 		String content =
 				"@main[]\n" +
@@ -7344,6 +8296,8 @@ public class x9_CompletionTest extends Parser3TestCase {
 		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
 		assertNotNull("После вставки $user. внутри HTML должен автоматически открыться popup с ключами; caret=" +
 				caretOffset + ", text=\n" + text, activeLookup);
+		assertTrue("Popup после $user. должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
 		List<String> names = activeLookup.getItems().stream()
 				.map(LookupElement::getLookupString)
 				.collect(Collectors.toList());
@@ -7353,6 +8307,50 @@ public class x9_CompletionTest extends Parser3TestCase {
 		LookupElement selected = activeLookup.getCurrentItem();
 		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
 		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testVariableDotCompletionRanksHashKeysAboveUserTemplates() {
+		Parser3UserTemplate foreachTemplate = createUserTemplate(
+				"foreach",
+				"Перебор элементов массива или хеша",
+				".foreach[key;value]{\n\t<CURSOR>\n}"
+		);
+
+		withUserTemplates(List.of(foreachTemplate), () -> {
+			createParser3FileInDir("www/user_template_priority_hash_keys.p",
+					"@main[]\n" +
+							"$person[\n" +
+							"\t$.login[]\n" +
+							"\t$.person_id[]\n" +
+							"\t$.fields[^hash::create[]]\n" +
+							"]\n" +
+							"\n" +
+							"^person.<caret>\n"
+			);
+			VirtualFile vf = myFixture.findFileInTempDir("www/user_template_priority_hash_keys.p");
+			myFixture.configureFromExistingVirtualFile(vf);
+
+			myFixture.complete(CompletionType.BASIC);
+			LookupElement[] elements = myFixture.getLookupElements();
+			assertNotNull("После ^person. должны быть варианты completion", elements);
+			List<String> names = Arrays.stream(elements)
+					.map(LookupElement::getLookupString)
+					.collect(Collectors.toList());
+
+			int loginIndex = names.indexOf("login.");
+			int personIdIndex = names.indexOf("person_id.");
+			int foreachIndex = names.indexOf("foreach[]");
+
+			assertTrue("Hash key login. должен быть в completion, есть: " + names, loginIndex >= 0);
+			assertTrue("Hash key person_id. должен быть в completion, есть: " + names, personIdIndex >= 0);
+			assertTrue("Пользовательский шаблон .foreach[] должен быть в completion, есть: " + names, foreachIndex >= 0);
+			assertTrue("Hash key login должен быть выше пользовательского шаблона, есть: " + names,
+					loginIndex < foreachIndex);
+			assertTrue("Hash key person_id должен быть выше пользовательского шаблона, есть: " + names,
+					personIdIndex < foreachIndex);
+			assertFalse("Пользовательский шаблон не должен быть первым пунктом, есть: " + names,
+					"foreach[]".equals(names.get(0)));
+		});
 	}
 
 	public void testSqlInjectedMethodCompletion_savedPrefixKeepsObjectMethods() {

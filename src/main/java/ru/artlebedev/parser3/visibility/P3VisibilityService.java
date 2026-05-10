@@ -15,6 +15,7 @@ import ru.artlebedev.parser3.use.P3UseResolver;
 import ru.artlebedev.parser3.utils.Parser3FileUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +40,8 @@ public final class P3VisibilityService {
 	private final CachedValuesManager cachedValuesManager;
 	private final P3AutoChainService autoChainService;
 	private final P3UseResolver useResolver;
+	private volatile long allProjectFilesModCount = -1;
+	private volatile @NotNull List<VirtualFile> allProjectFilesCache = Collections.emptyList();
 
 	private static final int MAX_USE_DEPTH = 50; // Защита от циклических зависимостей
 	private static final boolean DEBUG_PERF = false;
@@ -189,11 +192,32 @@ public final class P3VisibilityService {
 	 */
 	public @NotNull List<VirtualFile> getAllProjectFiles() {
 		long startTime = DEBUG_PERF ? System.currentTimeMillis() : 0;
-		List<VirtualFile> result = new ArrayList<>(P3IndexMaintenance.getIndexedParser3Files(project));
+		long modCount = com.intellij.psi.util.PsiModificationTracker.getInstance(project)
+				.forLanguage(Parser3Language.INSTANCE)
+				.getModificationCount();
+		List<VirtualFile> cached = allProjectFilesCache;
+		boolean cacheHit = allProjectFilesModCount == modCount;
+		List<VirtualFile> result;
+		if (cacheHit) {
+			result = new ArrayList<>(cached);
+		} else {
+			synchronized (this) {
+				cached = allProjectFilesCache;
+				cacheHit = allProjectFilesModCount == modCount;
+				if (cacheHit) {
+					result = new ArrayList<>(cached);
+				} else {
+					result = new ArrayList<>(P3IndexMaintenance.getIndexedParser3Files(project));
+					allProjectFilesCache = Collections.unmodifiableList(new ArrayList<>(result));
+					allProjectFilesModCount = modCount;
+				}
+			}
+		}
 		if (DEBUG_PERF) {
 			System.out.println("[P3Visibility.PERF] getAllProjectFiles: "
 					+ (System.currentTimeMillis() - startTime) + "ms"
-					+ " files=" + result.size());
+					+ " files=" + result.size()
+					+ " cacheHit=" + cacheHit);
 		}
 		return result;
 	}

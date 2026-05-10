@@ -699,6 +699,107 @@ public class x12_var_HashArrayTest extends Parser3TestCase {
 		assertTrue("Навигация $value.y.z должна вести к реальному $.z[] из $item", foundRealKey);
 	}
 
+	public void testHashKeyNavigation_nestedDotChainParentAndLeafUseAdditiveSource() {
+		createParser3FileInDir("hash_key_navigation_nested_dot_chain_parent_and_leaf.p",
+				"@main[]\n" +
+						"$person[^hash::create[]]\n" +
+						"$person.fields.remote[test_value]\n" +
+						"$copy[$person.fields.remote]\n");
+		VirtualFile vFile = myFixture.findFileInTempDir("hash_key_navigation_nested_dot_chain_parent_and_leaf.p");
+		assertNotNull("Файл navigation-кейса должен быть создан", vFile);
+
+		String content;
+		try {
+			content = new String(vFile.contentsToByteArray(), vFile.getCharset());
+		} catch (Exception e) {
+			fail("Не удалось прочитать navigation-кейс");
+			return;
+		}
+
+		int definitionPos = content.indexOf("$person.fields.remote[test_value]");
+		assertTrue("Определение $person.fields.remote должно существовать", definitionPos >= 0);
+		int usagePos = content.indexOf("$copy[$person.fields.remote]");
+		assertTrue("Использование $person.fields.remote должно существовать", usagePos >= 0);
+		int expectedFieldsOffset = definitionPos + "$person.".length();
+		int expectedRemoteOffset = definitionPos + "$person.fields.".length();
+
+		myFixture.configureFromExistingVirtualFile(vFile);
+
+		assertHashKeyNavigationTarget(
+				usagePos + "$copy[$person.".length(),
+				expectedFieldsOffset,
+				"fields",
+				"Навигация по parent-key fields должна вести к fields в $person.fields.remote[...]"
+		);
+		assertHashKeyNavigationTarget(
+				usagePos + "$copy[$person.fields.".length(),
+				expectedRemoteOffset,
+				"remote",
+				"Навигация по leaf-key remote должна вести к remote в $person.fields.remote[...]"
+		);
+	}
+
+	public void testHashKeyNavigation_nestedDotChainDefinitionSegmentsNavigateToThemselves() {
+		createParser3FileInDir("hash_key_navigation_nested_dot_chain_definition_segments.p",
+				"@main[]\n" +
+						"$person[^hash::create[]]\n" +
+						"$person.fields.remote[test_value]\n");
+		VirtualFile vFile = myFixture.findFileInTempDir("hash_key_navigation_nested_dot_chain_definition_segments.p");
+		assertNotNull("Файл navigation-кейса должен быть создан", vFile);
+
+		String content;
+		try {
+			content = new String(vFile.contentsToByteArray(), vFile.getCharset());
+		} catch (Exception e) {
+			fail("Не удалось прочитать navigation-кейс");
+			return;
+		}
+
+		int definitionPos = content.indexOf("$person.fields.remote[test_value]");
+		assertTrue("Определение $person.fields.remote должно существовать", definitionPos >= 0);
+		int expectedFieldsOffset = definitionPos + "$person.".length();
+		int expectedRemoteOffset = definitionPos + "$person.fields.".length();
+
+		myFixture.configureFromExistingVirtualFile(vFile);
+
+		assertHashKeyNavigationTarget(
+				expectedFieldsOffset,
+				expectedFieldsOffset,
+				"fields",
+				"Навигация по parent-key fields на строке определения должна вести к этому же fields"
+		);
+		assertHashKeyNavigationTarget(
+				expectedRemoteOffset,
+				expectedRemoteOffset,
+				"remote",
+				"Навигация по leaf-key remote на строке определения должна вести к этому же remote"
+		);
+	}
+
+	private void assertHashKeyNavigationTarget(
+			int clickOffset,
+			int expectedOffset,
+			String expectedText,
+			String message
+	) {
+		myFixture.getEditor().getCaretModel().moveToOffset(clickOffset);
+		PsiElement[] targets = GotoDeclarationAction.findAllTargetElements(
+				getProject(), myFixture.getEditor(), clickOffset);
+
+		assertNotNull(message + ": targets=null", targets);
+		assertTrue(message + ": targets пустой", targets.length > 0);
+
+		boolean found = false;
+		for (PsiElement target : targets) {
+			int targetOffset = target.getTextOffset();
+			if (targetOffset >= expectedOffset && targetOffset <= expectedOffset + expectedText.length()) {
+				found = true;
+				break;
+			}
+		}
+		assertTrue(message + ", targets=" + Arrays.toString(targets), found);
+	}
+
 	public void testMethodResultInference_resultCopiesLocalSourceAndThenAddsDotChain() {
 		List<String> c = doComplete("method_result_local_source_then_dot_chain.p",
 				"@makeHash[]\n" +

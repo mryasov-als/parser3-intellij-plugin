@@ -149,7 +149,7 @@ public final class P3MethodInsertHandler implements InsertHandler<LookupElement>
 			@NotNull String text,
 			int offset
 	) {
-		return P3TableColumnArgumentCompletionSupport.isColumnArgumentContext(project, virtualFile, text, offset);
+		return P3TableColumnArgumentCompletionSupport.isColumnArgumentSyntaxContext(text, offset);
 	}
 
 	/**

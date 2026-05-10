@@ -1644,6 +1644,25 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 						readChainTarget.getTextOffset()
 				)};
 			}
+
+			PsiElement readChainSourceTarget = findSyntheticReadChainSuffixTargetElement(
+					project,
+					currentVFile,
+					visibleFiles,
+					fullChain,
+					clickedName,
+					clickedElement.getTextOffset()
+			);
+			if (DEBUG) System.out.println("[handleHashKeyNav] synthetic read-chain suffix target=" + readChainSourceTarget);
+			if (readChainSourceTarget != null) {
+				PsiFile targetPsiFile = readChainSourceTarget.getContainingFile();
+				VirtualFile targetVFile = targetPsiFile != null ? targetPsiFile.getVirtualFile() : currentVFile;
+				return new PsiElement[]{P3NavigationTargets.createVariableTarget(
+						readChainSourceTarget,
+						targetVFile != null ? targetVFile : currentVFile,
+						readChainSourceTarget.getTextOffset()
+				)};
+			}
 		}
 
 		if (DEBUG) System.out.println("[handleHashKeyNav] not found, return null");
@@ -1728,7 +1747,7 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 			int occurrenceEnd = occurrence + textPattern.length();
 			int targetOffset = occurrenceEnd - clickedName.length();
 			if (targetOffset >= occurrence
-					&& targetOffset < maxTargetOffset
+					&& targetOffset <= maxTargetOffset
 					&& isExplicitHashChainAssignment(text, occurrence, occurrenceEnd)) {
 				bestTargetOffset = targetOffset;
 			}
@@ -1751,6 +1770,118 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 		if (pos >= text.length()) return false;
 		char nextChar = text.charAt(pos);
 		return nextChar == '[' || nextChar == '(' || nextChar == '{';
+	}
+
+	private @Nullable PsiElement findSyntheticReadChainSuffixTargetElement(
+			@NotNull Project project,
+			@NotNull VirtualFile currentFile,
+			@NotNull List<VirtualFile> visibleFiles,
+			@NotNull String fullChain,
+			@NotNull String clickedName,
+			int clickedOffset
+	) {
+		String suffix = buildReadChainSuffix(fullChain);
+		if (suffix == null) return null;
+		PsiManager psiManager = PsiManager.getInstance(project);
+
+		PsiElement currentFileTarget = findSyntheticReadChainSuffixTargetInFile(
+				psiManager,
+				currentFile,
+				suffix,
+				clickedName,
+				clickedOffset
+		);
+		if (currentFileTarget != null) return currentFileTarget;
+
+		for (VirtualFile file : visibleFiles) {
+			if (file.equals(currentFile) || !file.isValid()) continue;
+			PsiElement target = findSyntheticReadChainSuffixTargetInFile(
+					psiManager,
+					file,
+					suffix,
+					clickedName,
+					Integer.MAX_VALUE
+			);
+			if (target != null) return target;
+		}
+
+		return null;
+	}
+
+	private @Nullable String buildReadChainSuffix(@NotNull String fullChain) {
+		String chain = fullChain;
+		if (chain.startsWith("self.")) {
+			chain = chain.substring(5);
+		} else if (chain.startsWith("MAIN:") || chain.startsWith("BASE:")) {
+			chain = chain.substring(5);
+		}
+		int dot = chain.indexOf('.');
+		if (dot < 0 || dot >= chain.length() - 1) return null;
+		return chain.substring(dot);
+	}
+
+	private @Nullable PsiElement findSyntheticReadChainSuffixTargetInFile(
+			@NotNull PsiManager psiManager,
+			@NotNull VirtualFile file,
+			@NotNull String suffix,
+			@NotNull String clickedName,
+			int maxTargetOffset
+	) {
+		PsiFile psiFile = psiManager.findFile(file);
+		if (psiFile == null) return null;
+		String text = psiFile.getText();
+		int from = 0;
+		int bestTargetOffset = -1;
+		while (from < text.length()) {
+			int suffixOffset = text.indexOf(suffix, from);
+			if (suffixOffset < 0) break;
+			int occurrenceEnd = suffixOffset + suffix.length();
+			int dollarOffset = findReadChainDollarBeforeSuffix(text, suffixOffset);
+			int targetOffset = occurrenceEnd - clickedName.length();
+			boolean clickedOccurrence = maxTargetOffset != Integer.MAX_VALUE
+					&& dollarOffset >= 0
+					&& dollarOffset <= maxTargetOffset
+					&& maxTargetOffset < occurrenceEnd;
+			if (dollarOffset >= 0
+					&& targetOffset >= suffixOffset
+					&& targetOffset < text.length()
+					&& targetOffset < maxTargetOffset
+					&& !clickedOccurrence
+					&& isReadChainOccurrenceOrPrefix(text, dollarOffset, occurrenceEnd)) {
+				bestTargetOffset = targetOffset;
+			}
+			from = suffixOffset + 1;
+		}
+		if (bestTargetOffset < 0) return null;
+		return psiFile.findElementAt(bestTargetOffset);
+	}
+
+	private int findReadChainDollarBeforeSuffix(@NotNull String text, int suffixOffset) {
+		int pos = suffixOffset - 1;
+		while (pos >= 0) {
+			char ch = text.charAt(pos);
+			if (ch == '$') return pos;
+			if (ch == ':' || ch == '.'
+					|| ru.artlebedev.parser3.utils.Parser3VariableTailUtils.isVariableIdentifierChar(ch)) {
+				pos--;
+				continue;
+			}
+			return -1;
+		}
+		return -1;
+	}
+
+	private boolean isReadChainOccurrenceOrPrefix(
+			@NotNull String text,
+			int occurrence,
+			int occurrenceEnd
+	) {
+		if (occurrenceEnd < text.length() && text.charAt(occurrenceEnd) == '.') {
+			if (occurrence < 0 || occurrenceEnd > text.length()) return false;
+			if (ru.artlebedev.parser3.lexer.Parser3LexerUtils.isEscapedByCaret(text, occurrence)) return false;
+			return !ru.artlebedev.parser3.utils.Parser3ClassUtils.isOffsetInComment(text, occurrence);
+		}
+		return isReadChainOccurrence(text, occurrence, occurrenceEnd);
 	}
 
 	private @Nullable PsiElement findSyntheticReadChainTargetElement(
@@ -1785,13 +1916,7 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 			if (target != null) return target;
 		}
 
-		return findSyntheticReadChainTargetInFile(
-				psiManager,
-				currentFile,
-				textPattern,
-				clickedName,
-				Integer.MAX_VALUE
-		);
+		return null;
 	}
 
 	private @Nullable PsiElement findSyntheticReadChainTargetInFile(
@@ -1811,9 +1936,13 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 			if (occurrence < 0) break;
 			int targetOffset = occurrence + textPattern.length() - clickedName.length();
 			int occurrenceEnd = occurrence + textPattern.length();
+			boolean clickedOccurrence = maxTargetOffset != Integer.MAX_VALUE
+					&& occurrence <= maxTargetOffset
+					&& maxTargetOffset < occurrenceEnd;
 			if (targetOffset >= occurrence
 					&& targetOffset < text.length()
 					&& targetOffset < maxTargetOffset
+					&& !clickedOccurrence
 					&& isReadChainOccurrence(text, occurrence, occurrenceEnd)) {
 				bestTargetOffset = targetOffset;
 			}

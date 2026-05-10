@@ -10,14 +10,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.artlebedev.parser3.icons.Parser3Icons;
 import ru.artlebedev.parser3.index.P3ClassIndex;
+import ru.artlebedev.parser3.index.HashEntryInfo;
 import ru.artlebedev.parser3.index.P3MethodIndex;
 import ru.artlebedev.parser3.index.P3VariableIndex;
+import ru.artlebedev.parser3.index.P3VariableFileIndex;
 import ru.artlebedev.parser3.lang.P3UserMethodLookupObject;
 import ru.artlebedev.parser3.lang.Parser3BuiltinMethods;
 import ru.artlebedev.parser3.model.P3ClassDeclaration;
 import ru.artlebedev.parser3.model.P3MethodDeclaration;
 import ru.artlebedev.parser3.utils.Parser3BuiltinStaticPropertyUsageUtils;
 import ru.artlebedev.parser3.utils.Parser3ChainUtils;
+import ru.artlebedev.parser3.visibility.P3ScopeContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,24 +138,64 @@ public final class P3VariableMethodCompletionContributor {
 			@Nullable String currentFileText,
 			int resolveOffset
 	) {
-		long t0 = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		P3VariableIndex varIndex = P3VariableIndex.getInstance(project);
+		int finalResolveOffset = Math.max(0, resolveOffset);
+		varIndex.withSharedResolveCache(() -> {
+			completeVariableDotWithCache(
+					project,
+					varIndex,
+					varKey,
+					currentFile,
+					cursorOffset,
+					result,
+					caretDot,
+					closingSuffix,
+					currentFileText,
+					finalResolveOffset
+			);
+			return null;
+		});
+	}
+
+	private static void completeVariableDotWithCache(
+			@NotNull Project project,
+			@NotNull P3VariableIndex varIndex,
+			@NotNull String varKey,
+			@NotNull VirtualFile currentFile,
+			int cursorOffset,
+			@NotNull CompletionResultSet result,
+			boolean caretDot,
+			@Nullable String closingSuffix,
+			@Nullable String currentFileText,
+			int resolveOffset
+	) {
+		long t0 = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		String normalizedVarKey = Parser3ChainUtils.normalizeDynamicSegments(varKey);
 		String typedPrefix = result.getPrefixMatcher().getPrefix();
-		resolveOffset = Math.max(0, resolveOffset);
 
 		String className = null;
 		java.util.List<String> cols = null;
 		java.util.Map<String, ru.artlebedev.parser3.index.HashEntryInfo> resolvedHashKeys = null;
 		ru.artlebedev.parser3.index.HashEntryInfo resolvedHashEntry = null;
 		java.util.List<VirtualFile> visibleFiles = null;
+		java.util.List<VirtualFile> classSearchFiles = null;
 		P3VariableIndex.ChainResolveInfo resolvedChainInfo = null;
 
 		String chainPart = normalizedVarKey;
 		if (chainPart.startsWith("self.")) chainPart = chainPart.substring(5);
 		else if (chainPart.startsWith("MAIN:")) chainPart = chainPart.substring(5);
 
-		visibleFiles = getVisibleFilesLazy(project, currentFile, resolveOffset);
+		long visibleFilesStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
+		P3ScopeContext scopeContext = new P3ScopeContext(project, currentFile, resolveOffset);
+		visibleFiles = scopeContext.getVariableSearchFiles();
+		if (DEBUG_PERF) {
+			System.out.println("[VarMethodCompl.PERF] completeVariableDot visibleFiles: "
+					+ (System.currentTimeMillis() - visibleFilesStart) + "ms"
+					+ " count=" + visibleFiles.size()
+					+ " varKey=" + varKey
+					+ " file=" + currentFile.getName()
+					+ " offset=" + resolveOffset);
+		}
 		long t1 = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		resolvedChainInfo =
 				varIndex.resolveEffectiveChain(normalizedVarKey, visibleFiles, currentFile, resolveOffset);
@@ -161,6 +204,19 @@ public final class P3VariableMethodCompletionContributor {
 			cols = resolvedChainInfo.columns;
 			resolvedHashKeys = resolvedChainInfo.hashKeys;
 			resolvedHashEntry = resolvedChainInfo.hashEntry;
+		}
+
+		if (shouldRetryClassAwareResolve(resolvedChainInfo, className, chainPart)) {
+			classSearchFiles = ensureClassSearchFiles(scopeContext, classSearchFiles);
+			P3VariableIndex.ChainResolveInfo classAwareChainInfo =
+					varIndex.resolveEffectiveChain(normalizedVarKey, visibleFiles, classSearchFiles, currentFile, resolveOffset);
+			if (classAwareChainInfo != null || resolvedChainInfo == null) {
+				resolvedChainInfo = classAwareChainInfo;
+				className = classAwareChainInfo != null ? classAwareChainInfo.className : null;
+				cols = classAwareChainInfo != null ? classAwareChainInfo.columns : null;
+				resolvedHashKeys = classAwareChainInfo != null ? classAwareChainInfo.hashKeys : null;
+				resolvedHashEntry = classAwareChainInfo != null ? classAwareChainInfo.hashEntry : null;
+			}
 		}
 		if (DEBUG_PERF) System.out.println("[VarMethodCompl.PERF] completeVariableDot resolveEffectiveChain: "
 				+ (System.currentTimeMillis() - t1) + "ms, varKey=" + varKey + " → " + className);
@@ -179,6 +235,10 @@ public final class P3VariableMethodCompletionContributor {
 				+ " resolveOffset=" + resolveOffset);
 
 		if (className != null && !className.isEmpty()) {
+			boolean userClassName = isUserClassName(className);
+			java.util.List<VirtualFile> memberSearchFiles = userClassName
+					? ensureClassSearchFiles(scopeContext, classSearchFiles)
+					: java.util.Collections.emptyList();
 			// Дополнительные ключи собираем до свойств класса, чтобы одинаковое поле не показывалось дважды:
 			// $obj.user из класса и $obj.user.x[...] как additive-цепочка должны дать один вариант user.
 			java.util.Map<String, ru.artlebedev.parser3.index.HashEntryInfo> hashKeys = resolvedHashKeys;
@@ -187,7 +247,9 @@ public final class P3VariableMethodCompletionContributor {
 			if (hashKeys != null && !hashKeys.isEmpty()) {
 				hashKeys = varIndex.enrichWithAliasKeys(hashKeys, normalizedVarKey, currentFile, resolveOffset);
 			}
-			java.util.Set<String> getterPropertyNames = collectGetterPropertyNames(project, className, currentFile, resolveOffset);
+			java.util.Set<String> getterPropertyNames = userClassName
+					? collectGetterPropertyNames(project, className, memberSearchFiles)
+					: java.util.Collections.emptySet();
 			if (hashKeys != null && !getterPropertyNames.isEmpty()) {
 				hashKeys = new java.util.LinkedHashMap<>(hashKeys);
 				for (String getterName : getterPropertyNames) {
@@ -205,10 +267,10 @@ public final class P3VariableMethodCompletionContributor {
 
 			if (caretDot) {
 				// ^var. — методы + переменные класса
-				addClassMethods(project, className, currentFile, resolveOffset, result);
+				addClassMethods(project, className, currentFile, resolveOffset, result, memberSearchFiles);
 			} else {
 				// $var. — только свойства (переменные + @GET_ геттеры)
-				addClassProperties(project, className, currentFile, resolveOffset, result, additivePropertyNames);
+				addClassProperties(project, className, memberSearchFiles, result, additivePropertyNames);
 			}
 
 			// Fallback: колонки из хеш-цепочки ($data.key.list. → columns из HashEntryInfo)
@@ -249,7 +311,8 @@ public final class P3VariableMethodCompletionContributor {
 			ru.artlebedev.parser3.lang.Parser3CompletionContributor.fillUserTemplates(result, ".");
 		}
 		if (DEBUG_PERF) System.out.println("[VarMethodCompl.PERF] completeVariableDot TOTAL: " + (System.currentTimeMillis() - t0) + "ms"
-				+ " fastPath=" + (visibleFiles == null));
+				+ " visibleFiles=" + (visibleFiles != null ? visibleFiles.size() : 0)
+				+ " classSearchFiles=" + (classSearchFiles != null ? classSearchFiles.size() : 0));
 	}
 
 	private static @Nullable String resolveBuiltinStaticPropertyType(
@@ -289,12 +352,49 @@ public final class P3VariableMethodCompletionContributor {
 		return Parser3BuiltinMethods.supportsStaticPropertyAccess(clsName);
 	}
 
-	/**
-	 * Ленивое получение visibleFiles с учётом режима (USE_ONLY vs ALL_METHODS).
-	 */
-	private static java.util.List<VirtualFile> getVisibleFilesLazy(
-			@NotNull Project project, @NotNull VirtualFile currentFile, int cursorOffset) {
-		return P3CompletionUtils.getVisibleFilesForMethods(project, currentFile, cursorOffset);
+	private static boolean shouldRetryClassAwareResolve(
+			@Nullable P3VariableIndex.ChainResolveInfo resolvedChainInfo,
+			@Nullable String className,
+			@NotNull String chainPart
+	) {
+		if (resolvedChainInfo == null) {
+			return chainPart.contains(".");
+		}
+		if (isUserClassName(className)) {
+			return true;
+		}
+		return hashKeysNeedClassSearch(resolvedChainInfo.hashKeys);
+	}
+
+	private static boolean isUserClassName(@Nullable String className) {
+		return className != null
+				&& !className.isEmpty()
+				&& !Parser3BuiltinMethods.isBuiltinClass(className)
+				&& !P3VariableFileIndex.UNKNOWN_TYPE.equals(className)
+				&& !P3VariableFileIndex.VariableTypeInfo.METHOD_CALL_MARKER.equals(className);
+	}
+
+	private static boolean hashKeysNeedClassSearch(@Nullable java.util.Map<String, HashEntryInfo> hashKeys) {
+		if (hashKeys == null || hashKeys.isEmpty()) {
+			return false;
+		}
+		for (HashEntryInfo entry : hashKeys.values()) {
+			if (entry == null) continue;
+			if (entry.methodName != null || entry.targetClassName != null || entry.receiverVarKey != null) {
+				return true;
+			}
+			if (hashKeysNeedClassSearch(entry.nestedKeys)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static @NotNull java.util.List<VirtualFile> ensureClassSearchFiles(
+			@NotNull P3ScopeContext scopeContext,
+			@Nullable java.util.List<VirtualFile> classSearchFiles
+	) {
+		return classSearchFiles != null ? classSearchFiles : scopeContext.getClassSearchFiles();
 	}
 
 	/**
@@ -383,6 +483,21 @@ public final class P3VariableMethodCompletionContributor {
 			@NotNull CompletionResultSet result,
 			@NotNull java.util.Set<String> hiddenPropertyNames
 	) {
+		addClassProperties(
+				project,
+				className,
+				P3CompletionUtils.getVisibleFilesForClasses(project, currentFile, cursorOffset),
+				result,
+				hiddenPropertyNames);
+	}
+
+	public static void addClassProperties(
+			@NotNull Project project,
+			@NotNull String className,
+			@NotNull List<VirtualFile> visibleFiles,
+			@NotNull CompletionResultSet result,
+			@NotNull java.util.Set<String> hiddenPropertyNames
+	) {
 		long t0 = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		// Для встроенных классов — показываем свойства из справочника
 		if (Parser3BuiltinMethods.isBuiltinClass(className)) {
@@ -392,7 +507,6 @@ public final class P3VariableMethodCompletionContributor {
 
 		P3MethodIndex methodIndex = P3MethodIndex.getInstance(project);
 		P3ClassIndex classIndex = P3ClassIndex.getInstance(project);
-		List<VirtualFile> visibleFiles = P3CompletionUtils.getVisibleFilesForClasses(project, currentFile, cursorOffset);
 
 		// Собираем методы класса (для @GET_ геттеров и переменных)
 		List<P3MethodDeclaration> methods = new ArrayList<>();
@@ -445,6 +559,19 @@ public final class P3VariableMethodCompletionContributor {
 			int cursorOffset,
 			@NotNull CompletionResultSet result
 	) {
+		addGetterProperties(
+				project,
+				className,
+				P3CompletionUtils.getVisibleFilesForClasses(project, currentFile, cursorOffset),
+				result);
+	}
+
+	public static void addGetterProperties(
+			@NotNull Project project,
+			@NotNull String className,
+			@NotNull List<VirtualFile> visibleFiles,
+			@NotNull CompletionResultSet result
+	) {
 		long t0 = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		if (Parser3BuiltinMethods.isBuiltinClass(className)) {
 			return;
@@ -452,7 +579,6 @@ public final class P3VariableMethodCompletionContributor {
 
 		P3MethodIndex methodIndex = P3MethodIndex.getInstance(project);
 		P3ClassIndex classIndex = P3ClassIndex.getInstance(project);
-		List<VirtualFile> visibleFiles = P3CompletionUtils.getVisibleFilesForClasses(project, currentFile, cursorOffset);
 
 		List<P3MethodDeclaration> methods = new ArrayList<>();
 		collectClassMethods(className, methodIndex, classIndex, visibleFiles, methods, new ArrayList<>());
@@ -496,13 +622,23 @@ public final class P3VariableMethodCompletionContributor {
 			@NotNull VirtualFile currentFile,
 			int cursorOffset
 	) {
+		return collectGetterPropertyNames(
+				project,
+				className,
+				P3CompletionUtils.getVisibleFilesForClasses(project, currentFile, cursorOffset));
+	}
+
+	public static @NotNull java.util.Set<String> collectGetterPropertyNames(
+			@NotNull Project project,
+			@NotNull String className,
+			@NotNull List<VirtualFile> visibleFiles
+	) {
 		if (Parser3BuiltinMethods.isBuiltinClass(className)) {
 			return java.util.Collections.emptySet();
 		}
 
 		P3MethodIndex methodIndex = P3MethodIndex.getInstance(project);
 		P3ClassIndex classIndex = P3ClassIndex.getInstance(project);
-		List<VirtualFile> visibleFiles = P3CompletionUtils.getVisibleFilesForClasses(project, currentFile, cursorOffset);
 
 		List<P3MethodDeclaration> methods = new ArrayList<>();
 		collectClassMethods(className, methodIndex, classIndex, visibleFiles, methods, new ArrayList<>());
@@ -527,11 +663,28 @@ public final class P3VariableMethodCompletionContributor {
 			int cursorOffset,
 			@NotNull CompletionResultSet result
 	) {
+		addClassMethods(
+				project,
+				className,
+				currentFile,
+				cursorOffset,
+				result,
+				P3CompletionUtils.getVisibleFilesForClasses(project, currentFile, cursorOffset));
+	}
+
+	private static void addClassMethods(
+			@NotNull Project project,
+			@NotNull String className,
+			@NotNull VirtualFile currentFile,
+			int cursorOffset,
+			@NotNull CompletionResultSet result,
+			@NotNull List<VirtualFile> visibleFiles
+	) {
 		// Проверяем, встроенный ли это класс
 		if (Parser3BuiltinMethods.isBuiltinClass(className)) {
 			addBuiltinClassMethods(className, result);
 		} else {
-			addUserClassMethods(project, className, currentFile, cursorOffset, result);
+			addUserClassMethods(project, className, currentFile, cursorOffset, result, visibleFiles);
 		}
 	}
 
@@ -579,10 +732,26 @@ public final class P3VariableMethodCompletionContributor {
 			int cursorOffset,
 			@NotNull CompletionResultSet result
 	) {
+		addUserClassMethods(
+				project,
+				className,
+				currentFile,
+				cursorOffset,
+				result,
+				P3CompletionUtils.getVisibleFilesForClasses(project, currentFile, cursorOffset));
+	}
+
+	private static void addUserClassMethods(
+			@NotNull Project project,
+			@NotNull String className,
+			@NotNull VirtualFile currentFile,
+			int cursorOffset,
+			@NotNull CompletionResultSet result,
+			@NotNull List<VirtualFile> visibleFiles
+	) {
 		long t0 = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		P3MethodIndex methodIndex = P3MethodIndex.getInstance(project);
 		P3ClassIndex classIndex = P3ClassIndex.getInstance(project);
-		List<VirtualFile> visibleFiles = P3CompletionUtils.getVisibleFilesForClasses(project, currentFile, cursorOffset);
 
 		// Ищем класс
 		List<P3ClassDeclaration> classes = classIndex.findInFiles(className, visibleFiles);

@@ -6,14 +6,20 @@ import com.intellij.codeInsight.completion.CompletionInitializationContext;
 import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.AutoPopupController;
+import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupFocusDegree;
+import com.intellij.codeInsight.lookup.LookupManager;
+import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -21,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 import ru.artlebedev.parser3.utils.Parser3PsiUtils;
 import ru.artlebedev.parser3.utils.Parser3VariableTailUtils;
+import com.intellij.util.Alarm;
 
 /**
  * InsertHandler для переменных Parser3.
@@ -37,9 +44,12 @@ import ru.artlebedev.parser3.utils.Parser3VariableTailUtils;
 public final class P3VariableInsertHandler implements InsertHandler<LookupElement> {
 
 	public static final P3VariableInsertHandler INSTANCE = new P3VariableInsertHandler();
+	private static final Key<Boolean> SUPPRESS_EXPLICIT_USER_TEMPLATES_ONCE =
+			Key.create("Parser3.variable.dot.auto.popup.suppress.explicit.user.templates.once");
 
 	@Override
 	public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
+		suppressDuplicateCompletionDot(context, item);
 		Document doc = resolveHostDocument(context);
 		int tailOffset = context.getTailOffset();
 		CharSequence text = doc.getCharsSequence();
@@ -80,6 +90,7 @@ public final class P3VariableInsertHandler implements InsertHandler<LookupElemen
 		}
 		if (dollarPos < lineStart) {
 			return (context, item) -> {
+				suppressDuplicateCompletionDot(context, item);
 				INSTANCE.handleInsert(context, item);
 				if (suffix != null && !suffix.isEmpty()) {
 					Document doc = resolveHostDocument(context);
@@ -88,7 +99,7 @@ public final class P3VariableInsertHandler implements InsertHandler<LookupElemen
 					context.getEditor().getCaretModel().moveToOffset(tail + suffix.length());
 				}
 				if (openPopupAfterInsert) {
-					AutoPopupController.getInstance(context.getProject()).scheduleAutoPopup(context.getEditor());
+					showBasicCompletionLater(context.getProject(), context.getEditor());
 				}
 			};
 		}
@@ -101,6 +112,7 @@ public final class P3VariableInsertHandler implements InsertHandler<LookupElemen
 		final boolean needsDeferredRestore = linePrefix.indexOf('<') != -1 || lineSuffix.indexOf('>') != -1;
 
 		return (context, item) -> {
+			suppressDuplicateCompletionDot(context, item);
 			Document doc = resolveHostDocument(context);
 			Editor editor = resolveCompletionEditor(context, doc);
 			String expectedLine = linePrefix + item.getLookupString() + insertSuffix + lineSuffix;
@@ -109,7 +121,7 @@ public final class P3VariableInsertHandler implements InsertHandler<LookupElemen
 			Runnable finishCaretAndPopup = () -> {
 				moveCaretToHostOffset(editor, doc, caretTarget);
 				if (openPopupAfterInsert && !needsDeferredRestore) {
-					AutoPopupController.getInstance(context.getProject()).scheduleAutoPopup(editor);
+					showBasicCompletionLater(context.getProject(), editor);
 				}
 			};
 			Runnable restoreHostLine = () -> {
@@ -155,7 +167,6 @@ public final class P3VariableInsertHandler implements InsertHandler<LookupElemen
 							if (context.getProject().isDisposed()) {
 								return;
 							}
-							PsiDocumentManager.getInstance(context.getProject()).commitDocument(doc);
 							moveCaretToHostOffset(editor, doc, Math.min(caretTarget, doc.getTextLength()));
 							showBasicCompletion(context.getProject(), editor);
 						});
@@ -163,6 +174,21 @@ public final class P3VariableInsertHandler implements InsertHandler<LookupElemen
 				});
 			}
 		};
+	}
+
+	static void suppressDuplicateCompletionDot(@NotNull InsertionContext context, @NotNull LookupElement item) {
+		if (context.getCompletionChar() == '.' && item.getLookupString().endsWith(".")) {
+			context.setAddCompletionChar(false);
+		}
+	}
+
+	private static void showBasicCompletionLater(@NotNull Project project, @NotNull Editor editor) {
+		ApplicationManager.getApplication().invokeLater(() -> {
+			if (project.isDisposed() || editor instanceof EditorEx && ((EditorEx) editor).isDisposed()) {
+				return;
+			}
+			showBasicCompletion(project, editor);
+		});
 	}
 
 	private static void replaceCurrentLine(@NotNull Document doc, int lineAnchorOffset, @NotNull String expectedLine) {
@@ -228,15 +254,88 @@ public final class P3VariableInsertHandler implements InsertHandler<LookupElemen
 	}
 
 	static void showBasicCompletion(@NotNull Project project, @NotNull Editor editor) {
-		new CodeCompletionHandlerBase(CompletionType.BASIC, false, false, true)
+		markVariableDotAutoPopup(editor);
+		new CodeCompletionHandlerBase(CompletionType.BASIC, false, true, false)
 				.invokeCompletion(project, editor);
+		selectFirstItemInAsyncLookup(project, editor);
+	}
+
+	static void scheduleBasicAutoPopup(@NotNull Project project, @NotNull Editor editor) {
+		markVariableDotAutoPopup(editor);
+		AutoPopupController.getInstance(project).scheduleAutoPopup(editor);
+	}
+
+	public static boolean consumeVariableDotAutoPopupUserTemplateSuppression(@NotNull Editor editor) {
+		boolean suppress = Boolean.TRUE.equals(editor.getUserData(SUPPRESS_EXPLICIT_USER_TEMPLATES_ONCE));
+		if (suppress) {
+			editor.putUserData(SUPPRESS_EXPLICIT_USER_TEMPLATES_ONCE, null);
+		}
+		return suppress;
+	}
+
+	private static void markVariableDotAutoPopup(@NotNull Editor editor) {
+		editor.putUserData(SUPPRESS_EXPLICIT_USER_TEMPLATES_ONCE, Boolean.TRUE);
+	}
+
+	private static void selectFirstItemInAsyncLookup(@NotNull Project project, @NotNull Editor editor) {
+		Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, project);
+		int[] attemptsLeft = {20};
+		Runnable trySelect = new Runnable() {
+			@Override
+			public void run() {
+				if (project.isDisposed()) {
+					alarm.cancelAllRequests();
+					return;
+				}
+				Lookup activeLookup = LookupManager.getActiveLookup(editor);
+				if (ensureFirstLookupItemSelected(activeLookup)) {
+					alarm.cancelAllRequests();
+					return;
+				}
+				attemptsLeft[0]--;
+				if (attemptsLeft[0] > 0) {
+					alarm.addRequest(this, 20);
+				}
+			}
+		};
+		alarm.addRequest(trySelect, 0);
+	}
+
+	public static boolean ensureFirstLookupItemSelected(@Nullable Lookup lookup) {
+		if (!(lookup instanceof LookupImpl)) {
+			return false;
+		}
+		LookupImpl lookupImpl = (LookupImpl) lookup;
+		if (lookupImpl.isLookupDisposed()) {
+			return false;
+		}
+		java.util.List<LookupElement> items = lookupImpl.getItems();
+		if (items.isEmpty()) {
+			return false;
+		}
+		if (lookupImpl.getCurrentItem() == null || lookupImpl.getSelectedIndex() < 0) {
+			lookupImpl.setCurrentItem(items.get(0));
+		}
+		if (lookupImpl.getLookupFocusDegree() != LookupFocusDegree.FOCUSED) {
+			lookupImpl.setLookupFocusDegree(LookupFocusDegree.FOCUSED);
+		}
+		lookupImpl.ensureSelectionVisible(false);
+		lookupImpl.getList().repaint();
+		lookupImpl.getComponent().repaint();
+		return true;
 	}
 
 	static int findCaretAfterInsertedVariable(@NotNull Document doc, int preferredOffset, @NotNull String lookupString) {
 		CharSequence text = doc.getCharsSequence();
 		String fullText = text.toString();
-		String needle = "$" + lookupString;
 		int safePreferredOffset = Math.max(0, Math.min(preferredOffset, text.length()));
+		int insertedStart = safePreferredOffset - lookupString.length();
+		if (insertedStart >= 0
+				&& lookupString.contentEquals(text.subSequence(insertedStart, safePreferredOffset))) {
+			return safePreferredOffset;
+		}
+
+		String needle = "$" + lookupString;
 		int bestOffset = -1;
 		int bestDistance = Integer.MAX_VALUE;
 		int index = fullText.indexOf(needle);

@@ -77,13 +77,7 @@ public class Parser3CompletionConfidence extends CompletionConfidence {
 			return ThreeState.NO;
 		}
 
-		if (psiFile.getVirtualFile() != null
-				&& P3TableColumnArgumentCompletionSupport.isColumnArgumentContext(
-				psiFile.getProject(),
-				psiFile.getVirtualFile(),
-				text.toString(),
-				offset
-		)) {
+		if (P3TableColumnArgumentCompletionSupport.isColumnArgumentSyntaxContext(text, offset)) {
 			if (DEBUG_LOG) {
 				System.out.println("[P3Confidence] allow autopopup in table column argument at offset=" + offset);
 			}
