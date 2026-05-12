@@ -172,6 +172,13 @@ public final class P3VariableMethodCompletionContributor {
 		long t0 = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		String normalizedVarKey = Parser3ChainUtils.normalizeDynamicSegments(varKey);
 		String typedPrefix = result.getPrefixMatcher().getPrefix();
+		String delayedTypedPrefix = typedPrefix.isEmpty()
+				? extractDelayedDollarDotPrefix(currentFileText, cursorOffset)
+				: "";
+		if (!delayedTypedPrefix.isEmpty()) {
+			typedPrefix = delayedTypedPrefix;
+			result = result.withPrefixMatcher(delayedTypedPrefix);
+		}
 
 		String className = null;
 		java.util.List<String> cols = null;
@@ -306,13 +313,34 @@ public final class P3VariableMethodCompletionContributor {
 		}
 		// $var. неизвестного типа — ничего не добавляем
 
-		// Пользовательские шаблоны с prefix="." — показываем для ^var. контекста
-		if (caretDot) {
-			ru.artlebedev.parser3.lang.Parser3CompletionContributor.fillUserTemplates(result, ".");
-		}
+		// Пользовательские dot-шаблоны нужны и для ^var., и для $var. после точки.
+		// Они не должны фильтроваться уже набранным ключом: $data.id всё равно показывает .foreach[] внизу списка.
+		ru.artlebedev.parser3.lang.Parser3CompletionContributor.fillUserTemplates(result.withPrefixMatcher(""), ".");
 		if (DEBUG_PERF) System.out.println("[VarMethodCompl.PERF] completeVariableDot TOTAL: " + (System.currentTimeMillis() - t0) + "ms"
 				+ " visibleFiles=" + (visibleFiles != null ? visibleFiles.size() : 0)
 				+ " classSearchFiles=" + (classSearchFiles != null ? classSearchFiles.size() : 0));
+	}
+
+	private static @NotNull String extractDelayedDollarDotPrefix(@Nullable String currentFileText, int cursorOffset) {
+		if (currentFileText == null || currentFileText.isEmpty()) {
+			return "";
+		}
+		int safeOffset = Math.max(0, Math.min(cursorOffset, currentFileText.length()));
+		if (!P3CompletionUtils.isDollarVariableDotCompletionContext(currentFileText, safeOffset)) {
+			return "";
+		}
+
+		int prefixStart = safeOffset;
+		while (prefixStart > 0 && P3CompletionUtils.isVarIdentChar(currentFileText.charAt(prefixStart - 1))) {
+			prefixStart--;
+		}
+		if (prefixStart == safeOffset) {
+			return "";
+		}
+		if (prefixStart <= 0 || currentFileText.charAt(prefixStart - 1) != '.') {
+			return "";
+		}
+		return currentFileText.substring(prefixStart, safeOffset);
 	}
 
 	private static @Nullable String resolveBuiltinStaticPropertyType(
@@ -415,7 +443,7 @@ public final class P3VariableMethodCompletionContributor {
 		// Свойства встроенного класса
 		addBuiltinClassProperties(className, result);
 		// Пользовательские шаблоны с "."
-		ru.artlebedev.parser3.lang.Parser3CompletionContributor.fillUserTemplates(result, ".");
+		ru.artlebedev.parser3.lang.Parser3CompletionContributor.fillUserTemplates(result.withPrefixMatcher(""), ".");
 	}
 
 	/**
@@ -1026,6 +1054,7 @@ public final class P3VariableMethodCompletionContributor {
 		String typedPrefix = result.getPrefixMatcher().getPrefix();
 		int currentSegmentStart = cursorOffset >= 0 ? Math.max(0, cursorOffset - typedPrefix.length()) : -1;
 		java.util.Map<String, ru.artlebedev.parser3.index.HashEntryInfo> completionHashKeys = new java.util.LinkedHashMap<>(hashKeys);
+		java.util.Set<String> syntheticWeakCandidates = new java.util.HashSet<>();
 		String currentWeakCandidate = extractCurrentWeakCandidate(typedPrefix, currentFileText, cursorOffset);
 		if (currentWeakCandidate != null && !completionHashKeys.containsKey(currentWeakCandidate)) {
 			completionHashKeys.put(currentWeakCandidate,
@@ -1035,6 +1064,7 @@ public final class P3VariableMethodCompletionContributor {
 							null,
 							currentSegmentStart
 					));
+			syntheticWeakCandidates.add(currentWeakCandidate);
 		}
 		for (java.util.Map.Entry<String, ru.artlebedev.parser3.index.HashEntryInfo> entry : completionHashKeys.entrySet()) {
 			String keyName = entry.getKey();
@@ -1042,7 +1072,7 @@ public final class P3VariableMethodCompletionContributor {
 			if ("*".equals(keyName)) continue;
 			ru.artlebedev.parser3.index.HashEntryInfo info = entry.getValue();
 			if (isHiddenHashMutationEntry(info)) continue;
-			if (shouldHideCurrentWeakCandidate(
+			if (syntheticWeakCandidates.contains(keyName) && shouldHideCurrentWeakCandidate(
 					appendDot, keyName, typedPrefix, normalizedVarKey, currentFileText, currentSegmentStart)) {
 				continue;
 			}

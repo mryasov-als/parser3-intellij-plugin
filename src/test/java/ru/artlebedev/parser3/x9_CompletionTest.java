@@ -9,10 +9,15 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupFocusDegree;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
+import com.intellij.injected.editor.EditorWindow;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.TestModeFlags;
 import org.jetbrains.annotations.NotNull;
 import ru.artlebedev.parser3.completion.P3ClassCompletionContributor;
+import ru.artlebedev.parser3.completion.P3CompletionUtils;
 import ru.artlebedev.parser3.templates.Parser3UserTemplate;
 import ru.artlebedev.parser3.templates.Parser3UserTemplatesService;
 import ru.artlebedev.parser3.visibility.P3ScopeContext;
@@ -165,6 +170,138 @@ public class x9_CompletionTest extends Parser3TestCase {
 				.collect(Collectors.toList());
 	}
 
+	private void assertHashKeyDotAutoCompletionWithDotUserTemplates(@NotNull String message, @NotNull List<String> completions) {
+		assertTrue(message + " должен содержать ключ x: " + completions, completions.contains("x"));
+		assertTrue(message + " должен содержать ключ y: " + completions, completions.contains("y"));
+		assertTrue(message + " должен показывать dot-шаблон foreach[] после точки: " + completions,
+				completions.contains("foreach[]"));
+		assertFalse(message + " не должен показывать пользовательский шаблон curl:load[] без dot-prefix после точки: " + completions,
+				completions.contains("curl:load[]"));
+		assertFalse(message + " не должен показывать пользовательский шаблон mail:send[] без dot-prefix после точки: " + completions,
+				completions.contains("mail:send[]"));
+
+		int xIndex = completions.indexOf("x");
+		int yIndex = completions.indexOf("y");
+		int foreachIndex = completions.indexOf("foreach[]");
+		assertTrue(message + " ключ x должен быть выше dot-шаблона foreach[]: " + completions,
+				xIndex < foreachIndex);
+		assertTrue(message + " ключ y должен быть выше dot-шаблона foreach[]: " + completions,
+				yIndex < foreachIndex);
+	}
+
+	private void assertRealKeysAboveDotTemplates(
+			@NotNull String message,
+			@NotNull List<String> completions,
+			@NotNull List<String> realKeys,
+			@NotNull List<String> dotTemplates
+	) {
+		int lastRealIndex = -1;
+		for (String realKey : realKeys) {
+			int realIndex = completions.indexOf(realKey);
+			assertTrue(message + " должен содержать реальный ключ " + realKey + ": " + completions, realIndex >= 0);
+			lastRealIndex = Math.max(lastRealIndex, realIndex);
+		}
+		for (String dotTemplate : dotTemplates) {
+			int templateIndex = completions.indexOf(dotTemplate);
+			assertTrue(message + " должен содержать dot-шаблон " + dotTemplate + ": " + completions, templateIndex >= 0);
+			assertTrue(message + " dot-шаблон " + dotTemplate + " должен быть ниже реальных ключей: " + completions,
+					templateIndex > lastRealIndex);
+		}
+	}
+
+	private void assertActiveLookupFirstItemSelected(@NotNull String message, @NotNull LookupImpl lookup) {
+		waitForDefaultLookupSelection(lookup);
+		List<String> names = lookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertFalse(message + " должен иметь хотя бы один пункт", names.isEmpty());
+		LookupElement selected = lookup.getCurrentItem();
+		assertNotNull(message + " должен выбрать первый пункт", selected);
+		assertEquals(message + " должен выбрать первый пункт списка", names.get(0), selected.getLookupString());
+		assertEquals(message + " должен визуально выбрать первую строку", 0, lookup.getSelectedIndex());
+	}
+
+	private LookupImpl assertActiveLookupImpl(@NotNull String message) {
+		Lookup activeLookup = getActiveLookup();
+		assertNotNull(message + ": popup должен быть открыт", activeLookup);
+		assertTrue(message + ": popup должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		return (LookupImpl) activeLookup;
+	}
+
+	private Lookup getActiveLookup() {
+		Editor editor = myFixture.getEditor();
+		Lookup lookup = LookupManager.getActiveLookup(editor);
+		if (lookup == null && editor instanceof EditorWindow) {
+			lookup = LookupManager.getActiveLookup(((EditorWindow) editor).getDelegate());
+		}
+		return lookup;
+	}
+
+	private void assertNoActiveLookup(@NotNull String message) {
+		assertNull(message, getActiveLookup());
+	}
+
+	private List<String> getLookupNames(@NotNull Lookup lookup) {
+		return lookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+	}
+
+	private void typeWithAutoPopup(@NotNull String text, @NotNull String timeoutMessage) {
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type(text);
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError(timeoutMessage, e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+	}
+
+	private void typeInHostEditorWithAutoPopup(@NotNull String text, @NotNull String timeoutMessage) {
+		Editor editor = myFixture.getEditor();
+		Editor hostEditor = editor instanceof EditorWindow
+				? ((EditorWindow) editor).getDelegate()
+				: editor;
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			for (int i = 0; i < text.length(); i++) {
+				EditorTestUtil.performTypingAction(hostEditor, text.charAt(i));
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError(timeoutMessage, e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+	}
+
+	private void assertHashKeyDotCompletionWithUserTemplates(@NotNull String message, @NotNull List<String> completions) {
+		assertTrue(message + " должен содержать ключ x: " + completions, completions.contains("x"));
+		assertTrue(message + " должен содержать ключ y: " + completions, completions.contains("y"));
+		assertTrue(message + " должен показывать пользовательский шаблон curl:load[] по Ctrl+Space: " + completions,
+				completions.contains("curl:load[]"));
+		assertTrue(message + " должен показывать пользовательский шаблон foreach[] по Ctrl+Space: " + completions,
+				completions.contains("foreach[]"));
+		assertTrue(message + " должен показывать пользовательский шаблон mail:send[] по Ctrl+Space: " + completions,
+				completions.contains("mail:send[]"));
+
+		int xIndex = completions.indexOf("x");
+		int yIndex = completions.indexOf("y");
+		int firstTemplateIndex = java.util.stream.Stream.of("curl:load[]", "foreach[]", "mail:send[]")
+				.mapToInt(completions::indexOf)
+				.filter(i -> i >= 0)
+				.min()
+				.orElse(-1);
+		assertTrue(message + " ключ x должен быть выше пользовательских шаблонов: " + completions,
+				firstTemplateIndex < 0 || xIndex < firstTemplateIndex);
+		assertTrue(message + " ключ y должен быть выше пользовательских шаблонов: " + completions,
+				firstTemplateIndex < 0 || yIndex < firstTemplateIndex);
+	}
+
 	private String parser176RealClassA() {
 		return "@CLASS\n" +
 				"a\n" +
@@ -301,6 +438,35 @@ public class x9_CompletionTest extends Parser3TestCase {
 		myFixture.finishLookup(Lookup.REPLACE_SELECT_CHAR);
 	}
 
+	private void assertManualOpeningBracketDoesNotAcceptLookup(
+			@NotNull String path,
+			@NotNull String content,
+			@NotNull String lookupString,
+			char typedBracket,
+			@NotNull String expectedManualCall,
+			@NotNull String duplicatedCall
+	) {
+		configureParser3TextFile(path, content);
+		myFixture.complete(CompletionType.BASIC);
+		LookupElement[] elements = myFixture.getLookupElements();
+		assertNotNull("После полного имени вызова должен быть активный popup", elements);
+		LookupElement target = Arrays.stream(elements)
+				.filter(e -> lookupString.equals(e.getLookupString()))
+				.findFirst()
+				.orElse(null);
+		assertNotNull("В popup должен быть lookup element '" + lookupString + "'", target);
+		myFixture.getLookup().setCurrentItem(target);
+
+		myFixture.type(Character.toString(typedBracket));
+		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+
+		String text = myFixture.getEditor().getDocument().getText();
+		assertTrue("Ручной ввод " + typedBracket + " должен попасть в документ: " + text,
+				text.contains(expectedManualCall));
+		assertFalse("Ручной ввод " + typedBracket + " не должен выбирать lookup и удваивать скобки: " + text,
+				text.contains(duplicatedCall));
+	}
+
 	private Parser3UserTemplate createUserTemplate(@NotNull String name, @NotNull String comment, @NotNull String body) {
 		Parser3UserTemplate template = new Parser3UserTemplate();
 		template.id = java.util.UUID.randomUUID().toString();
@@ -311,6 +477,21 @@ public class x9_CompletionTest extends Parser3TestCase {
 		template.priority = 0;
 		template.scope = null;
 		return template;
+	}
+
+	private List<Parser3UserTemplate> createDotUserTemplates() {
+		return List.of(
+				createUserTemplate(
+						"foreach",
+						"Перебор элементов массива или хеша",
+						".foreach[key;value]{\n\t<CURSOR>\n}"
+				),
+				createUserTemplate(
+						"mail:send",
+						"Отправка сообщения по электронной почте",
+						".mail:send[\n\t$.from[<CURSOR>]\n]"
+				)
+		);
 	}
 
 	private int countPropertyCompletion(@NotNull List<String> completions, @NotNull String name) {
@@ -625,10 +806,14 @@ public class x9_CompletionTest extends Parser3TestCase {
 				"@main[]\n" +
 						"# на основе parser3/tests/097.html\n" +
 						"$env:t<caret>");
-		assertExplicitCompletionContainsUserTemplate("test_explicit_user_templates_dot_without_caret.p",
+		assertExplicitCompletionContainsUserTemplate("test_explicit_user_templates_dollar_dot_without_caret.p",
 				"@main[]\n" +
 						"# на основе parser3/tests/010.html\n" +
 						"$var.t<caret>");
+		assertExplicitCompletionContainsUserTemplate("test_explicit_user_templates_after_finished_dollar_dot_expression.p",
+				"@main[]\n" +
+						"# на основе parser3/tests/010.html\n" +
+						"^render[$var.t + ^cur<caret>]");
 		assertExplicitCompletionContainsUserTemplate("test_explicit_user_templates_invalid_caret_dot.p",
 				"@main[]\n" +
 						"# на основе parser3/tests/010.html\n" +
@@ -666,6 +851,51 @@ public class x9_CompletionTest extends Parser3TestCase {
 			assertEquals("Должен быть выделен текст между маркерами", "value",
 					myFixture.getEditor().getSelectionModel().getSelectedText());
 		});
+	}
+
+	public void testSystemMethodOpeningParenDoesNotAcceptLookupAfterExactTypedName() {
+		assertManualOpeningBracketDoesNotAcceptLookup(
+				"test_system_method_manual_opening_paren.p",
+				"@main[]\n" +
+						"# на основе parser3/tests/416.html\n" +
+						"^if<caret>",
+				"if",
+				'(',
+				"^if(",
+				"^if()()"
+		);
+		assertManualOpeningBracketDoesNotAcceptLookup(
+				"test_system_method_manual_square_bracket.p",
+				"@main[]\n" +
+						"# на основе parser3/tests/416.html\n" +
+						"^switch<caret>",
+				"switch",
+				'[',
+				"^switch[",
+				"^switch[][]"
+		);
+		assertManualOpeningBracketDoesNotAcceptLookup(
+				"test_static_method_manual_square_bracket.p",
+				"@main[]\n" +
+						"# обезличенный кейс конструктора builtin-класса\n" +
+						"^hash::create<caret>",
+				"hash::create",
+				'[',
+				"^hash::create[",
+				"^hash::create[][]"
+		);
+		assertManualOpeningBracketDoesNotAcceptLookup(
+				"test_user_method_manual_square_bracket.p",
+				"@main[]\n" +
+						"# обезличенный кейс пользовательского метода\n" +
+						"^helper<caret>\n" +
+						"\n" +
+						"@helper[]\n",
+				"helper",
+				'[',
+				"^helper[",
+				"^helper[][]"
+		);
 	}
 
 	public void testBooleanCompletion_autoPopupOnTypedTrueFalsePrefix() {
@@ -5455,6 +5685,9 @@ public class x9_CompletionTest extends Parser3TestCase {
 				nextLookupImpl.getSelectedIndex());
 		assertTrue("Автопопап после person. должен показывать dot-шаблон .foreach[]: " + nextLookupStrings,
 				nextLookupStrings.contains("foreach[]"));
+		assertTrue("Ключ subgroups должен быть выше dot-шаблона .foreach[]: " + nextLookupStrings,
+				nextLookupStrings.indexOf("subgroups") >= 0
+						&& nextLookupStrings.indexOf("subgroups") < nextLookupStrings.indexOf("foreach[]"));
 		assertFalse("Автопопап после person. не должен показывать caret-шаблон ^curl:load[]: " + nextLookupStrings,
 				nextLookupStrings.contains("curl:load[]"));
 		assertFalse("Автопопап после person. не должен показывать mail-шаблоны без явного Ctrl+Space: " + nextLookupStrings,
@@ -5523,7 +5756,7 @@ public class x9_CompletionTest extends Parser3TestCase {
 		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
 	}
 
-	public void testDollarCompletion_typedDotWithActiveVariablePopupOpensHashKeysPopup() throws Throwable {
+	public void testDollarCompletion_typedDotWithActiveVariablePopupDoesNotAcceptPartialVariable() throws Throwable {
 		try {
 			setDocumentRoot("www");
 		} catch (java.io.IOException e) {
@@ -5575,27 +5808,10 @@ public class x9_CompletionTest extends Parser3TestCase {
 				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
 		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
 		String text = hostDocument.getText();
-		assertTrue("Ручная точка в активном popup должна вставить $person.: " + text,
+		assertTrue("Ручная точка в активном popup не должна подтверждать частичный $pers: " + text,
+				text.contains("$pers."));
+		assertFalse("Ручная точка в активном popup не должна вставлять выбранный $person: " + text,
 				text.contains("$person."));
-		assertFalse("Ручная точка в активном popup не должна дублировать точку: " + text,
-				text.contains("$person.."));
-
-		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
-		assertNotNull("После ручной точки в активном popup должен открыться popup с ключами", activeLookup);
-		assertTrue("Popup после $person. должен быть LookupImpl", activeLookup instanceof LookupImpl);
-		waitForDefaultLookupSelection((LookupImpl) activeLookup);
-		List<String> names = activeLookup.getItems().stream()
-				.map(LookupElement::getLookupString)
-				.collect(Collectors.toList());
-		assertTrue("Popup после $person. должен содержать login, есть: " + names,
-				names.contains("login"));
-		assertTrue("Popup после $person. должен содержать fields., есть: " + names,
-				names.contains("fields."));
-		assertFalse("После ручной точки не должен оставаться popup корневой переменной person.: " + names,
-				names.contains("person."));
-		LookupElement selected = activeLookup.getCurrentItem();
-		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
-		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
 	}
 
 	public void testDollarCompletion_continueTypingVariableNameThenDotOpensHashKeysPopup() throws Throwable {
@@ -5885,7 +6101,80 @@ public class x9_CompletionTest extends Parser3TestCase {
 		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
 	}
 
-	public void testDollarCompletion_typedDotWithActiveVariablePopupSelectsMatchingDottedItem() throws Throwable {
+	public void testDollarCompletion_bareDollarDotDoesNotInsertSelfFromActivePopup() {
+		configureParser3TextFile("test_bare_dollar_dot_does_not_insert_self.p",
+				"@main[]\n" +
+						"$data[\n" +
+						"\t$.xxx[]\n" +
+						"\t$<caret>\n" +
+						"]\n");
+
+		myFixture.complete(CompletionType.BASIC);
+		Lookup variableLookup = myFixture.getLookup();
+		assertNotNull("После голого $ должен открыться popup переменных", variableLookup);
+		assertTrue("Popup переменных должен быть LookupImpl", variableLookup instanceof LookupImpl);
+		LookupElement selfElement = Arrays.stream(myFixture.getLookupElements())
+				.filter(e -> "self.".equals(e.getLookupString()))
+				.findFirst()
+				.orElse(null);
+		assertNotNull("Popup переменных должен содержать self.", selfElement);
+		((LookupImpl) variableLookup).setCurrentItem(selfElement);
+
+		myFixture.type(".");
+		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+
+		String text = myFixture.getEditor().getDocument().getText();
+		assertTrue("Точка после голого $ должна остаться ручным вводом $.: " + text,
+				text.contains("\t$.\n"));
+		assertFalse("Точка после голого $ не должна выбирать $self: " + text,
+				text.contains("$self"));
+	}
+
+	public void testDollarCompletion_tabDoesNotInsertSelfFromActivePopup() {
+		configureParser3TextFile("test_tab_does_not_insert_self.p",
+				"@main[]\n" +
+						"$data[\n" +
+						"\t$.xxx[]\n" +
+						"\t$<caret>\n" +
+						"]\n");
+
+		myFixture.complete(CompletionType.BASIC);
+		Lookup variableLookup = myFixture.getLookup();
+		assertNotNull("После голого $ должен открыться popup переменных", variableLookup);
+		assertTrue("Popup переменных должен быть LookupImpl", variableLookup instanceof LookupImpl);
+		LookupElement selfElement = Arrays.stream(myFixture.getLookupElements())
+				.filter(e -> "self.".equals(e.getLookupString()))
+				.findFirst()
+				.orElse(null);
+		assertNotNull("Popup переменных должен содержать self.", selfElement);
+		((LookupImpl) variableLookup).setCurrentItem(selfElement);
+
+		myFixture.performEditorAction(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE);
+		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+
+		String text = myFixture.getEditor().getDocument().getText();
+		assertTrue("Tab в активном popup должен остаться обычным Tab, а не выбором completion: " + text,
+				text.contains("\t$\t\n"));
+		assertFalse("Tab в активном popup не должен выбирать $self: " + text,
+				text.contains("$self"));
+		assertNull("Tab должен закрыть popup без вставки", LookupManager.getActiveLookup(myFixture.getEditor()));
+	}
+
+	public void testEditorTabWorksWithoutCompletionPopup() {
+		configureParser3TextFile("test_editor_tab_without_popup.p",
+				"@main[]\n" +
+						"<caret>$value[test]\n");
+		assertNull("Перед обычным Tab popup не должен быть открыт", LookupManager.getActiveLookup(myFixture.getEditor()));
+
+		myFixture.performEditorAction(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE);
+		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+
+		String text = myFixture.getEditor().getDocument().getText();
+		assertTrue("Обычный Tab без popup должен вставлять табуляцию/отступ: " + text,
+				text.contains("\n\t$value[test]"));
+	}
+
+	public void testDollarCompletion_typedDotWithWrongCurrentItemKeepsTypedVariable() throws Throwable {
 		try {
 			setDocumentRoot("www");
 		} catch (java.io.IOException e) {
@@ -5938,9 +6227,9 @@ public class x9_CompletionTest extends Parser3TestCase {
 				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
 		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
 		String text = hostDocument.getText();
-		assertTrue("Точка в активном popup должна вставить $person.: " + text,
+		assertTrue("Точка в активном popup должна оставить вручную набранный $person.: " + text,
 				text.contains("$person."));
-		assertFalse("Точка в активном popup не должна вставлять соседнюю переменную: " + text,
+		assertFalse("Точка в активном popup не должна выбирать соседнюю переменную: " + text,
 				text.contains("$personName"));
 
 		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
@@ -5959,6 +6248,201 @@ public class x9_CompletionTest extends Parser3TestCase {
 		LookupElement selected = activeLookup.getCurrentItem();
 		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
 		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testDollarHashKeyDotExplicitCompletionInsideMethodArgumentsRanksUserTemplatesLast() {
+		String base =
+				"@main[]\n" +
+						"$data[\n" +
+						"\t$.x[]\n" +
+						"\t$.y[]\n" +
+						"]\n";
+
+		String[][] cases = {
+				{"square", "^render[$data.<caret>]"},
+				{"square_nested", "^render[^wrap[$data.<caret>]]"},
+				{"round", "^if($data.<caret>){}"},
+				{"round_nested", "^if(^check[$data.<caret>]){}"},
+				{"curly", "^render{$data.<caret>}"},
+				{"mixed_brackets", "^render[^wrap($data.<caret>)]"}
+		};
+
+		for (String[] completionCase : cases) {
+			List<String> completions = getCompletions(
+					"hash_key_dot_user_templates_last_" + completionCase[0] + ".p",
+					base + completionCase[1] + "\n"
+			);
+			assertHashKeyDotCompletionWithUserTemplates(completionCase[0], completions);
+		}
+	}
+
+	public void testDollarHashKeyDotAutoPopupInsideMethodArgumentShowsDotUserTemplatesLast() throws Throwable {
+		configureParser3TextFile("hash_key_dot_auto_dot_user_templates_last.p",
+				"@main[]\n" +
+						"$data[\n" +
+						"\t$.x[]\n" +
+						"\t$.y[]\n" +
+						"]\n" +
+						"^render[$data<caret>]\n");
+
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type(".");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались popup ключей после ручного ввода точки внутри аргумента метода", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+
+		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+		assertNotNull("После $data. внутри аргумента метода должен открыться popup с ключами", activeLookup);
+		assertTrue("Popup после $data. должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
+		List<String> names = activeLookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertHashKeyDotAutoCompletionWithDotUserTemplates("autopopup", names);
+	}
+
+	public void testDollarHashKeyDotDelayedAutoPopupKeepsDotUserTemplatesLastAfterTypedPrefix() throws Throwable {
+		withUserTemplates(createDotUserTemplates(), () -> {
+			configureParser3TextFile("hash_key_dot_delayed_prefix_filters_templates.p",
+					"@main[]\n" +
+							"$data[\n" +
+							"\t$.id[]\n" +
+							"\t$.name[]\n" +
+							"]\n" +
+							"$data<caret>\n");
+
+			TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+				myFixture.type(".id");
+				com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+				try {
+					AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+				} catch (java.util.concurrent.TimeoutException e) {
+					throw new AssertionError("Не дождались delayed popup после быстрого ввода $data.id", e);
+				}
+				com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			});
+
+			Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+			assertNotNull("После быстрого ввода $data.id должен открыться popup с ключом id", activeLookup);
+			assertTrue("Popup после $data.id должен быть LookupImpl", activeLookup instanceof LookupImpl);
+			waitForDefaultLookupSelection((LookupImpl) activeLookup);
+			List<String> names = activeLookup.getItems().stream()
+					.map(LookupElement::getLookupString)
+					.collect(Collectors.toList());
+			assertTrue("Delayed popup после $data.id должен содержать ключ id, есть: " + names,
+					names.contains("id"));
+			assertRealKeysAboveDotTemplates(
+					"Delayed popup после $data.id",
+					names,
+					List.of("id"),
+					List.of("foreach[]", "mail:send[]"));
+			LookupElement selected = activeLookup.getCurrentItem();
+			assertNotNull("После delayed popup первый пункт должен быть выбран", selected);
+			assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+		});
+	}
+
+	public void testDollarVariableAutoPopupInsideIfArgumentAfterPlainText() throws Throwable {
+		configureParser3TextFile("if_argument_dollar_variable_autopopup.p",
+				"@main[]\n" +
+						"$data[\n" +
+						"\t$.xxx[]\n" +
+						"\t$.yyy[]\n" +
+						"]\n" +
+						"^if(def <caret>)\n");
+
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type("$da");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались popup переменных после $da внутри ^if(def ...)", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+
+		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+		assertNotNull("После $da внутри ^if(def ...) должен открыться popup переменных", activeLookup);
+		assertTrue("Popup после $da должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
+		List<String> names = activeLookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertTrue("Popup после $da должен содержать переменную data, есть: " + names,
+				names.contains("data."));
+		LookupElement selected = activeLookup.getCurrentItem();
+		assertNotNull("После открытия popup первый пункт должен быть выбран", selected);
+		assertEquals("Выбранным должен быть первый пункт popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testDollarVariableFastTypedTerminatorsDoNotAcceptRootPopup() throws Throwable {
+		String[][] cases = {
+				{"space", " ", "$da "},
+				{"square", "]", "$da]"},
+				{"round", ")", "$da)"}
+		};
+
+		for (String[] completionCase : cases) {
+			configureParser3TextFile("dollar_variable_terminator_no_lookup_accept_" + completionCase[0] + ".p",
+					"@main[]\n" +
+							"$data[\n" +
+							"\t$.id[]\n" +
+							"]\n" +
+							"<caret>\n");
+
+			typeWithAutoPopup("$da" + completionCase[1],
+					"Не дождались delayed actions после быстрого ввода $da" + completionCase[1]);
+
+			String text = myFixture.getEditor().getDocument().getText();
+			assertTrue("Быстрый ввод должен оставить ручной текст " + completionCase[2] + ": " + text,
+					text.contains(completionCase[2]));
+			assertFalse("Терминатор не должен выбирать root-переменную data.: " + text,
+					text.contains("$data."));
+			assertNoActiveLookup("После терминатора " + completionCase[1] + " не должен оставаться поздний popup");
+		}
+	}
+
+	public void testDollarHashKeyDotSemicolonDoesNotInsertDotUserTemplateFromActivePopup() {
+		Parser3UserTemplate foreachTemplate = createUserTemplate(
+				"foreach",
+				"Перебор элементов массива или хеша",
+				".foreach[key;value]{\n\t<CURSOR>\n}"
+		);
+
+		withUserTemplates(List.of(foreachTemplate), () -> {
+			configureParser3TextFile("hash_key_dot_semicolon_hides_lookup.p",
+					"@main[]\n" +
+							"$data[\n" +
+							"\t$.x[]\n" +
+							"\t$.y[]\n" +
+							"]\n" +
+							"$data.<caret>\n");
+
+			myFixture.complete(CompletionType.BASIC);
+			LookupElement[] elements = myFixture.getLookupElements();
+			assertNotNull("После $data. должен быть активный popup", elements);
+			LookupElement foreach = Arrays.stream(elements)
+					.filter(e -> "foreach[]".equals(e.getLookupString()))
+					.findFirst()
+					.orElse(null);
+			assertNotNull("В popup должен быть dot-шаблон .foreach[]", foreach);
+			myFixture.getLookup().setCurrentItem(foreach);
+
+			myFixture.type(";");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+
+			String text = myFixture.getEditor().getDocument().getText();
+			assertTrue("Символ ; должен быть напечатан как обычный текст: " + text,
+					text.contains("$data.;"));
+			assertFalse("Символ ; не должен выбирать dot-шаблон .foreach[]: " + text,
+					text.contains("$data.foreach"));
+		});
 	}
 
 	public void testDollarMainCompletion_usesParentAutoShapeWithoutLocalParamLeak() {
@@ -6685,7 +7169,7 @@ public class x9_CompletionTest extends Parser3TestCase {
 						"$comment.<caret>\n";
 		java.util.List<String> completions = getCompletions("hash_create_override_after_table_select.p", content);
 
-		assertTrue("После явного override пустой hash должен давать object methods, есть: " + completions,
+		assertTrue("Ctrl+Space после явного override пустого hash должен показывать пользовательские шаблоны, есть: " + completions,
 				completions.contains("foreach[]"));
 		assertTrue("После позднего $comment.id должен оставаться доказанный synthetic key id, есть: " + completions,
 				completions.contains("id"));
@@ -8379,6 +8863,298 @@ public class x9_CompletionTest extends Parser3TestCase {
 		assertTrue("В injected SQL для ^data.for должен быть foreach, есть: " + names, names.contains("foreach"));
 	}
 
+	public void testSqlInjectedParser3IfPrefixDoesNotShowSqlDefaultKeyword() {
+		createParser3FileInDir("www/sql_injected_if_no_sql_default.p",
+				"@main[]\n" +
+						"# реальный минимальный SQL-кейс: SQL completion не должен лезть внутрь Parser3 ^if(...)\n" +
+						"$list[^table::sql{\n" +
+						"\tSELECT\n" +
+						"\t\tid, user_id\n" +
+						"\tFROM\n" +
+						"\t\titems\n" +
+						"\tWHERE\n" +
+						"\t\t^if(def<caret>\n" +
+						"}]\n"
+		);
+		VirtualFile vf = myFixture.findFileInTempDir("www/sql_injected_if_no_sql_default.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		myFixture.complete(CompletionType.BASIC);
+		LookupElement[] elements = myFixture.getLookupElements();
+		List<String> names = elements == null
+				? List.of()
+				: Arrays.stream(elements).map(LookupElement::getLookupString).collect(Collectors.toList());
+		assertFalse("SQL keyword default не должен показываться внутри Parser3 ^if(...), есть: " + names,
+				names.contains("default"));
+	}
+
+	public void testSqlInjectedParser3IfAutoPopupConfidenceSkipsSqlKeywordCompletion() {
+		createParser3FileInDir("www/sql_injected_if_autopopup_confidence.p",
+				"@main[]\n" +
+						"# реальный минимальный SQL auto-popup кейс: SQL completion не должен стартовать внутри ^if(...)\n" +
+						"$list[^table::sql{\n" +
+						"\tSELECT\n" +
+						"\t\tid, user_id\n" +
+						"\tFROM\n" +
+						"\t\titems\n" +
+						"\tWHERE\n" +
+						"\t\t^if(def<caret>\n" +
+						"}]\n"
+		);
+		VirtualFile vf = myFixture.findFileInTempDir("www/sql_injected_if_autopopup_confidence.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		int offset = myFixture.getEditor().getCaretModel().getOffset();
+		com.intellij.psi.PsiElement contextElement = myFixture.getFile().findElementAt(Math.max(0, offset - 1));
+		assertNotNull("В SQL-блоке должен быть PSI element перед caret", contextElement);
+		com.intellij.util.ThreeState decision =
+				new ru.artlebedev.parser3.lang.Parser3CompletionConfidence()
+						.shouldSkipAutopopup(contextElement, myFixture.getFile(), offset);
+		assertEquals("SQL auto-popup должен подавляться внутри Parser3 ^if(...)", com.intellij.util.ThreeState.YES, decision);
+	}
+
+	public void testSqlInjectedDollarVariableAutoPopupInsideIfArgumentDoesNotCrash() throws Throwable {
+		createParser3FileInDir("www/sql_injected_if_dollar_variable_autopopup.p",
+				"@main[]\n" +
+						"$data[\n" +
+						"\t$.xxx[]\n" +
+						"\t$.yyy[]\n" +
+						"]\n" +
+						"$list[^table::sql{\n" +
+						"\tSELECT\n" +
+						"\t\t*\n" +
+						"\tFROM\n" +
+						"\t\titems\n" +
+						"\tWHERE\n" +
+						"\t\t^if(def <caret>)\n" +
+						"}]\n"
+		);
+		VirtualFile vf = myFixture.findFileInTempDir("www/sql_injected_if_dollar_variable_autopopup.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		TestModeFlags.runWithFlag(CompletionAutoPopupHandler.ourTestingAutopopup, Boolean.TRUE, () -> {
+			myFixture.type("$da");
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+			try {
+				AutoPopupController.getInstance(getProject()).waitForDelayedActions(5, TimeUnit.SECONDS);
+			} catch (java.util.concurrent.TimeoutException e) {
+				throw new AssertionError("Не дождались popup переменных после $da внутри SQL ^if(def ...)", e);
+			}
+			com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+		});
+
+		Lookup activeLookup = LookupManager.getActiveLookup(myFixture.getEditor());
+		assertNotNull("После $da внутри SQL ^if(def ...) должен открыться popup переменных", activeLookup);
+		assertTrue("Popup после SQL $da должен быть LookupImpl", activeLookup instanceof LookupImpl);
+		waitForDefaultLookupSelection((LookupImpl) activeLookup);
+		List<String> names = activeLookup.getItems().stream()
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+		assertTrue("Popup после SQL $da должен содержать переменную data, есть: " + names,
+				names.contains("data."));
+		LookupElement selected = activeLookup.getCurrentItem();
+		assertNotNull("После открытия SQL popup первый пункт должен быть выбран", selected);
+		assertEquals("Выбранным должен быть первый пункт SQL popup", names.get(0), selected.getLookupString());
+	}
+
+	public void testSqlInjectedDollarHashKeyFastTypedPrefixKeepsDotTemplatesLast() throws Throwable {
+		withUserTemplates(createDotUserTemplates(), () -> {
+			createParser3FileInDir("www/sql_injected_hash_key_fast_typed_prefix.p",
+					"@main[]\n" +
+							"$data[\n" +
+							"\t$.id[]\n" +
+							"\t$.name[]\n" +
+							"]\n" +
+							"$list[^table::sql{\n" +
+							"\tSELECT\n" +
+							"\t\t*\n" +
+							"\tFROM\n" +
+							"\t\titems\n" +
+							"\tWHERE\n" +
+							"\t\t^if(def <caret>)\n" +
+							"}]\n"
+			);
+			VirtualFile vf = myFixture.findFileInTempDir("www/sql_injected_hash_key_fast_typed_prefix.p");
+			myFixture.configureFromExistingVirtualFile(vf);
+
+			typeWithAutoPopup("$data.id", "Не дождались popup ключей после быстрого ввода SQL $data.id");
+
+			LookupImpl lookup = assertActiveLookupImpl("SQL popup после $data.id");
+			assertActiveLookupFirstItemSelected("SQL popup после $data.id", lookup);
+			List<String> names = getLookupNames(lookup);
+			assertEquals("После SQL $data.id выбранным должен быть реальный ключ id", "id",
+					lookup.getCurrentItem().getLookupString());
+			assertRealKeysAboveDotTemplates(
+					"SQL popup после $data.id",
+					names,
+					List.of("id"),
+					List.of("foreach[]", "mail:send[]"));
+		});
+	}
+
+	public void testSqlInjectedDollarVariableSemicolonDoesNotShowLatePopup() throws Throwable {
+		createParser3FileInDir("www/sql_injected_dollar_variable_semicolon_no_late_popup.p",
+				"@main[]\n" +
+						"$data[\n" +
+						"\t$.id[]\n" +
+						"]\n" +
+						"$list[^table::sql{\n" +
+						"\tSELECT\n" +
+						"\t\t*\n" +
+						"\tFROM\n" +
+						"\t\titems\n" +
+						"\tWHERE\n" +
+						"\t\t^if(def <caret>)\n" +
+						"}]\n"
+		);
+		VirtualFile vf = myFixture.findFileInTempDir("www/sql_injected_dollar_variable_semicolon_no_late_popup.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		typeWithAutoPopup("$da;", "Не дождались delayed actions после быстрого ввода SQL $da;");
+
+		com.intellij.openapi.editor.Document hostDocument =
+				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+		String text = hostDocument.getText();
+		assertTrue("SQL ввод $da; должен остаться ручным текстом: " + text,
+				text.contains("^if(def $da;)"));
+		assertFalse("SQL ввод $da; не должен выбирать $data из popup: " + text,
+				text.contains("^if(def $data"));
+		assertNoActiveLookup("После SQL $da; не должен оставаться поздний popup");
+	}
+
+	public void testSqlInjectedManualDollarDotOpensHashKeyPopupWithDotTemplatesLast() throws Throwable {
+		withUserTemplates(createDotUserTemplates(), () -> {
+			createParser3FileInDir("www/sql_injected_manual_dollar_dot_hash_keys.p",
+					"@main[]\n" +
+							"$data[\n" +
+							"\t$.id[]\n" +
+							"\t$.name[]\n" +
+							"]\n" +
+							"$list[^table::sql{\n" +
+							"\tSELECT\n" +
+							"\t\t*\n" +
+							"\tFROM\n" +
+							"\t\titems\n" +
+							"\tWHERE\n" +
+							"\t\t^if(def <caret>)\n" +
+							"}]\n"
+			);
+			VirtualFile vf = myFixture.findFileInTempDir("www/sql_injected_manual_dollar_dot_hash_keys.p");
+			myFixture.configureFromExistingVirtualFile(vf);
+
+			typeWithAutoPopup("$data.", "Не дождались popup ключей после ручного SQL $data.");
+
+			com.intellij.openapi.editor.Document hostDocument =
+					com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+			assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+			String text = hostDocument.getText();
+			assertTrue("SQL ручная точка должна оставить $data.: " + text,
+					text.contains("^if(def $data.)"));
+
+			LookupImpl lookup = assertActiveLookupImpl("SQL popup после $data.");
+			assertActiveLookupFirstItemSelected("SQL popup после $data.", lookup);
+			List<String> names = getLookupNames(lookup);
+			assertFalse("После SQL $data. не должен оставаться root-variable popup: " + names,
+					names.contains("data."));
+			assertRealKeysAboveDotTemplates(
+					"SQL popup после $data.",
+					names,
+					List.of("id", "name"),
+					List.of("foreach[]", "mail:send[]"));
+		});
+	}
+
+	public void testSqlInjectedActiveRootPopupDotKeepsTypedVariableAndOpensKeys() throws Throwable {
+		withUserTemplates(createDotUserTemplates(), () -> {
+			createParser3FileInDir("www/sql_injected_active_root_popup_dot.p",
+					"@main[]\n" +
+							"$dataName[test_value]\n" +
+							"$data[\n" +
+							"\t$.id[]\n" +
+							"\t$.name[]\n" +
+							"]\n" +
+							"$list[^table::sql{\n" +
+							"\tSELECT\n" +
+							"\t\t*\n" +
+							"\tFROM\n" +
+							"\t\titems\n" +
+							"\tWHERE\n" +
+							"\t\t^if(def $data<caret>)\n" +
+							"}]\n"
+			);
+			VirtualFile vf = myFixture.findFileInTempDir("www/sql_injected_active_root_popup_dot.p");
+			myFixture.configureFromExistingVirtualFile(vf);
+
+			myFixture.complete(CompletionType.BASIC);
+			Lookup variableLookup = myFixture.getLookup();
+			assertNotNull("В SQL после $data должен открыться popup переменных", variableLookup);
+			assertTrue("SQL popup переменных должен быть LookupImpl", variableLookup instanceof LookupImpl);
+			LookupElement wrongElement = Arrays.stream(myFixture.getLookupElements())
+					.filter(e -> "dataName".equals(e.getLookupString()))
+					.findFirst()
+					.orElse(null);
+			assertNotNull("SQL popup переменных должен содержать соседнюю переменную dataName", wrongElement);
+			((LookupImpl) variableLookup).setCurrentItem(wrongElement);
+
+			typeWithAutoPopup(".", "Не дождались popup ключей после точки в активном SQL root-popup");
+
+			com.intellij.openapi.editor.Document hostDocument =
+					com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+			assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+			String text = hostDocument.getText();
+			assertTrue("Точка в активном SQL popup должна оставить вручную набранный $data.: " + text,
+					text.contains("^if(def $data.)"));
+			assertFalse("Точка в активном SQL popup не должна выбирать соседнюю переменную: " + text,
+					text.contains("^if(def $dataName"));
+
+			LookupImpl lookup = assertActiveLookupImpl("SQL popup ключей после точки");
+			assertActiveLookupFirstItemSelected("SQL popup ключей после точки", lookup);
+			assertRealKeysAboveDotTemplates(
+					"SQL popup ключей после точки",
+					getLookupNames(lookup),
+					List.of("id", "name"),
+					List.of("foreach[]", "mail:send[]"));
+		});
+	}
+
+	public void testSqlInjectedObjectMethodAutoPopupConfidenceKeepsParser3Completion() {
+		createParser3FileInDir("www/sql_injected_object_method_autopopup_confidence.p",
+				"@main[]\n" +
+						"# Parser3 completion внутри SQL должен оставаться разрешённым для ^data.for\n" +
+						"$data[^hash::create[]]\n" +
+						"$list[^table::sql{\n" +
+						"\tSELECT\n" +
+						"\t\tid, name\n" +
+						"\tFROM\n" +
+						"\t\titems\n" +
+						"\tWHERE\n" +
+						"\t\tid in (^data.for<caret>)\n" +
+						"}]\n"
+		);
+		VirtualFile vf = myFixture.findFileInTempDir("www/sql_injected_object_method_autopopup_confidence.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		int offset = myFixture.getEditor().getCaretModel().getOffset();
+		com.intellij.psi.PsiElement contextElement = myFixture.getFile().findElementAt(Math.max(0, offset - 1));
+		assertNotNull("В SQL-блоке должен быть PSI element перед caret", contextElement);
+		com.intellij.util.ThreeState decision =
+				new ru.artlebedev.parser3.lang.Parser3CompletionConfidence()
+						.shouldSkipAutopopup(contextElement, myFixture.getFile(), offset);
+		assertEquals("Parser3 auto-popup для ^data.for внутри SQL должен быть разрешён", com.intellij.util.ThreeState.NO, decision);
+	}
+
+	public void testParser3CaretCallArgumentContextRecognizesBracketVariants() {
+		assertTrue("Круглые скобки Parser3-вызова должны считаться аргументами",
+				P3CompletionUtils.isParser3CaretCallArgumentContext("^if(def", "^if(def".length()));
+		assertTrue("Квадратные скобки Parser3-вызова должны считаться аргументами",
+				P3CompletionUtils.isParser3CaretCallArgumentContext("^method[def", "^method[def".length()));
+		assertTrue("Фигурные скобки Parser3-вызова должны считаться аргументами",
+				P3CompletionUtils.isParser3CaretCallArgumentContext("^method{def", "^method{def".length()));
+		assertFalse("Объектный Parser3 completion после точки не должен считаться простым аргументом вызова",
+				P3CompletionUtils.isParser3CaretCallArgumentContext("^data.for", "^data.for".length()));
+	}
+
 	public void testHtmlInjectedMethodCompletion_savedPrefixKeepsObjectMethods() {
 		createParser3FileInDir("www/errors_1_real_html_injected_saved_prefix.p",
 				"@main[]\n" +
@@ -8403,6 +9179,65 @@ public class x9_CompletionTest extends Parser3TestCase {
 		assertNotNull("В injected HTML completion после сохранённого префикса for должен показывать методы hash", elements);
 		List<String> names = Arrays.stream(elements).map(LookupElement::getLookupString).collect(Collectors.toList());
 		assertTrue("В injected HTML для ^data.for должен быть foreach, есть: " + names, names.contains("foreach"));
+	}
+
+	public void testHtmlInjectedManualDollarDotOpensHashKeyPopupWithDotTemplatesLast() throws Throwable {
+		withUserTemplates(createDotUserTemplates(), () -> {
+			createParser3FileInDir("www/html_injected_manual_dollar_dot_hash_keys.p",
+					"@main[]\n" +
+							"$data[\n" +
+							"\t$.id[]\n" +
+							"\t$.name[]\n" +
+							"]\n" +
+							"<div><caret></div>\n"
+			);
+			VirtualFile vf = myFixture.findFileInTempDir("www/html_injected_manual_dollar_dot_hash_keys.p");
+			myFixture.configureFromExistingVirtualFile(vf);
+
+			typeInHostEditorWithAutoPopup("$data.", "Не дождались popup ключей после ручного HTML $data.");
+
+			com.intellij.openapi.editor.Document hostDocument =
+					com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+			assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+			String text = hostDocument.getText();
+			assertTrue("HTML ручная точка должна оставить $data.: " + text,
+					text.contains("<div>$data.</div>"));
+
+			LookupImpl lookup = assertActiveLookupImpl("HTML popup после $data.");
+			assertActiveLookupFirstItemSelected("HTML popup после $data.", lookup);
+			List<String> names = getLookupNames(lookup);
+			assertFalse("После HTML $data. не должен оставаться root-variable popup: " + names,
+					names.contains("data."));
+			assertRealKeysAboveDotTemplates(
+					"HTML popup после $data.",
+					names,
+					List.of("id", "name"),
+					List.of("foreach[]", "mail:send[]"));
+		});
+	}
+
+	public void testHtmlInjectedDollarVariableSemicolonDoesNotShowLatePopup() throws Throwable {
+		createParser3FileInDir("www/html_injected_dollar_variable_semicolon_no_late_popup.p",
+				"@main[]\n" +
+						"$data[\n" +
+						"\t$.id[]\n" +
+						"]\n" +
+						"<div><caret></div>\n"
+		);
+		VirtualFile vf = myFixture.findFileInTempDir("www/html_injected_dollar_variable_semicolon_no_late_popup.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		typeInHostEditorWithAutoPopup("$da;", "Не дождались delayed actions после быстрого HTML $da;");
+
+		com.intellij.openapi.editor.Document hostDocument =
+				com.intellij.openapi.fileEditor.FileDocumentManager.getInstance().getDocument(vf);
+		assertNotNull("Должен существовать document исходного Parser3-файла", hostDocument);
+		String text = hostDocument.getText();
+		assertTrue("HTML ввод $da; должен остаться ручным текстом: " + text,
+				text.contains("<div>$da;</div>"));
+		assertFalse("HTML ввод $da; не должен выбирать $data из popup: " + text,
+				text.contains("<div>$data"));
+		assertNoActiveLookup("После HTML $da; не должен оставаться поздний popup");
 	}
 
 	public void testHtmlInjectedMethodCompletion_savedPrefixShowsBuiltinObjectMethods() {

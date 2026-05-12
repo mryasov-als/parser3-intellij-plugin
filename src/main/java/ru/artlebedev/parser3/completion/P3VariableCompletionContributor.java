@@ -1,4 +1,3 @@
-// asdfhjlk
 package ru.artlebedev.parser3.completion;
 
 import com.intellij.codeInsight.completion.*;
@@ -273,19 +272,8 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 				return true;
 			}
 
-			int searchStart = Math.max(0, offset - 50);
-			String before = text.substring(searchStart, offset);
-
-			for (int i = before.length() - 1; i >= 0; i--) {
-				char ch = before.charAt(i);
-				if (ch == '$') {
-					// ^$ — экранирование, не переменная
-					if (i > 0 && before.charAt(i - 1) == '^') return false;
-					return true;
-				}
-				// ${d — курсор после { прямо после $
-				if (ch == '{' && i > 0 && before.charAt(i - 1) == '$') return true;
-				if (ch == '\n' || ch == '\r') break;
+			if (P3CompletionUtils.shouldAutoPopupDollarVariablePrefix(text, offset, typeChar)) {
+				return true;
 			}
 		}
 
@@ -446,10 +434,9 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 	}
 
 	private static @org.jetbrains.annotations.Nullable VarPrefix extractVarPrefix(@NotNull CompletionParameters parameters) {
-		// Используем completion file — содержит набранный текст + IntellijIdeaRulezzz
-		PsiFile completionFile = parameters.getPosition().getContainingFile();
-		String text = completionFile != null ? completionFile.getText() : parameters.getOriginalFile().getText();
-		int offset = clampOffset(text, parameters.getOffset());
+		CompletionTextContext textContext = getCompletionTextContext(parameters);
+		String text = textContext.text.toString();
+		int offset = clampOffset(text, textContext.offset);
 
 		// Ищем $ назад
 		int dollarPos = -1;
@@ -1176,7 +1163,9 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 			@NotNull VirtualFile virtualFile,
 			@NotNull VarPrefix varCtx
 	) {
-		int cursorOffset = getEditorCaretOffset(parameters);
+		CompletionTextContext textContext = getCompletionTextContext(parameters);
+		int cursorOffset = textContext.offset;
+		String currentText = textContext.text.toString();
 		CompletionResultSet dotResult = result.withPrefixMatcher(varCtx.typedPrefix);
 
 		// Подавляем стандартный word completion IntelliJ — мы сами управляем списком
@@ -1185,7 +1174,7 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 		// ЕДИНАЯ ТОЧКА: $var. — свойства класса + колонки (caretDot=false)
 		P3VariableMethodCompletionContributor.completeVariableDot(
 				file.getProject(), varCtx.varKey, virtualFile, cursorOffset, dotResult, false,
-				varCtx.needsClosingBrace ? "}" : null, parameters.getOriginalFile().getText(),
+				varCtx.needsClosingBrace ? "}" : null, currentText,
 				varCtx.receiverResolveOffset >= 0 ? varCtx.receiverResolveOffset : cursorOffset);
 	}
 

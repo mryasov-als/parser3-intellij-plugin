@@ -1,12 +1,16 @@
 package ru.artlebedev.parser3.lang;
 
 import com.intellij.codeInsight.completion.CompletionConfidence;
+import com.intellij.injected.editor.DocumentWindow;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ThreeState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.artlebedev.parser3.completion.P3CompletionUtils;
 import ru.artlebedev.parser3.completion.P3PathCompletionSupport;
 import ru.artlebedev.parser3.completion.P3PseudoHashCompletionRegistry;
@@ -26,10 +30,10 @@ public class Parser3CompletionConfidence extends CompletionConfidence {
 			return ThreeState.UNSURE;
 		}
 
-		// Для injected-языков внутри Parser3 не вмешиваемся.
+		// Для injected-языков внутри Parser3 гасим только чужой popup внутри Parser3-аргументов.
 		com.intellij.lang.Language contextLang = contextElement.getLanguage();
 		if (contextLang != ru.artlebedev.parser3.Parser3Language.INSTANCE) {
-			return ThreeState.UNSURE;
+			return shouldSkipInjectedAutopopup(contextElement, psiFile, offset);
 		}
 
 		Document document = PsiDocumentManager.getInstance(psiFile.getProject()).getDocument(psiFile);
@@ -84,44 +88,152 @@ public class Parser3CompletionConfidence extends CompletionConfidence {
 			return ThreeState.NO;
 		}
 
-		int i = offset - 1;
-		while (i >= 0) {
-			char c = text.charAt(i);
-			if (Character.isLetterOrDigit(c) || c == '_' || c == '-' || c == ':') {
-				i--;
-				continue;
-			}
+		if (P3CompletionUtils.isParser3AutoPopupPrefixContext(text, offset)) {
+			return ThreeState.NO;
+		}
 
-			if (c == '^' || c == '.' || c == '$') {
-				return ThreeState.NO;
-			}
-			if (c == '{' && i > 0 && text.charAt(i - 1) == '$') {
-				return ThreeState.NO;
-			}
-			if (c == '@') {
-				if (i == 0 || text.charAt(i - 1) == '\n' || text.charAt(i - 1) == '\r') {
-					return ThreeState.NO;
-				}
-			}
-			if (c == '[') {
-				if (i > 0 && text.charAt(i - 1) == ']') {
-					return ThreeState.NO;
-				}
-			}
-
-			if (DEBUG_LOG) System.out.println("[P3Confidence] skip: delimiter='" + c
-					+ "' offset=" + offset + " inQuotes=" + isInsideQuotedString(text, offset));
+		if (P3CompletionUtils.isParser3CaretCallArgumentContext(text, offset)) {
 			return ThreeState.YES;
 		}
 
+		if (DEBUG_LOG) System.out.println("[P3Confidence] skip: offset=" + offset
+				+ " inQuotes=" + isInsideQuotedString(text, offset));
 		return ThreeState.YES;
+	}
+
+	private @NotNull ThreeState shouldSkipInjectedAutopopup(
+			@NotNull PsiElement contextElement,
+			@NotNull PsiFile psiFile,
+			int offset
+	) {
+		HostTextContext hostContext = getHostTextContext(contextElement, psiFile, offset);
+		if (hostContext == null) {
+			return ThreeState.UNSURE;
+		}
+		if (isAllowedParser3AutoPopupContext(hostContext.file, hostContext.text, hostContext.offset)) {
+			return ThreeState.NO;
+		}
+		if (P3CompletionUtils.isParser3CaretCallArgumentContext(hostContext.text, hostContext.offset)) {
+			return ThreeState.YES;
+		}
+		return ThreeState.UNSURE;
+	}
+
+	private boolean isAllowedParser3AutoPopupContext(
+			@NotNull PsiFile file,
+			@NotNull CharSequence text,
+			int offset
+	) {
+		if (P3PathCompletionSupport.detectContext(text, offset) != null) {
+			return true;
+		}
+		if (isBooleanLiteralAutoPopupContext(text, offset)) {
+			return true;
+		}
+		if (P3CompletionUtils.isHashDeleteKeyContext(text, offset)) {
+			return true;
+		}
+		if (P3CompletionUtils.isParser3AutoPopupPrefixContext(text, offset)) {
+			return true;
+		}
+		if (file.getVirtualFile() != null
+				&& P3PseudoHashCompletionRegistry.isParamTextContext(
+				file.getProject(),
+				file.getVirtualFile(),
+				text.toString(),
+				offset
+		)) {
+			return true;
+		}
+		return P3TableColumnArgumentCompletionSupport.isColumnArgumentSyntaxContext(text, offset);
+	}
+
+	private @Nullable HostTextContext getHostTextContext(
+			@NotNull PsiElement contextElement,
+			@NotNull PsiFile psiFile,
+			int offset
+	) {
+		PsiFile hostFile = findParser3HostFile(psiFile);
+		if (hostFile == null) {
+			return null;
+		}
+		Project project = hostFile.getProject();
+		Document hostDocument = PsiDocumentManager.getInstance(project).getDocument(hostFile);
+		if (hostDocument == null) {
+			return null;
+		}
+
+		Document injectedDocument = PsiDocumentManager.getInstance(project).getDocument(psiFile);
+		int hostOffset = offset;
+		if (injectedDocument instanceof DocumentWindow) {
+			CharSequence injectedText = injectedDocument.getCharsSequence();
+			hostOffset = ((DocumentWindow) injectedDocument).injectedToHost(clampOffset(injectedText, offset));
+		} else if (Parser3PsiUtils.isInjectedFragment(psiFile)) {
+			hostOffset = InjectedLanguageManager.getInstance(project).injectedToHost(contextElement, offset);
+		}
+		return new HostTextContext(hostFile, hostDocument.getCharsSequence(),
+				clampOffset(hostDocument.getCharsSequence(), hostOffset));
+	}
+
+	private static @Nullable PsiFile findParser3HostFile(@Nullable PsiFile file) {
+		PsiFile cur = file;
+		while (cur != null) {
+			if (Parser3PsiUtils.isParser3File(cur) && !Parser3PsiUtils.isInjectedFragment(cur)) {
+				return cur;
+			}
+			if (!Parser3PsiUtils.isInjectedFragment(cur)) {
+				return Parser3PsiUtils.isParser3File(cur) ? cur : null;
+			}
+			PsiElement context = cur.getContext();
+			if (context == null) {
+				return null;
+			}
+			PsiFile host = context.getContainingFile();
+			if (host == cur) {
+				return null;
+			}
+			cur = host;
+		}
+		return null;
+	}
+
+	private static int clampOffset(@NotNull CharSequence text, int offset) {
+		if (offset < 0) {
+			return 0;
+		}
+		return Math.min(offset, text.length());
+	}
+
+	private static final class HostTextContext {
+		private final @NotNull PsiFile file;
+		private final @NotNull CharSequence text;
+		private final int offset;
+
+		private HostTextContext(@NotNull PsiFile file, @NotNull CharSequence text, int offset) {
+			this.file = file;
+			this.text = text;
+			this.offset = offset;
+		}
 	}
 
 	private boolean isBooleanLiteralAutoPopupContext(@NotNull CharSequence text, int offset) {
 		if (offset <= 0 || offset > text.length()) {
 			return false;
 		}
-		return P3CompletionUtils.isBooleanLiteralContext(text, offset);
+		if (!P3CompletionUtils.isBooleanLiteralContext(text, offset)) {
+			return false;
+		}
+		String prefix = extractIdentifierPrefix(text, offset).toLowerCase(java.util.Locale.ROOT);
+		return prefix.isEmpty() || "true".startsWith(prefix) || "false".startsWith(prefix);
+	}
+
+	private static @NotNull String extractIdentifierPrefix(@NotNull CharSequence text, int offset) {
+		int safeOffset = Math.max(0, Math.min(offset, text.length()));
+		int start = safeOffset;
+		while (start > 0 && P3CompletionUtils.isVarIdentChar(text.charAt(start - 1))) {
+			start--;
+		}
+		return text.subSequence(start, safeOffset).toString();
 	}
 
 	/**

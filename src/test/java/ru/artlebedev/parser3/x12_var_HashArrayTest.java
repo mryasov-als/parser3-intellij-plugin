@@ -2539,6 +2539,8 @@ public class x12_var_HashArrayTest extends Parser3TestCase {
 		List<String> c = doComplete("al4.p",
 				"@main[]\n# на основе parser3/tests/010.html\n$a[\n\t$.b[value]\n]\n$v[$a.b]\n$a.b.<caret>");
 		assertTrue("Ctrl+Space должен показывать пользовательские шаблоны: " + c, c.contains("curl:load[]"));
+		assertTrue("Ctrl+Space должен показывать пользовательские шаблоны: " + c, c.contains("foreach[]"));
+		assertTrue("Ctrl+Space должен показывать пользовательские шаблоны: " + c, c.contains("mail:send[]"));
 		assertFalse("Не должно быть ключей из alias без добавления полей: " + c, c.contains("c"));
 		assertFalse("Не должно быть ключей из alias без добавления полей: " + c, c.contains("e"));
 	}

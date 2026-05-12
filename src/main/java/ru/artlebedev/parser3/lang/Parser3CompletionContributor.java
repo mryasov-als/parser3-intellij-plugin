@@ -78,17 +78,27 @@ public class Parser3CompletionContributor extends CompletionContributor {
 							return;
 						}
 
+						boolean dollarVariableDotContext =
+								ru.artlebedev.parser3.completion.P3CompletionUtils
+										.isDollarVariableDotCompletionContext(text, offset);
 						boolean explicitCompletion = !parameters.isAutoPopup();
 						boolean suppressExplicitUserTemplates =
 								ru.artlebedev.parser3.completion.P3VariableInsertHandler
 										.consumeVariableDotAutoPopupUserTemplateSuppression(parameters.getEditor());
 						boolean explicitUserTemplatesAdded = false;
-						if (explicitCompletion && !suppressExplicitUserTemplates) {
+						if (explicitCompletion && !suppressExplicitUserTemplates && !dollarVariableDotContext) {
 							fillUserTemplates(result.withPrefixMatcher(""), null);
 							explicitUserTemplatesAdded = true;
 						}
 
 						ru.artlebedev.parser3.completion.P3CompletionUtils.addBooleanLiteralCompletionsIfNeeded(text, offset, result);
+
+						if (dollarVariableDotContext) {
+							if (explicitCompletion && !suppressExplicitUserTemplates) {
+								fillUserTemplates(result.withPrefixMatcher(""), null);
+							}
+							return;
+						}
 
 						// Гарантированный bracket-context для $var[<CURSOR>]
 						int off = offset;
@@ -154,7 +164,7 @@ public class Parser3CompletionContributor extends CompletionContributor {
 						// Если есть точка но нет ^ — не показываем ничего
 						// (точка сама по себе не является контекстом для автокомплита)
 						if (hasDot && !hasCaret) {
-							if (suppressExplicitUserTemplates) {
+							if (suppressExplicitUserTemplates && !dollarVariableDotContext) {
 								fillUserTemplates(result.withPrefixMatcher(""), ".");
 							}
 							return;

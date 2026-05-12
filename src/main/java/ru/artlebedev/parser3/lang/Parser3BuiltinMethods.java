@@ -728,12 +728,24 @@ public final class Parser3BuiltinMethods {
 			"request", "response", "sqlite", "status", "string", "table", "void",
 			"xdoc", "xnode"
 	));
+	private static final java.util.Set<String> INTERNAL_BUILTIN_CLASS_NAMES = new java.util.HashSet<>(java.util.Arrays.asList(
+			"file-local", "file-http", "file-exec", "file-sql"
+	));
 
 	/**
 	 * Проверяет, является ли имя встроенным классом Parser3.
 	 */
 	public static boolean isBuiltinClass(@NotNull String className) {
 		return BUILTIN_CLASS_NAMES.contains(className.toLowerCase(java.util.Locale.ROOT));
+	}
+
+	/**
+	 * Проверяет, можно ли показывать встроенный класс как явный receiver в completion.
+	 * Внутренние subtype-ы нужны для вывода точных полей, но пользователь их не вводит.
+	 */
+	public static boolean isVisibleBuiltinClass(@NotNull String className) {
+		String lower = className.toLowerCase(java.util.Locale.ROOT);
+		return BUILTIN_CLASS_NAMES.contains(lower) && !INTERNAL_BUILTIN_CLASS_NAMES.contains(lower);
 	}
 
 	/**
@@ -807,6 +819,13 @@ public final class Parser3BuiltinMethods {
 		String lower = className.toLowerCase(java.util.Locale.ROOT);
 		List<BuiltinCallable> ctors = CONSTRUCTORS.get(lower);
 		return ctors != null ? Collections.unmodifiableList(ctors) : Collections.emptyList();
+	}
+
+	/**
+	 * Возвращает статические методы для указанного встроенного класса.
+	 */
+	public static @NotNull List<BuiltinCallable> getStaticMethodsForClass(@NotNull String className) {
+		return Collections.unmodifiableList(collectBuiltinCallables(STATIC_METHODS, className));
 	}
 
 	private static @NotNull List<CaretConstructor> collect(@NotNull Map<String, List<BuiltinCallable>> map) {

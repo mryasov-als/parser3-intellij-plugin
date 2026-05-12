@@ -817,6 +817,7 @@ public final class P3MethodCompletionContributor extends CompletionContributor {
 			String className = entry.getKey();
 			java.util.List<ru.artlebedev.parser3.lang.Parser3BuiltinMethods.BuiltinCallable> props = entry.getValue();
 			if (props.isEmpty()) continue;
+			if (!ru.artlebedev.parser3.lang.Parser3BuiltinMethods.isVisibleBuiltinClass(className)) continue;
 
 			String insertText = className + ":";
 			boolean matches = result.getPrefixMatcher().prefixMatches(insertText);
@@ -824,17 +825,7 @@ public final class P3MethodCompletionContributor extends CompletionContributor {
 			if (DEBUG_BUILTIN) System.out.println("[P3MethodCompl.BUILTIN]   class='" + className + "' insertText='" + insertText
 					+ "' matchesInsert=" + matches + " matchesName=" + matchesName);
 
-			// Краткое описание — перечень свойств
-			StringBuilder tailText = new StringBuilder(" ");
-			int count = 0;
-			for (ru.artlebedev.parser3.lang.Parser3BuiltinMethods.BuiltinCallable p : props) {
-				if (count > 0) tailText.append(", ");
-				tailText.append(p.name);
-				if (++count >= 4) {
-					if (props.size() > 4) tailText.append(", …");
-					break;
-				}
-			}
+			String tailText = buildBuiltinClassReceiverTailText(className);
 
 			com.intellij.codeInsight.lookup.LookupElementBuilder element =
 					com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -843,7 +834,7 @@ public final class P3MethodCompletionContributor extends CompletionContributor {
 							.withIcon(ru.artlebedev.parser3.icons.Parser3Icons.FileVariable)
 							.withTypeText("class", true)
 							.withPresentableText(className + ":")
-							.withTailText(tailText.toString(), true)
+							.withTailText(tailText, true)
 							.withInsertHandler((context, item) -> {
 								// Удаляем остаток старого имени (только символы идентификатора)
 								com.intellij.openapi.editor.Document doc = context.getDocument();
@@ -864,6 +855,38 @@ public final class P3MethodCompletionContributor extends CompletionContributor {
 		// Перезапуск completion когда prefix содержит ":" — переход от "form:" к свойствам
 		result.restartCompletionOnPrefixChange(
 				com.intellij.patterns.StandardPatterns.string().contains(":"));
+	}
+
+	private @NotNull String buildBuiltinClassReceiverTailText(@NotNull String className) {
+		java.util.LinkedHashSet<String> names = new java.util.LinkedHashSet<>();
+		addBuiltinCallableNames(names, ru.artlebedev.parser3.lang.Parser3BuiltinMethods.getConstructorsForClass(className));
+		addBuiltinCallableNames(names, ru.artlebedev.parser3.lang.Parser3BuiltinMethods.getStaticMethodsForClass(className));
+		addBuiltinCallableNames(names, ru.artlebedev.parser3.lang.Parser3BuiltinMethods.getMethodsForClass(className));
+
+		if (names.isEmpty()) {
+			return " методы класса";
+		}
+
+		StringBuilder tailText = new StringBuilder(" методы: ");
+		int count = 0;
+		for (String name : names) {
+			if (count > 0) tailText.append(", ");
+			tailText.append(name);
+			if (++count >= 4) {
+				if (names.size() > 4) tailText.append(", …");
+				break;
+			}
+		}
+		return tailText.toString();
+	}
+
+	private void addBuiltinCallableNames(
+			@NotNull java.util.Set<String> names,
+			@NotNull java.util.List<ru.artlebedev.parser3.lang.Parser3BuiltinMethods.BuiltinCallable> callables
+	) {
+		for (ru.artlebedev.parser3.lang.Parser3BuiltinMethods.BuiltinCallable callable : callables) {
+			names.add(callable.name);
+		}
 	}
 
 	/**

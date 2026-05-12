@@ -182,6 +182,154 @@ public final class P3CompletionUtils {
 		return isValidDollarVariableReceiver(receiver);
 	}
 
+	/**
+	 * Проверяет, что пользователь печатает имя Parser3-переменной после $.
+	 * Нужно для повторного запуска auto-popup при быстром вводе, когда popup после $ ещё не успел открыться.
+	 */
+	public static boolean shouldAutoPopupDollarVariablePrefix(@NotNull CharSequence text, int offset, char typedChar) {
+		if (!isVarIdentChar(typedChar)) return false;
+		int safeOffset = Math.max(0, Math.min(offset, text.length()));
+		if (safeOffset == 0) return false;
+
+		int searchStart = Math.max(0, safeOffset - 80);
+		for (int i = safeOffset - 1; i >= searchStart; i--) {
+			char ch = text.charAt(i);
+			if (isVarIdentChar(ch) || ch == '.' || ch == ':') {
+				continue;
+			}
+			if (ch == '$') {
+				if (i > 0 && text.charAt(i - 1) == '^') return false;
+				return isValidDollarVariablePrefixTail(text, i + 1, safeOffset);
+			}
+			if (ch == '{' && i > 0 && text.charAt(i - 1) == '$') {
+				if (i > 1 && text.charAt(i - 2) == '^') return false;
+				return isValidDollarVariablePrefixTail(text, i + 1, safeOffset);
+			}
+			return false;
+		}
+		return false;
+	}
+
+	/**
+	 * Проверяет тот же контекст до вставки символа.
+	 * Используется только для безопасного планирования штатного auto-popup, без прямого запуска completion.
+	 */
+	public static boolean shouldScheduleDollarVariablePrefixAutoPopupBeforeInsert(@NotNull CharSequence text, int offset, char typedChar) {
+		if (!isVarIdentChar(typedChar)) return false;
+		int safeOffset = Math.max(0, Math.min(offset, text.length()));
+		if (safeOffset == 0) return false;
+
+		int searchStart = Math.max(0, safeOffset - 80);
+		for (int i = safeOffset - 1; i >= searchStart; i--) {
+			char ch = text.charAt(i);
+			if (isVarIdentChar(ch) || ch == '.' || ch == ':') {
+				continue;
+			}
+			if (ch == '$') {
+				return i <= 0 || text.charAt(i - 1) != '^';
+			}
+			if (ch == '{' && i > 0 && text.charAt(i - 1) == '$') {
+				return i <= 1 || text.charAt(i - 2) != '^';
+			}
+			return false;
+		}
+		return false;
+	}
+
+	private static boolean isValidDollarVariablePrefixTail(@NotNull CharSequence text, int from, int to) {
+		if (from >= to) return false;
+		boolean hasIdentifierChar = false;
+		for (int i = from; i < to; i++) {
+			char ch = text.charAt(i);
+			if (isVarIdentChar(ch)) {
+				hasIdentifierChar = true;
+				continue;
+			}
+			if (ch == '.' || ch == ':') {
+				continue;
+			}
+			return false;
+		}
+		return hasIdentifierChar;
+	}
+
+	/**
+	 * Проверяет, что completion стоит после точки в цепочке Parser3-переменной:
+	 * $data., $data.key.<prefix>, ${data.key.<prefix>}.
+	 * В этом контексте нужны поля/ключи receiver-а, а не пользовательские шаблоны.
+	 */
+	public static boolean isDollarVariableDotCompletionContext(@NotNull CharSequence text, int offset) {
+		int safeOffset = Math.max(0, Math.min(offset, text.length()));
+		if (safeOffset == 0) return false;
+
+		int prefixStart = safeOffset;
+		while (prefixStart > 0 && isVarIdentChar(text.charAt(prefixStart - 1))) {
+			prefixStart--;
+		}
+
+		int dotOffset;
+		if (prefixStart > 0 && text.charAt(prefixStart - 1) == '.') {
+			dotOffset = prefixStart - 1;
+		} else if (safeOffset > 0 && text.charAt(safeOffset - 1) == '.') {
+			dotOffset = safeOffset - 1;
+		} else {
+			return hasDollarVariableDotOnCurrentLine(text, safeOffset);
+		}
+
+		int start = findDollarVariableStartBeforeDot(text, dotOffset);
+		if (start < 0 || start >= dotOffset) return hasDollarVariableDotOnCurrentLine(text, safeOffset);
+		if (start > 0 && text.charAt(start - 1) == '^') return false;
+
+		String receiver = text.subSequence(start + 1, dotOffset).toString();
+		if (receiver.startsWith("{")) {
+			receiver = receiver.substring(1);
+		}
+		if (receiver.isEmpty() || receiver.contains("IntellijIdeaRulezzz")) return false;
+		return isValidDollarVariableReceiver(receiver);
+	}
+
+	private static boolean hasDollarVariableDotOnCurrentLine(@NotNull CharSequence text, int offset) {
+		int safeOffset = Math.max(0, Math.min(offset, text.length()));
+		int lineStart = safeOffset;
+		while (lineStart > 0) {
+			char ch = text.charAt(lineStart - 1);
+			if (ch == '\n' || ch == '\r') break;
+			lineStart--;
+		}
+
+		int dotOffset = -1;
+		for (int i = safeOffset - 1; i >= lineStart; i--) {
+			if (text.charAt(i) == '.') {
+				dotOffset = i;
+				break;
+			}
+		}
+		if (dotOffset < 0) return false;
+		if (!hasOnlyCompletionPrefixAfterDot(text, dotOffset + 1, safeOffset)) return false;
+
+		int start = findDollarVariableStartBeforeDot(text, dotOffset);
+		if (start < lineStart || start >= dotOffset) return false;
+		if (start > 0 && text.charAt(start - 1) == '^') return false;
+
+		String receiver = text.subSequence(start + 1, dotOffset).toString();
+		if (receiver.startsWith("{")) {
+			receiver = receiver.substring(1);
+		}
+		if (receiver.isEmpty()) return false;
+		return isValidDollarVariableReceiver(receiver);
+	}
+
+	private static boolean hasOnlyCompletionPrefixAfterDot(@NotNull CharSequence text, int from, int to) {
+		int start = Math.max(0, from);
+		int end = Math.min(text.length(), to);
+		for (int i = start; i < end; i++) {
+			if (!isVarIdentChar(text.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	private static int findDollarVariableStartBeforeDot(@NotNull CharSequence text, int offset) {
 		int i = offset - 1;
 		while (i >= 0) {
@@ -299,6 +447,97 @@ public final class P3CompletionUtils {
 
 	private static boolean isClosingBracket(char ch) {
 		return ch == ']' || ch == ')' || ch == '}';
+	}
+
+	/**
+	 * Проверяет, что курсор стоит внутри аргументов Parser3-вызова на текущей строке:
+	 * ^if(def<caret>, ^method[arg<caret>] и похожие места.
+	 */
+	public static boolean isParser3CaretCallArgumentContext(@NotNull CharSequence text, int offset) {
+		int safeOffset = Math.max(0, Math.min(offset, text.length()));
+		if (safeOffset <= 0) {
+			return false;
+		}
+
+		int lineStart = safeOffset;
+		while (lineStart > 0) {
+			char ch = text.charAt(lineStart - 1);
+			if (ch == '\n' || ch == '\r') {
+				break;
+			}
+			lineStart--;
+		}
+
+		int caretOffset = -1;
+		for (int i = safeOffset - 1; i >= lineStart; i--) {
+			if (text.charAt(i) == '^' && !isEscapedByCaret(text, i)) {
+				caretOffset = i;
+				break;
+			}
+		}
+		if (caretOffset < 0) {
+			return false;
+		}
+
+		int depth = 0;
+		boolean hasOpening = false;
+		for (int i = caretOffset + 1; i < safeOffset; i++) {
+			if (isEscapedByCaret(text, i)) {
+				continue;
+			}
+			char ch = text.charAt(i);
+			if (isOpeningBracket(ch)) {
+				depth++;
+				hasOpening = true;
+				continue;
+			}
+			if (isClosingBracket(ch)) {
+				if (depth <= 0) {
+					return false;
+				}
+				depth--;
+			}
+		}
+		return hasOpening && depth > 0;
+	}
+
+	private static boolean isEscapedByCaret(@NotNull CharSequence text, int pos) {
+		int count = 0;
+		for (int i = pos - 1; i >= 0 && text.charAt(i) == '^'; i--) {
+			count++;
+		}
+		return (count % 2) == 1;
+	}
+
+	/**
+	 * Проверяет, что текущий префикс относится к Parser3 completion-контексту:
+	 * после ^, $, точки, ${...}, @ в начале строки или []-аргумента.
+	 */
+	public static boolean isParser3AutoPopupPrefixContext(@NotNull CharSequence text, int offset) {
+		int safeOffset = Math.max(0, Math.min(offset, text.length()));
+		int i = safeOffset - 1;
+		while (i >= 0) {
+			char c = text.charAt(i);
+			if (Character.isLetterOrDigit(c) || c == '_' || c == '-' || c == ':') {
+				i--;
+				continue;
+			}
+
+			if (c == '^' || c == '.' || c == '$') {
+				return true;
+			}
+			if (c == '{' && i > 0 && text.charAt(i - 1) == '$') {
+				return true;
+			}
+			if (c == '@') {
+				return i == 0 || text.charAt(i - 1) == '\n' || text.charAt(i - 1) == '\r';
+			}
+			if (c == '[') {
+				return i > 0 && text.charAt(i - 1) == ']';
+			}
+			return false;
+		}
+		return false;
 	}
 
 	/**

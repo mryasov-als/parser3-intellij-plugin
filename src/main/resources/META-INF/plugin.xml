@@ -117,9 +117,15 @@
 				implementationClass="ru.artlebedev.parser3.lang.Parser3CompletionConfidence"
 				order="first"/>
 
-		<!-- CharFilter — не закрываем popup при вводе : -->
+		<!-- CharFilter — обычный набор символов не должен выбирать пункт popup -->
 		<lookup.charFilter
 				implementationClass="ru.artlebedev.parser3.completion.Parser3CharFilter"
+				order="first"/>
+
+		<!-- Tab в активном popup не должен заменять текст выбранным completion -->
+		<editorActionHandler
+				action="EditorChooseLookupItemReplace"
+				implementationClass="ru.artlebedev.parser3.completion.Parser3LookupReplaceHandler"
 				order="first"/>
 
 		<!-- Find Usages for .p files -->

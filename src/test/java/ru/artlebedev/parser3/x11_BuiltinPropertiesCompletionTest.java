@@ -83,6 +83,10 @@ public class x11_BuiltinPropertiesCompletionTest extends Parser3TestCase {
 		return null;
 	}
 
+	private LookupElementPresentation findLookupElementPresentation(String content, String lookupString) {
+		return LookupElementPresentation.renderElement(findLookupElement(content, lookupString));
+	}
+
 	private String parser274RealDateBase(String completionLine) {
 		return "@main[]\n" +
 				"# на основе parser3/tests/274.html\n" +
@@ -312,6 +316,23 @@ public class x11_BuiltinPropertiesCompletionTest extends Parser3TestCase {
 		assertContains(completions, "stat", "^file:: должен содержать stat");
 	}
 
+	public void testCaretBuiltinClassReceiverTailShowsMethodsNotFields() {
+		LookupElementPresentation presentation = findLookupElementPresentation(
+				parser152RealFileBase("^file<caret>"),
+				"file:"
+		);
+		String tailText = presentation.getTailText();
+		assertNotNull("^file receiver должен иметь описание", tailText);
+		assertTrue("^file receiver должен описывать методы, а не поля: " + tailText,
+				tailText.contains("методы:"));
+		assertTrue("^file receiver должен перечислять методы класса: " + tailText,
+				tailText.contains("base64") || tailText.contains("load") || tailText.contains("stat"));
+		assertFalse("^file receiver не должен показывать поля name/size: " + tailText,
+				tailText.contains("name, size"));
+		assertFalse("^file receiver не должен показывать поля text/mode: " + tailText,
+				tailText.contains("text, mode"));
+	}
+
 	public void testFileVariableDot_showsDocumentedFields() {
 		List<String> completions = getCompletions(
 				parser152RealFileBase("$file.<caret>")
@@ -348,6 +369,18 @@ public class x11_BuiltinPropertiesCompletionTest extends Parser3TestCase {
 		List<String> caretCompletions = getCompletions(parser152RealFileBase("^file:<caret>"));
 		assertFalse("^file: не должен показывать instance fields: " + caretCompletions,
 				caretCompletions.contains("name"));
+	}
+
+	public void testInternalFileSubtypesDoNotAppearAsBuiltinClassAfterCaret() {
+		List<String> completions = getPresentableTexts(parser152RealFileBase("^file-<caret>"));
+		assertFalse("^file- не должен показывать внутренний subtype file-exec: " + completions,
+				completions.contains("file-exec:"));
+		assertFalse("^file- не должен показывать внутренний subtype file-http: " + completions,
+				completions.contains("file-http:"));
+		assertFalse("^file- не должен показывать внутренний subtype file-local: " + completions,
+				completions.contains("file-local:"));
+		assertFalse("^file- не должен показывать внутренний subtype file-sql: " + completions,
+				completions.contains("file-sql:"));
 	}
 
 	public void testFileVariableTypeInferredFromExec() {

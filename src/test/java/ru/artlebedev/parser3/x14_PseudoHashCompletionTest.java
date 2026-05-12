@@ -781,7 +781,11 @@ public class x14_PseudoHashCompletionTest extends Parser3TestCase {
 		assertContainsCompletion(completions, "charset", "Для mail:send должен предлагаться charset");
 		assertContainsCompletion(completions, "options", "Для mail:send должен предлагаться options");
 		assertContainsCompletion(completions, "print-debug", "Для mail:send должен предлагаться print-debug");
-		assertNotContainsCompletion(completions, "from", "Для mail:send не должны предлагаться примерные заголовки");
+		assertContainsCompletion(completions, "from", "Для mail:send должен предлагаться from");
+		assertContainsCompletion(completions, "to", "Для mail:send должен предлагаться to");
+		assertContainsCompletion(completions, "subject", "Для mail:send должен предлагаться subject");
+		assertContainsCompletion(completions, "cc", "Для mail:send должен предлагаться cc");
+		assertContainsCompletion(completions, "bcc", "Для mail:send должен предлагаться bcc");
 	}
 
 	public void testMailSendNestedFilePseudoHashCompletion() {
