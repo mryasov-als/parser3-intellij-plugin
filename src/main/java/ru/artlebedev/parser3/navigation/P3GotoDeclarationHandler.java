@@ -16,6 +16,8 @@ import ru.artlebedev.parser3.index.P3MethodCallIndex;
 import ru.artlebedev.parser3.model.P3ClassDeclaration;
 import ru.artlebedev.parser3.model.P3MethodDeclaration;
 import ru.artlebedev.parser3.psi.P3PsiExtractor;
+import ru.artlebedev.parser3.utils.Parser3ChainUtils;
+import ru.artlebedev.parser3.utils.Parser3IdentifierUtils;
 import ru.artlebedev.parser3.visibility.P3ScopeContext;
 
 import java.util.ArrayList;
@@ -86,6 +88,10 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 			if (P3UseNavigationHandler.isInAtUseContext(sourceElement)) {
 				return P3UseNavigationHandler.handleAtUseNavigationForString(sourceElement);
 			}
+			PsiElement[] bracketHashKeyResult = handleBracketLiteralHashKeyNavigation(sourceElement);
+			if (bracketHashKeyResult != null) {
+				return bracketHashKeyResult;
+			}
 			return null;
 		}
 
@@ -127,6 +133,14 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 			PsiElement[] hashKeyResult = handleHashKeyNavigation(sourceElement);
 			if (hashKeyResult != null) {
 				return hashKeyResult;
+			}
+			PsiElement[] textHashKeyResult = handleTextHashKeyNavigation(sourceElement);
+			if (textHashKeyResult != null) {
+				return textHashKeyResult;
+			}
+			PsiElement[] bracketHashKeyResult = handleBracketLiteralHashKeyNavigation(sourceElement);
+			if (bracketHashKeyResult != null) {
+				return bracketHashKeyResult;
 			}
 			return null;
 		}
@@ -1665,8 +1679,288 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 			}
 		}
 
-		if (DEBUG) System.out.println("[handleHashKeyNav] not found, return null");
+		PsiElement[] textChainResult = handleTextHashKeyNavigation(clickedElement);
+		if (DEBUG) System.out.println("[handleHashKeyNav] textChainResult=" + (textChainResult != null ? textChainResult.length : "null"));
+		return textChainResult;
+	}
+
+	private PsiElement @Nullable [] handleBracketLiteralHashKeyNavigation(@NotNull PsiElement clickedElement) {
+		PsiFile file = clickedElement.getContainingFile();
+		if (file == null || file.getVirtualFile() == null) return null;
+
+		String text = file.getText();
+		int clickOffset = clickedElement.getTextOffset();
+		BracketHashChainInfo chainInfo = buildBracketLiteralHashChain(text, clickOffset);
+		if (chainInfo == null) return null;
+		if (DEBUG) System.out.println("[handleBracketHashKeyNav] chain=" + chainInfo.fullChain + " clicked=" + chainInfo.clickedName);
+
+		return resolveTextHashKeyNavigation(clickedElement, chainInfo.fullChain, chainInfo.clickedName);
+	}
+
+	private PsiElement @Nullable [] handleTextHashKeyNavigation(@NotNull PsiElement clickedElement) {
+		IElementType elementType = clickedElement.getNode() != null ? clickedElement.getNode().getElementType() : null;
+		if (elementType != Parser3TokenTypes.VARIABLE && elementType != Parser3TokenTypes.NUMBER) return null;
+
+		PsiFile file = clickedElement.getContainingFile();
+		if (file == null || file.getVirtualFile() == null) return null;
+
+		String text = file.getText();
+		int segmentStart = clickedElement.getTextOffset();
+		int segmentEnd = segmentStart + clickedElement.getTextLength();
+		if (segmentStart < 0 || segmentEnd > text.length() || segmentStart >= segmentEnd) return null;
+
+		int beforeSegment = segmentStart - 1;
+		while (beforeSegment >= 0 && Character.isWhitespace(text.charAt(beforeSegment))) beforeSegment--;
+		if (beforeSegment < 0 || text.charAt(beforeSegment) != '.') return null;
+
+		int dollarPos = findChainDollarBefore(text, beforeSegment);
+		if (dollarPos < 0) return null;
+
+		String clickedName = clickedElement.getText();
+		String fullChain = parseDollarChainToSegmentStart(text, dollarPos, segmentStart, clickedName);
+		if (fullChain == null) return null;
+
+		return resolveTextHashKeyNavigation(clickedElement, fullChain, clickedName);
+	}
+
+	private PsiElement @Nullable [] resolveTextHashKeyNavigation(
+			@NotNull PsiElement clickedElement,
+			@NotNull String fullChain,
+			@NotNull String clickedName
+	) {
+		PsiFile file = clickedElement.getContainingFile();
+		if (file == null || file.getVirtualFile() == null) return null;
+
+		Project project = clickedElement.getProject();
+		VirtualFile currentVFile = file.getVirtualFile();
+		int clickOffset = clickedElement.getTextOffset();
+		ru.artlebedev.parser3.index.P3VariableIndex varIndex =
+				ru.artlebedev.parser3.index.P3VariableIndex.getInstance(project);
+
+		java.util.List<VirtualFile> visibleFiles = preferFile(
+				getVisibleFiles(project, currentVFile, clickOffset),
+				currentVFile
+		);
+		ru.artlebedev.parser3.index.P3VariableIndex.ChainResolveInfo resolvedChain =
+				varIndex.resolveEffectiveChain(fullChain, visibleFiles, currentVFile, clickOffset);
+		ru.artlebedev.parser3.index.HashEntryInfo entry = resolvedChain != null ? resolvedChain.hashEntry : null;
+		if (DEBUG) System.out.println("[handleTextHashKeyNav] chain=" + fullChain + " resolved=" + resolvedChain + " entry=" + entry
+				+ (entry != null ? " offset=" + entry.offset + " file=" + entry.file : ""));
+		if (entry == null || entry.offset < 0) return null;
+
+		VirtualFile targetVFile = entry.file != null
+				? entry.file
+				: resolvedChain.rootVariable != null
+						? resolvedChain.rootVariable.file
+						: currentVFile;
+		PsiElement targetElement = findHashEntryTargetElement(
+				project,
+				targetVFile,
+				currentVFile,
+				visibleFiles,
+				entry.offset,
+				clickedName
+		);
+		if (targetElement == null) return null;
+
+		PsiFile targetPsiFile = targetElement.getContainingFile();
+		VirtualFile actualTargetFile = targetPsiFile != null && targetPsiFile.getVirtualFile() != null
+				? targetPsiFile.getVirtualFile()
+				: targetVFile;
+		return new PsiElement[]{P3NavigationTargets.createVariableTarget(targetElement, actualTargetFile, entry.offset)};
+	}
+
+	private static @Nullable BracketHashChainInfo buildBracketLiteralHashChain(@NotNull String text, int clickOffset) {
+		int textLen = text.length();
+		if (clickOffset < 0 || clickOffset >= textLen) return null;
+
+		int openBracket = -1;
+		for (int i = clickOffset; i >= 0; i--) {
+			char ch = text.charAt(i);
+			if (ch == '[') {
+				openBracket = i;
+				break;
+			}
+			if (ch == '\n' || ch == '\r') return null;
+		}
+		if (openBracket < 0) return null;
+
+		int closeBracket = Parser3ChainUtils.findMatchingBracket(text, openBracket, textLen, '[');
+		if (closeBracket < 0 || clickOffset > closeBracket) return null;
+
+		String bracketText = text.substring(openBracket, closeBracket + 1);
+		String literalKey = Parser3ChainUtils.tryExtractLiteralBracketKey(bracketText);
+		if (literalKey == null) return null;
+
+		int keyStart = openBracket + 1;
+		int keyEnd = closeBracket;
+		while (keyStart < keyEnd && Character.isWhitespace(text.charAt(keyStart))) keyStart++;
+		while (keyEnd > keyStart && Character.isWhitespace(text.charAt(keyEnd - 1))) keyEnd--;
+		if (clickOffset < keyStart || clickOffset >= keyEnd) return null;
+
+		int beforeBracket = openBracket - 1;
+		while (beforeBracket >= 0 && Character.isWhitespace(text.charAt(beforeBracket))) beforeBracket--;
+		if (beforeBracket < 0 || text.charAt(beforeBracket) != '.') return null;
+
+		int dollarPos = findChainDollarBefore(text, beforeBracket);
+		if (dollarPos < 0) return null;
+
+		String fullChain = parseDollarChainToBracketSegment(text, dollarPos, openBracket, literalKey);
+		return fullChain != null ? new BracketHashChainInfo(fullChain, literalKey) : null;
+	}
+
+	private static int findChainDollarBefore(@NotNull String text, int fromOffset) {
+		for (int i = fromOffset; i >= 0; i--) {
+			char ch = text.charAt(i);
+			if (ch == '$') return i;
+			if (ch == '\n' || ch == '\r' || ch == ';' || ch == '{' || ch == '}') break;
+		}
+		return -1;
+	}
+
+	private static @Nullable String parseDollarChainToBracketSegment(
+			@NotNull String text,
+			int dollarPos,
+			int targetOpenBracket,
+			@NotNull String targetKey
+	) {
+		int textLen = text.length();
+		int pos = dollarPos + 1;
+		if (pos >= textLen) return null;
+
+		String prefix = "";
+		if (startsWithAt(text, pos, "self.")) {
+			prefix = "self.";
+			pos += 5;
+		} else if (startsWithAt(text, pos, "MAIN:")) {
+			prefix = "MAIN:";
+			pos += 5;
+		} else if (startsWithAt(text, pos, "BASE:")) {
+			prefix = "BASE:";
+			pos += 5;
+		}
+
+		if (pos >= textLen || !Parser3IdentifierUtils.isIdentifierStart(text.charAt(pos))) return null;
+		int rootStart = pos;
+		pos++;
+		while (pos < textLen && Parser3IdentifierUtils.isVariableIdentifierChar(text.charAt(pos))) pos++;
+
+		StringBuilder chain = new StringBuilder(prefix).append(text, rootStart, pos);
+		while (pos < textLen && pos <= targetOpenBracket) {
+			while (pos < textLen && Character.isWhitespace(text.charAt(pos))) pos++;
+			if (pos >= textLen || text.charAt(pos) != '.') return null;
+			pos++;
+			while (pos < textLen && Character.isWhitespace(text.charAt(pos))) pos++;
+			if (pos >= textLen) return null;
+
+			if (pos == targetOpenBracket) {
+				chain.append(".[").append(targetKey).append(']');
+				return chain.toString();
+			}
+
+			String segment = parseIntermediateChainSegment(text, pos);
+			if (segment == null) return null;
+			chain.append('.').append(segment);
+			pos = skipIntermediateChainSegment(text, pos);
+			if (pos < 0) return null;
+		}
 		return null;
+	}
+
+	private static @Nullable String parseDollarChainToSegmentStart(
+			@NotNull String text,
+			int dollarPos,
+			int targetSegmentStart,
+			@NotNull String targetKey
+	) {
+		int textLen = text.length();
+		int pos = dollarPos + 1;
+		if (pos >= textLen) return null;
+
+		String prefix = "";
+		if (startsWithAt(text, pos, "self.")) {
+			prefix = "self.";
+			pos += 5;
+		} else if (startsWithAt(text, pos, "MAIN:")) {
+			prefix = "MAIN:";
+			pos += 5;
+		} else if (startsWithAt(text, pos, "BASE:")) {
+			prefix = "BASE:";
+			pos += 5;
+		}
+
+		if (pos >= textLen || !Parser3IdentifierUtils.isIdentifierStart(text.charAt(pos))) return null;
+		int rootStart = pos;
+		pos++;
+		while (pos < textLen && Parser3IdentifierUtils.isVariableIdentifierChar(text.charAt(pos))) pos++;
+
+		StringBuilder chain = new StringBuilder(prefix).append(text, rootStart, pos);
+		while (pos < textLen && pos <= targetSegmentStart) {
+			while (pos < textLen && Character.isWhitespace(text.charAt(pos))) pos++;
+			if (pos >= textLen || text.charAt(pos) != '.') return null;
+			pos++;
+			while (pos < textLen && Character.isWhitespace(text.charAt(pos))) pos++;
+			if (pos >= textLen) return null;
+
+			if (pos == targetSegmentStart) {
+				chain.append('.').append(targetKey);
+				return chain.toString();
+			}
+
+			String segment = parseIntermediateChainSegment(text, pos);
+			if (segment == null) return null;
+			chain.append('.').append(segment);
+			pos = skipIntermediateChainSegment(text, pos);
+			if (pos < 0) return null;
+		}
+		return null;
+	}
+
+	private static @Nullable String parseIntermediateChainSegment(@NotNull String text, int segmentStart) {
+		int textLen = text.length();
+		char ch = text.charAt(segmentStart);
+		if (ch == '[') {
+			int close = Parser3ChainUtils.findMatchingBracket(text, segmentStart, textLen, '[');
+			if (close < 0) return null;
+			String literal = Parser3ChainUtils.tryExtractLiteralBracketKey(text.substring(segmentStart, close + 1));
+			return literal != null ? text.substring(segmentStart, close + 1) : "*";
+		}
+		if (ch == '(' || ch == '{') {
+			int close = Parser3ChainUtils.findMatchingBracket(text, segmentStart, textLen, ch);
+			return close >= 0 ? "*" : null;
+		}
+		if (!Parser3IdentifierUtils.isIdentifierStart(ch)) return null;
+		int pos = segmentStart + 1;
+		while (pos < textLen && Parser3IdentifierUtils.isVariableIdentifierChar(text.charAt(pos))) pos++;
+		return text.substring(segmentStart, pos);
+	}
+
+	private static int skipIntermediateChainSegment(@NotNull String text, int segmentStart) {
+		int textLen = text.length();
+		char ch = text.charAt(segmentStart);
+		if (ch == '[' || ch == '(' || ch == '{') {
+			int close = Parser3ChainUtils.findMatchingBracket(text, segmentStart, textLen, ch);
+			return close >= 0 ? close + 1 : -1;
+		}
+		if (!Parser3IdentifierUtils.isIdentifierStart(ch)) return -1;
+		int pos = segmentStart + 1;
+		while (pos < textLen && Parser3IdentifierUtils.isVariableIdentifierChar(text.charAt(pos))) pos++;
+		return pos;
+	}
+
+	private static boolean startsWithAt(@NotNull String text, int offset, @NotNull String prefix) {
+		return offset >= 0 && offset + prefix.length() <= text.length()
+				&& text.regionMatches(offset, prefix, 0, prefix.length());
+	}
+
+	private static final class BracketHashChainInfo {
+		final @NotNull String fullChain;
+		final @NotNull String clickedName;
+
+		BracketHashChainInfo(@NotNull String fullChain, @NotNull String clickedName) {
+			this.fullChain = fullChain;
+			this.clickedName = clickedName;
+		}
 	}
 
 	private boolean isHashKeyAssignmentDefinition(@NotNull PsiElement clickedElement) {
@@ -1782,12 +2076,14 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 	) {
 		String suffix = buildReadChainSuffix(fullChain);
 		if (suffix == null) return null;
+		String rootVarKey = extractRootVarKey(fullChain);
 		PsiManager psiManager = PsiManager.getInstance(project);
 
 		PsiElement currentFileTarget = findSyntheticReadChainSuffixTargetInFile(
 				psiManager,
 				currentFile,
 				suffix,
+				rootVarKey,
 				clickedName,
 				clickedOffset
 		);
@@ -1799,6 +2095,7 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 					psiManager,
 					file,
 					suffix,
+					rootVarKey,
 					clickedName,
 					Integer.MAX_VALUE
 			);
@@ -1824,6 +2121,7 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 			@NotNull PsiManager psiManager,
 			@NotNull VirtualFile file,
 			@NotNull String suffix,
+			@NotNull String rootVarKey,
 			@NotNull String clickedName,
 			int maxTargetOffset
 	) {
@@ -1847,6 +2145,7 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 					&& targetOffset < text.length()
 					&& targetOffset < maxTargetOffset
 					&& !clickedOccurrence
+					&& !hasRootResetAssignmentBetween(text, rootVarKey, occurrenceEnd, maxTargetOffset)
 					&& isReadChainOccurrenceOrPrefix(text, dollarOffset, occurrenceEnd)) {
 				bestTargetOffset = targetOffset;
 			}
@@ -1893,12 +2192,14 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 			int clickedOffset
 	) {
 		String textPattern = "$" + fullChain;
+		String rootVarKey = extractRootVarKey(fullChain);
 		PsiManager psiManager = PsiManager.getInstance(project);
 
 		PsiElement currentFileTarget = findSyntheticReadChainTargetInFile(
 				psiManager,
 				currentFile,
 				textPattern,
+				rootVarKey,
 				clickedName,
 				clickedOffset
 		);
@@ -1910,6 +2211,7 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 					psiManager,
 					file,
 					textPattern,
+					rootVarKey,
 					clickedName,
 					Integer.MAX_VALUE
 			);
@@ -1923,6 +2225,7 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 			@NotNull PsiManager psiManager,
 			@NotNull VirtualFile file,
 			@NotNull String textPattern,
+			@NotNull String rootVarKey,
 			@NotNull String clickedName,
 			int maxTargetOffset
 	) {
@@ -1943,6 +2246,7 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 					&& targetOffset < text.length()
 					&& targetOffset < maxTargetOffset
 					&& !clickedOccurrence
+					&& !hasRootResetAssignmentBetween(text, rootVarKey, occurrenceEnd, maxTargetOffset)
 					&& isReadChainOccurrence(text, occurrence, occurrenceEnd)) {
 				bestTargetOffset = targetOffset;
 			}
@@ -1950,6 +2254,52 @@ public final class P3GotoDeclarationHandler implements GotoDeclarationHandler {
 		}
 		if (bestTargetOffset < 0) return null;
 		return psiFile.findElementAt(bestTargetOffset);
+	}
+
+	private static @NotNull String extractRootVarKey(@NotNull String fullChain) {
+		int rootEnd;
+		if (fullChain.startsWith("self.")) {
+			rootEnd = fullChain.indexOf('.', 5);
+		} else if (fullChain.startsWith("MAIN:") || fullChain.startsWith("BASE:")) {
+			rootEnd = fullChain.indexOf('.', 5);
+		} else {
+			rootEnd = fullChain.indexOf('.');
+		}
+		return rootEnd > 0 ? fullChain.substring(0, rootEnd) : fullChain;
+	}
+
+	private boolean hasRootResetAssignmentBetween(
+			@NotNull String text,
+			@NotNull String rootVarKey,
+			int fromOffset,
+			int toOffset
+	) {
+		if (toOffset == Integer.MAX_VALUE || rootVarKey.isEmpty()) return false;
+
+		String pattern = "$" + rootVarKey;
+		int from = Math.max(0, fromOffset);
+		int limit = Math.min(toOffset, text.length());
+		while (from < limit) {
+			int occurrence = text.indexOf(pattern, from);
+			if (occurrence < 0 || occurrence >= limit) return false;
+			int occurrenceEnd = occurrence + pattern.length();
+			if (occurrenceEnd <= limit
+					&& !ru.artlebedev.parser3.lexer.Parser3LexerUtils.isEscapedByCaret(text, occurrence)
+					&& !ru.artlebedev.parser3.utils.Parser3ClassUtils.isOffsetInComment(text, occurrence)
+					&& isFullRootAssignmentAt(text, occurrenceEnd)) {
+				return true;
+			}
+			from = occurrence + 1;
+		}
+		return false;
+	}
+
+	private static boolean isFullRootAssignmentAt(@NotNull String text, int rootEndOffset) {
+		int pos = rootEndOffset;
+		while (pos < text.length() && Character.isWhitespace(text.charAt(pos))) pos++;
+		if (pos >= text.length()) return false;
+		char nextChar = text.charAt(pos);
+		return nextChar == '[' || nextChar == '(' || nextChar == '{';
 	}
 
 	private boolean isReadChainOccurrence(

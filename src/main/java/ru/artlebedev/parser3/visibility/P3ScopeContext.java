@@ -12,11 +12,13 @@ import ru.artlebedev.parser3.model.P3ClassDeclaration;
 import ru.artlebedev.parser3.model.P3MethodDeclaration;
 import ru.artlebedev.parser3.settings.Parser3ProjectSettings;
 import ru.artlebedev.parser3.use.P3UseResolver;
+import ru.artlebedev.parser3.utils.Parser3IdentifierUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +40,11 @@ public final class P3ScopeContext {
 			"\\^use\\s*\\[\\s*([^\\];]+)\\s*;[^\\]]*\\$\\.replace\\s*\\(\\s*true\\s*\\)[^\\]]*\\]",
 			Pattern.MULTILINE | Pattern.CASE_INSENSITIVE
 	);
+	private static final Pattern CLASS_METHOD_CALL_PATTERN = Pattern.compile(
+			"\\^\\s*(" + Parser3IdentifierUtils.NAME_REGEX + ")\\s*::?\\s*"
+					+ Parser3IdentifierUtils.METHOD_NAME_REGEX + "\\s*([\\[\\(\\{])",
+			Pattern.MULTILINE
+	);
 
 	private final @NotNull Project project;
 	private final @NotNull VirtualFile currentFile;
@@ -50,6 +57,7 @@ public final class P3ScopeContext {
 	private @Nullable List<VirtualFile> classSearchFiles;
 	private final @NotNull List<VirtualFile> variableSearchFiles;
 	private final @NotNull Map<VirtualFile, Integer> useOffsetMap;
+	private final @NotNull Map<VirtualFile, Integer> variableUseOffsetMap;
 	private final @NotNull Map<VirtualFile, Boolean> inheritedMainLocalsMap;
 	private final @Nullable P3ClassDeclaration currentClass;
 	private final boolean hasAutouse;
@@ -88,7 +96,6 @@ public final class P3ScopeContext {
 				"positionallyVisibleFiles=" + positionallyVisibleFiles.size());
 		long modeStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
 		this.methodSearchFiles = buildModeSearchFiles();
-		this.variableSearchFiles = methodSearchFiles;
 		logPerf("buildModeSearchFiles", modeStart, currentFile, cursorOffset,
 				"methodSearchFiles=" + methodSearchFiles.size());
 		long inheritedStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
@@ -105,6 +112,18 @@ public final class P3ScopeContext {
 		this.hasAutouse = hasAutouseInFiles(project, methodSearchFiles);
 		logPerf("hasAutouseInFiles", autouseStart, currentFile, cursorOffset,
 				"hasAutouse=" + hasAutouse);
+		long variableSearchStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
+		List<VirtualFile> variableClassSearchFiles = hasAutouse && !allMethodsMode
+				? getClassSearchFiles()
+				: List.of();
+		VariableSearchData variableSearchData = buildVariableSearchData(
+				project, currentFile, methodSearchFiles, hasAutouse && !allMethodsMode,
+				variableClassSearchFiles, useOffsetMap);
+		this.variableSearchFiles = variableSearchData.files;
+		this.variableUseOffsetMap = variableSearchData.useOffsetMap;
+		logPerf("buildVariableSearchFiles", variableSearchStart, currentFile, cursorOffset,
+				"variableSearchFiles=" + variableSearchFiles.size()
+						+ " variableUseOffsets=" + variableUseOffsetMap.size());
 		if (DEBUG_PERF) {
 			System.out.println("[P3ScopeContext.PERF] TOTAL: "
 					+ (System.currentTimeMillis() - totalStart) + "ms"
@@ -245,8 +264,17 @@ public final class P3ScopeContext {
 		return useOffsetMap.getOrDefault(sourceFile, -1);
 	}
 
+	public int getVariableUseOffset(@NotNull VirtualFile sourceFile) {
+		return variableUseOffsetMap.getOrDefault(sourceFile, -1);
+	}
+
 	public boolean isSourceVisibleAtCursor(@NotNull VirtualFile sourceFile) {
 		return allMethodsMode || isSourcePositionallyVisibleAtCursor(sourceFile);
+	}
+
+	public boolean isVariableSourceVisibleAtCursor(@NotNull VirtualFile sourceFile) {
+		return allMethodsMode || isSourcePositionallyVisibleAtCursor(
+				sourceFile, currentFile, variableUseOffsetMap, cursorOffset);
 	}
 
 	public boolean isSourcePositionallyVisibleAtCursor(@NotNull VirtualFile sourceFile) {
@@ -409,6 +437,89 @@ public final class P3ScopeContext {
 		}
 
 		return map;
+	}
+
+	public static @NotNull VariableSearchData buildVariableSearchData(
+			@NotNull Project project,
+			@NotNull VirtualFile currentFile,
+			int cursorOffset,
+			@NotNull List<VirtualFile> baseSearchFiles
+	) {
+		Map<VirtualFile, Integer> useOffsetMap = buildUseOffsetMap(project, currentFile);
+		boolean hasAutouse = !isAllMethodsMode(project) && hasAutouseInFiles(project, baseSearchFiles);
+		List<VirtualFile> classSearchFiles = hasAutouse
+				? P3VisibilityService.getInstance(project).getAllProjectFiles()
+				: baseSearchFiles;
+		return buildVariableSearchData(
+				project, currentFile, baseSearchFiles, hasAutouse, classSearchFiles, useOffsetMap);
+	}
+
+	private static @NotNull VariableSearchData buildVariableSearchData(
+			@NotNull Project project,
+			@NotNull VirtualFile currentFile,
+			@NotNull List<VirtualFile> baseSearchFiles,
+			boolean hasAutouse,
+			@NotNull List<VirtualFile> classSearchFiles,
+			@NotNull Map<VirtualFile, Integer> baseUseOffsetMap
+	) {
+		Map<VirtualFile, Integer> variableUseOffsetMap = new HashMap<>(baseUseOffsetMap);
+		LinkedHashSet<VirtualFile> files = new LinkedHashSet<>(baseSearchFiles);
+		if (hasAutouse) {
+			addAutouseClassLoadedFiles(project, currentFile, baseSearchFiles, classSearchFiles,
+					variableUseOffsetMap, files);
+		}
+		return new VariableSearchData(new ArrayList<>(files), variableUseOffsetMap);
+	}
+
+	private static void addAutouseClassLoadedFiles(
+			@NotNull Project project,
+			@NotNull VirtualFile currentFile,
+			@NotNull List<VirtualFile> sourceFiles,
+			@NotNull List<VirtualFile> classSearchFiles,
+			@NotNull Map<VirtualFile, Integer> variableUseOffsetMap,
+			@NotNull LinkedHashSet<VirtualFile> resultFiles
+	) {
+		P3ClassIndex classIndex = P3ClassIndex.getInstance(project);
+		Set<VirtualFile> classSearchFileSet = new HashSet<>(classSearchFiles);
+
+		for (VirtualFile sourceFile : sourceFiles) {
+			if (!sourceFile.isValid()) continue;
+			String text = readFileTextSmart(sourceFile);
+			if (text.isEmpty()) continue;
+
+			Matcher matcher = CLASS_METHOD_CALL_PATTERN.matcher(text);
+			while (matcher.find()) {
+				if (ru.artlebedev.parser3.utils.Parser3ClassUtils.isOffsetInComment(text, matcher.start())) continue;
+				String className = matcher.group(1);
+				if ("MAIN".equals(className) || "BASE".equals(className)) continue;
+
+				int loadOffset = sourceFile.equals(currentFile)
+						? matcher.start()
+						: variableUseOffsetMap.getOrDefault(sourceFile, -1);
+				for (P3ClassDeclaration declaration : classIndex.findByName(className)) {
+					VirtualFile classFile = declaration.getFile();
+					if (!classFile.isValid() || !classSearchFileSet.contains(classFile)) continue;
+					resultFiles.add(classFile);
+					Integer existingOffset = variableUseOffsetMap.get(classFile);
+					if (existingOffset == null || loadOffset < existingOffset) {
+						variableUseOffsetMap.put(classFile, loadOffset);
+					}
+				}
+			}
+		}
+	}
+
+	public static final class VariableSearchData {
+		public final @NotNull List<VirtualFile> files;
+		public final @NotNull Map<VirtualFile, Integer> useOffsetMap;
+
+		private VariableSearchData(
+				@NotNull List<VirtualFile> files,
+				@NotNull Map<VirtualFile, Integer> useOffsetMap
+		) {
+			this.files = files;
+			this.useOffsetMap = useOffsetMap;
+		}
 	}
 
 	private static void addTransitiveUseOffsets(

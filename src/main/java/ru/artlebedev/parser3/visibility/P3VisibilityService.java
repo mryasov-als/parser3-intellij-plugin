@@ -1,12 +1,12 @@
 package ru.artlebedev.parser3.visibility;
 
 import com.intellij.openapi.components.Service;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootModificationTracker;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
 import ru.artlebedev.parser3.Parser3Language;
 import ru.artlebedev.parser3.index.P3IndexMaintenance;
@@ -14,11 +14,14 @@ import ru.artlebedev.parser3.settings.Parser3ProjectSettings;
 import ru.artlebedev.parser3.use.P3UseResolver;
 import ru.artlebedev.parser3.utils.Parser3FileUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Основной сервис для определения видимости файлов в Parser3.
@@ -37,11 +40,11 @@ public final class P3VisibilityService {
 
 	private final Project project;
 	private final PsiManager psiManager;
-	private final CachedValuesManager cachedValuesManager;
 	private final P3AutoChainService autoChainService;
 	private final P3UseResolver useResolver;
 	private volatile long allProjectFilesModCount = -1;
 	private volatile @NotNull List<VirtualFile> allProjectFilesCache = Collections.emptyList();
+	private final @NotNull Map<VirtualFile, VisibleFilesCacheEntry> visibleFilesCache = new ConcurrentHashMap<>();
 
 	private static final int MAX_USE_DEPTH = 50; // Защита от циклических зависимостей
 	private static final boolean DEBUG_PERF = false;
@@ -49,7 +52,6 @@ public final class P3VisibilityService {
 	public P3VisibilityService(@NotNull Project project) {
 		this.project = project;
 		this.psiManager = PsiManager.getInstance(project);
-		this.cachedValuesManager = CachedValuesManager.getManager(project);
 		this.autoChainService = P3AutoChainService.getInstance(project);
 		this.useResolver = new P3UseResolver(project);
 	}
@@ -67,8 +69,7 @@ public final class P3VisibilityService {
 	 */
 	public @NotNull List<VirtualFile> getVisibleFiles(@NotNull VirtualFile file) {
 		long startTime = DEBUG_PERF ? System.currentTimeMillis() : 0;
-		PsiFile psiFile = psiManager.findFile(file);
-		if (psiFile == null) {
+		if (!file.isValid() || psiManager.findFile(file) == null) {
 			// Запасной вариант: вернуть только сам файл
 			List<VirtualFile> result = new ArrayList<>();
 			result.add(file);
@@ -81,33 +82,103 @@ public final class P3VisibilityService {
 			return result;
 		}
 
-		// getCachedValue возвращает результат напрямую
-		// Используем PROJECT_ROOT_MODIFICATION_TRACKER - кеш сбрасывается только при изменении структуры проекта,
-		// а не при каждом нажатии клавиши в файле
-		List<VirtualFile> result = cachedValuesManager.getCachedValue(
-				psiFile,
-				() -> {
-					long computeStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
-					List<VirtualFile> visible = computeVisibleFiles(file);
-					if (DEBUG_PERF) {
-						System.out.println("[P3Visibility.PERF] getVisibleFiles cacheCompute: "
-								+ (System.currentTimeMillis() - computeStart) + "ms"
-								+ " file=" + file.getName()
-								+ " visible=" + visible.size());
-					}
-					return CachedValueProvider.Result.create(
-							visible,
-							com.intellij.psi.util.PsiModificationTracker.getInstance(project).forLanguage(Parser3Language.INSTANCE)
-					);
-				}
-		);
+		VisibleFilesCacheEntry cached = visibleFilesCache.get(file);
+		VisibleFilesCacheKey cacheKey = buildVisibleFilesCacheKey(file, cached != null ? cached.files : null);
+		if (cached != null && cached.key.equals(cacheKey)) {
+			if (DEBUG_PERF) {
+				System.out.println("[P3Visibility.PERF] getVisibleFiles TOTAL: "
+						+ (System.currentTimeMillis() - startTime) + "ms"
+						+ " file=" + file.getName()
+						+ " visible=" + cached.files.size()
+						+ " cacheHit=true");
+			}
+			return cached.files;
+		}
+
+		long computeStart = DEBUG_PERF ? System.currentTimeMillis() : 0;
+		List<VirtualFile> visible = Collections.unmodifiableList(computeVisibleFiles(file));
+		visibleFilesCache.put(file, new VisibleFilesCacheEntry(buildVisibleFilesCacheKey(file, visible), visible));
+		if (DEBUG_PERF) {
+			System.out.println("[P3Visibility.PERF] getVisibleFiles cacheCompute: "
+					+ (System.currentTimeMillis() - computeStart) + "ms"
+					+ " file=" + file.getName()
+					+ " visible=" + visible.size());
+		}
 		if (DEBUG_PERF) {
 			System.out.println("[P3Visibility.PERF] getVisibleFiles TOTAL: "
 					+ (System.currentTimeMillis() - startTime) + "ms"
 					+ " file=" + file.getName()
-					+ " visible=" + result.size());
+					+ " visible=" + visible.size()
+					+ " cacheHit=false");
 		}
-		return result;
+		return visible;
+	}
+
+	private @NotNull VisibleFilesCacheKey buildVisibleFilesCacheKey(
+			@NotNull VirtualFile file,
+			@org.jetbrains.annotations.Nullable List<VirtualFile> cachedVisibleFiles
+	) {
+		Parser3ProjectSettings settings = Parser3ProjectSettings.getInstance(project);
+		long rootStamp = ProjectRootModificationTracker.getInstance(project).getModificationCount();
+		return new VisibleFilesCacheKey(
+				rootStamp,
+				computeCurrentUseFingerprint(file),
+				computeVisibleDependencyStamp(file, cachedVisibleFiles),
+				settings.getDocumentRootPath(),
+				settings.getMainAutoPath()
+		);
+	}
+
+	private long computeCurrentUseFingerprint(@NotNull VirtualFile file) {
+		String text = readFileTextSmart(file);
+		if (text.indexOf("@USE") < 0 && text.indexOf("^use") < 0) return 0L;
+
+		long hash = 1125899906842597L;
+		int count = 0;
+		for (int pos = 0; pos < text.length(); pos++) {
+			boolean atUse = text.startsWith("@USE", pos);
+			boolean caretUse = text.startsWith("^use", pos);
+			if (!atUse && !caretUse) continue;
+
+			int lineStart = pos;
+			while (lineStart > 0 && text.charAt(lineStart - 1) != '\n' && text.charAt(lineStart - 1) != '\r') {
+				lineStart--;
+			}
+			int lineEnd = pos;
+			while (lineEnd < text.length() && text.charAt(lineEnd) != '\n' && text.charAt(lineEnd) != '\r') {
+				lineEnd++;
+			}
+			hash = 31 * hash + text.substring(lineStart, lineEnd).trim().hashCode();
+			count++;
+			pos = lineEnd;
+		}
+		return 31 * hash + count;
+	}
+
+	private long computeVisibleDependencyStamp(
+			@NotNull VirtualFile currentFile,
+			@org.jetbrains.annotations.Nullable List<VirtualFile> cachedVisibleFiles
+	) {
+		if (cachedVisibleFiles == null || cachedVisibleFiles.isEmpty()) return 0L;
+		long hash = 1469598103934665603L;
+		for (VirtualFile visibleFile : cachedVisibleFiles) {
+			if (currentFile.equals(visibleFile)) continue;
+			hash = 1099511628211L * hash + visibleFile.getPath().hashCode();
+			hash = 1099511628211L * hash + visibleFile.getModificationStamp();
+		}
+		return hash;
+	}
+
+	private static @NotNull String readFileTextSmart(@NotNull VirtualFile file) {
+		Document document = FileDocumentManager.getInstance().getDocument(file);
+		if (document != null) {
+			return document.getText();
+		}
+		try {
+			return new String(file.contentsToByteArray(), StandardCharsets.UTF_8);
+		} catch (Exception ignored) {
+			return "";
+		}
 	}
 
 	private @NotNull List<VirtualFile> computeVisibleFiles(@NotNull VirtualFile file) {
@@ -181,6 +252,63 @@ public final class P3VisibilityService {
 					+ " visited=" + visited.size());
 		}
 		return result;
+	}
+
+	private static final class VisibleFilesCacheEntry {
+		final @NotNull VisibleFilesCacheKey key;
+		final @NotNull List<VirtualFile> files;
+
+		private VisibleFilesCacheEntry(
+				@NotNull VisibleFilesCacheKey key,
+				@NotNull List<VirtualFile> files
+		) {
+			this.key = key;
+			this.files = files;
+		}
+	}
+
+	private static final class VisibleFilesCacheKey {
+		final long rootStamp;
+		final long currentUseFingerprint;
+		final long dependencyStamp;
+		final @NotNull String documentRootPath;
+		final @NotNull String mainAutoPath;
+
+		private VisibleFilesCacheKey(
+				long rootStamp,
+				long currentUseFingerprint,
+				long dependencyStamp,
+				@org.jetbrains.annotations.Nullable String documentRootPath,
+				@org.jetbrains.annotations.Nullable String mainAutoPath
+		) {
+			this.rootStamp = rootStamp;
+			this.currentUseFingerprint = currentUseFingerprint;
+			this.dependencyStamp = dependencyStamp;
+			this.documentRootPath = documentRootPath != null ? documentRootPath : "";
+			this.mainAutoPath = mainAutoPath != null ? mainAutoPath : "";
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (this == other) return true;
+			if (!(other instanceof VisibleFilesCacheKey)) return false;
+			VisibleFilesCacheKey key = (VisibleFilesCacheKey) other;
+			return rootStamp == key.rootStamp
+					&& currentUseFingerprint == key.currentUseFingerprint
+					&& dependencyStamp == key.dependencyStamp
+					&& documentRootPath.equals(key.documentRootPath)
+					&& mainAutoPath.equals(key.mainAutoPath);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = Long.hashCode(rootStamp);
+			result = 31 * result + Long.hashCode(currentUseFingerprint);
+			result = 31 * result + Long.hashCode(dependencyStamp);
+			result = 31 * result + documentRootPath.hashCode();
+			result = 31 * result + mainAutoPath.hashCode();
+			return result;
+		}
 	}
 
 	/**

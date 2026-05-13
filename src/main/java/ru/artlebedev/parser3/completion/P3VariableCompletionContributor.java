@@ -573,7 +573,7 @@ public class P3VariableCompletionContributor extends CompletionContributor {
 	}
 
 	private static @NotNull String normalizeDynamicSegments(@NotNull String text) {
-		return Parser3ChainUtils.normalizeDynamicSegments(text);
+		return Parser3ChainUtils.normalizeChainKeyForResolve(text);
 	}
 
 	/**

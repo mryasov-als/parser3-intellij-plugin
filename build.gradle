@@ -36,15 +36,15 @@ intellijPlatform {
 		description = 'Parser3 language support for IntelliJ IDEA: syntax highlighting, code completion, navigation, quick documentation, formatting, folding, HTML/CSS/JavaScript/SQL injections, and safe refactoring for @USE and ^use[] paths.<br /><br /><em>Requires IntelliJ IDEA 2026.1 or newer.</em>'
 		changeNotes = '''
 			<ul>
-				<li>Improved variable auto-popup stability: fixed behavior after $, after a dot, after fast typing, and inside ^if.</li>
-				<li>Fixed a variable auto-popup crash inside SQL ^if; completion now runs only on a stable host editor.</li>
-				<li>Restored normal Tab behavior: without a popup, after closing a popup, and inside the Parser3 completion popup.</li>
-				<li>Regular typing no longer selects completion accidentally: fixed scenarios with a manually typed bracket after a method name, semicolon, dot, and a bare $.</li>
-				<li>Refined template behavior after a variable dot: user templates are hidden, dot templates are available through auto-popup and Ctrl+Space, but have low priority.</li>
-				<li>Suppressed unnecessary SQL suggestions inside Parser3 arguments; restored delayed popup for hash keys after fast typing.</li>
-				<li>Added mail fields to mail:send completion.</li>
-				<li>Improved builtin receiver hints: method names are now shown in the signature.</li>
-				<li>Hidden internal file subtypes from completion.</li>
+				<li>Fixed visibility of MAIN variables from included classes and merging of their hash keys.</li>
+				<li>Optimized visible file list updates: the plugin no longer rereads all included files on every request when @USE/^use[], dependencies, and project settings have not changed.</li>
+				<li>Fixed hash bracket keys: keys with dots, nested keys, and lookup by internal prefix.</li>
+				<li>Fixed duplicate builtin fields in completion.</li>
+				<li>Fixed SQL auto-popup in single-line table::sql blocks.</li>
+				<li>Fixed critical freezes and crashes: StackOverflow on self-assignment through receiver dot-chain and completion freeze on self-reference through split.</li>
+				<li>Added completion for trim directions; fixed string type inference after trim in a chain.</li>
+				<li>Added completion for MAIN service methods.</li>
+				<li>Fixed filtering of dot templates in method completion.</li>
 			</ul>
 		'''
 		vendor {

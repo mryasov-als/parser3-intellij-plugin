@@ -93,9 +93,8 @@ final class P3VariableEffectiveShape {
 				&& structuralVisible.sourceVarKey != null
 				&& bestClassNameFromAdditive
 				&& "hash".equals(bestClassName)) {
-			return className;
-		}
-		if (P3VariableFileIndex.UNKNOWN_TYPE.equals(className)
+			return P3VariableFileIndex.UNKNOWN_TYPE;
+		} else if (P3VariableFileIndex.UNKNOWN_TYPE.equals(className)
 				&& bestClassName != null
 				&& canInheritBestStructure(structuralVisible)) {
 			className = bestClassName;

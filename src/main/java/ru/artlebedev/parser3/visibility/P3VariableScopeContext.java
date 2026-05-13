@@ -74,14 +74,14 @@ public final class P3VariableScopeContext {
 
 	public int getUseOffset(@NotNull VirtualFile sourceFile) {
 		if (scopeContext != null) {
-			return scopeContext.getUseOffset(sourceFile);
+			return scopeContext.getVariableUseOffset(sourceFile);
 		}
 		return useOffsetMap.getOrDefault(sourceFile, -1);
 	}
 
 	public boolean isSourceVisibleAtCursor(@NotNull VirtualFile sourceFile) {
 		if (scopeContext != null) {
-			return scopeContext.isSourceVisibleAtCursor(sourceFile);
+			return scopeContext.isVariableSourceVisibleAtCursor(sourceFile);
 		}
 		return allMethodsMode || P3ScopeContext.isSourcePositionallyVisibleAtCursor(
 				sourceFile, currentFile, useOffsetMap, cursorOffset);

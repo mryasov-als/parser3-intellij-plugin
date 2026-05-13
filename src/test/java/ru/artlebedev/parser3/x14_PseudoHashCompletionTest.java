@@ -915,6 +915,69 @@ public class x14_PseudoHashCompletionTest extends Parser3TestCase {
 		assertContainsCompletion(completions, "n", "Для string.match в опциях поиска должен предлагаться n");
 	}
 
+	public void testStringTrimDirectionParamTextCompletion() {
+		createParser3File(
+				"test_string_trim_direction_completion.p",
+				"@main[]\n" +
+						"# обезличенный реальный кейс error/5.p\n" +
+						"^items_uri.0.trim[<caret>;/]\n" +
+						"^var.x.y.z.trim[;/]"
+		);
+
+		myFixture.complete(CompletionType.BASIC);
+		LookupElement[] elements = myFixture.getLookupElements();
+		assertNotNull("Должны быть варианты completion", elements);
+		List<String> completions = Arrays.stream(elements)
+				.map(LookupElement::getLookupString)
+				.collect(Collectors.toList());
+
+		assertEquals("Первый вариант completion должен быть выбран автоматически",
+				elements[0], myFixture.getLookup().getCurrentItem());
+		assertContainsCompletion(completions, "both", "Для динамического trim в первом параметре должен предлагаться both");
+		assertContainsCompletion(completions, "left", "Для динамического trim в первом параметре должен предлагаться left");
+		assertContainsCompletion(completions, "start", "Для динамического trim в первом параметре должен предлагаться start");
+		assertContainsCompletion(completions, "right", "Для динамического trim в первом параметре должен предлагаться right");
+		assertContainsCompletion(completions, "end", "Для динамического trim в первом параметре должен предлагаться end");
+	}
+
+	public void testStringTrimDirectionParamTextPrefixCompletion() {
+		List<String> completions = getCompletions(
+				"@main[]\n" +
+						"# обезличенный реальный кейс error/5.p\n" +
+						"^var.x.y.z.trim[r<caret>;/]"
+		);
+
+		assertContainsCompletion(completions, "right", "Для динамического trim по префиксу r должен предлагаться right");
+		assertNotContainsCompletion(completions, "both", "Для динамического trim по префиксу r не должен предлагаться both");
+	}
+
+	public void testStringTrimDirectionParamTextInsertKeepsPlainTextForm() {
+		createParser3File(
+				"test_string_trim_direction_text_value_insert.p",
+				"@main[]\n" +
+						"# обезличенный реальный кейс error/5.p\n" +
+						"^var.x.y.z.trim[ri<caret>;/]"
+		);
+
+		myFixture.complete(CompletionType.BASIC);
+		LookupElement[] elements = myFixture.getLookupElements();
+		assertNotNull("Должны быть варианты completion", elements);
+
+		LookupElement rightElement = Arrays.stream(elements)
+				.filter(element -> "right".equals(element.getLookupString()))
+				.findFirst()
+				.orElse(null);
+		assertNotNull("Должен быть вариант right", rightElement);
+
+		myFixture.getLookup().setCurrentItem(rightElement);
+		myFixture.finishLookup('\n');
+
+		String text = myFixture.getEditor().getDocument().getText();
+		assertTrue("После вставки должно быть ^var.x.y.z.trim[right;/]: " + text,
+				text.contains("^var.x.y.z.trim[right;/]"));
+		assertFalse("После вставки не должно быть $.right: " + text, text.contains("$.right"));
+	}
+
 	public void testTableLoadNamelessParamTextCompletion() {
 		List<String> completions = getCompletions(
 				"@main[]\n" +
@@ -1234,6 +1297,26 @@ public class x14_PseudoHashCompletionTest extends Parser3TestCase {
 						text,
 						offset,
 						'-'
+				)
+		);
+	}
+
+	public void testStringTrimDirectionParamTextAutoPopupOnTypedLetter() {
+		String source = "@main[]\n" +
+				"# обезличенный реальный кейс error/5.p\n" +
+				"^var.x.y.z.trim[<caret>;/]";
+		int offset = source.indexOf("<caret>");
+		String text = source.replace("<caret>", "");
+
+		createParser3File("test_string_trim_direction_autopopup.p", text);
+		assertTrue(
+				"Для динамического trim popup должен подниматься сразу при вводе направления отсечения",
+				P3PseudoHashCompletionRegistry.shouldAutoPopupParamText(
+						getProject(),
+						myFixture.getFile().getVirtualFile(),
+						text,
+						offset,
+						'b'
 				)
 		);
 	}

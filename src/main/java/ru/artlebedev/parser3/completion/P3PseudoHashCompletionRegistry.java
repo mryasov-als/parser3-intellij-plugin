@@ -41,6 +41,7 @@ public final class P3PseudoHashCompletionRegistry {
 	private static final boolean DEBUG = false;
 	private static final boolean DEBUG_PERF = false;
 	private static final String CONFIG_RESOURCE_PATH = "ru/artlebedev/parser3/completion/pseudo-hash-completion.json";
+	private static final String ANY_CLASS = "*";
 
 	private static volatile RegistryData cachedBuiltinData;
 	private static final Map<String, RegistryData> userDataCache = new LinkedHashMap<>();
@@ -403,6 +404,10 @@ public final class P3PseudoHashCompletionRegistry {
 			return null;
 		}
 
+		if (hasMethodSpec(project, ANY_CLASS, scope.callableKind, scope.callableName, scope.targetType)) {
+			return scope.withResolvedClassName(ANY_CLASS);
+		}
+
 		String resolvedClassName = resolveReceiverClass(project, currentFile, cursorOffset, scope.receiverVarKey);
 		if (resolvedClassName == null || resolvedClassName.isBlank()) {
 			if (DEBUG) {
@@ -681,6 +686,16 @@ public final class P3PseudoHashCompletionRegistry {
 			current = found.params;
 		}
 		return current;
+	}
+
+	private static boolean hasMethodSpec(
+			@NotNull Project project,
+			@Nullable String className,
+			@NotNull CallableKind callableKind,
+			@NotNull String callableName,
+			@NotNull TargetType targetType
+	) {
+		return getRegistryData(project).methodsByKey.containsKey(key(className, callableKind, callableName, targetType));
 	}
 
 	private static @NotNull List<TextValueSpec> getTextValues(

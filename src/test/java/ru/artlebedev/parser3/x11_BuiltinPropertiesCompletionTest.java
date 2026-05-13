@@ -5,6 +5,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +58,13 @@ public class x11_BuiltinPropertiesCompletionTest extends Parser3TestCase {
 
 	private void assertContains(List<String> list, String item, String message) {
 		assertTrue(message + ", есть: " + list, list.contains(item));
+	}
+
+	private void assertBuiltinPropertyNotDuplicated(String message, String content, String propertyName) {
+		List<String> completions = getCompletions(content);
+		assertContains(completions, propertyName, message);
+		assertEquals(message + " не должен дублироваться из read-chain: " + completions,
+				1, Collections.frequency(completions, propertyName));
 	}
 
 	private void assertContainsAny(List<String> list, String substring, String message) {
@@ -220,6 +228,41 @@ public class x11_BuiltinPropertiesCompletionTest extends Parser3TestCase {
 		assertContains(completions, "weekyear", "$date. должен содержать weekyear");
 		assertContains(completions, "daylightsaving", "$date. должен содержать daylightsaving");
 		assertContains(completions, "TZ", "$date. должен содержать TZ");
+	}
+
+	public void testDateVariableDollarDot_deduplicatesBuiltinFieldAndReadChain() {
+		assertBuiltinPropertyNotDuplicated("$dt.mo должен содержать date.month",
+				"@main[]\n" +
+						"$dt[^date::now[]]\n" +
+						"$month[$dt.month]\n" +
+						"^if($dt.month < 10){\n" +
+						"\t$month[0$dt.month]\n" +
+						"}\n" +
+						"$dt.mo<caret>\n",
+				"month");
+	}
+
+	public void testBuiltinVariableDollarDot_deduplicatesOtherBuiltinFieldsAndReadChain() {
+		assertBuiltinPropertyNotDuplicated("$file.na должен содержать file.name",
+				parser152RealFileBase(
+						"$fileName[$file.name]\n" +
+								"$file.na<caret>"),
+				"name");
+		assertBuiltinPropertyNotDuplicated("$stat.md должен содержать file-local.mdate",
+				parser152RealFileBase(
+						"$statDate[$stat.mdate]\n" +
+								"$stat.md<caret>"),
+				"mdate");
+		assertBuiltinPropertyNotDuplicated("$file.st должен содержать file-http.status",
+				parser223RealCurlFileBase(
+						"$status[$file.status]\n" +
+								"$file.st<caret>"),
+				"status");
+		assertBuiltinPropertyNotDuplicated("$xNode.node должен содержать xnode.nodeName",
+				parser152RealXdocBase(
+						"$nodeName[$xNode.nodeName]\n" +
+								"$xNode.node<caret>"),
+				"nodeName");
 	}
 
 	public void testDateVariableCompletion_insertsDotAfterVariableName() {

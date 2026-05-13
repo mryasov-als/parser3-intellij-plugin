@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.artlebedev.parser3.index.P3ClassIndex;
+import ru.artlebedev.parser3.lexer.Parser3LexerCore;
 import ru.artlebedev.parser3.utils.Parser3VariableTailUtils;
 import ru.artlebedev.parser3.visibility.P3ScopeContext;
 
@@ -499,6 +500,115 @@ public final class P3CompletionUtils {
 			}
 		}
 		return hasOpening && depth > 0;
+	}
+
+	/**
+	 * Проверяет вложенный Parser3-вызов внутри SQL-инъекции, не считая внешний SQL-конструктор.
+	 */
+	public static boolean isEmbeddedParser3CallInsideSql(@NotNull CharSequence text, int offset) {
+		int safeOffset = Math.max(0, Math.min(offset, text.length()));
+		if (safeOffset <= 0) {
+			return false;
+		}
+
+		int lineStart = safeOffset;
+		while (lineStart > 0) {
+			char ch = text.charAt(lineStart - 1);
+			if (ch == '\n' || ch == '\r') {
+				break;
+			}
+			lineStart--;
+		}
+
+		for (int caretOffset = safeOffset - 1; caretOffset >= lineStart; caretOffset--) {
+			if (text.charAt(caretOffset) != '^' || isEscapedByCaret(text, caretOffset)) {
+				continue;
+			}
+			int openingOffset = findFirstOpeningBracketAfterCaret(text, caretOffset + 1, safeOffset);
+			if (openingOffset < 0 || !isBracketOpenAtOffset(text, openingOffset, safeOffset)) {
+				continue;
+			}
+			if (isSqlInjectionCallPrefix(text, caretOffset, openingOffset)) {
+				continue;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isInsideParser3PrefixInSql(@NotNull CharSequence text, int offset) {
+		int i = Math.max(0, Math.min(offset, text.length())) - 1;
+		while (i >= 0) {
+			char ch = text.charAt(i);
+			if (ch == '$' || ch == '^') {
+				return true;
+			}
+			if (Character.isWhitespace(ch)
+					|| ch == '(' || ch == ')' || ch == '[' || ch == ']' || ch == '{' || ch == '}'
+					|| ch == ',' || ch == ';' || ch == '\'' || ch == '"' || ch == '`') {
+				return false;
+			}
+			i--;
+		}
+		return false;
+	}
+
+	private static int findFirstOpeningBracketAfterCaret(@NotNull CharSequence text, int start, int end) {
+		for (int i = start; i < end; i++) {
+			char ch = text.charAt(i);
+			if (Character.isWhitespace(ch)) {
+				continue;
+			}
+			if (isOpeningBracket(ch)) {
+				return i;
+			}
+			if (!isVarIdentChar(ch) && ch != ':' && ch != '.') {
+				return -1;
+			}
+		}
+		return -1;
+	}
+
+	private static boolean isBracketOpenAtOffset(@NotNull CharSequence text, int openingOffset, int offset) {
+		int depth = 0;
+		for (int i = openingOffset; i < offset; i++) {
+			if (isEscapedByCaret(text, i)) {
+				continue;
+			}
+			char ch = text.charAt(i);
+			if (isOpeningBracket(ch)) {
+				depth++;
+				continue;
+			}
+			if (isClosingBracket(ch)) {
+				if (depth <= 0) {
+					return false;
+				}
+				depth--;
+				if (depth == 0 && i < offset - 1) {
+					return false;
+				}
+			}
+		}
+		return depth > 0;
+	}
+
+	private static boolean isSqlInjectionCallPrefix(@NotNull CharSequence text, int caretOffset, int openingOffset) {
+		String callPrefix = text.subSequence(caretOffset, openingOffset).toString().trim();
+		if (callPrefix.endsWith(":sql") || callPrefix.endsWith("::sql")) {
+			return true;
+		}
+		for (String prefix : Parser3LexerCore.getUserSqlInjectionPrefixes()) {
+			if (prefix == null) {
+				continue;
+			}
+			String normalizedPrefix = prefix.trim();
+			if (!normalizedPrefix.isEmpty()
+					&& (callPrefix.equals(normalizedPrefix) || callPrefix.endsWith(normalizedPrefix))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean isEscapedByCaret(@NotNull CharSequence text, int pos) {

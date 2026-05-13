@@ -3550,4 +3550,408 @@ public class x7_VariableTypeTest extends Parser3TestCase {
 
 		assertTrue("Навигация по ^oSql.table должна вести к @table в queryService, targets:" + targetDump, foundTableMethod);
 	}
+
+	public void testMainVariableFromExplicitlyUsedClassFileIsVisibleAsMainVariable() {
+		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		createParser3FileInDir("used_class_main_var/www/auto.p",
+				"@auto[]\n" +
+						"^use[UserClass.p]\n" +
+						"$check[$MAIN:VAR_FROM_CLASS]\n");
+		createParser3FileInDir("used_class_main_var/www/UserClass.p",
+				"@CLASS\n" +
+						"UsClass\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@auto[]\n" +
+						"$MAIN:VAR_FROM_CLASS[\n" +
+						"\t$.xxx[]\n" +
+						"]\n" +
+						"\n" +
+						"@create[]\n");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+
+		com.intellij.openapi.vfs.VirtualFile currentFile =
+				myFixture.findFileInTempDir("used_class_main_var/www/auto.p");
+		assertNotNull("auto.p не найден", currentFile);
+		String content = readFile(currentFile);
+		int offset = content.indexOf("$check");
+		assertTrue("Проверочное использование не найдено", offset >= 0);
+
+		ru.artlebedev.parser3.visibility.P3ScopeContext scopeContext =
+				new ru.artlebedev.parser3.visibility.P3ScopeContext(getProject(), currentFile, offset);
+		ru.artlebedev.parser3.index.P3VariableIndex.VisibleVariable variable =
+				ru.artlebedev.parser3.index.P3VariableIndex.getInstance(getProject())
+						.findVariable("MAIN:VAR_FROM_CLASS", scopeContext.getVariableSearchFiles(), currentFile, offset);
+
+		assertNotNull("$MAIN:VAR_FROM_CLASS из явно подключённого файла класса должен быть виден", variable);
+		assertNull("$MAIN:VAR_FROM_CLASS не должен считаться переменной класса", variable.ownerClass);
+		assertTrue("Переменная должна приходить из UserClass.p",
+				variable.file.getPath().endsWith("used_class_main_var/www/UserClass.p"));
+		assertNotNull("Ключи хеша из подключённого файла должны быть распарсены", variable.hashKeys);
+		assertTrue("Должен быть ключ xxx", variable.hashKeys.containsKey("xxx"));
+	}
+
+	public void testMainVariableFromAutouseLoadedClassFileIsVisibleAfterDirectClassCall() {
+		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		createParser3FileInDir("autouse_loaded_class_main_var/www/auto.p",
+				"@autouse[className]\n" +
+						"^use[${className}.p]\n");
+		createParser3FileInDir("autouse_loaded_class_main_var/www/UsClass.p",
+				"@CLASS\n" +
+						"UsClass\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@auto[]\n" +
+						"$MAIN:VAR_FROM_CLASS[\n" +
+						"\t$.xxx[]\n" +
+						"]\n" +
+						"\n" +
+						"@create[]\n" +
+						"\n" +
+						"@method[]\n" +
+						"$result[\n" +
+						"\t$.now[^date::now[]]\n" +
+						"]\n");
+		createParser3FileInDir("autouse_loaded_class_main_var/www/page.p",
+				"@main[]\n" +
+						"$before[$MAIN:VAR_FROM_CLASS]\n" +
+						"$uc[^UsClass::create[]]\n" +
+						"$after[$MAIN:VAR_FROM_CLASS]\n");
+		createParser3FileInDir("autouse_loaded_class_main_var/www/method_page.p",
+				"@main[]\n" +
+						"$before[$MAIN:VAR_FROM_CLASS]\n" +
+						"$data[^UsClass:method[]]\n" +
+						"$after[$MAIN:VAR_FROM_CLASS]\n");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+
+		com.intellij.openapi.vfs.VirtualFile currentFile =
+				myFixture.findFileInTempDir("autouse_loaded_class_main_var/www/page.p");
+		assertNotNull("page.p не найден", currentFile);
+		String content = readFile(currentFile);
+		int beforeOffset = content.indexOf("$before");
+		int afterOffset = content.indexOf("$after");
+		assertTrue("Использование до вызова класса не найдено", beforeOffset >= 0);
+		assertTrue("Использование после вызова класса не найдено", afterOffset >= 0);
+
+		ru.artlebedev.parser3.index.P3VariableIndex variableIndex =
+				ru.artlebedev.parser3.index.P3VariableIndex.getInstance(getProject());
+		ru.artlebedev.parser3.visibility.P3ScopeContext beforeScopeContext =
+				new ru.artlebedev.parser3.visibility.P3ScopeContext(getProject(), currentFile, beforeOffset);
+		assertNull("Файл класса не должен быть виден до прямого вызова ^UsClass::create[]",
+				variableIndex.findVariable(
+						"MAIN:VAR_FROM_CLASS",
+						beforeScopeContext.getVariableSearchFiles(),
+						currentFile,
+						beforeOffset));
+
+		ru.artlebedev.parser3.visibility.P3ScopeContext afterScopeContext =
+				new ru.artlebedev.parser3.visibility.P3ScopeContext(getProject(), currentFile, afterOffset);
+		ru.artlebedev.parser3.index.P3VariableIndex.VisibleVariable variable =
+				variableIndex.findVariable(
+						"MAIN:VAR_FROM_CLASS",
+						afterScopeContext.getVariableSearchFiles(),
+						currentFile,
+						afterOffset);
+
+		assertNotNull("$MAIN:VAR_FROM_CLASS из файла, загруженного через @autouse, должен быть виден после ^UsClass::create[]", variable);
+		assertNull("$MAIN:VAR_FROM_CLASS из autouse-файла не должен считаться переменной класса", variable.ownerClass);
+		assertTrue("Переменная должна приходить из UsClass.p",
+				variable.file.getPath().endsWith("autouse_loaded_class_main_var/www/UsClass.p"));
+		assertNotNull("Ключи хеша из autouse-файла должны быть распарсены", variable.hashKeys);
+		assertTrue("Должен быть ключ xxx", variable.hashKeys.containsKey("xxx"));
+
+		com.intellij.openapi.vfs.VirtualFile methodCurrentFile =
+				myFixture.findFileInTempDir("autouse_loaded_class_main_var/www/method_page.p");
+		assertNotNull("method_page.p не найден", methodCurrentFile);
+		String methodContent = readFile(methodCurrentFile);
+		int methodBeforeOffset = methodContent.indexOf("$before");
+		int methodAfterOffset = methodContent.indexOf("$after");
+		assertTrue("Использование до вызова метода класса не найдено", methodBeforeOffset >= 0);
+		assertTrue("Использование после вызова метода класса не найдено", methodAfterOffset >= 0);
+
+		ru.artlebedev.parser3.visibility.P3ScopeContext methodBeforeScopeContext =
+				new ru.artlebedev.parser3.visibility.P3ScopeContext(getProject(), methodCurrentFile, methodBeforeOffset);
+		assertNull("Файл класса не должен быть виден до прямого вызова ^UsClass:method[]",
+				variableIndex.findVariable(
+						"MAIN:VAR_FROM_CLASS",
+						methodBeforeScopeContext.getVariableSearchFiles(),
+						methodCurrentFile,
+						methodBeforeOffset));
+
+		ru.artlebedev.parser3.visibility.P3ScopeContext methodAfterScopeContext =
+				new ru.artlebedev.parser3.visibility.P3ScopeContext(getProject(), methodCurrentFile, methodAfterOffset);
+		ru.artlebedev.parser3.index.P3VariableIndex.VisibleVariable methodVariable =
+				variableIndex.findVariable(
+						"MAIN:VAR_FROM_CLASS",
+						methodAfterScopeContext.getVariableSearchFiles(),
+						methodCurrentFile,
+						methodAfterOffset);
+
+		assertNotNull("$MAIN:VAR_FROM_CLASS из файла, загруженного через @autouse, должен быть виден после ^UsClass:method[]", methodVariable);
+		assertNull("$MAIN:VAR_FROM_CLASS после ^UsClass:method[] не должен считаться переменной класса", methodVariable.ownerClass);
+		assertTrue("Переменная после ^UsClass:method[] должна приходить из UsClass.p",
+				methodVariable.file.getPath().endsWith("autouse_loaded_class_main_var/www/UsClass.p"));
+	}
+
+	public void testHashKeyNavigation_usedClassMainVariableRealKeyBeatsReadChainAcrossMainAliases() {
+		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		createParser3FileInDir("used_class_main_var_nav/www/page.p",
+				"@main[]\n" +
+						"^use[UserClass.p]\n" +
+						"^if(!def $MAIN:VAR_FROM_CLASS.yyy){\n" +
+						"\t^rem{read-chain без присваивания}\n" +
+						"}\n" +
+						"$VAR_FROM_CLASS.zzz[var]\n" +
+						"$plain[$VAR_FROM_CLASS.xxx]\n" +
+						"$main[$MAIN:VAR_FROM_CLASS.xxx]\n" +
+						"$self[$self.VAR_FROM_CLASS.xxx]\n" +
+						"$read[$VAR_FROM_CLASS.yyy]\n" +
+						"$assigned[$VAR_FROM_CLASS.zzz]\n");
+		createParser3FileInDir("used_class_main_var_nav/www/UserClass.p",
+				"@CLASS\n" +
+						"UsClass\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@auto[]\n" +
+						"$MAIN:VAR_FROM_CLASS[\n" +
+						"\t$.xxx[]\n" +
+						"]\n" +
+						"\n" +
+						"@create[]\n");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+
+		assertHashKeyNavigationToMarker(
+				"used_class_main_var_nav/www/page.p",
+				"$plain[$VAR_FROM_CLASS.xxx]",
+				"xxx",
+				"used_class_main_var_nav/www/UserClass.p",
+				"$.xxx[]");
+		assertHashKeyNavigationToMarker(
+				"used_class_main_var_nav/www/page.p",
+				"$main[$MAIN:VAR_FROM_CLASS.xxx]",
+				"xxx",
+				"used_class_main_var_nav/www/UserClass.p",
+				"$.xxx[]");
+		assertHashKeyNavigationToMarker(
+				"used_class_main_var_nav/www/page.p",
+				"$self[$self.VAR_FROM_CLASS.xxx]",
+				"xxx",
+				"used_class_main_var_nav/www/UserClass.p",
+				"$.xxx[]");
+		assertHashKeyNavigationToMarker(
+				"used_class_main_var_nav/www/page.p",
+				"$read[$VAR_FROM_CLASS.yyy]",
+				"yyy",
+				"used_class_main_var_nav/www/page.p",
+				"$MAIN:VAR_FROM_CLASS.yyy");
+		assertHashKeyNavigationToMarker(
+				"used_class_main_var_nav/www/page.p",
+				"$assigned[$VAR_FROM_CLASS.zzz]",
+				"zzz",
+				"used_class_main_var_nav/www/page.p",
+				"$VAR_FROM_CLASS.zzz[var]");
+	}
+
+	public void testHashKeyNavigation_autouseClassMainVariableRealKeyVisibleAfterClassCall() {
+		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		createParser3FileInDir("autouse_class_main_var_nav/www/auto.p",
+				"@autouse[className]\n" +
+						"^use[${className}.p]\n");
+		createParser3FileInDir("autouse_class_main_var_nav/www/UsClass.p",
+				"@CLASS\n" +
+						"UsClass\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@auto[]\n" +
+						"$MAIN:VAR_FROM_CLASS[\n" +
+						"\t$.xxx[]\n" +
+						"]\n" +
+						"\n" +
+						"@create[]\n");
+		createParser3FileInDir("autouse_class_main_var_nav/www/page.p",
+				"@main[]\n" +
+						"$uc[^UsClass::create[]]\n" +
+						"^if(!def $MAIN:VAR_FROM_CLASS.yyy){\n" +
+						"\t^rem{read-chain без присваивания}\n" +
+						"}\n" +
+						"$VAR_FROM_CLASS.zzz[var]\n" +
+						"$plain[$VAR_FROM_CLASS.xxx]\n" +
+						"$assigned[$VAR_FROM_CLASS.zzz]\n");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+
+		assertHashKeyNavigationToMarker(
+				"autouse_class_main_var_nav/www/page.p",
+				"$plain[$VAR_FROM_CLASS.xxx]",
+				"xxx",
+				"autouse_class_main_var_nav/www/UsClass.p",
+				"$.xxx[]");
+		assertHashKeyNavigationToMarker(
+				"autouse_class_main_var_nav/www/page.p",
+				"$assigned[$VAR_FROM_CLASS.zzz]",
+				"zzz",
+				"autouse_class_main_var_nav/www/page.p",
+				"$VAR_FROM_CLASS.zzz[var]");
+	}
+
+	public void testHashKeyNavigation_hashLiteralBracketEmailKey() {
+		createParser3FileInDir("www/errors_3_bracket_email_hash_key_nav.p",
+				"@main[]\n" +
+						"$emails[\n" +
+						"\t$.[test1@example.com][]\n" +
+						"\t$.[test2@example.com][]\n" +
+						"]\n" +
+						"$value[$emails.[test1@example.com]]\n");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+
+		assertHashKeyNavigationToMarker(
+				"www/errors_3_bracket_email_hash_key_nav.p",
+				"$value[$emails.[test1@example.com]]",
+				"test1@example.com",
+				"www/errors_3_bracket_email_hash_key_nav.p",
+				"$.[test1@example.com][]");
+	}
+
+	public void testHashKeyNavigation_hashLiteralBracketEmailNestedKey() {
+		createParser3FileInDir("www/errors_3_bracket_email_nested_hash_key_nav.p",
+				"@main[]\n" +
+						"$emails[\n" +
+						"\t$.[test1@example.com][]\n" +
+						"\t$.[test2@example.com][\n" +
+						"\t\t$.now[^date::now[]]\n" +
+						"\t]\n" +
+						"\t$.test2[\n" +
+						"\t\t$.now[^date::now[]]\n" +
+						"\t]\n" +
+						"]\n" +
+						"$value[$emails.[test2@example.com].now]\n");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+
+		assertHashKeyNavigationToMarker(
+				"www/errors_3_bracket_email_nested_hash_key_nav.p",
+				"$value[$emails.[test2@example.com].now]",
+				"now",
+				"www/errors_3_bracket_email_nested_hash_key_nav.p",
+				"$.now[^date::now[]]");
+	}
+
+	public void testHashKeyNavigation_explicitHashOverrideAfterReadChainTargetsRealKey() {
+		createParser3FileInDir("www/overwrite_hash_key_nav_real_after_read_chain.p",
+				"@main[]\n" +
+						"$data.old_key\n" +
+						"$data[\n" +
+						"\t$.new_key[]\n" +
+						"]\n" +
+						"$value[$data.new_key]\n");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+
+		assertHashKeyNavigationToMarker(
+				"www/overwrite_hash_key_nav_real_after_read_chain.p",
+				"$value[$data.new_key]",
+				"new_key",
+				"www/overwrite_hash_key_nav_real_after_read_chain.p",
+				"$.new_key[]");
+	}
+
+	public void testHashKeyNavigation_explicitHashOverrideAfterReadChainDropsOldSyntheticKey() {
+		createParser3FileInDir("www/overwrite_hash_key_nav_old_read_chain_dropped.p",
+				"@main[]\n" +
+						"$data.old_key\n" +
+						"$data[\n" +
+						"\t$.new_key[]\n" +
+						"]\n" +
+						"$value[$data.old_key]\n");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+
+		com.intellij.openapi.vfs.VirtualFile vFile = myFixture.findFileInTempDir("www/overwrite_hash_key_nav_old_read_chain_dropped.p");
+		assertNotNull("Файл не найден", vFile);
+
+		String content = readFile(vFile);
+		int usagePos = content.indexOf("$value[$data.old_key]");
+		assertTrue("Использование old_key не найдено", usagePos >= 0);
+		int keyPos = content.indexOf("old_key", usagePos);
+		assertTrue("Ключ old_key не найден в использовании", keyPos >= 0);
+		int clickOffset = keyPos + 1;
+
+		myFixture.configureFromExistingVirtualFile(vFile);
+		myFixture.getEditor().getCaretModel().moveToOffset(clickOffset);
+
+		PsiElement[] targets = GotoDeclarationAction.findAllTargetElements(
+				getProject(), myFixture.getEditor(), clickOffset);
+
+		boolean hasTargets = targets != null && targets.length > 0;
+		assertFalse("Старый synthetic old_key не должен оставаться target после полного $data[...] override", hasTargets);
+	}
+
+	private void assertHashKeyNavigationToMarker(
+			@NotNull String sourceFile,
+			@NotNull String usageMarker,
+			@NotNull String keyName,
+			@NotNull String expectedFile,
+			@NotNull String expectedMarker
+	) {
+		com.intellij.openapi.vfs.VirtualFile vFile = myFixture.findFileInTempDir(sourceFile);
+		assertNotNull("Файл не найден: " + sourceFile, vFile);
+
+		String content = readFile(vFile);
+		int usagePos = content.indexOf(usageMarker);
+		assertTrue("Использование не найдено: " + usageMarker, usagePos >= 0);
+		int keyPos = content.indexOf(keyName, usagePos);
+		assertTrue("Ключ не найден в использовании: " + keyName, keyPos >= 0);
+		int clickOffset = keyPos + Math.min(1, keyName.length() - 1);
+
+		myFixture.configureFromExistingVirtualFile(vFile);
+		myFixture.getEditor().getCaretModel().moveToOffset(clickOffset);
+
+		PsiElement[] targets = GotoDeclarationAction.findAllTargetElements(
+				getProject(), myFixture.getEditor(), clickOffset);
+
+		assertNotNull("Нет таргетов для " + usageMarker, targets);
+		assertTrue("Нет таргетов для " + usageMarker, targets.length > 0);
+
+		com.intellij.openapi.vfs.VirtualFile expectedVFile = myFixture.findFileInTempDir(expectedFile);
+		assertNotNull("Ожидаемый файл не найден: " + expectedFile, expectedVFile);
+		String expectedContent = readFile(expectedVFile);
+		int expectedMarkerPos = expectedContent.indexOf(expectedMarker);
+		assertTrue("Ожидаемый маркер не найден: " + expectedMarker, expectedMarkerPos >= 0);
+		int expectedKeyPos = expectedContent.indexOf(keyName, expectedMarkerPos);
+		assertTrue("Ожидаемый ключ не найден в маркере: " + keyName, expectedKeyPos >= 0);
+
+		boolean found = false;
+		for (PsiElement target : targets) {
+			PsiFile targetFile = target.getContainingFile();
+			if (targetFile == null || targetFile.getVirtualFile() == null) continue;
+			int targetOffset = target.getTextOffset();
+			if (targetFile.getVirtualFile().getPath().endsWith(expectedFile)
+					&& targetOffset >= expectedKeyPos
+					&& targetOffset <= expectedKeyPos + keyName.length()) {
+				found = true;
+				break;
+			}
+		}
+		assertTrue("Навигация по " + usageMarker + " должна вести к " + expectedFile + " / " + expectedMarker, found);
+	}
 }

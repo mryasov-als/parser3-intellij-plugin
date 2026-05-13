@@ -1,6 +1,7 @@
 package ru.artlebedev.parser3.utils;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.artlebedev.parser3.lexer.Parser3LexerUtils;
 
 public final class Parser3ChainUtils {
@@ -97,6 +98,98 @@ public final class Parser3ChainUtils {
 		return result.toString();
 	}
 
+	public static @NotNull String normalizeChainKeyForResolve(@NotNull String text) {
+		StringBuilder result = new StringBuilder(text.length());
+		int segmentStart = 0;
+
+		for (int i = 0; i <= text.length(); i++) {
+			boolean isBoundary = i == text.length();
+			if (!isBoundary) {
+				char ch = text.charAt(i);
+				if (ch == '[' || ch == '(' || ch == '{') {
+					int closePos = findMatchingBracket(text, i, text.length(), ch);
+					if (closePos < 0) {
+						break;
+					}
+					i = closePos;
+					continue;
+				}
+				isBoundary = ch == '.';
+			}
+
+			if (!isBoundary) {
+				continue;
+			}
+
+			if (result.length() > 0) {
+				result.append('.');
+			}
+			result.append(normalizeChainKeySegment(text.substring(segmentStart, i)));
+			segmentStart = i + 1;
+		}
+
+		return result.toString();
+	}
+
+	public static @NotNull String @NotNull [] splitNormalizedSegments(@NotNull String text) {
+		java.util.ArrayList<String> result = new java.util.ArrayList<>();
+		int segmentStart = 0;
+
+		for (int i = 0; i <= text.length(); i++) {
+			boolean isBoundary = i == text.length();
+			if (!isBoundary) {
+				char ch = text.charAt(i);
+				if (ch == '[' || ch == '(' || ch == '{') {
+					int closePos = findMatchingBracket(text, i, text.length(), ch);
+					if (closePos < 0) {
+						break;
+					}
+					i = closePos;
+					continue;
+				}
+				isBoundary = ch == '.';
+			}
+
+			if (!isBoundary) {
+				continue;
+			}
+
+			String segment = text.substring(segmentStart, i);
+			result.add(normalizeSegment(segment));
+			segmentStart = i + 1;
+		}
+
+		return result.toArray(new String[0]);
+	}
+
+	private static @NotNull String normalizeSegment(@NotNull String segment) {
+		if (segment.isEmpty()) return "";
+
+		char first = segment.charAt(0);
+		if (first == '$' || first == '(') {
+			return "*";
+		}
+		if (first == '[') {
+			String literalKey = tryExtractLiteralBracketKey(segment);
+			return literalKey != null ? literalKey : "*";
+		}
+		return segment;
+	}
+
+	private static @NotNull String normalizeChainKeySegment(@NotNull String segment) {
+		if (segment.isEmpty()) return "";
+
+		char first = segment.charAt(0);
+		if (first == '$' || first == '(') {
+			return "*";
+		}
+		if (first == '[') {
+			String literalKey = tryExtractLiteralBracketKey(segment);
+			return literalKey != null ? "[" + literalKey + "]" : "*";
+		}
+		return segment;
+	}
+
 	public static boolean hasCompletedChainOccurrenceElsewhere(
 			@NotNull String text,
 			@NotNull String expectedChain,
@@ -116,7 +209,7 @@ public final class Parser3ChainUtils {
 		return false;
 	}
 
-	private static String tryExtractLiteralBracketKey(@NotNull String segment) {
+	public static @Nullable String tryExtractLiteralBracketKey(@NotNull String segment) {
 		if (segment.length() < 2 || segment.charAt(0) != '[' || segment.charAt(segment.length() - 1) != ']') {
 			return null;
 		}

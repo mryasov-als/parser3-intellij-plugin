@@ -2061,6 +2061,37 @@
 	{
 		"targets": [
 			{
+				"class": "*",
+				"dynamicMethod": "trim",
+				"type": "params"
+			}
+		],
+		"paramText": [
+			{
+				"text": "both",
+				"comment": "Отсекать символы с начала и с конца строки."
+			},
+			{
+				"text": "left",
+				"comment": "Отсекать символы с начала строки."
+			},
+			{
+				"text": "start",
+				"comment": "Отсекать символы с начала строки."
+			},
+			{
+				"text": "right",
+				"comment": "Отсекать символы с конца строки."
+			},
+			{
+				"text": "end",
+				"comment": "Отсекать символы с конца строки."
+			}
+		]
+	},
+	{
+		"targets": [
+			{
 				"class": "string",
 				"staticMethod": "base64",
 				"type": "colon"

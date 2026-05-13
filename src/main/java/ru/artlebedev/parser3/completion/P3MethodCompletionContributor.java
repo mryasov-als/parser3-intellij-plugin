@@ -179,7 +179,7 @@ public final class P3MethodCompletionContributor extends CompletionContributor {
 
 	/**
 	 * Проверяет что курсор находится после @ в начале строки (колонка 0).
-	 * @main[], @auto[], @conf[], @USE, @BASE, @OPTIONS, @CLASS
+	 * @main[], @auto[], @conf[], @autouse[], @postprocess[], @USE, @BASE, @OPTIONS, @CLASS
 	 */
 	private boolean isAtDirectiveStart(CharSequence text, int offset) {
 		// Ищем @ назад на текущей строке
@@ -199,7 +199,7 @@ public final class P3MethodCompletionContributor extends CompletionContributor {
 	}
 
 	/**
-	 * Добавляет автокомплит директив: @main[], @auto[], @conf[], @USE, @BASE, @OPTIONS, @CLASS
+	 * Добавляет автокомплит директив: @main[], @auto[], @conf[], @autouse[], @postprocess[], @USE, @BASE, @OPTIONS, @CLASS
 	 */
 	private void addDirectiveCompletions(
 			@NotNull CompletionParameters parameters,
@@ -220,12 +220,16 @@ public final class P3MethodCompletionContributor extends CompletionContributor {
 		String prefix = text.subSequence(atPos + 1, offset).toString();
 		CompletionResultSet dirResult = result.withPrefixMatcher(prefix);
 
-		// Методы-точки входа: вставляют "main[]\n" и ставят курсор на новую строку
-		String[] methods = {"main[]", "auto[]"};
-		for (String m : methods) {
+		// Методы-точки входа и инициализации: вставляют имя метода и ставят курсор на новую строку.
+		String[][] methods = {
+				{"main[]", "Точка входа MAIN"},
+				{"auto[]", "Инициализация файла/класса при загрузке"},
+		};
+		for (String[] m : methods) {
 			LookupElementBuilder el = LookupElementBuilder
-					.create(m)
+					.create(m[0])
 					.withIcon(Parser3Icons.FileMethod)
+					.withTypeText(m[1], true)
 					.withInsertHandler((ctx, item) -> {
 						com.intellij.openapi.editor.Editor editor = ctx.getEditor();
 						Document doc = ctx.getDocument();
@@ -236,12 +240,17 @@ public final class P3MethodCompletionContributor extends CompletionContributor {
 			dirResult.addElement(com.intellij.codeInsight.completion.PrioritizedLookupElement.withPriority(el, 100));
 		}
 
-		// @conf[filespec]\n — с параметром filespec
-		{
+		// Служебные методы уровня файла с фиксированными параметрами.
+		String[][] fileMethods = {
+				{"conf[filespec]", "Конфигурация перед @auto"},
+				{"autouse[className]", "Автозагрузка классов по имени"},
+				{"postprocess[body]", "Постобработка результата @main"},
+		};
+		for (String[] method : fileMethods) {
 			LookupElementBuilder el = LookupElementBuilder
-					.create("conf[filespec]")
+					.create(method[0])
 					.withIcon(Parser3Icons.FileMethod)
-					.withTypeText("Конфигурация (выполняется перед @auto)", true)
+					.withTypeText(method[1], true)
 					.withInsertHandler((ctx, item) -> {
 						com.intellij.openapi.editor.Editor editor = ctx.getEditor();
 						Document doc = ctx.getDocument();

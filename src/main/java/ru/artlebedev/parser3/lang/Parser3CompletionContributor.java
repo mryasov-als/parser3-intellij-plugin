@@ -9,6 +9,7 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.injected.editor.DocumentWindow;
+import com.intellij.openapi.editor.Document;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -22,6 +23,7 @@ import ru.artlebedev.parser3.templates.Parser3UserTemplatesService;
 import org.jetbrains.annotations.NotNull;
 
 import ru.artlebedev.parser3.icons.Parser3Icons;
+import ru.artlebedev.parser3.psi.Parser3SqlBlock;
 import ru.artlebedev.parser3.utils.Parser3PsiUtils;
 import ru.artlebedev.parser3.utils.Parser3TextUtils;
 
@@ -39,6 +41,11 @@ import java.util.List;
 public class Parser3CompletionContributor extends CompletionContributor {
 
 	private static final double USER_TEMPLATE_PRIORITY = -1000.0;
+	private static final String[] SQL_KEYWORDS = {
+			"SELECT", "FROM", "WHERE", "AND", "OR", "ORDER", "GROUP", "BY", "HAVING", "LIMIT",
+			"JOIN", "LEFT", "RIGHT", "INNER", "OUTER", "ON", "IN", "IS", "NOT", "NULL",
+			"AS", "INSERT", "UPDATE", "DELETE", "VALUES", "SET"
+	};
 
 	public Parser3CompletionContributor() {
 
@@ -74,6 +81,10 @@ public class Parser3CompletionContributor extends CompletionContributor {
 							return;
 						}
 
+						if (addPlainTextSqlKeywordFallback(parameters, result)) {
+							return;
+						}
+
 						if (parameters.isAutoPopup() && isInTableColumnArgumentContext(originalFile, text, offset)) {
 							return;
 						}
@@ -85,8 +96,9 @@ public class Parser3CompletionContributor extends CompletionContributor {
 						boolean suppressExplicitUserTemplates =
 								ru.artlebedev.parser3.completion.P3VariableInsertHandler
 										.consumeVariableDotAutoPopupUserTemplateSuppression(parameters.getEditor());
+						boolean caretMethodDotContext = isCaretMethodDotContext(text, offset);
 						boolean explicitUserTemplatesAdded = false;
-						if (explicitCompletion && !suppressExplicitUserTemplates && !dollarVariableDotContext) {
+						if (explicitCompletion && !suppressExplicitUserTemplates && !dollarVariableDotContext && !caretMethodDotContext) {
 							fillUserTemplates(result.withPrefixMatcher(""), null);
 							explicitUserTemplatesAdded = true;
 						}
@@ -218,6 +230,96 @@ public class Parser3CompletionContributor extends CompletionContributor {
 					}
 				}
 		);
+	}
+
+	@Override
+	public boolean invokeAutoPopup(@NotNull PsiElement position, char typeChar) {
+		return Character.isLetter(typeChar) && isPlainTextSqlInjection(position);
+	}
+
+	private static boolean isPlainTextSqlInjection(@NotNull PsiElement position) {
+		PsiFile injectedFile = position.getContainingFile();
+		return injectedFile != null
+				&& "TEXT".equals(injectedFile.getLanguage().getID())
+				&& injectedFile.getContext() instanceof Parser3SqlBlock;
+	}
+
+	private static boolean addPlainTextSqlKeywordFallback(
+			@NotNull CompletionParameters parameters,
+			@NotNull CompletionResultSet result
+	) {
+		Document document = parameters.getEditor().getDocument();
+		if (!(document instanceof DocumentWindow)) {
+			return false;
+		}
+
+		if (!isPlainTextSqlInjection(parameters.getPosition())) {
+			return false;
+		}
+
+		DocumentWindow documentWindow = (DocumentWindow) document;
+		CharSequence injectedText = document.getCharsSequence();
+		int injectedOffset = clampOffset(injectedText, parameters.getOffset());
+		int hostOffset = documentWindow.injectedToHost(injectedOffset);
+		CharSequence hostText = documentWindow.getDelegate().getCharsSequence();
+		if (hostOffset < 0 || hostOffset > hostText.length()) {
+			return false;
+		}
+		if (ru.artlebedev.parser3.completion.P3CompletionUtils.isParser3AutoPopupPrefixContext(hostText, hostOffset)
+				|| ru.artlebedev.parser3.completion.P3CompletionUtils.isEmbeddedParser3CallInsideSql(hostText, hostOffset)
+				|| ru.artlebedev.parser3.completion.P3CompletionUtils.isInsideParser3PrefixInSql(hostText, hostOffset)) {
+			return false;
+		}
+
+		CompletionResultSet sqlResult = ru.artlebedev.parser3.completion.P3CompletionUtils.makeCaseInsensitive(result);
+		for (String keyword : SQL_KEYWORDS) {
+			sqlResult.addElement(PrioritizedLookupElement.withPriority(
+					LookupElementBuilder.create(keyword).withBoldness(true),
+					50.0
+			));
+		}
+		return true;
+	}
+
+	private static int clampOffset(@NotNull CharSequence text, int offset) {
+		if (offset < 0) {
+			return 0;
+		}
+		return Math.min(offset, text.length());
+	}
+
+	private static boolean isCaretMethodDotContext(
+			@NotNull CharSequence text,
+			int offset
+	) {
+		int safeOffset = Math.max(0, Math.min(offset, text.length()));
+		int lineStart = safeOffset;
+		while (lineStart > 0) {
+			char ch = text.charAt(lineStart - 1);
+			if (ch == '\n' || ch == '\r') {
+				break;
+			}
+			lineStart--;
+		}
+
+		int prefixStart = safeOffset;
+		while (prefixStart > lineStart && ru.artlebedev.parser3.completion.P3CompletionUtils.isVarIdentChar(text.charAt(prefixStart - 1))) {
+			prefixStart--;
+		}
+		if (prefixStart <= lineStart || text.charAt(prefixStart - 1) != '.') {
+			return false;
+		}
+
+		for (int i = prefixStart - 2; i >= lineStart; i--) {
+			char ch = text.charAt(i);
+			if (ch == '^') {
+				return true;
+			}
+			if (ru.artlebedev.parser3.completion.P3CompletionUtils.isMethodPrefixStopChar(ch)) {
+				return false;
+			}
+		}
+		return false;
 	}
 
 	private static boolean isInTableColumnArgumentContext(

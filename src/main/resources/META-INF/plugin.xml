@@ -122,12 +122,6 @@
 				implementationClass="ru.artlebedev.parser3.completion.Parser3CharFilter"
 				order="first"/>
 
-		<!-- Tab в активном popup не должен заменять текст выбранным completion -->
-		<editorActionHandler
-				action="EditorChooseLookupItemReplace"
-				implementationClass="ru.artlebedev.parser3.completion.Parser3LookupReplaceHandler"
-				order="first"/>
-
 		<!-- Find Usages for .p files -->
 		<referencesSearch
 				implementation="ru.artlebedev.parser3.references.P3FileReferencesSearcher"/>

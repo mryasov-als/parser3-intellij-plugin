@@ -1,6 +1,10 @@
 package ru.artlebedev.parser3.editor;
 
+import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
+import com.intellij.codeInsight.lookup.LookupManager;
+import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.fileTypes.FileType;
@@ -16,6 +20,8 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.artlebedev.parser3.Parser3FileType;
+import ru.artlebedev.parser3.completion.P3CompletionUtils;
+import ru.artlebedev.parser3.psi.Parser3SqlBlock;
 import ru.artlebedev.parser3.utils.Parser3PsiUtils;
 import ru.artlebedev.parser3.utils.Parser3TextUtils;
 
@@ -40,8 +46,8 @@ public final class Parser3TypedHandler extends TypedHandlerDelegate {
 	@Override
 	public @NotNull Result beforeCharTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull FileType fileType) {
 
-// Обрабатываем только Parser3-файлы (включая injected HTML внутри .p файлов)
-		if (!Parser3PsiUtils.isParser3File(file)) {
+// Обрабатываем только Parser3-файлы (включая injected HTML/SQL внутри .p файлов)
+		if (!isParser3EditorContext(file, editor)) {
 			return Result.CONTINUE;
 		}
 
@@ -112,8 +118,8 @@ public final class Parser3TypedHandler extends TypedHandlerDelegate {
 	@Override
 	public @NotNull Result charTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
 
-// Обрабатываем только Parser3-файлы (включая injected HTML внутри .p файлов)
-		if (!Parser3PsiUtils.isParser3File(file)) {
+// Обрабатываем только Parser3-файлы (включая injected HTML/SQL внутри .p файлов)
+		if (!isParser3EditorContext(file, editor)) {
 			return Result.CONTINUE;
 		}
 
@@ -133,6 +139,15 @@ public final class Parser3TypedHandler extends TypedHandlerDelegate {
 			if (handleOpeningParen(editor)) {
 				return Result.STOP;
 			}
+			return Result.CONTINUE;
+		}
+		if (shouldScheduleSqlInjectedAutoPopup(c, editor, file)) {
+			ApplicationManager.getApplication().invokeLater(() -> {
+				if (!project.isDisposed() && LookupManager.getActiveLookup(editor) == null) {
+					new CodeCompletionHandlerBase(CompletionType.BASIC, false, false, true)
+							.invokeCompletion(project, editor);
+				}
+			});
 			return Result.CONTINUE;
 		}
 
@@ -239,6 +254,60 @@ public final class Parser3TypedHandler extends TypedHandlerDelegate {
 		editor.getCaretModel().moveToOffset(newCaretOffset);
 
 		return true;
+	}
+
+	private static boolean isParser3EditorContext(@NotNull PsiFile file, @NotNull Editor editor) {
+		if (Parser3PsiUtils.isParser3File(file)) {
+			return true;
+		}
+		Document document = editor.getDocument();
+		if (!(document instanceof DocumentWindow)) {
+			return false;
+		}
+		PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(file.getProject());
+		PsiFile injectedFile = psiDocumentManager.getPsiFile(document);
+		if (Parser3PsiUtils.isParser3File(injectedFile)) {
+			return true;
+		}
+		PsiFile hostFile = psiDocumentManager.getPsiFile(((DocumentWindow) document).getDelegate());
+		return Parser3PsiUtils.isParser3File(hostFile);
+	}
+
+	private static boolean shouldScheduleSqlInjectedAutoPopup(char typedChar, @NotNull Editor editor, @NotNull PsiFile file) {
+		if (!Character.isLetter(typedChar)) {
+			return false;
+		}
+		Document document = editor.getDocument();
+		if (!(document instanceof DocumentWindow)) {
+			return false;
+		}
+		PsiFile injectedFile = PsiDocumentManager.getInstance(file.getProject()).getPsiFile(document);
+		if (injectedFile == null) {
+			return false;
+		}
+		PsiElement context = injectedFile.getContext();
+		if (!(context instanceof Parser3SqlBlock)) {
+			return false;
+		}
+		DocumentWindow documentWindow = (DocumentWindow) document;
+		CharSequence injectedText = document.getCharsSequence();
+		int injectedOffset = clampOffset(injectedText, editor.getCaretModel().getOffset());
+		int hostOffset = documentWindow.injectedToHost(injectedOffset);
+		CharSequence hostText = documentWindow.getDelegate().getCharsSequence();
+		if (hostOffset < 0 || hostOffset > hostText.length()) {
+			return false;
+		}
+		boolean parser3Prefix = P3CompletionUtils.isParser3AutoPopupPrefixContext(hostText, hostOffset);
+		boolean parser3Call = P3CompletionUtils.isEmbeddedParser3CallInsideSql(hostText, hostOffset);
+		boolean insideParser3 = P3CompletionUtils.isInsideParser3PrefixInSql(hostText, hostOffset);
+		return !parser3Prefix && !parser3Call && !insideParser3;
+	}
+
+	private static int clampOffset(@NotNull CharSequence text, int offset) {
+		if (offset < 0) {
+			return 0;
+		}
+		return Math.min(offset, text.length());
 	}
 
 	private static final class BlockRange {

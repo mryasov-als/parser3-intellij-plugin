@@ -2,12 +2,16 @@ package ru.artlebedev.parser3;
 
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VfsUtil;
 import org.jetbrains.annotations.NotNull;
 import ru.artlebedev.parser3.settings.Parser3ProjectSettings;
+import ru.artlebedev.parser3.visibility.P3VisibilityService;
 import ru.artlebedev.parser3.visibility.P3ScopeContext;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -105,6 +109,50 @@ public class x17_PerformanceCompletionTest extends Parser3TestCase {
 		assertTrue("Hash completion не должен зависеть от " + PROJECT_CLASS_COUNT
 						+ " неподключённых классов, худший прогретый прогон=" + worstMs + "ms",
 				worstMs <= HOT_COMPLETION_LIMIT_MS);
+	}
+
+	public void testVisibleFilesCacheSurvivesPlainTypingWithoutUseChanges() {
+		setMethodCompletionMode(Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		createParser3FileInDir("lib/common.p",
+				"@helper[]\n" +
+						"$helperValue[test_helper]\n");
+		VirtualFile page = createParser3FileInDir("pages/plain_typing_page.p",
+				"@main[]\n" +
+						"^use[../lib/common.p]\n" +
+						"$news_uri[^request:uri.split[?;lh]]\n" +
+						"$news_uri[^news_uri.0.trim[both;/]]\n" +
+						"$start_uri[^news_uri.split[/;lh]]\n" +
+						"$start_uri[$start_uri.0]\n" +
+						"$sta<caret>");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		DumbService.getInstance(getProject()).waitForSmartMode();
+
+		P3VisibilityService visibilityService = P3VisibilityService.getInstance(getProject());
+		List<VirtualFile> before = visibilityService.getVisibleFiles(page);
+
+		ApplicationManager.getApplication().runWriteAction(() -> {
+			try {
+				VfsUtil.saveText(page,
+						"@main[]\n" +
+								"^use[../lib/common.p]\n" +
+								"$news_uri[^request:uri.split[?;lh]]\n" +
+								"$news_uri[^news_uri.0.trim[both;/]]\n" +
+								"$start_uri[^news_uri.split[/;lh]]\n" +
+								"$start_uri[$start_uri.0]\n" +
+								"$star<caret>");
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		DumbService.getInstance(getProject()).waitForSmartMode();
+
+		List<VirtualFile> after = visibilityService.getVisibleFiles(page);
+		assertSame("Обычный набор переменной не должен сбрасывать кеш видимых файлов, если use-граф не менялся",
+				before, after);
+		assertTrue("Видимость должна сохранить подключённый файл: " + after,
+				after.stream().anyMatch(file -> "common.p".equals(file.getName())));
 	}
 
 	private void createHeavyAutouseProject() {

@@ -23,8 +23,13 @@ import ru.artlebedev.parser3.templates.Parser3UserTemplatesService;
 import ru.artlebedev.parser3.visibility.P3ScopeContext;
 import ru.artlebedev.parser3.visibility.P3VariableScopeContext;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -152,6 +157,20 @@ public class x9_CompletionTest extends Parser3TestCase {
 				.collect(Collectors.toList());
 	}
 
+	private Map<String, String> getCompletionTypeTexts(String path, String content) {
+		configureParser3TextFile(path, content);
+
+		myFixture.complete(CompletionType.BASIC);
+		LookupElement[] elements = myFixture.getLookupElements();
+		Map<String, String> result = new LinkedHashMap<>();
+		if (elements == null) return result;
+		for (LookupElement element : elements) {
+			LookupElementPresentation presentation = LookupElementPresentation.renderElement(element);
+			result.put(element.getLookupString(), presentation.getTypeText());
+		}
+		return result;
+	}
+
 	private void configureParser3TextFile(@NotNull String path, @NotNull String content) {
 		VirtualFile vf = createParser3FileInDir(path, content);
 		myFixture.configureFromExistingVirtualFile(vf);
@@ -245,6 +264,157 @@ public class x9_CompletionTest extends Parser3TestCase {
 		return lookup.getItems().stream()
 				.map(LookupElement::getLookupString)
 				.collect(Collectors.toList());
+	}
+
+	private void createUsedClassMainVariableFixture(@NotNull String rootDir) {
+		createParser3FileInDir(rootDir + "/www/auto.p",
+				"@auto[]\n" +
+						"^use[UserClass.p]\n" +
+						"^if(!def $MAIN:VAR_FROM_CLASS.main_read_key){\n" +
+						"\t^rem{read-chain через MAIN}\n" +
+						"}\n" +
+						"^if(!def $self.VAR_FROM_CLASS.self_read_key){\n" +
+						"\t^rem{read-chain через self}\n" +
+						"}\n" +
+						"^if(!def $VAR_FROM_CLASS.normal_read_key){\n" +
+						"\t^rem{read-chain без префикса}\n" +
+						"}\n" +
+						"$VAR_FROM_CLASS.assigned_key[value]\n" +
+						"$VAR_FROM_CLASS.<caret>\n");
+		createParser3FileInDir(rootDir + "/www/main_access.p",
+				"@auto[]\n" +
+						"^use[UserClass.p]\n" +
+						"^if(!def $MAIN:VAR_FROM_CLASS.main_read_key){\n" +
+						"\t^rem{read-chain через MAIN}\n" +
+						"}\n" +
+						"^if(!def $self.VAR_FROM_CLASS.self_read_key){\n" +
+						"\t^rem{read-chain через self}\n" +
+						"}\n" +
+						"^if(!def $VAR_FROM_CLASS.normal_read_key){\n" +
+						"\t^rem{read-chain без префикса}\n" +
+						"}\n" +
+						"$VAR_FROM_CLASS.assigned_key[value]\n" +
+						"$MAIN:VAR_FROM_CLASS.<caret>\n");
+		createParser3FileInDir(rootDir + "/www/self_access.p",
+				"@auto[]\n" +
+						"^use[UserClass.p]\n" +
+						"^if(!def $MAIN:VAR_FROM_CLASS.main_read_key){\n" +
+						"\t^rem{read-chain через MAIN}\n" +
+						"}\n" +
+						"^if(!def $self.VAR_FROM_CLASS.self_read_key){\n" +
+						"\t^rem{read-chain через self}\n" +
+						"}\n" +
+						"^if(!def $VAR_FROM_CLASS.normal_read_key){\n" +
+						"\t^rem{read-chain без префикса}\n" +
+						"}\n" +
+						"$VAR_FROM_CLASS.assigned_key[value]\n" +
+						"$self.VAR_FROM_CLASS.<caret>\n");
+		createParser3FileInDir(rootDir + "/www/UserClass.p",
+				"@CLASS\n" +
+						"UsClass\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@auto[]\n" +
+						"$MAIN:VAR_FROM_CLASS[\n" +
+						"\t$.real_key[]\n" +
+						"]\n" +
+						"^if(!def $MAIN:VAR_FROM_CLASS.used_file_read_key){\n" +
+						"\t^rem{read-chain в подключённом файле}\n" +
+						"}\n" +
+						"$MAIN:VAR_FROM_CLASS.used_file_assigned_key[value]\n" +
+						"\n" +
+						"@create[]\n");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+	}
+
+	private void createRealAutoStyleMainVariableFixture(
+			@NotNull String rootDir,
+			boolean autouse
+	) {
+		createParser3FileInDir(rootDir + "/www/auto.p",
+				autouse
+						? "@autouse[className]\n^use[${className}.p]\n"
+						: "@auto[]\n^use[UserClass.p]\n");
+		createParser3FileInDir(rootDir + "/www/" + (autouse ? "UsClass.p" : "UserClass.p"),
+				"@CLASS\n" +
+						"UsClass\n" +
+						"\n" +
+						"@OPTIONS\n" +
+						"locals\n" +
+						"\n" +
+						"@auto[]\n" +
+						"$MAIN:VAR_FROM_CLASS[\n" +
+						"\t$.xxx[]\n" +
+						"]\n" +
+						"\n" +
+						"@create[]\n");
+		createParser3FileInDir(rootDir + "/www/page.p",
+				"@main[]\n" +
+						(autouse ? "$uc[^UsClass::create[]]\n" : "^use[UserClass.p]\n") +
+						"^if(!def $MAIN:VAR_FROM_CLASS.yyy){\n" +
+						"\t^rem{TODO}\n" +
+						"\t$VAR_FROM_CLASS.zzz[var]\n" +
+						"}\n" +
+						"$VAR_FROM_CLASS.<caret>\n");
+
+		com.intellij.psi.PsiDocumentManager.getInstance(getProject()).commitAllDocuments();
+		com.intellij.openapi.project.DumbService.getInstance(getProject()).waitForSmartMode();
+	}
+
+	private void assertMainVariableClassKeys(
+			@NotNull String message,
+			@NotNull List<String> completions
+	) {
+		assertTrue(message + ": нет real_key, есть: " + completions,
+				completions.contains("real_key"));
+		assertTrue(message + ": нет main_read_key, есть: " + completions,
+				completions.contains("main_read_key"));
+		assertTrue(message + ": нет self_read_key, есть: " + completions,
+				completions.contains("self_read_key"));
+		assertTrue(message + ": нет normal_read_key, есть: " + completions,
+				completions.contains("normal_read_key"));
+		assertTrue(message + ": нет assigned_key, есть: " + completions,
+				completions.contains("assigned_key"));
+		assertTrue(message + ": нет used_file_read_key, есть: " + completions,
+				completions.contains("used_file_read_key"));
+		assertTrue(message + ": нет used_file_assigned_key, есть: " + completions,
+				completions.contains("used_file_assigned_key"));
+		assertEquals(message + ": real_key должен быть без дублей, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "real_key"));
+		assertEquals(message + ": main_read_key должен быть без дублей, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "main_read_key"));
+		assertEquals(message + ": self_read_key должен быть без дублей, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "self_read_key"));
+		assertEquals(message + ": normal_read_key должен быть без дублей, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "normal_read_key"));
+		assertEquals(message + ": assigned_key должен быть без дублей, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "assigned_key"));
+		assertEquals(message + ": used_file_read_key должен быть без дублей, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "used_file_read_key"));
+		assertEquals(message + ": used_file_assigned_key должен быть без дублей, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "used_file_assigned_key"));
+	}
+
+	private void assertRealAutoStyleKeys(
+			@NotNull String message,
+			@NotNull List<String> completions
+	) {
+		assertTrue(message + ": нет xxx из подключённого класса, есть: " + completions,
+				completions.contains("xxx"));
+		assertTrue(message + ": нет yyy из read-chain без присваивания, есть: " + completions,
+				completions.contains("yyy"));
+		assertTrue(message + ": нет zzz из присваивания внутри ветки, есть: " + completions,
+				completions.contains("zzz"));
+		assertEquals(message + ": xxx должен быть без дублей, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "xxx"));
+		assertEquals(message + ": yyy должен быть без дублей, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "yyy"));
+		assertEquals(message + ": zzz должен быть без дублей, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "zzz"));
 	}
 
 	private void typeWithAutoPopup(@NotNull String text, @NotNull String timeoutMessage) {
@@ -631,6 +801,28 @@ public class x9_CompletionTest extends Parser3TestCase {
 						myFixture.getCaretOffset(),
 						't'
 				));
+	}
+
+	public void testDirectiveCompletion_includesAutouseAndPostprocess() {
+		List<String> completions = getCompletions("directive_autouse_postprocess.p",
+				"# обезличенный минимальный кейс error/6.p\n" +
+						"@<caret>");
+
+		assertTrue("@conf[filespec] должен оставаться в completion директив: " + completions,
+				completions.contains("conf[filespec]"));
+		assertTrue("@autouse[className] должен быть в completion директив: " + completions,
+				completions.contains("autouse[className]"));
+		assertTrue("@postprocess[body] должен быть в completion директив: " + completions,
+				completions.contains("postprocess[body]"));
+
+		Map<String, String> typeTexts = getCompletionTypeTexts("directive_autouse_postprocess_descriptions.p",
+				"# обезличенный минимальный кейс error/6.p\n" +
+						"@<caret>");
+		assertEquals("Точка входа MAIN", typeTexts.get("main[]"));
+		assertEquals("Инициализация файла/класса при загрузке", typeTexts.get("auto[]"));
+		assertEquals("Конфигурация перед @auto", typeTexts.get("conf[filespec]"));
+		assertEquals("Автозагрузка классов по имени", typeTexts.get("autouse[className]"));
+		assertEquals("Постобработка результата @main", typeTexts.get("postprocess[body]"));
 	}
 
 	public void testMethodCompletion_dynamicClassStaticMethodPrefix() {
@@ -5031,6 +5223,56 @@ public class x9_CompletionTest extends Parser3TestCase {
 				completions.contains("item."));
 	}
 
+	public void testDollarCompletion_usedClassMainVariableKeepsReadChainKeysAcrossMainAliases() {
+		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		createUsedClassMainVariableFixture("used_class_main_var_keys_plain");
+
+		List<String> completions = getCompletionsFromExistingFile("used_class_main_var_keys_plain/www/auto.p");
+		assertMainVariableClassKeys(
+				"$VAR_FROM_CLASS. должен видеть реальные и read-chain ключи из подключённого класса",
+				completions);
+	}
+
+	public void testDollarMainCompletion_usedClassMainVariableKeepsReadChainKeysAcrossMainAliases() {
+		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		createUsedClassMainVariableFixture("used_class_main_var_keys_main");
+
+		List<String> completions = getCompletionsFromExistingFile("used_class_main_var_keys_main/www/main_access.p");
+		assertMainVariableClassKeys(
+				"$MAIN:VAR_FROM_CLASS. должен видеть реальные и read-chain ключи из подключённого класса",
+				completions);
+	}
+
+	public void testDollarSelfCompletion_usedClassMainVariableKeepsReadChainKeysAcrossMainAliases() {
+		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		createUsedClassMainVariableFixture("used_class_main_var_keys_self");
+
+		List<String> completions = getCompletionsFromExistingFile("used_class_main_var_keys_self/www/self_access.p");
+		assertMainVariableClassKeys(
+				"$self.VAR_FROM_CLASS. должен видеть реальные и read-chain ключи из подключённого класса",
+				completions);
+	}
+
+	public void testDollarCompletion_realAutoUseClassMainVariableKeepsKeysWithoutAssignment() {
+		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		createRealAutoStyleMainVariableFixture("real_auto_use_class_main_var_keys", false);
+
+		List<String> completions = getCompletionsFromExistingFile("real_auto_use_class_main_var_keys/www/page.p");
+		assertRealAutoStyleKeys(
+				"Реальный auto.p-style кейс с ^use[UserClass.p] должен видеть xxx, yyy и zzz",
+				completions);
+	}
+
+	public void testDollarCompletion_realAutoAutouseClassMainVariableKeepsKeysWithoutAssignmentAfterClassCall() {
+		setMethodCompletionMode(ru.artlebedev.parser3.settings.Parser3ProjectSettings.MethodCompletionMode.USE_ONLY);
+		createRealAutoStyleMainVariableFixture("real_auto_autouse_class_main_var_keys", true);
+
+		List<String> completions = getCompletionsFromExistingFile("real_auto_autouse_class_main_var_keys/www/page.p");
+		assertRealAutoStyleKeys(
+				"Реальный auto.p-style кейс с @autouse и ^UsClass::create[] должен видеть xxx, yyy и zzz",
+				completions);
+	}
+
 	public void testDollarCompletion_parser050RealIfHashResultShowsKey() {
 		String content =
 				"@main[]\n" +
@@ -6130,8 +6372,90 @@ public class x9_CompletionTest extends Parser3TestCase {
 				text.contains("$self"));
 	}
 
-	public void testDollarCompletion_tabDoesNotInsertSelfFromActivePopup() {
-		configureParser3TextFile("test_tab_does_not_insert_self.p",
+	public void testDollarCompletion_spaceWithActiveVariablePopupKeepsManualInput() {
+		configureParser3TextFile("test_space_with_active_variable_popup_keeps_manual_input.p",
+				"@main[]\n" +
+						"$data[\n" +
+						"\t$.id[]\n" +
+						"]\n" +
+						"^if(def $da<caret>)\n");
+
+		myFixture.complete(CompletionType.BASIC);
+		Lookup variableLookup = myFixture.getLookup();
+		assertNotNull("После $da должен открыться popup переменных", variableLookup);
+		assertTrue("Popup переменных должен быть LookupImpl", variableLookup instanceof LookupImpl);
+		LookupElement dataElement = Arrays.stream(myFixture.getLookupElements())
+				.filter(e -> "data.".equals(e.getLookupString()))
+				.findFirst()
+				.orElse(null);
+		assertNotNull("Popup переменных должен содержать data.", dataElement);
+		((LookupImpl) variableLookup).setCurrentItem(dataElement);
+
+		myFixture.type(" ");
+		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+
+		String text = myFixture.getEditor().getDocument().getText();
+		assertTrue("Пробел при активном popup должен остаться ручным вводом после $da: " + text,
+				text.contains("^if(def $da )"));
+		assertFalse("Пробел при активном popup не должен выбирать $data: " + text,
+				text.contains("^if(def $data"));
+		assertNull("После ручного пробела popup должен закрыться",
+				LookupManager.getActiveLookup(myFixture.getEditor()));
+	}
+
+	public void testDollarCompletion_semicolonWithActiveVariablePopupKeepsManualInput() {
+		configureParser3TextFile("test_semicolon_with_active_variable_popup_keeps_manual_input.p",
+				"@main[]\n" +
+						"$data[\n" +
+						"\t$.id[]\n" +
+						"]\n" +
+						"^if(def $da<caret>)\n");
+
+		myFixture.complete(CompletionType.BASIC);
+		Lookup variableLookup = myFixture.getLookup();
+		assertNotNull("После $da должен открыться popup переменных", variableLookup);
+		assertTrue("Popup переменных должен быть LookupImpl", variableLookup instanceof LookupImpl);
+		LookupElement dataElement = Arrays.stream(myFixture.getLookupElements())
+				.filter(e -> "data.".equals(e.getLookupString()))
+				.findFirst()
+				.orElse(null);
+		assertNotNull("Popup переменных должен содержать data.", dataElement);
+		((LookupImpl) variableLookup).setCurrentItem(dataElement);
+
+		myFixture.type(";");
+		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
+
+		String text = myFixture.getEditor().getDocument().getText();
+		assertTrue("Точка с запятой при активном popup должна остаться ручным вводом после $da: " + text,
+				text.contains("^if(def $da;)"));
+		assertFalse("Точка с запятой при активном popup не должна выбирать $data: " + text,
+				text.contains("^if(def $data"));
+		assertNull("После ручной точки с запятой popup должен закрыться",
+				LookupManager.getActiveLookup(myFixture.getEditor()));
+	}
+
+	public void testPluginRegistersEditorTabIndentHandlersButNotLookupReplaceHandler() throws Exception {
+		String pluginXml = new String(
+				Files.readAllBytes(Paths.get("src/main/resources/META-INF/plugin.xml")),
+				StandardCharsets.UTF_8
+		);
+
+		assertTrue("Плагин должен подключать штатный Parser3-отступ по Tab как в v0.7.39",
+				pluginXml.contains("EditorIndentSelection"));
+		assertTrue("Плагин должен подключать штатный Parser3-отступ по Shift+Tab как в v0.7.39",
+				pluginXml.contains("EditorUnindentSelection"));
+		assertTrue("Плагин должен регистрировать Parser3IndentHandler",
+				pluginXml.contains("Parser3IndentHandler"));
+		assertTrue("Плагин должен регистрировать Parser3UnindentHandler",
+				pluginXml.contains("Parser3UnindentHandler"));
+		assertFalse("Плагин не должен перехватывать Tab в lookup popup",
+				pluginXml.contains("EditorChooseLookupItemReplace"));
+		assertFalse("Плагин не должен регистрировать Parser3LookupReplaceHandler",
+				pluginXml.contains("Parser3LookupReplaceHandler"));
+	}
+
+	public void testDollarCompletion_tabUsesStandardLookupReplaceAction() {
+		configureParser3TextFile("test_tab_uses_standard_lookup_replace.p",
 				"@main[]\n" +
 						"$data[\n" +
 						"\t$.xxx[]\n" +
@@ -6153,11 +6477,14 @@ public class x9_CompletionTest extends Parser3TestCase {
 		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
 
 		String text = myFixture.getEditor().getDocument().getText();
-		assertTrue("Tab в активном popup должен остаться обычным Tab, а не выбором completion: " + text,
-				text.contains("\t$\t\n"));
-		assertFalse("Tab в активном popup не должен выбирать $self: " + text,
-				text.contains("$self"));
-		assertNull("Tab должен закрыть popup без вставки", LookupManager.getActiveLookup(myFixture.getEditor()));
+		assertTrue("Стандартный lookup replace не должен удалить начало файла: " + text,
+				text.contains("@main[]\n"));
+		assertTrue("Стандартный lookup replace не должен удалить соседний hash key: " + text,
+				text.contains("\t$.xxx[]\n"));
+		assertTrue("Tab в активном popup теперь должен идти через штатный lookup replace: " + text,
+				text.contains("\t$self."));
+		assertNull("После штатного lookup replace popup должен закрыться",
+				LookupManager.getActiveLookup(myFixture.getEditor()));
 	}
 
 	public void testEditorTabWorksWithoutCompletionPopup() {
@@ -6166,7 +6493,7 @@ public class x9_CompletionTest extends Parser3TestCase {
 						"<caret>$value[test]\n");
 		assertNull("Перед обычным Tab popup не должен быть открыт", LookupManager.getActiveLookup(myFixture.getEditor()));
 
-		myFixture.performEditorAction(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE);
+		myFixture.performEditorAction(IdeActions.ACTION_EDITOR_TAB);
 		com.intellij.util.ui.UIUtil.dispatchAllInvocationEvents();
 
 		String text = myFixture.getEditor().getDocument().getText();
@@ -7185,6 +7512,127 @@ public class x9_CompletionTest extends Parser3TestCase {
 				completions.contains("score"));
 		assertFalse("После явного override не должен оставаться старый столбец comment, есть: " + completions,
 				completions.contains("comment"));
+	}
+
+	public void testDollarCompletion_tableOverrideAfterHashLiteralDropsOldKeys() {
+		String content =
+				"@main[]\n" +
+						"# полный table reset после hash literal должен заменить shape\n" +
+						"$data[\n" +
+						"\t$.old_key[]\n" +
+						"\t$.old_nested[\n" +
+						"\t\t$.inner[]\n" +
+						"\t]\n" +
+						"]\n" +
+						"$data[^table::create{id\tname\n" +
+						"1\ttest_user}]\n" +
+						"$data.<caret>\n";
+		java.util.List<String> completions = getCompletions("table_override_after_hash_literal.p", content);
+
+		assertTrue("После table override должна быть колонка id, есть: " + completions,
+				completions.contains("id"));
+		assertTrue("После table override должна быть колонка name, есть: " + completions,
+				completions.contains("name"));
+		assertFalse("После table override не должен оставаться старый hash key old_key, есть: " + completions,
+				completions.contains("old_key"));
+		assertFalse("После table override не должен оставаться старый hash key old_nested, есть: " + completions,
+				completions.contains("old_nested."));
+		assertEquals("Колонка id не должна дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "id"));
+	}
+
+	public void testDollarCompletion_objectOverrideAfterHashLiteralDropsOldKeys() {
+		String content =
+				"@CLASS\n" +
+						"ProfileData\n" +
+						"\n" +
+						"@create[]\n" +
+						"$self.login[]\n" +
+						"\n" +
+						"@GET_status[]\n" +
+						"$result[ok]\n" +
+						"\n" +
+						"@main[]\n" +
+						"# полный object reset после hash literal должен заменить shape\n" +
+						"$data[\n" +
+						"\t$.old_key[]\n" +
+						"]\n" +
+						"$data[^ProfileData::create[]]\n" +
+						"$data.<caret>\n";
+		java.util.List<String> completions = getCompletions("object_override_after_hash_literal.p", content);
+
+		assertTrue("После object override должно быть свойство класса login, есть: " + completions,
+				completions.contains("login"));
+		assertTrue("После object override должен быть getter status, есть: " + completions,
+				completions.contains("status"));
+		assertFalse("После object override не должен оставаться старый hash key old_key, есть: " + completions,
+				completions.contains("old_key"));
+		assertEquals("login не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "login"));
+	}
+
+	public void testDollarCompletion_scalarOverrideAfterReadChainDropsSyntheticKeys() {
+		String content =
+				"@main[]\n" +
+						"# полный scalar reset после read-chain должен убрать synthetic shape\n" +
+						"$data.old_key\n" +
+						"$data[value]\n" +
+						"$data.<caret>\n";
+		java.util.List<String> completions = getCompletions("scalar_override_after_read_chain.p", content);
+
+		assertFalse("После scalar override не должен оставаться synthetic key old_key, есть: " + completions,
+				completions.contains("old_key"));
+		assertEquals("Synthetic key old_key не должен дублироваться: " + completions,
+				0, java.util.Collections.frequency(completions, "old_key"));
+	}
+
+	public void testDollarCompletion_mainPrefixOverrideAfterPlainVarWinsForSelfAccess() {
+		String content =
+				"@main[]\n" +
+						"# В MAIN $data, $self.data и $MAIN:data — одна переменная\n" +
+						"$data[\n" +
+						"\t$.old_key[]\n" +
+						"]\n" +
+						"$MAIN:data[\n" +
+						"\t$.new_key[]\n" +
+						"]\n" +
+						"$self.data.<caret>\n";
+		java.util.List<String> completions = getCompletions("main_prefix_override_plain_to_self.p", content);
+
+		assertTrue("$MAIN:data должен переопределить форму для $self.data, есть: " + completions,
+				completions.contains("new_key"));
+		assertFalse("Старая форма $data не должна оставаться после $MAIN:data override, есть: " + completions,
+				completions.contains("old_key"));
+		assertEquals("new_key не должен дублироваться между $data/$self/$MAIN, есть: " + completions,
+				1, java.util.Collections.frequency(completions, "new_key"));
+	}
+
+	public void testDollarCompletion_selfHashOverrideWithGetterDropsReadChainKeys() {
+		String content =
+				"@CLASS\n" +
+						"ProfilePage\n" +
+						"\n" +
+						"@create[]\n" +
+						"$self.data.old_key\n" +
+						"$self.data[\n" +
+						"\t$.new_key[]\n" +
+						"]\n" +
+						"$self.data.<caret>\n" +
+						"\n" +
+						"@GET_data[]\n" +
+						"$result[\n" +
+						"\t$.getter_key[]\n" +
+						"]\n";
+		java.util.List<String> completions = getCompletions("self_hash_override_with_getter.p", content);
+
+		assertTrue("Явное $self.data[...] должно дать new_key, есть: " + completions,
+				completions.contains("new_key"));
+		assertFalse("Read-chain key old_key не должен оставаться после явного $self.data[...], есть: " + completions,
+				completions.contains("old_key"));
+		assertFalse("При явном полном $self.data[...] getter не должен подменять field shape, есть: " + completions,
+				completions.contains("getter_key"));
+		assertEquals("new_key не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "new_key"));
 	}
 
 	public void testDollarCompletion_methodCallRootInfersBraceReadChain() {
@@ -8913,6 +9361,23 @@ public class x9_CompletionTest extends Parser3TestCase {
 		assertEquals("SQL auto-popup должен подавляться внутри Parser3 ^if(...)", com.intellij.util.ThreeState.YES, decision);
 	}
 
+	public void testSqlInjectedOneLineSqlKeywordAutoPopup() throws Throwable {
+		createParser3FileInDir("www/errors/1_sql_one_line_autopopup.p",
+				"@main[]\n" +
+						"$list[^table::sql{SELECT id, name FROM users <caret>}]\n"
+		);
+		VirtualFile vf = myFixture.findFileInTempDir("www/errors/1_sql_one_line_autopopup.p");
+		myFixture.configureFromExistingVirtualFile(vf);
+
+		typeWithAutoPopup("WHE", "Не дождались SQL popup после WHE в однострочном table::sql{}");
+
+		LookupImpl lookup = assertActiveLookupImpl("SQL popup после WHE в однострочном table::sql{}");
+		assertActiveLookupFirstItemSelected("SQL popup после WHE в однострочном table::sql{}", lookup);
+		List<String> names = getLookupNames(lookup);
+		assertTrue("SQL popup после WHE должен содержать WHERE, есть: " + names,
+				names.stream().anyMatch(name -> "WHERE".equalsIgnoreCase(name)));
+	}
+
 	public void testSqlInjectedDollarVariableAutoPopupInsideIfArgumentDoesNotCrash() throws Throwable {
 		createParser3FileInDir("www/sql_injected_if_dollar_variable_autopopup.p",
 				"@main[]\n" +
@@ -9256,6 +9721,81 @@ public class x9_CompletionTest extends Parser3TestCase {
 		assertNotNull("В injected HTML completion после сохранённого префикса de должен показывать методы hash", elements);
 		List<String> names = Arrays.stream(elements).map(LookupElement::getLookupString).collect(Collectors.toList());
 		assertTrue("В injected HTML для ^data.de должен быть delete, есть: " + names, names.contains("delete"));
+	}
+
+	public void testHashMethodCompletion_savedLongPrefixFiltersDotUserTemplates() {
+		List<String> completions = getCompletions(
+				"www/errors/2.p",
+				"@main[]\n" +
+						"$data[^hash::create[]]\n" +
+						"^data.contai<caret>\n");
+
+		assertTrue("Для ^data.contai должен быть contains, есть: " + completions,
+				completions.contains("contains"));
+		assertFalse("Для ^data.contai не должен показываться dot-шаблон foreach[], есть: " + completions,
+				completions.contains("foreach[]"));
+	}
+
+	public void testDollarCompletion_hashLiteralBracketEmailKeysAreVisible() {
+		List<String> completions = getCompletions(
+				"www/errors/3.p",
+				"@main[]\n" +
+						"$emails[\n" +
+						"\t$.[test1@example.com][]\n" +
+						"\t$.[test2@example.com][]\n" +
+						"]\n" +
+						"$emails.<caret>\n");
+
+		assertTrue("Хеш с bracket-ключом email должен содержать [test1@example.com], есть: " + completions,
+				completions.contains("[test1@example.com]"));
+		assertTrue("Хеш с bracket-ключом email должен содержать [test2@example.com], есть: " + completions,
+				completions.contains("[test2@example.com]"));
+		assertEquals("Ключ [test1@example.com] не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "[test1@example.com]"));
+		assertEquals("Ключ [test2@example.com] не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "[test2@example.com]"));
+	}
+
+	public void testDollarCompletion_hashLiteralBracketEmailKeyShowsNestedKeys() {
+		List<String> completions = getCompletions(
+				"www/errors/3_nested.p",
+				"@main[]\n" +
+						"$emails[\n" +
+						"\t$.[test1@example.com][]\n" +
+						"\t$.[test2@example.com][\n" +
+						"\t\t$.now[^date::now[]]\n" +
+						"\t]\n" +
+						"\t$.test2[\n" +
+						"\t\t$.now[^date::now[]]\n" +
+						"\t]\n" +
+						"]\n" +
+						"$emails.[test2@example.com].<caret>\n");
+
+		assertTrue("Вложенный ключ bracket-email должен содержать now., есть: " + completions,
+				completions.contains("now."));
+		assertEquals("Ключ now. не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "now."));
+	}
+
+	public void testDollarCompletion_hashLiteralBracketEmailKeyMatchesInnerPrefix() {
+		List<String> completions = getCompletions(
+				"www/errors/3_prefix.p",
+				"@main[]\n" +
+						"$emails[\n" +
+						"\t$.[test1@example.com][]\n" +
+						"\t$.[test2@example.com][\n" +
+						"\t\t$.now[^date::now[]]\n" +
+						"\t]\n" +
+						"\t$.[aa bb cc][\n" +
+						"\t\t$.xxx[]\n" +
+						"\t]\n" +
+						"]\n" +
+						"$emails.test<caret>\n");
+
+		assertTrue("Bracket-email ключ должен находиться по внутреннему префиксу test, есть: " + completions,
+				completions.contains("[test2@example.com]."));
+		assertEquals("Bracket-email ключ не должен дублироваться: " + completions,
+				1, java.util.Collections.frequency(completions, "[test2@example.com]."));
 	}
 
 	public void testRealMixedSqlAndHtmlInjectedCompletion_htmlDeleteIsNotHiddenByUserTemplates() {

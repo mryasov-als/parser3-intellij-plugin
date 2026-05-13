@@ -15,6 +15,7 @@ import ru.artlebedev.parser3.completion.P3CompletionUtils;
 import ru.artlebedev.parser3.completion.P3PathCompletionSupport;
 import ru.artlebedev.parser3.completion.P3PseudoHashCompletionRegistry;
 import ru.artlebedev.parser3.completion.P3TableColumnArgumentCompletionSupport;
+import ru.artlebedev.parser3.psi.Parser3SqlBlock;
 import ru.artlebedev.parser3.utils.Parser3PsiUtils;
 
 public class Parser3CompletionConfidence extends CompletionConfidence {
@@ -26,7 +27,7 @@ public class Parser3CompletionConfidence extends CompletionConfidence {
 	public @NotNull ThreeState shouldSkipAutopopup(@NotNull PsiElement contextElement,
 												   @NotNull PsiFile psiFile,
 												   int offset) {
-		if (!Parser3PsiUtils.isParser3File(psiFile)) {
+		if (!Parser3PsiUtils.isParser3File(psiFile) && findParser3HostFile(psiFile) == null) {
 			return ThreeState.UNSURE;
 		}
 
@@ -113,10 +114,21 @@ public class Parser3CompletionConfidence extends CompletionConfidence {
 		if (isAllowedParser3AutoPopupContext(hostContext.file, hostContext.text, hostContext.offset)) {
 			return ThreeState.NO;
 		}
+		if (isInjectedSqlContext(contextElement, psiFile)) {
+			return P3CompletionUtils.isEmbeddedParser3CallInsideSql(hostContext.text, hostContext.offset)
+					? ThreeState.YES
+					: ThreeState.NO;
+		}
 		if (P3CompletionUtils.isParser3CaretCallArgumentContext(hostContext.text, hostContext.offset)) {
 			return ThreeState.YES;
 		}
 		return ThreeState.UNSURE;
+	}
+
+	private static boolean isInjectedSqlContext(@NotNull PsiElement contextElement, @NotNull PsiFile psiFile) {
+		PsiFile injectedFile = contextElement.getContainingFile();
+		PsiElement context = injectedFile != null ? injectedFile.getContext() : psiFile.getContext();
+		return context instanceof Parser3SqlBlock;
 	}
 
 	private boolean isAllowedParser3AutoPopupContext(

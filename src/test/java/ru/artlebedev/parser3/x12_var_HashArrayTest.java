@@ -1468,6 +1468,103 @@ public class x12_var_HashArrayTest extends Parser3TestCase {
 				P3VariableFileIndex.UNKNOWN_TYPE, completionInfo.variable.className);
 	}
 
+	public void testObjectMethodResultInference_selfReceiverDotChainDoesNotOverflowInCompletion() {
+		String content =
+				"@main[]\n" +
+						"# регресс: самоприсваивание через receiver dot-chain не должно зацикливать foreach lookup\n" +
+						"$items_uri[^request:uri.split[?;lh]]\n" +
+						"$items_uri[^items_uri.0.trim[both;/]]\n" +
+						"$start_uri[^items_uri.split]\n" +
+						"$st<caret>";
+
+		List<String> completions;
+		try {
+			completions = doComplete("object_method_self_receiver_dot_chain_completion.p", content);
+		} catch (StackOverflowError e) {
+			fail("Completion не должен падать на самоприсваивании через receiver dot-chain");
+			return;
+		}
+
+		assertTrue("$st<caret> должен предлагать start_uri: " + completions,
+				completions.contains("start_uri"));
+
+		VirtualFile vf = myFixture.findFileInTempDir("object_method_self_receiver_dot_chain_completion.p");
+		assertNotNull("Файл теста должен быть создан", vf);
+
+		List<VirtualFile> visibleFiles = P3VisibilityService.getInstance(getProject()).getVisibleFiles(vf);
+		P3VariableIndex variableIndex = P3VariableIndex.getInstance(getProject());
+		int cursorOffset = content.indexOf("$st<caret>");
+
+		try {
+			variableIndex.resolveEffectiveChain("items_uri.0.trim", visibleFiles, vf, cursorOffset);
+		} catch (StackOverflowError e) {
+			fail("resolveEffectiveChain не должен падать на самоприсваивании через receiver dot-chain");
+		}
+	}
+
+	public void testObjectMethodResultInference_splitTrimThenSelfFieldCopyDoesNotFreezeCompletion() {
+		String content =
+				"@print_news_page[][locals]\n" +
+						"# обезличенный минимальный кейс freeze-popup: split -> trim -> split -> self field copy\n" +
+						"$news_uri[^request:uri.split[?;lh]]\n" +
+						"$news_uri[^news_uri.0.trim[both;/]]\n" +
+						"$start_uri[^news_uri.split[/;lh]]\n" +
+						"$start_uri[$start_uri.0]\n" +
+						"$start<caret>";
+
+		List<String> completions;
+		try {
+			completions = doComplete("object_method_split_trim_self_field_copy_completion.p", content);
+		} catch (StackOverflowError e) {
+			fail("Completion не должен падать на split -> trim -> split -> self field copy");
+			return;
+		}
+
+		assertTrue("$start<caret> должен предлагать start_uri: " + completions,
+				completions.contains("start_uri") || completions.contains("start_uri."));
+
+		VirtualFile vf = myFixture.findFileInTempDir("object_method_split_trim_self_field_copy_completion.p");
+		assertNotNull("Файл теста должен быть создан", vf);
+
+		List<VirtualFile> visibleFiles = P3VisibilityService.getInstance(getProject()).getVisibleFiles(vf);
+		P3VariableIndex variableIndex = P3VariableIndex.getInstance(getProject());
+		int cursorOffset = content.indexOf("$start<caret>");
+		P3VariableIndex.VariableCompletionInfo info =
+				variableIndex.resolveEffectiveVariable("start_uri", visibleFiles, vf, cursorOffset);
+
+		assertNotNull("Переменная start_uri должна находиться", info);
+		assertEquals("После $start_uri[$start_uri.0] итоговый тип start_uri должен быть string",
+				"string", info.variable.className);
+	}
+
+	public void testObjectMethodResultInference_dynamicTrimReceiverDoesNotAddHashKeyToRoot() {
+		String content =
+				"@main[]\n" +
+						"# обезличенный реальный кейс error/5.p\n" +
+						"$news_uri[^request:uri.split[?;lh]]\n" +
+						"$news_uri[/^news_uri.0.trim[both;/]/]\n" +
+						"$news_uri.<caret>";
+
+		List<String> completions = doComplete("object_method_trim_receiver_does_not_add_hash_key.p", content);
+
+		assertFalse("^news_uri.0.trim[] не должен превращать news_uri в hash с ключом 0: " + completions,
+				completions.contains("0"));
+
+		VirtualFile vf = myFixture.findFileInTempDir("object_method_trim_receiver_does_not_add_hash_key.p");
+		assertNotNull("Файл теста должен быть создан", vf);
+
+		List<VirtualFile> visibleFiles = P3VisibilityService.getInstance(getProject()).getVisibleFiles(vf);
+		P3VariableIndex variableIndex = P3VariableIndex.getInstance(getProject());
+		int cursorOffset = content.indexOf("$news_uri.<caret>");
+		P3VariableIndex.VariableCompletionInfo info =
+				variableIndex.resolveEffectiveVariable("news_uri", visibleFiles, vf, cursorOffset);
+		assertNotNull("Переменная news_uri должна находиться", info);
+		assertEquals("Итоговый тип news_uri должен быть string",
+				"string", info.variable.className);
+		assertFalse("У news_uri не должно быть synthetic hash-key 0",
+				info.hashKeys != null && info.hashKeys.containsKey("0"));
+	}
+
 	public void testHash_copy_dollarRef() {
 		List<String> c = doComplete("cp1.p",
 				parser209RealHashCopyBase("$a2.<caret>"));

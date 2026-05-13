@@ -566,8 +566,10 @@ public final class P3VariableIndex {
 			@NotNull VirtualFile currentFile,
 			int cursorOffset
 	) {
+		P3ScopeContext.VariableSearchData variableSearchData = P3ScopeContext.buildVariableSearchData(
+				project, currentFile, cursorOffset, visibleFiles);
 		return getVisibleVariables(new P3VariableScopeContext(
-				project, currentFile, cursorOffset, visibleFiles, P3ScopeContext.buildUseOffsetMap(project, currentFile)));
+				project, currentFile, cursorOffset, variableSearchData.files, variableSearchData.useOffsetMap));
 	}
 
 	public @NotNull List<VisibleVariable> getVisibleVariables(
@@ -1775,11 +1777,43 @@ public final class P3VariableIndex {
 		}
 
 		VisibleVariable indexed = findVariableByIndexQuery(varKey, visibleFiles, currentFile, currentOffset);
+		if (indexed != null && fast != null && fast.isAdditive) {
+			return mergeVisibleVariableShapes(indexed, fast);
+		}
 		if (indexed != null && !indexed.isAdditive) {
 			return indexed;
 		}
 
 		return findVariable(varKey, visibleFiles, currentFile, currentOffset);
+	}
+
+	private static @NotNull VisibleVariable mergeVisibleVariableShapes(
+			@NotNull VisibleVariable base,
+			@NotNull VisibleVariable overlay
+	) {
+		Map<String, HashEntryInfo> mergedHashKeys = mergeHashEntryMaps(base.hashKeys, overlay.hashKeys);
+		List<String> mergedHashSourceVars = mergeHashSourceVars(base.hashSourceVars, overlay.hashSourceVars);
+		List<String> mergedColumns = overlay.columns != null ? overlay.columns : base.columns;
+		String mergedClassName = !P3VariableFileIndex.UNKNOWN_TYPE.equals(base.className) && !base.className.isEmpty()
+				? base.className
+				: overlay.className;
+		return new VisibleVariable(
+				base.varKey,
+				base.cleanName,
+				mergedClassName,
+				base.ownerClass,
+				base.file,
+				base.offset,
+				mergedColumns,
+				overlay.sourceVarKey != null ? overlay.sourceVarKey : base.sourceVarKey,
+				base.methodName,
+				base.targetClassName,
+				mergedHashKeys,
+				mergedHashSourceVars,
+				false,
+				base.isLocal,
+				base.receiverVarKey
+		);
 	}
 
 	private @Nullable VisibleVariable findVariableInCurrentFileRaw(
@@ -1835,7 +1869,15 @@ public final class P3VariableIndex {
 		if (P3VariableFileIndex.UNKNOWN_TYPE.equals(resolved.className)
 				&& resolved.sourceVarKey != null
 				&& !resolved.sourceVarKey.isEmpty()) {
-			resolved = resolveSourceVariable(resolved, visibleFiles, currentFile, currentOffset);
+			resolved = resolveSourceVariableInternal(
+					resolved,
+					visibleFiles,
+					currentFile,
+					currentOffset,
+					5,
+					visitedValues,
+					resolvingVarKeys
+			);
 		}
 
 		List<String> columns = resolved.columns;
@@ -2133,8 +2175,13 @@ public final class P3VariableIndex {
 		if (P3VariableFileIndex.VariableTypeInfo.METHOD_CALL_MARKER.equals(resolvedClass)) {
 			resolvedClass = P3VariableFileIndex.UNKNOWN_TYPE;
 		}
-		Map<String, HashEntryInfo> mergedHashKeys = mergeHashEntryMaps(resolved.hashKeys, variable.hashKeys);
-		List<String> mergedHashSourceVars = mergeHashSourceVars(resolved.hashSourceVars, variable.hashSourceVars);
+		boolean canMergeOwnHashShape = canCarryHashShape(resolvedClass);
+		Map<String, HashEntryInfo> mergedHashKeys = canMergeOwnHashShape
+				? mergeHashEntryMaps(resolved.hashKeys, variable.hashKeys)
+				: resolved.hashKeys;
+		List<String> mergedHashSourceVars = canMergeOwnHashShape
+				? mergeHashSourceVars(resolved.hashSourceVars, variable.hashSourceVars)
+				: resolved.hashSourceVars;
 
 		return new VisibleVariable(
 				variable.varKey,
@@ -2152,6 +2199,13 @@ public final class P3VariableIndex {
 				variable.isAdditive,
 				resolved.receiverVarKey
 		);
+	}
+
+	private static boolean canCarryHashShape(@NotNull String className) {
+		return P3VariableFileIndex.UNKNOWN_TYPE.equals(className)
+				|| "hash".equals(className)
+				|| "array".equals(className)
+				|| "table".equals(className);
 	}
 
 	private static @Nullable List<String> mergeHashSourceVars(
@@ -2247,8 +2301,11 @@ public final class P3VariableIndex {
 		Map<String, VisibleVariable> dedup = new LinkedHashMap<>();
 		Map<String, Integer> dedupEffectiveOffset = new HashMap<>();
 
+		P3ScopeContext.VariableSearchData variableSearchData = P3ScopeContext.buildVariableSearchData(
+				project, currentFile, currentOffset, visibleFiles);
+		visibleSet.addAll(variableSearchData.files);
 		P3VariableScopeContext scopeContext = new P3VariableScopeContext(
-				project, currentFile, currentOffset, visibleFiles, P3ScopeContext.buildUseOffsetMap(project, currentFile));
+				project, currentFile, currentOffset, variableSearchData.files, variableSearchData.useOffsetMap);
 
 		try {
 			for (String key : searchKeys) {
@@ -2260,11 +2317,10 @@ public final class P3VariableIndex {
 							if (!visibleSet.contains(file)) return true;
 							if (!scopeContext.isSourceVisibleAtCursor(file)) return true;
 
-							P3VariableFileIndex.VariableTypeInfo lastVisible = null;
 							boolean inheritedMainLocals = scopeContext.hasInheritedMainLocalsForSourceFile(file);
 							String fileText = isTemporaryVariableName(pureName) ? readFileTextSmart(file) : null;
+							P3VariableEffectiveShape shape = new P3VariableEffectiveShape(extractPureVarName(key), true);
 							for (P3VariableFileIndex.VariableTypeInfo info : infos) {
-								// Логика из collectVisibleFromOtherFile
 								if (isInfoLocal(info, inheritedMainLocals)) continue;
 								if (isTemporaryVariableName(pureName)
 										&& fileText != null
@@ -2279,34 +2335,20 @@ public final class P3VariableIndex {
 								} else {
 									continue;
 								}
-								if (lastVisible == null || info.offset > lastVisible.offset) {
-									lastVisible = info;
-								}
+								shape.add(info);
 							}
 
-							if (lastVisible != null) {
-								// METHOD_CALL_MARKER — не резолвим здесь, оставляем как есть
-								String className = lastVisible.isMethodCallType()
-										? P3VariableFileIndex.VariableTypeInfo.METHOD_CALL_MARKER
-										: lastVisible.className;
-
-								String cleanName = extractPureVarName(key);
-								String dedupKey = cleanName + "|" + lastVisible.ownerClass;
-
-								P3VariableFileIndex.VariableTypeInfo finalLast = lastVisible;
+							VisibleVariable candidate = createVisibleVariableFromShape(key, file, shape, false);
+							if (candidate != null) {
+								String dedupKey = candidate.cleanName + "|" + candidate.ownerClass;
 								int useOffset = scopeContext.getUseOffset(file);
 								int existingEffective = dedupEffectiveOffset.getOrDefault(dedupKey, Integer.MIN_VALUE);
 								VisibleVariable existing = dedup.get(dedupKey);
 
 								if (existing == null ||
 										useOffset > existingEffective ||
-										(useOffset == existingEffective && (!file.equals(existing.file) || finalLast.offset > existing.offset))) {
-									dedup.put(dedupKey, new VisibleVariable(key, cleanName, className,
-											finalLast.ownerClass, file, finalLast.offset,
-											finalLast.columns, finalLast.sourceVarKey,
-											finalLast.methodName, finalLast.targetClassName,
-											attachHashEntryFiles(finalLast.hashKeys, file), finalLast.hashSourceVars,
-											finalLast.isAdditive, finalLast.receiverVarKey));
+										(useOffset == existingEffective && (!file.equals(existing.file) || candidate.offset > existing.offset))) {
+									dedup.put(dedupKey, candidate);
 									dedupEffectiveOffset.put(dedupKey, useOffset);
 								}
 							}
@@ -2352,6 +2394,39 @@ public final class P3VariableIndex {
 		if (P3VariableFileIndex.UNKNOWN_TYPE.equals(result.className)) return null;
 
 		return result;
+	}
+
+	private static @Nullable VisibleVariable createVisibleVariableFromShape(
+			@NotNull String varKey,
+			@NotNull VirtualFile file,
+			@NotNull P3VariableEffectiveShape shape,
+			boolean isLocal
+	) {
+		if (!shape.hasVisible()) return null;
+		P3VariableFileIndex.VariableTypeInfo structuralVisible = shape.structuralVisible();
+		if (structuralVisible == null) return null;
+
+		Map<String, HashEntryInfo> fileHashKeys = attachHashEntryFiles(shape.hashKeys(), file);
+		List<String> effectiveColumns = P3VariableEffectiveShape.applyColumnHashMutations(
+				structuralVisible.columns, fileHashKeys);
+		String cleanName = extractPureVarName(varKey);
+		return new VisibleVariable(
+				varKey,
+				cleanName,
+				shape.className(),
+				structuralVisible.ownerClass,
+				file,
+				structuralVisible.offset,
+				effectiveColumns,
+				shape.effectiveSourceVarKey(),
+				structuralVisible.methodName,
+				structuralVisible.targetClassName,
+				fileHashKeys,
+				shape.hashSourceVars(),
+				structuralVisible.isAdditive,
+				isLocal,
+				structuralVisible.receiverVarKey
+		);
 	}
 
 	/**
@@ -2474,9 +2549,7 @@ public final class P3VariableIndex {
 			prefix = "BASE:";
 			chain = chain.substring(5);
 		}
-		chain = Parser3ChainUtils.normalizeDynamicSegments(chain);
-
-		String[] segments = chain.split("\\.", -1);
+		String[] segments = Parser3ChainUtils.splitNormalizedSegments(chain);
 		if (segments.length == 0) return null;
 
 		String firstKey = prefix + segments[0];
@@ -2503,7 +2576,15 @@ public final class P3VariableIndex {
 
 		if (P3VariableFileIndex.UNKNOWN_TYPE.equals(currentType)) {
 			if (rootVar != null && rootVar.sourceVarKey != null) {
-				VisibleVariable resolved = resolveSourceVariable(rootVar, visibleFiles, currentFile, currentOffset);
+				VisibleVariable resolved = resolveSourceVariableInternal(
+						rootVar,
+						visibleFiles,
+						currentFile,
+						currentOffset,
+						5,
+						visitedValues,
+						resolvingVarKeys
+				);
 				if (resolved != rootVar) {
 					currentType = resolved.className;
 					if ("table".equals(currentType) && (currentColumns == null || currentColumns.isEmpty())) {
@@ -2525,7 +2606,15 @@ public final class P3VariableIndex {
 		if (("hash".equals(currentType) || "array".equals(currentType))
 				&& (currentHashKeys == null || currentHashKeys.isEmpty())) {
 			if (rootVar != null) {
-				VisibleVariable effectiveVar = resolveSourceVariable(rootVar, visibleFiles, currentFile, currentOffset);
+				VisibleVariable effectiveVar = resolveSourceVariableInternal(
+						rootVar,
+						visibleFiles,
+						currentFile,
+						currentOffset,
+						5,
+						visitedValues,
+						resolvingVarKeys
+				);
 				currentHashKeys = resolveAllHashKeys(effectiveVar, visibleFiles, currentFile, currentOffset);
 			}
 		}
@@ -2625,7 +2714,8 @@ public final class P3VariableIndex {
 				if ((cols == null || cols.isEmpty()) && rootVar != null) {
 					cols = resolveColumnsForChain(firstKey, visibleFiles, currentFile, currentOffset);
 				}
-				if (cols != null && cols.contains(propName)) {
+				if ((cols != null && cols.contains(propName))
+						|| ((cols == null || cols.isEmpty()) && isNumericTableColumn(propName))) {
 					currentEntry = null;
 					currentType = "string";
 					currentColumns = null;
@@ -2698,6 +2788,14 @@ public final class P3VariableIndex {
 		} finally {
 			resolvingVarKeys.remove(chainResolveKey);
 		}
+	}
+
+	private static boolean isNumericTableColumn(@NotNull String propName) {
+		if (propName.isEmpty()) return false;
+		for (int i = 0; i < propName.length(); i++) {
+			if (!Character.isDigit(propName.charAt(i))) return false;
+		}
+		return true;
 	}
 
 	private @Nullable Map<String, HashEntryInfo> resolveHashEntryValueRefs(
@@ -2806,7 +2904,15 @@ public final class P3VariableIndex {
 			@NotNull VirtualFile currentFile,
 			int currentOffset
 	) {
-		return resolveSourceVariableInternal(var, visibleFiles, currentFile, currentOffset, 5);
+		return resolveSourceVariableInternal(
+				var,
+				visibleFiles,
+				currentFile,
+				currentOffset,
+				5,
+				new java.util.HashSet<>(),
+				new java.util.HashSet<>()
+		);
 	}
 
 	private @NotNull VisibleVariable resolveSourceVariableInternal(
@@ -2814,7 +2920,9 @@ public final class P3VariableIndex {
 			@NotNull java.util.List<VirtualFile> visibleFiles,
 			@NotNull VirtualFile currentFile,
 			int currentOffset,
-			int maxDepth
+			int maxDepth,
+			@NotNull java.util.Set<String> visitedValues,
+			@NotNull java.util.Set<String> resolvingVarKeys
 	) {
 		if (maxDepth <= 0) return var;
 		// Резолвим только UNKNOWN переменные с sourceVarKey
@@ -2822,7 +2930,13 @@ public final class P3VariableIndex {
 		if (!P3VariableFileIndex.UNKNOWN_TYPE.equals(var.className)) return var;
 		if (var.sourceVarKey == null || var.sourceVarKey.isEmpty()) return var;
 		String sourceVarKey = P3VariableEffectiveShape.decodeHashSourceVarKey(var.sourceVarKey);
-		int sourceLookupOffset = P3VariableEffectiveShape.decodeHashSourceLookupOffset(var.sourceVarKey, currentOffset);
+		boolean snapshotSourceLookup = P3VariableEffectiveShape.isHashSourceAtOffset(var.sourceVarKey)
+				|| isDotPathReference(sourceVarKey)
+				|| var.varKey.equals(sourceVarKey);
+		int decodedSourceLookupOffset = P3VariableEffectiveShape.decodeHashSourceLookupOffset(var.sourceVarKey, currentOffset);
+		int sourceLookupOffset = snapshotSourceLookup
+				? Math.min(decodedSourceLookupOffset, Math.max(0, var.offset - 1))
+				: decodedSourceLookupOffset;
 
 		if (sourceVarKey.startsWith("foreach:") || sourceVarKey.startsWith("foreach_field:")) {
 			java.util.Map<String, HashEntryInfo> resolvedKeys = resolveAllHashKeys(var, visibleFiles, currentFile, currentOffset);
@@ -2849,7 +2963,14 @@ public final class P3VariableIndex {
 		// Dotpath: $var[$data.key1] → резолвим тип через цепочку
 		if (isDotPathReference(sourceVarKey)) {
 			ChainResolveInfo chainInfo =
-					resolveEffectiveChain(sourceVarKey, visibleFiles, currentFile, sourceLookupOffset);
+					resolveEffectiveChainCached(
+							sourceVarKey,
+							visibleFiles,
+							currentFile,
+							sourceLookupOffset,
+							visitedValues,
+							resolvingVarKeys
+					);
 			if (chainInfo != null && chainInfo.className != null
 					&& !P3VariableFileIndex.UNKNOWN_TYPE.equals(chainInfo.className)) {
 				if (DEBUG_ALWAYS) System.out.println("[resolveSourceVariable] dotPath " + var.varKey + " → sourceVarKey=" + sourceVarKey + " → type=" + chainInfo.className);
@@ -3337,7 +3458,15 @@ public final class P3VariableIndex {
 					new java.util.HashSet<>()
 			);
 		}
-		return resolveSourceVariableInternal(resolved, visibleFiles, currentFile, currentOffset, maxDepth);
+		return resolveSourceVariableInternal(
+				resolved,
+				visibleFiles,
+				currentFile,
+				currentOffset,
+				maxDepth,
+				new java.util.HashSet<>(),
+				new java.util.HashSet<>()
+		);
 	}
 
 	private static @Nullable java.util.Map<String, HashEntryInfo> hashKeysFromColumns(
@@ -3842,7 +3971,7 @@ public final class P3VariableIndex {
 			@NotNull VirtualFile currentFile,
 			int currentOffset
 	) {
-		VisibleVariable rootVar = findVariableInCurrentFileOnly(rootVarPureName, currentFile, currentOffset);
+		VisibleVariable rootVar = findVariableInCurrentFileRaw(rootVarPureName, currentFile, currentOffset);
 		if (rootVar != null && rootVar.sourceVarKey != null
 				&& (rootVar.sourceVarKey.startsWith("foreach:")
 				|| rootVar.sourceVarKey.startsWith("foreach_field:"))) {

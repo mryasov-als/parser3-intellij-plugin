@@ -198,7 +198,7 @@ public final class P3VariableFileIndex extends FileBasedIndexExtension<String, L
 								@Nullable String receiverVarKey) {
 			this.offset = offset;
 			this.className = className;
-			this.ownerClass = ownerClass;
+			this.ownerClass = normalizeOwnerClass(ownerClass, varPrefix);
 			this.ownerMethod = ownerMethod;
 			this.methodName = methodName;
 			this.targetClassName = targetClassName;
@@ -210,6 +210,15 @@ public final class P3VariableFileIndex extends FileBasedIndexExtension<String, L
 			this.hashKeys = (hashKeys != null && hashKeys.isEmpty()) ? null : hashKeys;
 			this.hashSourceVars = (hashSourceVars != null && hashSourceVars.isEmpty()) ? null : hashSourceVars;
 			this.isAdditive = isAdditive;
+		}
+
+		private static @Nullable String normalizeOwnerClass(
+				@Nullable String ownerClass,
+				@Nullable String varPrefix
+		) {
+			// $MAIN:name всегда пишет в MAIN, даже если физически находится внутри @CLASS.
+			if ("MAIN:".equals(varPrefix)) return null;
+			return ownerClass;
 		}
 
 		/**
@@ -1497,7 +1506,7 @@ public final class P3VariableFileIndex extends FileBasedIndexExtension<String, L
 
 	@Override
 	public int getVersion() {
-		return 44; // v44: принудительный bootstrap перестройки после установки плагина
+		return 45; // v45: $MAIN:* внутри @CLASS индексируется как MAIN-переменная
 	}
 
 	@Override

@@ -328,6 +328,9 @@ public final class P3VariableParser {
 								// chain.get(last) — метод, chain.get(0..last-1) — поля
 								int lastIdx = chain.size() - 1;
 								String lastMethod = chain.get(lastIdx);
+								if (isReceiverOnlyValueMethod(lastMethod)) {
+									continue;
+								}
 								if (isHashMutatingMethod(lastMethod) && chainCp < len && text.charAt(chainCp) == '[') {
 									Map<String, HashEntryInfo> mutationKeys = extractNestedHashMutationKeys(
 											text, chainCp, len, lastMethod, chain, chainOffsets);
@@ -1010,13 +1013,19 @@ public final class P3VariableParser {
 		}
 
 		// === Проверяем ссылку на переменную: $varName как единственное содержимое ===
-		// $copy[$original] → тип copy = тип original (ленивый резолв через sourceVarKey)
+		// $copy[$original] / {$original} → тип copy = тип original (ленивый резолв через sourceVarKey).
+		// В круглых скобках это скалярное выражение, оно не должно переносить hash-форму источника.
 		if (text.charAt(pos) == '$') {
 			String refVar = extractSoleVarReference(text, pos, to);
-			if (refVar != null) {
+			if (refVar != null && bracket != '(') {
 				if (DEBUG) System.out.println("[P3VarParser.parseValueContent] var reference → sourceVarKey=" + refVar);
 				return new ParsedValue(P3VariableFileIndex.UNKNOWN_TYPE, null, refVar);
 			}
+		}
+
+		if (bracket == '[' && containsTemplateExpression(text, pos, to)) {
+			// Шаблон с Parser3-выражением без hash/array/call/reference-формы даёт строковое значение.
+			return new ParsedValue("string");
 		}
 
 		return ParsedValue.unknown();
@@ -1763,6 +1772,18 @@ public final class P3VariableParser {
 		return "add".equals(methodName) || "rename".equals(methodName) || "sub".equals(methodName);
 	}
 
+	private static boolean isReceiverOnlyValueMethod(@NotNull String methodName) {
+		return "trim".equals(methodName);
+	}
+
+	private static boolean containsTemplateExpression(@NotNull String text, int from, int to) {
+		for (int i = from; i < to; i++) {
+			char ch = text.charAt(i);
+			if (ch == '^' || ch == '$') return true;
+		}
+		return false;
+	}
+
 	private static boolean isRootHashMutatingMethod(@NotNull String methodName) {
 		return isHashMutatingMethod(methodName)
 				|| "join".equals(methodName)
@@ -2196,13 +2217,14 @@ public final class P3VariableParser {
 					pos += 2; // после $.
 
 					// Парсим имя ключа
-					int keyStart = pos;
-					while (pos < to && isIdentChar(text.charAt(pos))) pos++;
-					if (pos == keyStart) {
+					DotChainSegmentInfo keySegment = parseDotChainSegment(text, pos, to, textLen);
+					if (keySegment == null) {
 						pos++;
 						continue;
 					}
-					String keyName = text.substring(keyStart, pos);
+					String keyName = keySegment.keyName;
+					int keyStart = keySegment.keyOffset;
+					pos = keySegment.nextPos;
 
 					// Ожидаем [ или (
 					while (pos < to && Character.isWhitespace(text.charAt(pos))) pos++;

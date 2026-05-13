@@ -20,6 +20,7 @@ import ru.artlebedev.parser3.model.P3ClassDeclaration;
 import ru.artlebedev.parser3.model.P3MethodDeclaration;
 import ru.artlebedev.parser3.utils.Parser3BuiltinStaticPropertyUsageUtils;
 import ru.artlebedev.parser3.utils.Parser3ChainUtils;
+import ru.artlebedev.parser3.utils.Parser3IdentifierUtils;
 import ru.artlebedev.parser3.visibility.P3ScopeContext;
 
 import java.util.ArrayList;
@@ -170,7 +171,7 @@ public final class P3VariableMethodCompletionContributor {
 			int resolveOffset
 	) {
 		long t0 = DEBUG_PERF ? System.currentTimeMillis() : 0;
-		String normalizedVarKey = Parser3ChainUtils.normalizeDynamicSegments(varKey);
+		String normalizedVarKey = Parser3ChainUtils.normalizeChainKeyForResolve(varKey);
 		String typedPrefix = result.getPrefixMatcher().getPrefix();
 		String delayedTypedPrefix = typedPrefix.isEmpty()
 				? extractDelayedDollarDotPrefix(currentFileText, cursorOffset)
@@ -263,6 +264,15 @@ public final class P3VariableMethodCompletionContributor {
 					hashKeys.remove(getterName);
 				}
 			}
+			java.util.Set<String> builtinPropertyNames = !userClassName && Parser3BuiltinMethods.isBuiltinClass(className)
+					? collectBuiltinPropertyNames(className)
+					: java.util.Collections.emptySet();
+			if (hashKeys != null && !builtinPropertyNames.isEmpty()) {
+				hashKeys = new java.util.LinkedHashMap<>(hashKeys);
+				for (String propertyName : builtinPropertyNames) {
+					hashKeys.remove(propertyName);
+				}
+			}
 			java.util.Set<String> additivePropertyNames = new java.util.HashSet<>();
 			if (hashKeys != null && !hashKeys.isEmpty()) {
 				for (String keyName : hashKeys.keySet()) {
@@ -314,8 +324,9 @@ public final class P3VariableMethodCompletionContributor {
 		// $var. неизвестного типа — ничего не добавляем
 
 		// Пользовательские dot-шаблоны нужны и для ^var., и для $var. после точки.
-		// Они не должны фильтроваться уже набранным ключом: $data.id всё равно показывает .foreach[] внизу списка.
-		ru.artlebedev.parser3.lang.Parser3CompletionContributor.fillUserTemplates(result.withPrefixMatcher(""), ".");
+		// В ^var.method фильтруем по методу; в $var.key сохраняем прежний низкоприоритетный fallback шаблонов.
+		CompletionResultSet userTemplateResult = caretDot ? result : result.withPrefixMatcher("");
+		ru.artlebedev.parser3.lang.Parser3CompletionContributor.fillUserTemplates(userTemplateResult, ".");
 		if (DEBUG_PERF) System.out.println("[VarMethodCompl.PERF] completeVariableDot TOTAL: " + (System.currentTimeMillis() - t0) + "ms"
 				+ " visibleFiles=" + (visibleFiles != null ? visibleFiles.size() : 0)
 				+ " classSearchFiles=" + (classSearchFiles != null ? classSearchFiles.size() : 0));
@@ -443,7 +454,7 @@ public final class P3VariableMethodCompletionContributor {
 		// Свойства встроенного класса
 		addBuiltinClassProperties(className, result);
 		// Пользовательские шаблоны с "."
-		ru.artlebedev.parser3.lang.Parser3CompletionContributor.fillUserTemplates(result.withPrefixMatcher(""), ".");
+		ru.artlebedev.parser3.lang.Parser3CompletionContributor.fillUserTemplates(result, ".");
 	}
 
 	/**
@@ -676,6 +687,14 @@ public final class P3VariableMethodCompletionContributor {
 			if (method.isGetter()) {
 				result.add(method.getName());
 			}
+		}
+		return result;
+	}
+
+	private static @NotNull java.util.Set<String> collectBuiltinPropertyNames(@NotNull String className) {
+		java.util.Set<String> result = new java.util.HashSet<>();
+		for (Parser3BuiltinMethods.BuiltinCallable property : Parser3BuiltinMethods.getPropertiesForClass(className)) {
+			result.add(property.name);
 		}
 		return result;
 	}
@@ -1080,13 +1099,14 @@ public final class P3VariableMethodCompletionContributor {
 			// Определяем, нужна ли точка после ключа.
 			// В контексте ^var. (appendDot=true) — всегда точка (у значения всегда есть методы).
 			// В контексте $var. (appendDot=false) — только если есть вложенные ключи или известный тип.
-			boolean needsDot = appendDot || info.hasNestedKeys()
+			boolean scalarMethodResult = isScalarMethodResultHashEntry(info);
+			boolean needsDot = appendDot || (!scalarMethodResult && (info.hasNestedKeys()
 					|| info.nestedKeys != null  // пустой nestedKeys = есть ключи (например через foreach_field)
 					|| ("hash".equals(info.className) && info.nestedKeys != null)
 					|| "table".equals(info.className)
 					|| (!"hash".equals(info.className)
 					&& !ru.artlebedev.parser3.index.P3VariableFileIndex.UNKNOWN_TYPE.equals(info.className)
-					&& ru.artlebedev.parser3.lang.Parser3BuiltinMethods.isBuiltinClass(info.className));
+					&& ru.artlebedev.parser3.lang.Parser3BuiltinMethods.isBuiltinClass(info.className))));
 			if (DEBUG) System.out.println("[addHashKeys] key=" + keyName + " needsDot=" + needsDot + " className=" + info.className + " nestedKeys=" + (info.nestedKeys != null ? info.nestedKeys.keySet() : "null") + " hasNestedKeys=" + info.hasNestedKeys());
 			String displayType = ru.artlebedev.parser3.index.P3VariableFileIndex.UNKNOWN_TYPE.equals(info.className)
 					? null : info.className;
@@ -1097,7 +1117,7 @@ public final class P3VariableMethodCompletionContributor {
 			String displayTailText = exceptionMeta != null ? " " + exceptionMeta.description : tailLabel;
 
 			// Ключи с пробелами/спецсимволами — оборачиваем в скобки: [key name]
-			boolean needsBrackets = keyName.indexOf(' ') >= 0 || keyName.indexOf('\t') >= 0;
+			boolean needsBrackets = !isSimpleDotKey(keyName);
 
 			String insertText;
 			String displayText;
@@ -1116,6 +1136,9 @@ public final class P3VariableMethodCompletionContributor {
 					.withTypeText(displayType, true)
 					.withPresentableText(displayText)
 					.withTailText(displayTailText, true);
+			if (needsBrackets) {
+				element = element.withLookupString(keyName);
+			}
 
 			com.intellij.codeInsight.completion.InsertHandler<com.intellij.codeInsight.lookup.LookupElement> handler;
 			if (needsBrackets) {
@@ -1210,6 +1233,15 @@ public final class P3VariableMethodCompletionContributor {
 
 	private static boolean isHiddenHashMutationEntry(@Nullable ru.artlebedev.parser3.index.HashEntryInfo info) {
 		return info != null && "__deleted__".equals(info.className);
+	}
+
+	private static boolean isScalarMethodResultHashEntry(@NotNull ru.artlebedev.parser3.index.HashEntryInfo info) {
+		if (info.nestedKeys != null && !info.nestedKeys.isEmpty()) return false;
+		if (info.methodName != null && !info.methodName.isEmpty()) return true;
+		return "int".equals(info.className)
+				|| "double".equals(info.className)
+				|| "bool".equals(info.className)
+				|| "string".equals(info.className);
 	}
 
 	private static @Nullable String extractCurrentWeakCandidate(
@@ -1369,5 +1401,16 @@ public final class P3VariableMethodCompletionContributor {
 		result.put("colno", new ExceptionFieldMeta("int", "номер колонки, где произошла ошибка"));
 		result.put("handled", new ExceptionFieldMeta("bool", "флаг, что ошибка обработана"));
 		return java.util.Collections.unmodifiableMap(result);
+	}
+
+	private static boolean isSimpleDotKey(@NotNull String keyName) {
+		if (keyName.isEmpty()) return false;
+		if (!Parser3IdentifierUtils.isIdentifierStart(keyName.charAt(0))) return false;
+		for (int i = 1; i < keyName.length(); i++) {
+			if (!Parser3IdentifierUtils.isVariableIdentifierChar(keyName.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
